@@ -9,15 +9,21 @@ public class Statistic
     float currentamount;        // Value of the base stat
     float currentmaxamount;     // Current max value of the stat (includes bonuses)
 
-
     List<Bonus> bonusamounts;   // List of bonuses to the stat. The key is the added/subtracted value, and the value is the time it stays.
     float bonuses;
+    float maxbonuses;
+    List<Bonus> exhaustedbonuses;
 
     List<Bonus> multipliers;   // List of multiplier bonuses to the maxvalue of the stat.
     float multiplier;
+    List<Bonus> exhaustedmultipliers;
 
     public Statistic(float amount)
     {
+        bonusamounts = new List<Bonus>();
+        multipliers = new List<Bonus>();
+        exhaustedbonuses = new List<Bonus>();
+        exhaustedmultipliers = new List<Bonus>();
         this.maxamount = amount;
         currentamount = amount;
         currentmaxamount = amount;
@@ -26,8 +32,9 @@ public class Statistic
 
     /**
      * Updates the bonus and checks if they are still working, removes bonuses that have timedout
+     * Do not call this function. Should be only used in the pawn class
      */
-    public void Update()
+    public void UpdateStatistics()
     {
         CheckBonuses();
         CheckMultipliers();
@@ -41,11 +48,17 @@ public class Statistic
         return maxamount;
     }
 
+    /**
+     * Returns the value of the statistic with bonuses/multipliers
+     */
     public float GetValue()
     {
         return currentamount + bonuses;
     }
 
+    /**
+     * Sets the value of the statistic
+     */
     public void SetValue(float value)
     {
         Mathf.Clamp(value, 0, GetMaxValue());
@@ -53,22 +66,31 @@ public class Statistic
 
     }
 
+    /**
+     * Returns the max value of the statistic with bonuses/multipliers
+     */
     public float GetMaxValue()
     {
-        return (maxamount * multiplier) + bonuses;
+        return (maxamount * multiplier) + maxbonuses;
     }
 
+    /**
+     * Sets the max value of the statistic permanently
+     */
     public void SetMaxValue(float value)
     {
         float diff = value - maxamount;
         maxamount = value;
-        AddValue(diff);       
+        AddValue(diff);
         if (maxamount < currentamount)
         {
             currentamount = maxamount;
         }
     }
 
+    /**
+     * Adds to the value of the Statistic, can also be negative
+     */
     public void AddValue(float amount)
     {
         if (bonusamounts.Count > 0)
@@ -105,7 +127,7 @@ public class Statistic
 
     //---------------------------------------- BONUSES ---------------------------------------------------------//
 
-    public Vector2 FillDifference(float value, float max, float fill)
+    private Vector2 FillDifference(float value, float max, float fill)
     {
         Vector2 result = new Vector2();
         if (fill > 0)
@@ -122,7 +144,7 @@ public class Statistic
                 result.y = 0;
             }
         }
-        else if(fill < 0)
+        else if (fill < 0)
         {
             if (Mathf.Abs(fill) > value)
             {
@@ -163,34 +185,59 @@ public class Statistic
         multipliers.Add(b);
     }
 
-    public void CheckBonuses()
+    private void CheckBonuses()
     {
+        float b = 0;
+        float mb = 0;
         if (bonusamounts.Count > 0)
         {
-            float b = 0;
+            exhaustedbonuses.Clear();
             foreach (Bonus bonus in bonusamounts)
             {
                 if (bonus.CheckBonus())
                 {
                     b += bonus.GetValue();
+                    mb += bonus.GetMaxValue();
                 }
                 else
                 {
-                    RecalculateBonuses(bonusamounts, bonus);
+                    exhaustedbonuses.Add(bonus);
                 }
             }
+
+            foreach(Bonus bonus in exhaustedbonuses)
+            {
+                RecalculateBonuses(bonusamounts, bonus);
+            }
+
+
             if (b != bonuses)
             {
                 bonuses = b;
             }
+            if (mb != maxbonuses)
+            {
+                maxbonuses = mb;
+            }
+
+            return;
+        }
+        if (b != bonuses)
+        {
+            bonuses = b;
+        }
+        if (mb != maxbonuses)
+        {
+            maxbonuses = mb;
         }
     }
 
-    public void CheckMultipliers()
+    private void CheckMultipliers()
     {
+        float multi = 1;
         if (multipliers.Count > 0)
         {
-            float multi = 1;
+            exhaustedmultipliers.Clear();
             foreach (Bonus bonus in multipliers)
             {
                 if (bonus.CheckBonus())
@@ -199,50 +246,65 @@ public class Statistic
                 }
                 else
                 {
-                    RecalculateBonuses(multipliers, bonus);
+                    exhaustedmultipliers.Add(bonus);
                 }
             }
+            foreach (Bonus bonus in exhaustedmultipliers)
+            {
+                RecalculateBonuses(exhaustedmultipliers, bonus);
+            }
+
             if (multi != multiplier)
             {
                 multiplier = multi;
+                return;
             }
+        }
+        if (multi != multiplier)
+        {
+            multiplier = multi;
         }
     }
 
     /**
      * Places any unused bonuses to the other bonues and then removes the bonues from the list
      */
-    public void RecalculateBonuses(List<Bonus> bonuses, Bonus bonus)
+    private void RecalculateBonuses(List<Bonus> bonuses, Bonus bonus)
     {
         float value = bonus.GetValue();
-        bonuses.Remove(bonus);
 
         foreach (Bonus b in bonuses)
         {
-            float bvalue = b.GetValue();
-            float bmaxvalue = b.GetMaxValue();
-
-            float diff = bmaxvalue - bvalue;
-            if (diff > 0)
+            if (b != bonus)
             {
-                if (value >= diff)
+                float bvalue = b.GetValue();
+                float bmaxvalue = b.GetMaxValue();
+
+                float diff = bmaxvalue - bvalue;
+                if (diff > 0)
                 {
-                    b.SetValue(bmaxvalue);
-                    value -= diff;
+                    if (value >= diff)
+                    {
+                        b.SetValue(bmaxvalue);
+                        value -= diff;
+                    }
+                    else
+                    {
+                        b.SetValue(bvalue + value);
+                        value = 0;
+                        bonuses.Remove(bonus);
+                        return;
+                    }
                 }
-                else
+
+                if (value <= 0)
                 {
-                    b.SetValue(bvalue + value);
-                    value = 0;
+                    bonuses.Remove(bonus);
                     return;
                 }
-            }
-
-            if (value <= 0)
-            {
-                return;
-            }
+            }         
         }
+
 
         //If there is no more bonus, check if the stats' base value is low
         float svalue = currentamount;
@@ -259,7 +321,10 @@ public class Statistic
                 SetValue(svalue + value);
             }
         }
-
+        if (bonus != null)
+        {
+            bonuses.Remove(bonus);
+        }
     }
     /**
      * Object type that contains data on a timed bonus. If the time is reduced to zero, it should be removed

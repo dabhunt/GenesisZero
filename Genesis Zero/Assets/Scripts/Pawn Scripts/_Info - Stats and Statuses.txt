@@ -1,0 +1,48 @@
+
+Statistics ------------------------------------------------------------------------------------------------------------------------------------
+* A data type that contains a value that can be manpipulated extensively
+* It's main features is allowing for temporary (time-based) bonuses to the value are are both additive and mulltiplicative
+* This is used for data like Health, Damage, Dodgechance, etc.
+
+List of Some Functions and Notes: (Not all is included in this info txt)
+Note: Most Get functions will have a Set() function as well. If you're not sure what they do exactly, reference the source code
+GetValue();			- Returns the value of the stat with bonuses included
+GetMaxValue();		- Returns the max value of the stat with bonuses
+GetBaseValue();		- Returns the maxvalue of the stat without bonuses
+AddBonus();			- Adds a flat bonus amount to the stat for a specific amount of time
+AddMultiplier();	- ^ But with multiplication
+MultiplyValue();	- Multiplies the current value of the stat and adds that to the value
+MultiplyMaxValue();	- Permanent change to the base value. 1.5 is a 50% increase. Also adds the increased amount
+AddValue();			- Adds a amount to the stat. Can be negative
+
+Some implemented statistics in Pawn
+Health				- If set to zero, pawn will die/despawn
+Damage				- Base Damage of the pawn. Can be used to calculate how much damage a pawn does
+Speed				- Base speed of the pawn. Can be used to denote how fast a pawn moves
+Attackspeed			- Base attack speed of pawn. Can be used to denote how fast a pawn attacks
+Flatdamagereduction	- A flat reduction to the damage that the pawn takes. They will always take 1 damage at least
+Damagereduction		- A percentage damage reduction to the pawn. A value from 0 to 1. They will always at least take 1 damage
+Dodgechance			- A percentage chance to dodge any primary source of damage taking zero damage. Factor from 0 to 1
+
+
+Statuses ------------------------------------------------------------------------------------------------------------------------------------
+* A data type that is either TRUE or FALSE depending on the time/value variable
+* By Default, the status will decrement the time/value variable and become FALSE when the time is 0
+* Statuses can be used for a meter as well, by setting the Threshhold variable higher than 0. 
+	- EX. The status rage is FALSE when it's value is 3, but its threshhold is 5
+
+Functions: (Check source code for more documentation)
+GetTime();
+SetTime();
+GetValue();	//Functionally the same as Get/SetTime();
+SetValue();
+AddTime()/AddValue();
+GetThreshhold();
+SetThreshhold();
+IsActive();
+
+Some implemented statuses in Pawn
+Invunerable			- If true, the pawn will not take any damage from any source
+Stunned				- If true, the pawn cannot not do any actions
+Burning				- If true, the pawn is in a state of burning
+Slowed				- If true, the pawn's speed is reduced

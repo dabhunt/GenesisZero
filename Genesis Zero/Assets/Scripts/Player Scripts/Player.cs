@@ -14,7 +14,17 @@ public class Player : Pawn
     // Update is called once per frame
     new void Update()
     {
-        Debug.Log("Player");
+        if (Input.GetKeyDown(KeyCode.Space))
+        {
+            GetHealth().AddBonus(-10,15,1);
+        }
+        Debug.Log("Player" + GetHealth().GetValue() +" : "+ GetHealth().GetMaxValue());
         base.Update();
+    }
+
+    new public void TakeDamage(float amount, GameObject source)
+    {
+        //Add anthing if there is class specific additions to taking damage
+        base.TakeDamage(amount, source);
     }
 }
