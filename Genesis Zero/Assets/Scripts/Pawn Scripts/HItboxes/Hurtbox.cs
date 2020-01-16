@@ -37,13 +37,29 @@ public class Hurtbox : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-        foreach (Collider col in colliders)
+        try
         {
-            if (col == null)
+            foreach (Collider col in colliders)
             {
-                colliders.Remove(col);
+                if (col == null)
+                {
+                    colliders.Remove(col);
+                }
+
             }
         }
+        catch { }
+    }
+
+    private void OnTriggerEnter(Collider other)
+    {
+        Debug.Log("SpecialT");
+    }
+
+
+    private void OnCollisionEnter(Collision collision)
+    {
+        Debug.Log("Colliding");
     }
 
     [ExecuteInEditMode]
@@ -57,11 +73,12 @@ public class Hurtbox : MonoBehaviour
                 Collider col = colliders[i];
                 if (col.GetComponent<SphereCollider>() != null)
                 {
-                    Gizmos.DrawWireSphere(transform.position + col.transform.localPosition + col.GetComponent<SphereCollider>().center, col.GetComponent<SphereCollider>().radius);
+                    Debug.Log(col.transform.rotation);
+                    Gizmos.DrawWireSphere(col.transform.position + col.GetComponent<SphereCollider>().center, col.GetComponent<SphereCollider>().radius);
                 }
                 if (col.GetComponent<BoxCollider>() != null)
                 {
-                    Gizmos.DrawWireCube(transform.position + col.transform.localPosition + col.GetComponent<BoxCollider>().center, col.GetComponent<BoxCollider>().size);
+                    Gizmos.DrawWireCube(col.transform.position + col.GetComponent<BoxCollider>().center, col.GetComponent<BoxCollider>().size);
                 }
             }
         }

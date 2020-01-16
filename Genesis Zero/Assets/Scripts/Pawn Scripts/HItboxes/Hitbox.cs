@@ -6,7 +6,7 @@ using UnityEngine;
 public class Hitbox : MonoBehaviour
 {
     float damage;
-    
+
     bool HurtsAliies;
     bool HurtsEnemies;
 
@@ -40,13 +40,17 @@ public class Hitbox : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-        foreach (Collider col in colliders)
+        try
         {
-            if (col == null)
+            foreach (Collider col in colliders)
             {
-                colliders.Remove(col);
+                if (col == null)
+                {
+                    colliders.Remove(col);
+                }
             }
         }
+        catch { }
     }
 
     [ExecuteInEditMode]
@@ -63,13 +67,13 @@ public class Hitbox : MonoBehaviour
                 if (col.GetComponent<SphereCollider>() != null)
                 {
                     //Debug.Log("C");
-                    Gizmos.DrawWireSphere(transform.position + col.transform.localPosition + col.GetComponent<SphereCollider>().center, col.GetComponent<SphereCollider>().radius);
+                    Gizmos.DrawWireSphere(col.transform.position - col.GetComponent<SphereCollider>().center, col.GetComponent<SphereCollider>().radius);
                 }
 
                 if (col.GetComponent<BoxCollider>() != null)
                 {
                     //Debug.Log(col.GetComponent<BoxCollider>().center);
-                    Gizmos.DrawWireCube(transform.position + col.transform.localPosition + col.GetComponent<BoxCollider>().center, col.GetComponent<BoxCollider>().size);
+                    Gizmos.DrawWireCube(col.transform.position + col.GetComponent<BoxCollider>().center, col.GetComponent<BoxCollider>().size);
                 }
 
             }
