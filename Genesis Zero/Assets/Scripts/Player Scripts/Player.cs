@@ -18,13 +18,13 @@ public class Player : Pawn
         {
             GetHealth().AddBonus(-10,15,1);
         }
-        Debug.Log("Player" + GetHealth().GetValue() +" : "+ GetHealth().GetMaxValue());
+        //Debug.Log("Player" + GetHealth().GetValue() +" : "+ GetHealth().GetMaxValue());
         base.Update();
     }
 
-    new public void TakeDamage(float amount, GameObject source)
+    new public void TakeDamage(float amount)
     {
         //Add anthing if there is class specific additions to taking damage
-        base.TakeDamage(amount, source);
+        base.TakeDamage(amount);
     }
 }

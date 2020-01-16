@@ -28,7 +28,7 @@ public class Pawn : MonoBehaviour
     /**
      * The function that handles damage taken. Does not handle things like burning and knockback
      */
-    public void TakeDamage(float amount, GameObject source)
+    public void TakeDamage(float amount)
     {
         if (Random.Range(0, 100) > GetDodgeChance().GetValue() * 100) // Not invunerable, will take the damage
         {
