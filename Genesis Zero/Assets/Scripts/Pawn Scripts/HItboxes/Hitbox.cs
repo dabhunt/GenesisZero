@@ -23,9 +23,19 @@ public class Hitbox : MonoBehaviour
     public Collider collider;
     private List<GameObject> hittargets;
 
+    public Vector3 lastposition;
+
     private void Awake()
     {
+        if (GetComponent<Rigidbody>() == null)
+        {
+            gameObject.AddComponent<Rigidbody>();
+            Rigidbody rb = GetComponent<Rigidbody>();
+            rb.useGravity = false;
+            rb.isKinematic = false;
+            rb.collisionDetectionMode = CollisionDetectionMode.ContinuousDynamic;
 
+        }
     }
 
     // Start is called before the first frame update
@@ -41,6 +51,7 @@ public class Hitbox : MonoBehaviour
             }
         }
         //AddCollliders(transform, colliders);
+        lastposition = collider.transform.position;
         hittargets = new List<GameObject>();
     }
 
@@ -66,7 +77,31 @@ public class Hitbox : MonoBehaviour
 
     }
 
+    private void FixedUpdate()
+    {
+        /**
+        RaycastHit hit;
+        Vector3 pos = collider.transform.position;
+        Vector3 direction = pos - lastposition;
+        float distance = Mathf.Abs(Vector3.Distance(pos, lastposition)) * 10;
+        //Debug.Log(direction +" "+ Mathf.Abs(Vector3.Distance(pos, lastposition)) * 10);
+        Debug.DrawRay(pos, direction,Color.blue, distance);
+        if (Physics.Raycast(pos, direction, out hit, distance, LayerMask.NameToLayer("Allies")))
+        {
+            //Debug.Log("Rayed: " + hit.collider.gameObject.name);
+        }
+        lastposition = collider.transform.position;
+    */
+    }
+
+
     private void OnTriggerEnter(Collider other)
+    {
+        //Debug.Log("Dect");
+        CheckCollisions(other);
+    }
+
+    public void CheckCollisions(Collider other)
     {
         if (state == State.Active)
         {
@@ -88,7 +123,7 @@ public class Hitbox : MonoBehaviour
                 BodyPart bp = other.GetComponent<BodyPart>();
                 if (bp && bp.SpecialPart)
                 {
-                    Debug.Log("SPecial hit");
+                    Debug.Log("Special hit");
                     finaldamage *= bp.damagemultipler;
                 }
 
@@ -103,53 +138,7 @@ public class Hitbox : MonoBehaviour
                     state = State.Deactive;
                 }
             }
-            
-        }
-    }
 
-    public void CheckCollisions(Collider collider)
-    {
-        Collider[] cols = null;
-        if (collider.GetComponent<SphereCollider>() != null)
-        {
-            cols = Physics.OverlapSphere(collider.transform.position, collider.GetComponent<SphereCollider>().radius);
-        }
-        if (collider.GetComponent<BoxCollider>() != null)
-        {
-            cols = Physics.OverlapBox(collider.transform.position, collider.GetComponent<BoxCollider>().size);
-        }
-        if (cols != null)
-        {
-            if (cols.Length > 1)
-            {
-                Debug.Log("Collide" + cols.Length);
-            }
-
-            foreach (Collider col in cols)
-            {
-                if (col != collider)
-                {
-                    Debug.Log((col != collider) + " " + maxhits + " " + (col.GetComponentInParent<Hurtbox>() || col.GetComponent<Hurtbox>()) + " " + CanDamage(col) + " " + col.GetComponentInParent<Pawn>());
-                }
-                
-                if (col != collider && maxhits > 0 && (col.GetComponentInParent<Hurtbox>() || col.GetComponent<Hurtbox>()) && CanDamage(col) && col.GetComponentInParent<Pawn>())
-                {
-                    if(state == State.Active)
-                    {
-                        state = State.Colliding;
-                    }
-
-                    Pawn p = col.GetComponentInParent<Pawn>();
-                    Debug.Log("Hit");
-                    p.TakeDamage(damage);
-                    --maxhits;
-                }
-                else if (maxhits <= 0)
-                {
-                    state = State.Deactive;
-                    break;
-                }
-            }
         }
 
     }
@@ -165,7 +154,7 @@ public class Hitbox : MonoBehaviour
         }
         return false;
     }
-    
+
     private void OnDrawGizmos()
     {
         Gizmos.color = Color.red;

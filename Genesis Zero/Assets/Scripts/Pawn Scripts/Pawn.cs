@@ -108,6 +108,46 @@ public class Pawn : MonoBehaviour
     {
         return critchance;
     }
+
+    public bool IsStunned()
+    {
+        return stunned.IsTrue();
+    }
+
+    public Status GetStunnedStatus()
+    {
+        return stunned;
+    }
+
+    public bool IsInvunerable()
+    {
+        return invunerable.IsTrue();
+    }
+
+    public void SetInvunerable(float time)
+    {
+        invunerable.SetTime(time);
+    }
+
+    public Status GetInvunerableStatus()
+    {
+        return invunerable;
+    }
+
+    public bool IsBurning()
+    {
+        return burning.IsTrue();
+    }
+
+    public bool IsSlowed()
+    {
+        return slowed.IsTrue();
+    }
+
+    public Status GetSlowedStatus()
+    {
+        return slowed;
+    }
     // ------------------------- ---------------- ------------------------------//
 
     // ------------------------ General Functions ------------------------------//

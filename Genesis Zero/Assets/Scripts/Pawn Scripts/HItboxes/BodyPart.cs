@@ -28,7 +28,7 @@ public class BodyPart : MonoBehaviour
             gameObject.AddComponent<Rigidbody>();
             Rigidbody rb = GetComponent<Rigidbody>();
             rb.useGravity = false;
-            rb.isKinematic = true;
+            rb.isKinematic = false;
             rb.collisionDetectionMode = CollisionDetectionMode.Continuous;
 
         }

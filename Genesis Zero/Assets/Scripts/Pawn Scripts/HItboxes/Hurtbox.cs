@@ -57,7 +57,7 @@ public class Hurtbox : MonoBehaviour
 
     private void OnTriggerEnter(Collider other)
     {
-        Debug.Log("SpecialT");
+        //Debug.Log("SpecialT");
     }
 
 
@@ -73,8 +73,6 @@ public class Hurtbox : MonoBehaviour
         {
             for (int i = 0; i < colliders.Count; i++)
             {
-
-
                 Collider col = colliders[i];
                 BodyPart bp = col.GetComponent<BodyPart>();
                 if (bp != null && bp.SpecialPart == true)

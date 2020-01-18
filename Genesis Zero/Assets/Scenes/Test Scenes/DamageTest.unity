@@ -1730,10 +1730,10 @@ Rigidbody:
   m_Drag: 0
   m_AngularDrag: 0.05
   m_UseGravity: 0
-  m_IsKinematic: 1
+  m_IsKinematic: 0
   m_Interpolate: 0
   m_Constraints: 0
-  m_CollisionDetection: 3
+  m_CollisionDetection: 1
 --- !u!1 &1026157878 stripped
 GameObject:
   m_CorrespondingSourceObject: {fileID: 3782432903653303537, guid: a2e9204f00764aa44b1982ab285ebebc,
@@ -1779,7 +1779,7 @@ Rigidbody:
   m_Drag: 0
   m_AngularDrag: 0.05
   m_UseGravity: 0
-  m_IsKinematic: 1
+  m_IsKinematic: 0
   m_Interpolate: 0
   m_Constraints: 0
   m_CollisionDetection: 1
@@ -1856,7 +1856,7 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1334897067}
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: -2.457, y: 1.686, z: 4}
+  m_LocalPosition: {x: -2.457, y: 1.686, z: 32.4}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children: []
   m_Father: {fileID: 0}
@@ -1879,6 +1879,7 @@ MonoBehaviour:
   HurtsEnemies: 0
   maxhits: 2
   collider: {fileID: 1334897070}
+  lastposition: {x: 0, y: 0, z: 0}
 --- !u!65 &1334897070
 BoxCollider:
   m_ObjectHideFlags: 0
@@ -1890,7 +1891,7 @@ BoxCollider:
   m_IsTrigger: 1
   m_Enabled: 1
   serializedVersion: 2
-  m_Size: {x: 1, y: 0.1, z: 0.2}
+  m_Size: {x: 1, y: 0.1, z: 0.1}
   m_Center: {x: 0, y: 0, z: 0}
 --- !u!54 &1334897071
 Rigidbody:
@@ -1904,10 +1905,10 @@ Rigidbody:
   m_Drag: 0
   m_AngularDrag: 0.05
   m_UseGravity: 0
-  m_IsKinematic: 1
+  m_IsKinematic: 0
   m_Interpolate: 0
   m_Constraints: 0
-  m_CollisionDetection: 3
+  m_CollisionDetection: 2
 --- !u!114 &1334897072
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -1920,9 +1921,9 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 8a6257d6c35fbb849af141657a0731d6, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  target: {fileID: 0}
-  direction: {x: 0, y: 0, z: -30}
-  active: 0
+  target: {fileID: 1334897067}
+  direction: {x: 0, y: 0, z: -40}
+  active: 1
 --- !u!1 &1401611020
 GameObject:
   m_ObjectHideFlags: 0
@@ -1952,10 +1953,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 76b163fb265bd124cbfb7b5dab93af12, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  colliders:
-  - {fileID: 609451370}
-  - {fileID: 2129174683}
-  - {fileID: 1651670904}
+  colliders: []
 --- !u!4 &1401611022
 Transform:
   m_ObjectHideFlags: 0
@@ -2032,6 +2030,7 @@ GameObject:
   - component: {fileID: 1648022066}
   - component: {fileID: 1648022069}
   - component: {fileID: 1648022068}
+  - component: {fileID: 1648022070}
   m_Layer: 8
   m_Name: Player
   m_TagString: Player
@@ -2074,7 +2073,7 @@ SphereCollider:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1648022065}
   m_Material: {fileID: 0}
-  m_IsTrigger: 0
+  m_IsTrigger: 1
   m_Enabled: 1
   serializedVersion: 2
   m_Radius: 0.5
@@ -2092,6 +2091,22 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   colliders: []
+--- !u!54 &1648022070
+Rigidbody:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1648022065}
+  serializedVersion: 2
+  m_Mass: 1
+  m_Drag: 0
+  m_AngularDrag: 0.05
+  m_UseGravity: 0
+  m_IsKinematic: 0
+  m_Interpolate: 0
+  m_Constraints: 0
+  m_CollisionDetection: 1
 --- !u!1 &1651670902
 GameObject:
   m_ObjectHideFlags: 0
