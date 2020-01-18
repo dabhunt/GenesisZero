@@ -26,11 +26,15 @@ public class Hurtbox : MonoBehaviour
         Transform[] children = GetComponentsInChildren<Transform>();
         foreach (Transform t in children)
         {
-            Collider[] cols = t.GetComponents<Collider>();
-            for (int i = 0; i < cols.Length; i++) // Add Colliders to the hitbox
+            if (t.GetComponent<BodyPart>() != null)
             {
-                colliders.Add(cols[i]);
+                Collider[] cols = t.GetComponents<Collider>();
+                for (int i = 0; i < cols.Length; i++) // Add Colliders to the hitbox
+                {
+                    colliders.Add(cols[i]);
+                }
             }
+
         }
     }
 
@@ -63,17 +67,39 @@ public class Hurtbox : MonoBehaviour
     }
 
     [ExecuteInEditMode]
-    private void OnDrawGizmos()
+    private void OnDrawGizmosSelected()
     {
         if (colliders != null)
         {
             for (int i = 0; i < colliders.Count; i++)
             {
-                Gizmos.color = Color.red;
+
+
                 Collider col = colliders[i];
+                BodyPart bp = col.GetComponent<BodyPart>();
+                if (bp != null && bp.SpecialPart == true)
+                {
+                    if (bp.damagemultipler > 1)
+                    {
+                        Gizmos.color = Color.yellow;
+                    }
+                    else if(bp.damagemultipler < 1)
+                    {
+                        Gizmos.color = Color.grey;
+                    }
+                    else
+                    {
+                        Gizmos.color = Color.red;
+                    }
+                }
+                else
+                {
+                    Gizmos.color = Color.red;
+                }
+
                 if (col.GetComponent<SphereCollider>() != null)
                 {
-                    Debug.Log(col.transform.rotation);
+                    //Debug.Log(col.transform.localEulerAngles);
                     Gizmos.DrawWireSphere(col.transform.position + col.GetComponent<SphereCollider>().center, col.GetComponent<SphereCollider>().radius);
                 }
                 if (col.GetComponent<BoxCollider>() != null)

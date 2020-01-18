@@ -18,6 +18,7 @@ public class Player : Pawn
         {
             GetHealth().AddBonus(-10,15,1);
         }
+       
         //Debug.Log("Player" + GetHealth().GetValue() +" : "+ GetHealth().GetMaxValue());
         base.Update();
     }

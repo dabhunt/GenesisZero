@@ -2,15 +2,37 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-[RequireComponent(typeof(Collider))]
+//[RequireComponent(typeof(Collider))]
+//[RequireComponent(typeof(Rigidbody))]
+
+[ExecuteInEditMode]
 public class BodyPart : MonoBehaviour
 {
 
     [Header("--Special Part?--")]
     public bool SpecialPart;
     [Tooltip("Applies only if SpecialPart is true")]
-    public float damagemultipler;
+    public float damagemultipler = 1;
 
+    private void Awake()
+    {
+        if (GetComponent<Collider>() == null)
+        {
+            gameObject.AddComponent<SphereCollider>();
+            SphereCollider sc = GetComponent<SphereCollider>();
+            sc.radius = .2f;
+            sc.isTrigger = true;
+        }
+        if (GetComponent<Rigidbody>() == null)
+        {
+            gameObject.AddComponent<Rigidbody>();
+            Rigidbody rb = GetComponent<Rigidbody>();
+            rb.useGravity = false;
+            rb.isKinematic = true;
+            rb.collisionDetectionMode = CollisionDetectionMode.Continuous;
+
+        }
+    }
     private void Start()
     {
         Collider collider = GetComponent<Collider>();
@@ -20,7 +42,7 @@ public class BodyPart : MonoBehaviour
     {
         if (other.GetComponentInParent<Hitbox>())
         {
-            Debug.Log("Hit");
+            //Debug.Log("Hit");
         }
 
     }
@@ -29,5 +51,6 @@ public class BodyPart : MonoBehaviour
     {
         //Debug.Log("Special");
     }
+
 
 }

@@ -6,14 +6,14 @@ public class Pawn : MonoBehaviour
 {
     private Statistic health, damage, speed, attackspeed, flatdamagereduction, damagereduction, dodgechance, critchance;
     private List<Statistic> statistics;
-    public StatObject Stats;
+    public StatObject stats;
 
     private Status invunerable, stunned, burning, slowed;
     private List<Status> statuses;
 
     protected void Start()
     {
-        if (Stats != null)
+        if (stats != null)
         {
             AddStats();
         }
@@ -120,20 +120,25 @@ public class Pawn : MonoBehaviour
     {
         transform.position = position;
     }
+
+    public void Translate(Vector3 translation)
+    {
+        transform.position += translation;
+    }
     
     // ------------------------- ---------------- ------------------------------//
 
     private void AddStats()
     {
         statistics = new List<Statistic>();
-        health = new Statistic(Stats.health); statistics.Add(health);
-        damage = new Statistic(Stats.damage); statistics.Add(damage);
-        speed = new Statistic(Stats.speed); statistics.Add(speed);
-        attackspeed = new Statistic(Stats.attackspeed); statistics.Add(attackspeed);
-        flatdamagereduction = new Statistic(Stats.flatdamagereduction); statistics.Add(flatdamagereduction);
-        damagereduction = new Statistic(Stats.damagereduction); statistics.Add(damagereduction);
-        dodgechance = new Statistic(Stats.dodgechance); statistics.Add(dodgechance);
-        critchance = new Statistic(Stats.critchance); statistics.Add(critchance);
+        health = new Statistic(stats.health); statistics.Add(health);
+        damage = new Statistic(stats.damage); statistics.Add(damage);
+        speed = new Statistic(stats.speed); statistics.Add(speed);
+        attackspeed = new Statistic(stats.attackspeed); statistics.Add(attackspeed);
+        flatdamagereduction = new Statistic(stats.flatdamagereduction); statistics.Add(flatdamagereduction);
+        damagereduction = new Statistic(stats.damagereduction); statistics.Add(damagereduction);
+        dodgechance = new Statistic(stats.dodgechance); statistics.Add(dodgechance);
+        critchance = new Statistic(stats.critchance); statistics.Add(critchance);
     }
 
     private void InitializeStatuses()
