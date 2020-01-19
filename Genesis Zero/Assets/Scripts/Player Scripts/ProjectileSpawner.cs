@@ -19,7 +19,6 @@ public class ProjectileSpawner : MonoBehaviour
     private void Update()
     {
         Shoot();
-        Debug.Log(fireAction);
     }
 
     private void OnEnable()
@@ -34,7 +33,7 @@ public class ProjectileSpawner : MonoBehaviour
 
     public void Shoot()
     {
-        if (fireAction == 1 && Time.time >= timeToFire)
+        if (fireAction > 0 && Time.time >= timeToFire)
         {
             timeToFire = Time.time + 1 / projectile.GetComponent<Projectile>().fireRate; 
             Instantiate(projectile, firePoint.position, firePoint.rotation);
