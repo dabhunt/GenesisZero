@@ -184,6 +184,9 @@ public class Statistic
         bonusamounts.Add(b);
     }
 
+    /**
+     * Only Effects maxvalue
+     */
     public void AddMultiplier(float value, float time)
     {
         Bonus b = new Bonus(value, value, time);

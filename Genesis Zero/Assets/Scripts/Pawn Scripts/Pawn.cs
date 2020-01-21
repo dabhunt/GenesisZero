@@ -11,6 +11,9 @@ public class Pawn : MonoBehaviour
     private Status invunerable, stunned, burning, slowed;
     private List<Status> statuses;
 
+    private float burntime, burndamage; //burndamage is damage per second
+    private float slowtime;
+
     protected void Start()
     {
         if (stats != null)
@@ -30,7 +33,7 @@ public class Pawn : MonoBehaviour
      */
     public void TakeDamage(float amount)
     {
-        if (Random.Range(0, 100) > GetDodgeChance().GetValue() * 100) // Not invunerable, will take the damage
+        if (Random.Range(0, 100) < GetDodgeChance().GetValue() * 100) // Dodging will ignore damage
         {
             float finaldamage = amount;
             if (invunerable.IsActive() == true)
@@ -43,9 +46,11 @@ public class Pawn : MonoBehaviour
 
             // Damage
             GetHealth().AddValue(-finaldamage);
+            //Debug.Log("Health Left:"+GetHealth().GetValue());
         }
         else
         {
+            Debug.Log(transform.root.name + " Dodged!");
             //Dodge Effect
         }
     }
@@ -65,7 +70,28 @@ public class Pawn : MonoBehaviour
         {
             stat.UpdateStatistics();
         }
+        foreach (Status status in statuses)
+        {
+            status.UpdateStatus();
+        }
 
+
+
+        if (IsBurning())
+        {
+            GetHealth().AddValue(-burndamage * Time.deltaTime);
+            burntime -= Time.deltaTime;
+        }
+        if (IsSlowed())
+        {
+            speed.AddBonus(-GetSpeed().GetMaxValue() * GetSlowedStatus().GetFactor(), Time.deltaTime);
+            slowtime -= Time.deltaTime;
+        }
+
+        if (GetHealth().GetValue() <= 0)
+        {
+            Destroy(this.gameObject);
+        }
     }
 
     // ------------------------- ACCESS FUNCTIONS ------------------------------//
@@ -139,6 +165,13 @@ public class Pawn : MonoBehaviour
         return burning.IsTrue();
     }
 
+    public void Burn(float time, float damage)
+    {
+        burntime = time;
+        burndamage = damage;
+        burning.SetTime(time);
+    }
+
     public bool IsSlowed()
     {
         return slowed.IsTrue();
@@ -147,6 +180,11 @@ public class Pawn : MonoBehaviour
     public Status GetSlowedStatus()
     {
         return slowed;
+    }
+
+    public void Slow(float factor, float time){
+        slowed.SetFactor(factor);
+        slowtime = time;
     }
     // ------------------------- ---------------- ------------------------------//
 
@@ -165,7 +203,7 @@ public class Pawn : MonoBehaviour
     {
         transform.position += translation;
     }
-    
+
     // ------------------------- ---------------- ------------------------------//
 
     private void AddStats()
@@ -184,10 +222,10 @@ public class Pawn : MonoBehaviour
     private void InitializeStatuses()
     {
         statuses = new List<Status>();
-        statuses.Add(invunerable);
-        statuses.Add(stunned);
-        statuses.Add(burning);
-        statuses.Add(slowed);
+        invunerable = new Status(0); statuses.Add(invunerable);
+        stunned = new Status(0); statuses.Add(stunned);
+        burning = new Status(0); statuses.Add(burning);
+        slowed = new Status(0); statuses.Add(slowed);
     }
 
 }

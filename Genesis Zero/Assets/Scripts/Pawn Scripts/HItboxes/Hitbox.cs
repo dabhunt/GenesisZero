@@ -112,7 +112,7 @@ public class Hitbox : MonoBehaviour
         {
             if (other != collider)
             {
-                Debug.Log((other != collider) + " " + maxhits + " " + (other.GetComponentInParent<Hurtbox>() || other.GetComponent<Hurtbox>()) + " " + CanDamage(other) + " " + other.GetComponentInParent<Pawn>());
+                //Debug.Log((other != collider) + " " + maxhits + " " + (other.GetComponentInParent<Hurtbox>() || other.GetComponent<Hurtbox>()) + " " + CanDamage(other) + " " + other.GetComponentInParent<Pawn>());
             }
 
             if (other != collider && maxhits > 0 && (other.GetComponentInParent<Hurtbox>() || other.GetComponent<Hurtbox>()) && CanDamage(other) && other.GetComponentInParent<Pawn>() && !hittargets.Contains(other.transform.root.gameObject))
@@ -123,11 +123,14 @@ public class Hitbox : MonoBehaviour
                 BodyPart bp = other.GetComponent<BodyPart>();
                 if (bp && bp.SpecialPart)
                 {
-                    Debug.Log("Special hit");
+                    Debug.Log("Special hit " + other.transform.root.name);
                     finaldamage *= bp.damagemultipler;
                 }
+                else
+                {
+                    Debug.Log("Hit " + other.transform.root.name);
+                }
 
-                Debug.Log("Hit");
                 p.TakeDamage(damage);
 
                 hittargets.Add(other.transform.root.gameObject);

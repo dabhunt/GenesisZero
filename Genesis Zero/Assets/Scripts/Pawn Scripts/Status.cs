@@ -46,14 +46,14 @@ public class Status
     /**
      * Updates the time of the status, changes status state to false if time is zero
      */
-    public void Update()
+    public void UpdateStatus()
     {
         if (time > threshhold)
         {
             time -= Time.deltaTime;
             isActive = true;
         }
-        else if (time > 0)
+        else if (time <= threshhold)
         {
             time -= Time.deltaTime;
             isActive = false;
@@ -128,5 +128,21 @@ public class Status
     public void SetFactor(float factor)
     {
         this.factor = factor;
+    }
+
+    /**
+     * Multiplies the current time by the factor
+     */
+    public void MultiplyTime(float factor)
+    {
+        time *= this.factor;
+    }
+
+    /**
+     * Sets time to 0
+     */
+    public void RemoveTime()
+    {
+        time = 0;
     }
 }

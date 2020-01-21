@@ -5,7 +5,6 @@ using UnityEngine;
 [ExecuteInEditMode]
 public class Hurtbox : MonoBehaviour
 {
-    float damage;
 
     public List<Collider> colliders;
 
