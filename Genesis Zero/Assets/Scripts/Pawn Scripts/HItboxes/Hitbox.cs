@@ -23,7 +23,7 @@ public class Hitbox : MonoBehaviour
     public Collider collider;
     private List<GameObject> hittargets;
 
-    public Vector3 lastposition;
+    private Vector3 lastposition;
 
     private void Awake()
     {
