@@ -4,11 +4,12 @@ using UnityEngine;
 
 public class Player : Pawn
 {
+    SkillManager SkillManager;
     // Start is called before the first frame update
     new void Start()
     {
         Time.fixedDeltaTime = .01f; // <- this is here as a placeholder, no other good place to have this.
-
+        SkillManager = new SkillManager(this);
         base.Start();
     }
 
@@ -23,5 +24,10 @@ public class Player : Pawn
     {
         //Add anything if there is class specific additions to taking damage
         base.TakeDamage(amount);
+    }
+
+    public bool HasSkill(string name)
+    {
+        return SkillManager.HasSkill(name);
     }
 }

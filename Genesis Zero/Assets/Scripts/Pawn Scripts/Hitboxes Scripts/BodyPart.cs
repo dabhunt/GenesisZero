@@ -2,9 +2,9 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-//[RequireComponent(typeof(Collider))]
-//[RequireComponent(typeof(Rigidbody))]
-
+/**
+ * Kenny Doan
+ */
 [ExecuteInEditMode]
 public class BodyPart : MonoBehaviour
 {

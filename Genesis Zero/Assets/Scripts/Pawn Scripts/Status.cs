@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using UnityEngine;
 
 /**
+ * Kenny Doan
  * Status is a object class that uses time/value to check if the status is true or not.
  * If time is 0 then the status is false, otherwise it is true, unless the threshold is changed
  */
