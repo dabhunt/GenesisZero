@@ -7,6 +7,7 @@ public class ProjectileSpawner : MonoBehaviour
     [Header("Settings")]
     public GameObject projectile;
     public Transform firePoint;
+    public float fireRate = 5;
 
     private PlayerInputActions inputActions;
     private float timeToFire = 0;
@@ -35,8 +36,8 @@ public class ProjectileSpawner : MonoBehaviour
     {
         if (fireAction > 0 && Time.time >= timeToFire)
         {
-            timeToFire = Time.time + 1 / projectile.GetComponent<Projectile>().fireRate; 
-            Instantiate(projectile, firePoint.position, firePoint.rotation);
+            timeToFire = Time.time + 1 / fireRate; 
+            Instantiate(projectile, firePoint.transform.position, firePoint.transform.rotation);
         }
     }
 }

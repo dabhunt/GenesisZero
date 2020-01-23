@@ -6,41 +6,33 @@ using UnityEngine;
 [RequireComponent(typeof(Rigidbody))]
 public class CharacterController : MonoBehaviour
 {
-    [System.Serializable]
-    public class MovementSettings
-    {
-        public float movementSpeed = 12f;
-        public float jumpStrength = 2f;
-        public float distToGround = 1f;
-        public LayerMask ground;
-    }
-    [System.Serializable]
-    public class PhysicsSettings
-    {
-        //this is for later use to replace the default gravity
-        public float gravity = 1f;
-    }
+    [Header("Movement")]
+    public float acceleration = 20f;
+    public float jumpStrength = 6f;
+    public float distToGround = 1f;
+    public LayerMask ground;
 
-    //References to the different settings objects
-    public MovementSettings movementSettings;
-    public MovementSettings physicsSettings;
+    [Header("Physics")]
+    public float gravity = 14f;
+
     private PlayerInputActions inputActions;
+    private Rigidbody rb;
+    private Vector2 movementInput;
+    private Vector3 moveVec = Vector3.zero;
 
-    Rigidbody rb;
-    Vector2 movementInput;
-    Vector3 velocity = Vector3.zero;
+    private float vertForce;
+    private float currentSpeed = 0;
 
     private void Awake()
     {
         rb = GetComponent<Rigidbody>();
         inputActions = new PlayerInputActions();
-        MovementSettings moveSetting = new MovementSettings();
-
         inputActions.PlayerControls.Move.performed += ctx => movementInput = ctx.ReadValue<Vector2>();
     }
 
     private void FixedUpdate()
     {
+        ApplyDownForce();
         Move();
     }
 
@@ -56,20 +48,43 @@ public class CharacterController : MonoBehaviour
 
     private void Move()
     {
-        velocity.x = movementInput.x * movementSettings.movementSpeed * Time.deltaTime;
-        rb.MovePosition(transform.position + velocity);
+        if (movementInput.x != 0)
+        {
+            currentSpeed += movementInput.x * acceleration * Time.deltaTime;
+            currentSpeed = Mathf.Min(Mathf.Abs(currentSpeed), Mathf.Abs(GetComponent<Player>().GetSpeed().GetValue())) * movementInput.x;
+        }
+        else
+        {
+            currentSpeed = 0;
+        }
+        moveVec.x = currentSpeed;
+        moveVec.y = vertForce;
+        rb.velocity = transform.TransformDirection(moveVec);
     }
 
-    private bool IsGrounded()
+    public bool IsGrounded()
     {
-        return Physics.Raycast(transform.position, Vector3.down, movementSettings.distToGround, movementSettings.ground);
+        return Physics.Raycast(transform.position, Vector3.down, distToGround, ground);
     }
-    public void Jump()
+
+    private void Jump()
     {
-        //Debug.Log(IsGrounded());
         if (IsGrounded())
         {
-            rb.AddForce(new Vector2(0f, movementSettings.jumpStrength), ForceMode.Impulse);
+            vertForce = jumpStrength;
+        }
+    }
+
+    private void ApplyDownForce()
+    {
+        if (!IsGrounded())
+        {
+            vertForce -= gravity * Time.deltaTime;
+        }
+        else
+        {
+            if (vertForce < 0)
+                vertForce = 0;
         }
     }
 }
