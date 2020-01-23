@@ -66,6 +66,7 @@ public class CharacterController : MonoBehaviour
     {
         return Physics.Raycast(transform.position, Vector3.down, distToGround, ground);
     }
+
     private void Jump()
     {
         if (IsGrounded())
@@ -79,6 +80,11 @@ public class CharacterController : MonoBehaviour
         if (!IsGrounded())
         {
             vertForce -= gravity * Time.deltaTime;
+        }
+        else
+        {
+            if (vertForce < 0)
+                vertForce = 0;
         }
     }
 }
