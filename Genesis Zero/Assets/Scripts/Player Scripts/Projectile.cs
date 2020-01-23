@@ -6,18 +6,31 @@ using UnityEngine;
 public class Projectile : MonoBehaviour
 {
     [Header("Settings")]
-    public float speed = 30;
-    public float fireRate = 5;
+    public float speed = 30f;
+    public float gravity = 0f;
+    public float lifeTime = 20f;
+    public Vector3 direction;
 
     private Rigidbody rb;
     private void Start()
     {
         rb = GetComponent<Rigidbody>();
+        Invoke("DestroyObject", lifeTime);
     }
 
     private void Update()
     {
-        Vector3 v = transform.right * speed * Time.deltaTime;
-        rb.AddForce(new Vector2(speed, 0f));
+        Move();
+    }
+
+    private void Move()
+    {
+        direction = speed * transform.right * Time.deltaTime;
+        transform.position += direction;
+    }
+
+    private void DestroyObject()
+    {
+        Destroy(gameObject);
     }
 }
