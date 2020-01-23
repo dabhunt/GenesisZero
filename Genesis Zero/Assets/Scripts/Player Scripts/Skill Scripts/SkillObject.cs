@@ -24,4 +24,8 @@ public class SkillObject : ScriptableObject
     public float damagereduction;
     public float dodgechance;
     public float critchance;
+    public float critdamage;
+    public float range;
+    public float shield;
+    public float weight;
 }

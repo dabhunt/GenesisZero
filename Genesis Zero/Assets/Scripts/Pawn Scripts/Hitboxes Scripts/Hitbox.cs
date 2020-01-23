@@ -13,14 +13,15 @@ public class Hitbox : MonoBehaviour
     private enum State { Active, Colliding, Deactive };
     State state;
 
-    public float damage;
+    public float Damage;        // How much damage the hitbox can deal
 
-    public bool HurtsAllies;
-    public bool HurtsEnemies;
+    public bool HurtsAllies;    // Determines if this hitbox can harm the allies layer
+    public bool HurtsEnemies;   // Determines if this hotbox can harm the enemies layer
 
-    public int maxhits = 1;
+    public int MaxHits = 1;     // Number of times the hitbox can hit something
 
-    public Collider collider;
+    public Collider Collider;
+    public Pawn Source;         // Source is a reference to the pawn that spawned this hitbox. Optional, used if things like critchance is calculated
     private List<GameObject> hittargets;
 
     private Vector3 lastposition;
@@ -43,15 +44,15 @@ public class Hitbox : MonoBehaviour
     {
         //colliders.Clear();
         state = State.Active;
-        if (collider == null)
+        if (GetComponent<Collider>() == null)
         {
             if (GetComponent<Collider>())
             {
-                collider = GetComponent<Collider>();
+                Collider = GetComponent<Collider>();
             }
         }
         //AddCollliders(transform, colliders);
-        lastposition = collider.transform.position;
+        lastposition = GetComponent<Collider>().transform.position;
         hittargets = new List<GameObject>();
     }
 
@@ -110,14 +111,14 @@ public class Hitbox : MonoBehaviour
 
         if (state == State.Colliding)
         {
-            if (other != collider)
+            if (other != GetComponent<Collider>())
             {
                 //Debug.Log((other != collider) + " " + maxhits + " " + (other.GetComponentInParent<Hurtbox>() || other.GetComponent<Hurtbox>()) + " " + CanDamage(other) + " " + other.GetComponentInParent<Pawn>());
             }
 
-            if (other != collider && maxhits > 0 && (other.GetComponentInParent<Hurtbox>() || other.GetComponent<Hurtbox>()) && CanDamage(other) && other.GetComponentInParent<Pawn>() && !hittargets.Contains(other.transform.root.gameObject))
+            if (other != GetComponent<Collider>() && MaxHits > 0 && (other.GetComponentInParent<Hurtbox>() || other.GetComponent<Hurtbox>()) && CanDamage(other) && other.GetComponentInParent<Pawn>() && !hittargets.Contains(other.transform.root.gameObject))
             {
-                float finaldamage = damage;
+                float finaldamage = Damage;
                 Pawn p = other.GetComponentInParent<Pawn>();
 
                 BodyPart bp = other.GetComponent<BodyPart>();
@@ -131,12 +132,19 @@ public class Hitbox : MonoBehaviour
                     Debug.Log("Hit " + other.transform.root.name);
                 }
 
-                p.TakeDamage(damage);
+                if (Source != null)
+                {
+                    if (Random.Range(0, 100) > Source.GetCritChance().GetValue() * 100)
+                    {
+                        finaldamage *= Source.GetCritDamage().GetValue();
+                    }
+                }
+                p.TakeDamage(Damage);
 
                 hittargets.Add(other.transform.root.gameObject);
 
-                --maxhits;
-                if (maxhits <= 0)
+                --MaxHits;
+                if (MaxHits <= 0)
                 {
                     state = State.Deactive;
                 }
@@ -146,6 +154,15 @@ public class Hitbox : MonoBehaviour
 
     }
 
+    /**
+     * IMPORTANT FUNCTION, if hitbox is spawned from instantiate, this function should be called to initalize the hitbox with a source
+     * If no source is set, offensive stats like critchance will not be applied to the hitbox.
+     */
+    public void InitializeHitbox(float damage, Pawn source)
+    {
+        this.Damage = damage;
+        this.Source = source;
+    }
 
     public bool CanDamage(Collider col)
     {
@@ -161,7 +178,7 @@ public class Hitbox : MonoBehaviour
     private void OnDrawGizmos()
     {
         Gizmos.color = Color.red;
-        Collider col = collider;
+        Collider col = GetComponent<Collider>();
         if (col.GetComponent<SphereCollider>() != null)
         {
             //Debug.Log("C");

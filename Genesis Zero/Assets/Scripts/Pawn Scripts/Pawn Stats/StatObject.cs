@@ -18,5 +18,9 @@ public class StatObject : ScriptableObject
     public float damagereduction;
     public float dodgechance;
     public float critchance;
+    public float critdamage = 2;
+    public float range = 1;
+    public float shield;
+    public float weight = 10;
 
 }

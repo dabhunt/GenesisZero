@@ -10,7 +10,7 @@ using UnityEngine;
  */
 public class Pawn : MonoBehaviour
 {
-    private Statistic health, damage, speed, attackspeed, flatdamagereduction, damagereduction, dodgechance, critchance;
+    private Statistic health, damage, speed, attackspeed, flatdamagereduction, damagereduction, dodgechance, critchance, critdamage, range, shield, weight;
     private List<Statistic> statistics;
     public StatObject Stats;
 
@@ -18,7 +18,8 @@ public class Pawn : MonoBehaviour
     private List<Status> statuses;
 
     private float burntime, burndamage; //burndamage is damage per second
-    private float slowtime;
+    private float slowtime, knockbackforce;
+    private Vector3 knockbackvector;
 
     protected void Start()
     {
@@ -47,9 +48,24 @@ public class Pawn : MonoBehaviour
             {
                 finaldamage = 0;
             }
-
             finaldamage -= GetFlatDamageReduction().GetValue();
             finaldamage = finaldamage - finaldamage * GetDamageReduction().GetValue();
+
+            // Shield Damage
+            if (GetShield().GetValue() > 0)
+            {
+                float diff = GetShield().GetValue() - finaldamage;
+                if (diff > 0)
+                {
+                    GetShield().AddValue(-finaldamage);
+                    finaldamage = 0;
+                }
+                else
+                {
+                    GetShield().SetValue(0);
+                    finaldamage = -diff;
+                }
+            }
 
             // Damage
             GetHealth().AddValue(-finaldamage);
@@ -88,6 +104,11 @@ public class Pawn : MonoBehaviour
         {
             GetHealth().AddValue(-burndamage * Time.deltaTime);
             burntime -= Time.deltaTime;
+        }
+        if (knockbackforce > 0)
+        {
+            Translate(knockbackvector.normalized * knockbackforce); // Move the pawn a certain distance
+            knockbackforce *= Mathf.Clamp(8f / GetWeight().GetValue(), 0, .95f);
         }
         if (IsSlowed())
         {
@@ -142,6 +163,26 @@ public class Pawn : MonoBehaviour
         return critchance;
     }
 
+    public Statistic GetCritDamage()
+    {
+        return critdamage;
+    }
+
+    public Statistic GetRange()
+    {
+        return range;
+    }
+
+    public Statistic GetShield()
+    {
+        return shield;
+    }
+
+    public Statistic GetWeight()
+    {
+        return weight;
+    }
+
     public bool IsStunned()
     {
         return stunned.IsTrue();
@@ -177,6 +218,12 @@ public class Pawn : MonoBehaviour
         burntime = time;
         burndamage = damage;
         burning.SetTime(time);
+    }
+
+    public void KnockBack(Vector3 direction, float force)
+    {
+        knockbackvector = direction;
+        knockbackforce = force;
     }
 
     public bool IsSlowed()
@@ -224,6 +271,10 @@ public class Pawn : MonoBehaviour
         damagereduction = new Statistic(Stats.damagereduction); statistics.Add(damagereduction);
         dodgechance = new Statistic(Stats.dodgechance); statistics.Add(dodgechance);
         critchance = new Statistic(Stats.critchance); statistics.Add(critchance);
+        critdamage = new Statistic(Stats.critdamage); statistics.Add(critdamage);
+        range = new Statistic(Stats.range); statistics.Add(range);
+        shield = new Statistic(Stats.shield); statistics.Add(shield);
+        weight = new Statistic(Stats.weight); statistics.Add(weight);
     }
 
     private void InitializeStatuses()

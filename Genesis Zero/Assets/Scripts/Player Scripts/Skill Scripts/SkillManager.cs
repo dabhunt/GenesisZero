@@ -63,6 +63,10 @@ public class SkillManager
         player.GetDamageReduction().AddMaxValue(skill.damagereduction * multi);
         player.GetDodgeChance().AddMaxValue(skill.dodgechance * multi);
         player.GetCritChance().AddMaxValue(skill.critchance * multi);
+        player.GetCritDamage().AddMaxValue(skill.critdamage * multi);
+        player.GetRange().AddMaxValue(skill.range * multi);
+        player.GetShield().AddMaxValue(skill.shield * multi);
+        player.GetWeight().AddMaxValue(skill.weight * multi);
     }
 
     /**
@@ -73,6 +77,9 @@ public class SkillManager
         return Skills.ContainsKey(name);
     }
 
+    /**
+     * Returns a random SkillObject that exists in the resources/skills folder
+     */
     public SkillObject GetRandomSkill()
     {
         Object[] skills = Resources.LoadAll("Skills");
@@ -81,6 +88,9 @@ public class SkillManager
         return skill;
     }
 
+    /**
+    * Returns a random SkillObject that exists in the resources/skills/abilities folder
+    */
     public SkillObject GetRandomAbility()
     {
         Object[] skills = Resources.LoadAll("Skills/Abilities");
