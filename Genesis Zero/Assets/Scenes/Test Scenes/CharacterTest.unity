@@ -320,11 +320,11 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 700675868}
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: -0, y: 0.95, z: 0}
-  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_LocalPosition: {x: 0.522, y: 0, z: -0.55}
+  m_LocalScale: {x: 0.20000003, y: 0.3, z: 0.2}
   m_Children: []
-  m_Father: {fileID: 1832549396}
-  m_RootOrder: 0
+  m_Father: {fileID: 774732211}
+  m_RootOrder: 1
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &774732206
 GameObject:
@@ -439,6 +439,7 @@ Transform:
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children:
   - {fileID: 1832549396}
+  - {fileID: 700675869}
   m_Father: {fileID: 0}
   m_RootOrder: 2
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
@@ -454,7 +455,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 3ee1d0742058dc04fb4fc35e3da11838, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  zeroToMaxTime: 0.1
+  acceleration: 20
   jumpStrength: 6
   distToGround: 1
   ground:
@@ -573,8 +574,7 @@ Transform:
   m_LocalRotation: {x: 0, y: 0, z: -0.7071068, w: 0.7071068}
   m_LocalPosition: {x: 0.237, y: 0, z: -0.55}
   m_LocalScale: {x: 0.20000002, y: 0.3, z: 0.2}
-  m_Children:
-  - {fileID: 700675869}
+  m_Children: []
   m_Father: {fileID: 774732211}
   m_RootOrder: 0
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: -90}
