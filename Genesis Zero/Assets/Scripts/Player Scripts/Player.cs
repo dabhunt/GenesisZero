@@ -30,4 +30,9 @@ public class Player : Pawn
     {
         return SkillManager.HasSkill(name);
     }
+
+    public SkillManager GetSkillManager()
+    {
+        return SkillManager;
+    }
 }
