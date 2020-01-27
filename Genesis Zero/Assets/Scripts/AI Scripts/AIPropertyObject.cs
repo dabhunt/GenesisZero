@@ -13,5 +13,8 @@ public class AIPropertyObject : ScriptableObject
     public float DetectRadius = 1.0f;
     public float AvoidRadius;
     public float AttackChargeTime = 1.0f;
+    public float AttackDuration = 1.0f;
     public float AttackCooldownTime = 1.0f;
+    public float AttackRadius = 0.5f;
+    public bool StopFollowingWhenOutOfRange = false;
 }

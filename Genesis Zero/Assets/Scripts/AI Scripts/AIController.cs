@@ -10,6 +10,91 @@ public class AIController : Pawn
 {
     public AIPropertyObject BehaviorProperties;
 
-    public enum AIState { Patrolling, Following, Attacking, CoolingDown }
-    private AIState state = AIState.Patrolling;
+    public enum AIState { Idle, Patrol, Follow, Charge, Attack, Cooldown }
+    private AIState state = AIState.Patrol; // Current behavior state
+
+    private Transform tr; // Reference to own transform to avoid internal GetComponent call
+    public Transform Target; // Target or player object to follow and attack
+
+    private float stateTime = 0.0f; // Duration of current state
+
+    protected virtual void Awake()
+    {
+        tr = transform;
+    }
+
+    public void Update()
+    {
+        base.Update();
+
+        if (BehaviorProperties == null)
+        {
+            Debug.LogError("No AI Properties assigned to " + transform.name, gameObject);
+            return;
+        }
+
+        if (IsStunned())
+        {
+            ChangeState(AIState.Patrol);
+        }
+        else if (Target != null)
+        {
+            StateUpdate();
+        }
+        else
+        {
+            ChangeState(AIState.Idle);
+        }
+    }
+
+    public void StateUpdate()
+    {
+        if (state == AIState.Patrol) // State when moving around while not following player
+        {
+            if (GetDistanceToTarget() <= BehaviorProperties.DetectRadius)
+            {
+                ChangeState(AIState.Follow);
+            }
+        }
+        else if (state == AIState.Follow) // State when following player to attack
+        {
+            if (BehaviorProperties.StopFollowingWhenOutOfRange && GetDistanceToTarget() > BehaviorProperties.DetectRadius)
+            {
+                ChangeState(AIState.Patrol);
+            }
+            else if (GetDistanceToTarget() <= BehaviorProperties.AttackRadius)
+            {
+                ChangeState(AIState.Attack);
+            }
+        }
+        else if (state == AIState.Charge) // State when charging up an attack
+        {
+
+        }
+        else if (state == AIState.Attack) // State when performing actual attack
+        {
+            
+        }
+        else if (state == AIState.Cooldown) // State when cooling down after attack
+        {
+
+        }
+
+        stateTime += Time.deltaTime;
+    }
+
+    public void ChangeState(AIState newState)
+    {
+        state = newState;
+        stateTime = 0.0f;
+    }
+
+    public float GetDistanceToTarget()
+    {
+        if (tr != null && Target != null)
+        {
+            return Vector3.Distance(tr.position, Target.position);
+        }
+        return 0.0f;
+    }
 }
