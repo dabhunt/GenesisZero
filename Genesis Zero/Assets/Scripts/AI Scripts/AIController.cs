@@ -11,12 +11,12 @@ public class AIController : Pawn
     public AIPropertyObject BehaviorProperties;
 
     public enum AIState { Idle, Patrol, Follow, Charge, Attack, Cooldown }
-    private AIState state = AIState.Patrol; // Current behavior state
+    protected AIState state = AIState.Patrol; // Current behavior state
 
-    private Transform tr; // Reference to own transform to avoid internal GetComponent call
+    protected Transform tr; // Reference to own transform to avoid internal GetComponent call
     public Transform Target; // Target or player object to follow and attack
 
-    private float stateTime = 0.0f; // Duration of current state
+    protected float stateTime = 0.0f; // Duration of current state
 
     protected virtual void Awake()
     {
@@ -46,7 +46,7 @@ public class AIController : Pawn
             ChangeState(AIState.Idle);
         }
 
-        Debug.Log(state);
+        //Debug.Log(state);
     }
 
     /**
