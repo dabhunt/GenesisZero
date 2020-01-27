@@ -10,7 +10,7 @@ public class BasicMove : MonoBehaviour
 {
     public float MoveSpeed = 1.0f;
 
-    void Update()
+    private void Update()
     {
         Vector3 moveDir = Vector3.zero;
         moveDir += Input.GetKey(KeyCode.UpArrow) ? Vector3.up : Vector3.zero;
