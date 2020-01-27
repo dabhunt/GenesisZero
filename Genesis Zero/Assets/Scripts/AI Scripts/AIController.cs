@@ -11,4 +11,5 @@ public class AIController : Pawn
     public AIPropertyObject BehaviorProperties;
 
     public enum AIState { Patrolling, Following, Attacking, CoolingDown }
+    private AIState state = AIState.Patrolling;
 }
