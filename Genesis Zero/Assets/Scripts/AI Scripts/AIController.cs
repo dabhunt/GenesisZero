@@ -45,6 +45,8 @@ public class AIController : Pawn
         {
             ChangeState(AIState.Idle);
         }
+
+        Debug.Log(state);
     }
 
     public void StateUpdate()
@@ -64,7 +66,7 @@ public class AIController : Pawn
             }
             else if (GetDistanceToTarget() <= BehaviorProperties.AttackRadius)
             {
-                ChangeState(AIState.Attack);
+                ChangeState(AIState.Charge);
             }
         }
         else if (state == AIState.Charge) // State when charging up an attack
