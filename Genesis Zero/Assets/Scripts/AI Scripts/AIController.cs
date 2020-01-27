@@ -69,15 +69,24 @@ public class AIController : Pawn
         }
         else if (state == AIState.Charge) // State when charging up an attack
         {
-
+            if (stateTime >= BehaviorProperties.AttackChargeTime)
+            {
+                ChangeState(AIState.Attack);
+            }
         }
         else if (state == AIState.Attack) // State when performing actual attack
         {
-            
+            if (stateTime >= BehaviorProperties.AttackDuration)
+            {
+                ChangeState(AIState.Cooldown);
+            }
         }
         else if (state == AIState.Cooldown) // State when cooling down after attack
         {
-
+            if (stateTime >= BehaviorProperties.AttackCooldownTime)
+            {
+                ChangeState(AIState.Patrol);
+            }
         }
 
         stateTime += Time.deltaTime;
@@ -96,5 +105,18 @@ public class AIController : Pawn
             return Vector3.Distance(tr.position, Target.position);
         }
         return 0.0f;
+    }
+
+    public void OnDrawGizmos()
+    {
+        if (BehaviorProperties != null)
+        {
+            Gizmos.color = Color.cyan;
+            Gizmos.DrawWireSphere(transform.position, BehaviorProperties.DetectRadius);
+            Gizmos.color = Color.yellow;
+            Gizmos.DrawWireSphere(transform.position, BehaviorProperties.AvoidRadius);
+            Gizmos.color = Color.red;
+            Gizmos.DrawWireSphere(transform.position, BehaviorProperties.AttackRadius);
+        }
     }
 }

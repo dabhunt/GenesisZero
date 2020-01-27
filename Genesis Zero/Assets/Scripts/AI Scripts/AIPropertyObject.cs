@@ -11,7 +11,7 @@ using UnityEngine;
 public class AIPropertyObject : ScriptableObject
 {
     public float DetectRadius = 1.0f;
-    public float AvoidRadius;
+    public float AvoidRadius = 0.0f;
     public float AttackChargeTime = 1.0f;
     public float AttackDuration = 1.0f;
     public float AttackCooldownTime = 1.0f;
