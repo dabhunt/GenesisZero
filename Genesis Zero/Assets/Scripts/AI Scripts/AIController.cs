@@ -90,7 +90,7 @@ public class AIController : Pawn
         {
             if (stateTime >= BehaviorProperties.AttackCooldownTime)
             {
-                ChangeState(AIState.Patrol);
+                ChangeState(AIState.Follow);
             }
         }
 
