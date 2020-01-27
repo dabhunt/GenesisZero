@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using UnityEngine;
 
 /**
+ * Kenny Doan
  * Statistic is a data type that contains and manipulates a value and is designed for statistic related numbers
  * It's main key feature is allowing for temporary bonuses. Both additive and multiplicative. (Requires management to work)
  * This class is designed to work with the Pawn class primarily to keep track and manage the basic stats of pawns.
@@ -91,6 +92,14 @@ public class Statistic
         {
             currentamount = maxamount;
         }
+    }
+
+    /**
+     * Add to the max value of the statistic permanently
+     */
+    public void AddMaxValue(float value)
+    {
+        SetMaxValue(GetMaxValue() + value);
     }
 
     /**
@@ -184,6 +193,9 @@ public class Statistic
         bonusamounts.Add(b);
     }
 
+    /**
+     * Only Effects maxvalue
+     */
     public void AddMultiplier(float value, float time)
     {
         Bonus b = new Bonus(value, value, time);

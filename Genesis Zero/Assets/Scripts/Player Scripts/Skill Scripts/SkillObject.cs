@@ -1,15 +1,21 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.UI;
 
-[CreateAssetMenu(menuName = "Pawn/Create Statistic")]
 /**
  * Kenny Doan
- * ScriptableObject that contains data on what the pawn's initial stats are.
- * Add a Statobject to the script that extends the Pawn Script
  */
-public class StatObject : ScriptableObject
+[CreateAssetMenu(menuName = "Player/Create Skill")]
+public class SkillObject : ScriptableObject
 {
+    public Sprite Icon;
+
+    [TextArea]
+    public string Description;
+
+    public bool IsAbility;
+
     public float health;
     public float damage;
     public float speed;
@@ -18,9 +24,8 @@ public class StatObject : ScriptableObject
     public float damagereduction;
     public float dodgechance;
     public float critchance;
-    public float critdamage = 2;
-    public float range = 1;
+    public float critdamage;
+    public float range;
     public float shield;
-    public float weight = 10;
-
+    public float weight;
 }

@@ -2,10 +2,14 @@
 using System.Collections.Generic;
 using UnityEngine;
 
+/**
+ * Kenny Doan
+ * Hurtbox is a script that manages the BodyParts in the child objects below. 
+ * It is primarily used by the Hitbox class in order to have multi hurtbox detection
+ */
 [ExecuteInEditMode]
 public class Hurtbox : MonoBehaviour
 {
-    float damage;
 
     public List<Collider> colliders;
 
