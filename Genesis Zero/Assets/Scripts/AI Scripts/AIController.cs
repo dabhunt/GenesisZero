@@ -119,6 +119,18 @@ public class AIController : Pawn
     }
 
     /**
+     * Returns the distance that the target has entered into the avoid radius
+     */
+    public float GetAvoidCloseness()
+    {
+        if (tr != null && Target != null && BehaviorProperties != null)
+        {
+            return Mathf.Max(0.0f, BehaviorProperties.AvoidRadius - GetDistanceToTarget());
+        }
+        return 0.0f;
+    }
+
+    /**
      * Draw visual representations of properties
      */
     public void OnDrawGizmos()
