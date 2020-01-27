@@ -8,5 +8,5 @@ using UnityEngine;
  */
 public class AIController : MonoBehaviour
 {
-
+    public AIPropertyObject BehaviorProperties;
 }
