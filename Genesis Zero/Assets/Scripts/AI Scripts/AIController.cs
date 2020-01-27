@@ -13,17 +13,11 @@ public class AIController : Pawn
     public enum AIState { Idle, Patrol, Follow, Charge, Attack, Cooldown }
     protected AIState state = AIState.Patrol; // Current behavior state
 
-    protected Transform tr; // Reference to own transform to avoid internal GetComponent call
     public Transform Target; // Target or player object to follow and attack
 
     protected float stateTime = 0.0f; // Duration of current state
 
-    protected virtual void Awake()
-    {
-        tr = transform;
-    }
-
-    public void Update()
+    protected void Update()
     {
         base.Update();
 
@@ -111,9 +105,9 @@ public class AIController : Pawn
      */
     public float GetDistanceToTarget()
     {
-        if (tr != null && Target != null)
+        if (Target != null)
         {
-            return Vector3.Distance(tr.position, Target.position);
+            return Vector3.Distance(transform.position, Target.position);
         }
         return 0.0f;
     }
@@ -123,7 +117,7 @@ public class AIController : Pawn
      */
     public float GetAvoidCloseness()
     {
-        if (tr != null && Target != null && BehaviorProperties != null)
+        if (Target != null && BehaviorProperties != null)
         {
             return Mathf.Max(0.0f, BehaviorProperties.AvoidRadius - GetDistanceToTarget());
         }
@@ -133,7 +127,7 @@ public class AIController : Pawn
     /**
      * Draw visual representations of properties
      */
-    public void OnDrawGizmos()
+    protected void OnDrawGizmos()
     {
         if (BehaviorProperties != null)
         {

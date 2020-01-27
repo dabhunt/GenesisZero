@@ -25,13 +25,13 @@ public class DroneAI : AIController
     public ParticleSystem chargeParticles;
     public ParticleSystem attackParticles;
 
-    protected override void Awake()
+    protected void Start()
     {
-        base.Awake();
+        base.Start();
         patrolDir = Mathf.RoundToInt(Mathf.Sign(Random.value - 0.5f));
     }
 
-    public void Update()
+    protected void Update()
     {
         base.Update();
 
@@ -40,9 +40,9 @@ public class DroneAI : AIController
         if (state == AIState.Follow || state == AIState.Charge || state == AIState.Attack || state == AIState.Cooldown)
         {
             // Rotation assumes that local up direction is forward
-            lookDir = Vector3.Slerp(lookDir, Target.position - tr.position, RotationRate * Time.deltaTime); // Rotate to face target
+            lookDir = Vector3.Slerp(lookDir, Target.position - transform.position, RotationRate * Time.deltaTime); // Rotate to face target
             targetSpeed = MoveSpeed;
-            Accelerate((tr.position - Target.position).normalized * Mathf.Min(GetAvoidCloseness(), AvoidAccelLimit) * Acceleration * AvoidAmount); // Acceleration to keep away from the target
+            Accelerate((transform.position - Target.position).normalized * Mathf.Min(GetAvoidCloseness(), AvoidAccelLimit) * Acceleration * AvoidAmount); // Acceleration to keep away from the target
         }
         else if (state == AIState.Patrol)
         {
@@ -55,10 +55,10 @@ public class DroneAI : AIController
             targetSpeed = 0.0f;
         }
 
-        Accelerate(tr.up * (targetSpeed - velocity.magnitude * Mathf.Clamp01(Vector3.Dot(tr.up, velocity.normalized))) * Acceleration); // Accelerate toward the target
-        Accelerate(-tr.right * velocity.magnitude * Vector3.Dot(tr.right, velocity.normalized) * SideDecel); // Deceleration to prevent sideways movement
-        tr.rotation = Quaternion.LookRotation(Vector3.forward, lookDir); // Actual rotation
-        tr.Translate(velocity * Time.deltaTime, Space.World); // Actual translation based on velocity
+        Accelerate(transform.up * (targetSpeed - velocity.magnitude * Mathf.Clamp01(Vector3.Dot(transform.up, velocity.normalized))) * Acceleration); // Accelerate toward the target
+        Accelerate(-transform.right * velocity.magnitude * Vector3.Dot(transform.right, velocity.normalized) * SideDecel); // Deceleration to prevent sideways movement
+        transform.rotation = Quaternion.LookRotation(Vector3.forward, lookDir); // Actual rotation
+        transform.Translate(velocity * Time.deltaTime, Space.World); // Actual translation based on velocity
 
         // Particles to show charge and attack states (for testing)
         if (chargeParticles != null)

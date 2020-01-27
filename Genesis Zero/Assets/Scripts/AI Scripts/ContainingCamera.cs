@@ -16,12 +16,12 @@ public class ContainingCamera : MonoBehaviour
     public float OutsideFactor = 10f; // Multiplier for result of how far objects are outside of the viewport
     public float moveRate = 10f; // How quickly the camera moves
 
-    private void Awake()
+    protected void Awake()
     {
         cam = GetComponent<Camera>();
     }
 
-    private void Update()
+    protected void Update()
     {
         if (ViewObjects.Length == 0) { return; }
 
