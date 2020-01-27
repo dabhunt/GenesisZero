@@ -49,7 +49,10 @@ public class AIController : Pawn
         Debug.Log(state);
     }
 
-    public void StateUpdate()
+    /**
+     * State logic meant to be called in Update
+     */
+    private void StateUpdate()
     {
         if (state == AIState.Patrol) // State when moving around while not following player
         {
@@ -94,12 +97,18 @@ public class AIController : Pawn
         stateTime += Time.deltaTime;
     }
 
+    /**
+     * This is used to change the current state of the AI
+     */
     public void ChangeState(AIState newState)
     {
         state = newState;
         stateTime = 0.0f;
     }
 
+    /**
+     * Returns the distance to the target/player
+     */
     public float GetDistanceToTarget()
     {
         if (tr != null && Target != null)
@@ -109,6 +118,9 @@ public class AIController : Pawn
         return 0.0f;
     }
 
+    /**
+     * Draw visual representations of properties
+     */
     public void OnDrawGizmos()
     {
         if (BehaviorProperties != null)

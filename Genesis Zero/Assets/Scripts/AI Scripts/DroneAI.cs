@@ -4,5 +4,10 @@ using UnityEngine;
 
 public class DroneAI : AIController
 {
+    public void Update()
+    {
+        base.Update();
 
+
+    }
 }
