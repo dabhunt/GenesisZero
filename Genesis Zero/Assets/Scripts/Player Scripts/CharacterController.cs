@@ -77,19 +77,19 @@ public class CharacterController : MonoBehaviour
         
         if (movementInput.x != 0)
         {
-            currentSpeed += movementInput.x * acceleration * Time.deltaTime;
+            currentSpeed += movementInput.x * acceleration * Time.fixedDeltaTime;
             currentSpeed = Mathf.Min(Mathf.Abs(currentSpeed), Mathf.Abs(GetComponent<Player>().GetSpeed().GetValue())) * movementInput.x;
         }
         else
         {
             if (currentSpeed > 0)
             {
-                currentSpeed -= acceleration * Time.deltaTime;
+                currentSpeed -= acceleration * Time.fixedDeltaTime;
                 currentSpeed = Mathf.Max(currentSpeed, 0);
             }
             else if (currentSpeed < 0)
             {
-                currentSpeed += acceleration * Time.deltaTime;
+                currentSpeed += acceleration * Time.fixedDeltaTime;
                 currentSpeed = Mathf.Min(currentSpeed, 0);
             }
         }
@@ -113,7 +113,7 @@ public class CharacterController : MonoBehaviour
      */
     public void Jump()
     {
-        Debug.Log(IsGrounded());
+        //Debug.Log(IsGrounded());
         if (IsGrounded())
         {
             vertForce = jumpStrength;
@@ -127,7 +127,7 @@ public class CharacterController : MonoBehaviour
     {
         if (!IsGrounded())
         {
-            vertForce -= gravity * Time.deltaTime;
+            vertForce -= gravity * Time.fixedDeltaTime;
         }
         else
         {
@@ -146,7 +146,7 @@ public class CharacterController : MonoBehaviour
         aimVec.x = aimInput.x - pos.x; 
         aimVec.y = aimInput.y - pos.y;
 
-        float tmpAngle = Mathf.Atan2((aimVec.y - gun.transform.position.y), (aimVec.x - gun.transform.position.x)) * Mathf.Rad2Deg;
+        float tmpAngle = Mathf.Atan2(aimVec.y, aimVec.x) * Mathf.Rad2Deg;
         if (tmpAngle != 0)
             gun.transform.localRotation = Quaternion.Euler(0, 0, tmpAngle);
     }
