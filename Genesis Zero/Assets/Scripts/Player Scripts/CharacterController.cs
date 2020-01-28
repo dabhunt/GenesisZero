@@ -15,10 +15,19 @@ public class CharacterController : MonoBehaviour
     [Header("Physics")]
     public float gravity = 14f;
 
+    [Header("Camera")]
+    public Camera mainCam;
+
+    [Header("Gun")]
+    public GameObject gun;
+    public GameObject crosshair;
+
     private PlayerInputActions inputActions;
     private Rigidbody rb;
     private Vector2 movementInput;
+    private Vector2 aimInput;
     private Vector3 moveVec = Vector3.zero;
+    private Vector3 lookVec = Vector3.zero;
 
     private float vertForce;
     private float currentSpeed = 0;
@@ -28,6 +37,12 @@ public class CharacterController : MonoBehaviour
         rb = GetComponent<Rigidbody>();
         inputActions = new PlayerInputActions();
         inputActions.PlayerControls.Move.performed += ctx => movementInput = ctx.ReadValue<Vector2>();
+        inputActions.PlayerControls.LookAim.performed += ctx => aimInput = ctx.ReadValue<Vector2>();
+    }
+
+    private void Update()
+    {
+        Aim();
     }
 
     private void FixedUpdate()
@@ -55,7 +70,16 @@ public class CharacterController : MonoBehaviour
         }
         else
         {
-            currentSpeed = 0;
+            if (currentSpeed > 0)
+            {
+                currentSpeed -= acceleration * Time.deltaTime;
+                currentSpeed = Mathf.Max(currentSpeed, 0);
+            }
+            else if (currentSpeed < 0)
+            {
+                currentSpeed += acceleration * Time.deltaTime;
+                currentSpeed = Mathf.Min(currentSpeed, 0);
+            }
         }
         moveVec.x = currentSpeed;
         moveVec.y = vertForce;
@@ -86,5 +110,10 @@ public class CharacterController : MonoBehaviour
             if (vertForce < 0)
                 vertForce = 0;
         }
+    }
+
+    private void Aim()
+    {
+        gun.transform.LookAt(crosshair);
     }
 }
