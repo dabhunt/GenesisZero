@@ -114,6 +114,6 @@ public class CharacterController : MonoBehaviour
 
     private void Aim()
     {
-        gun.transform.LookAt(crosshair);
+        
     }
 }
