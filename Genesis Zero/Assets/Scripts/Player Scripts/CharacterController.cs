@@ -1,4 +1,8 @@
-﻿using System.Collections;
+﻿/* CharacterController class deals with general input processing for
+ * movements, aiming, shooting.
+ */
+
+using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
@@ -21,13 +25,14 @@ public class CharacterController : MonoBehaviour
     [Header("Gun")]
     public GameObject gun;
     public GameObject crosshair;
+    public float sensitivity;
 
     private PlayerInputActions inputActions;
     private Rigidbody rb;
     private Vector2 movementInput;
     private Vector2 aimInput;
     private Vector3 moveVec = Vector3.zero;
-    private Vector3 lookVec = Vector3.zero;
+    private Vector3 aimVec = Vector3.zero;
 
     private float vertForce;
     private float currentSpeed = 0;
@@ -42,12 +47,13 @@ public class CharacterController : MonoBehaviour
 
     private void Update()
     {
-        Aim();
+        
     }
 
     private void FixedUpdate()
     {
         ApplyDownForce();
+        Aim();
         Move();
     }
 
@@ -61,6 +67,10 @@ public class CharacterController : MonoBehaviour
         inputActions.Disable();
     }
 
+    /* This controls the character general movements
+     * It updates the movement vector every frame then apply
+     * it based on the input
+     */
     private void Move()
     {
         if (movementInput.x != 0)
@@ -86,11 +96,18 @@ public class CharacterController : MonoBehaviour
         rb.velocity = transform.TransformDirection(moveVec);
     }
 
+    /* This checks if the character is currently on the ground
+     * LayerMask named ground controls what surfaces 
+     * group the player can jump on
+     */
     public bool IsGrounded()
     {
         return Physics.Raycast(transform.position, Vector3.down, distToGround, ground);
     }
 
+    /* This function is called with an event
+     * invoked when player press jump button
+     */
     private void Jump()
     {
         if (IsGrounded())
@@ -99,6 +116,9 @@ public class CharacterController : MonoBehaviour
         }
     }
 
+    /* This function deals with the character's downwards force(gravity)
+     * If the player's not grounded, apply downward force. And zero it if player is grounded
+     */
     private void ApplyDownForce()
     {
         if (!IsGrounded())
@@ -112,8 +132,18 @@ public class CharacterController : MonoBehaviour
         }
     }
 
+    /* This function control character aiming
+     * Crosshair is moved using mouse/rightStick
+     * Gun rotates to point at crosshair
+     */
     private void Aim()
     {
-        
+        Vector3 pos = mainCam.WorldToScreenPoint(transform.position);
+        aimVec.x = aimInput.x - pos.x; 
+        aimVec.y = aimInput.y - pos.y;
+
+        float tmpAngle = Mathf.Atan2((aimVec.y - gun.transform.position.y), (aimVec.x - gun.transform.position.x)) * Mathf.Rad2Deg;
+        if (tmpAngle != 0)
+            gun.transform.localRotation = Quaternion.Euler(0, 0, tmpAngle);
     }
 }
