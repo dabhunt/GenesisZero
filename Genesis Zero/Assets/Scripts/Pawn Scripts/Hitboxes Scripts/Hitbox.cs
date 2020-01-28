@@ -17,7 +17,8 @@ public class Hitbox : MonoBehaviour
 
     public bool HurtsAllies;    // Determines if this hitbox can harm the allies layer
     public bool HurtsEnemies;   // Determines if this hotbox can harm the enemies layer
-
+    [Space]
+    public bool Intangible;     // If True, then the hitbox can pass through walls
     public int MaxHits = 1;     // Number of times the hitbox can hit something
 
     public Collider Collider;
@@ -116,7 +117,8 @@ public class Hitbox : MonoBehaviour
                 //Debug.Log((other != collider) + " " + maxhits + " " + (other.GetComponentInParent<Hurtbox>() || other.GetComponent<Hurtbox>()) + " " + CanDamage(other) + " " + other.GetComponentInParent<Pawn>());
             }
 
-            if (other != GetComponent<Collider>() && MaxHits > 0 && (other.GetComponentInParent<Hurtbox>() || other.GetComponent<Hurtbox>()) && CanDamage(other) && other.GetComponentInParent<Pawn>() && !hittargets.Contains(other.transform.root.gameObject))
+            bool siblingcolliders = hittargets.Contains(other.transform.root.gameObject);
+            if (other != GetComponent<Collider>() && MaxHits > 0 && (other.GetComponentInParent<Hurtbox>() || other.GetComponent<Hurtbox>()) && CanDamage(other) && other.GetComponentInParent<Pawn>() && !siblingcolliders)
             {
                 float finaldamage = Damage;
                 Pawn p = other.GetComponentInParent<Pawn>();
@@ -144,10 +146,15 @@ public class Hitbox : MonoBehaviour
                 hittargets.Add(other.transform.root.gameObject);
 
                 --MaxHits;
-                if (MaxHits <= 0)
-                {
-                    state = State.Deactive;
-                }
+            }
+            else if (Intangible == false && other != GetComponent<Collider>() && !siblingcolliders)
+            {
+                state = State.Deactive;
+            }
+
+            if (MaxHits <= 0)
+            {
+                state = State.Deactive;
             }
 
         }
