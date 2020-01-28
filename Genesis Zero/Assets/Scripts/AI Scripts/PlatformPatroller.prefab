@@ -4868,6 +4868,7 @@ GameObject:
   - component: {fileID: 751653433366621651}
   - component: {fileID: 751653433366621648}
   - component: {fileID: 1228177588051193604}
+  - component: {fileID: 7599204422373525046}
   m_Layer: 0
   m_Name: PlatformPatroller
   m_TagString: Untagged
@@ -4953,6 +4954,31 @@ CapsuleCollider:
   m_Height: 2
   m_Direction: 1
   m_Center: {x: 0, y: 0, z: 0}
+--- !u!114 &7599204422373525046
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 751653433366621662}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: acd9289bf746a314ca891f0a3401d0df, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  Stats: {fileID: 11400000, guid: 56fcfcdb24ba56a47b7d667abc15dead, type: 2}
+  BehaviorProperties: {fileID: 11400000, guid: 632ca5414802f174f9d20a08707e91f7, type: 2}
+  Target: {fileID: 0}
+  RotationRate: 10
+  MoveSpeed: 10
+  Acceleration: 5
+  SideDecel: 1
+  AvoidAmount: 1
+  AvoidAccelLimit: 1
+  PatrolSpeed: 5
+  PatrolRotateRate: 1
+  chargeParticles: {fileID: 0}
+  attackParticles: {fileID: 0}
 --- !u!1 &751653434026467023
 GameObject:
   m_ObjectHideFlags: 0

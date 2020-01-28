@@ -4,9 +4,9 @@ using UnityEngine;
 
 /**
  * Justin Couch
- * DroneAI is the class representing the flying drone enemy type.
+ * PlatformPatrollerAI is the class representing the platform patroller enemy type.
  */
-public class DroneAI : AIController
+public class PlatformPatrollerAI : AIController
 {
     private Vector3 lookDir = Vector3.up;
     public float RotationRate = 10f; // How fast to rotate
