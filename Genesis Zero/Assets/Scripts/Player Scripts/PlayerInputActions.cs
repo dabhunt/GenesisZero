@@ -30,7 +30,7 @@ public class @PlayerInputActions : IInputActionCollection, IDisposable
                     ""name"": ""Look/Aim"",
                     ""type"": ""PassThrough"",
                     ""id"": ""95a719cb-580b-4379-94fd-1776eeaec549"",
-                    ""expectedControlType"": ""Vector2"",
+                    ""expectedControlType"": ""Vector3"",
                     ""processors"": """",
                     ""interactions"": """"
                 },
@@ -132,7 +132,7 @@ public class @PlayerInputActions : IInputActionCollection, IDisposable
                 {
                     ""name"": """",
                     ""id"": ""3b124ca6-b944-45a8-9c20-0c1ffa5c5550"",
-                    ""path"": ""<Mouse>/delta"",
+                    ""path"": ""<Mouse>/position"",
                     ""interactions"": """",
                     ""processors"": """",
                     ""groups"": ""Keyboard&Mouse"",
