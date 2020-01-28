@@ -102,11 +102,11 @@ public class Hurtbox : MonoBehaviour
                 if (col.GetComponent<SphereCollider>() != null)
                 {
                     //Debug.Log(col.transform.localEulerAngles);
-                    Gizmos.DrawWireSphere(col.transform.position + col.GetComponent<SphereCollider>().center, col.GetComponent<SphereCollider>().radius);
+                    Gizmos.DrawWireSphere(col.transform.position + col.GetComponent<SphereCollider>().center, col.GetComponent<SphereCollider>().radius * transform.localScale.x);
                 }
                 if (col.GetComponent<BoxCollider>() != null)
                 {
-                    Gizmos.DrawWireCube(col.transform.position + col.GetComponent<BoxCollider>().center, col.GetComponent<BoxCollider>().size);
+                    Gizmos.DrawWireCube(col.transform.position + col.GetComponent<BoxCollider>().center, col.GetComponent<BoxCollider>().size * transform.localScale.x);
                 }
             }
         }
