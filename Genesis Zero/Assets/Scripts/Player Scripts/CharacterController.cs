@@ -13,7 +13,8 @@ public class CharacterController : MonoBehaviour
     [Header("Movement")]
     public float acceleration = 20f;
     public float jumpStrength = 6f;
-    public float distToGround = 1f;
+    public float distToGround = 0.5f; //dist from body origin to ground
+    public float bodyRadius = 0.5f; //radius of the spherecast for IsGrounded
     public LayerMask ground;
 
     [Header("Physics")]
@@ -73,6 +74,7 @@ public class CharacterController : MonoBehaviour
      */
     private void Move()
     {
+        
         if (movementInput.x != 0)
         {
             currentSpeed += movementInput.x * acceleration * Time.deltaTime;
@@ -102,14 +104,16 @@ public class CharacterController : MonoBehaviour
      */
     public bool IsGrounded()
     {
-        return Physics.Raycast(transform.position, Vector3.down, distToGround, ground);
+        RaycastHit hit;
+        return Physics.SphereCast(transform.position, bodyRadius, Vector3.down, out hit, distToGround, ground, QueryTriggerInteraction.UseGlobal);
     }
 
     /* This function is called with an event
      * invoked when player press jump button
      */
-    private void Jump()
+    public void Jump()
     {
+        Debug.Log(IsGrounded());
         if (IsGrounded())
         {
             vertForce = jumpStrength;
