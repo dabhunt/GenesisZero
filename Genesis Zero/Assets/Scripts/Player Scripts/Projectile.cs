@@ -18,14 +18,19 @@ public class Projectile : MonoBehaviour
         Invoke("DestroyObject", lifeTime);
     }
 
-    private void Update()
+    private void FixedUpdate()
     {
         Move();
     }
 
+    private void Update()
+    {
+        
+    }
+
     private void Move()
     {
-        direction = speed * transform.right * Time.deltaTime;
+        direction = speed * transform.right * Time.fixedDeltaTime;
         transform.position += direction;
     }
 

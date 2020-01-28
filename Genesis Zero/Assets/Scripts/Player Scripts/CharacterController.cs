@@ -146,7 +146,7 @@ public class CharacterController : MonoBehaviour
         aimVec.x = aimInput.x - pos.x; 
         aimVec.y = aimInput.y - pos.y;
 
-        float tmpAngle = Mathf.Atan2((aimVec.y - gun.transform.position.y), (aimVec.x - gun.transform.position.x)) * Mathf.Rad2Deg;
+        float tmpAngle = Mathf.Atan2(aimVec.y, aimVec.x) * Mathf.Rad2Deg;
         if (tmpAngle != 0)
             gun.transform.localRotation = Quaternion.Euler(0, 0, tmpAngle);
     }
