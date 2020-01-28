@@ -9,13 +9,14 @@ using UnityEngine;
 public class PlatformPatrollerAI : AIController
 {
     public float MoveSpeed = 10f; // Maximum movement speed
+    public float LungeSpeed = 20f; // Maximum movement speed
     private float targetSpeed = 0.0f;
     public float Acceleration = 5.0f; // Rate of acceleration
     private Vector3 velocity = Vector3.zero;
     public float AvoidAmount = 1.0f; // How much to accelerate away from the target
     public float AvoidAccelLimit = 1.0f; // Limit on avoidance acceleration
 
-    private Collider mainCollider; // Physical collider for movement
+    private BoxCollider mainCollider; // Physical collider for movement
     public LayerMask GroundMask; // Layermask for ground objects
 
     public float PatrolSpeed = 5.0f; // Movement speed while patrolling
@@ -26,25 +27,35 @@ public class PlatformPatrollerAI : AIController
 
     protected void Awake()
     {
-        mainCollider = GetComponent<Collider>();
+        mainCollider = GetComponent<BoxCollider>();
     }
 
-    protected void Start()
+    new protected void Start()
     {
         base.Start();
         faceDir = Mathf.RoundToInt(Mathf.Sign(Random.value - 0.5f));
+        if (Target == null)
+        {
+            Target = GameObject.FindGameObjectWithTag("Player").transform;
+        }
     }
 
-    protected void Update()
+    new protected void Update()
     {
         base.Update();
+    }
+
+    protected void FixedUpdate()
+    {
+        //base.Update();
 
         if (Target == null || mainCollider == null) { return; }
 
         if (state == AIState.Follow || state == AIState.Charge || state == AIState.Attack || state == AIState.Cooldown)
         {
+            faceDir = Mathf.RoundToInt(Mathf.Sign(Target.position.x - transform.position.x));
             targetSpeed = MoveSpeed;
-            Accelerate((transform.position - Target.position).normalized * Mathf.Min(GetAvoidCloseness(), AvoidAccelLimit) * Acceleration * AvoidAmount); // Acceleration to keep away from the target
+            //Accelerate((transform.position - Target.position).normalized * Mathf.Min(GetAvoidCloseness(), AvoidAccelLimit) * Acceleration * AvoidAmount); // Acceleration to keep away from the target
         }
         else if (state == AIState.Patrol)
         {
@@ -55,8 +66,33 @@ public class PlatformPatrollerAI : AIController
             targetSpeed = 0.0f;
         }
 
-        Accelerate(transform.up * (targetSpeed - velocity.magnitude * Mathf.Clamp01(Vector3.Dot(transform.up, velocity.normalized))) * Acceleration); // Accelerate toward the target
-        transform.Translate(velocity * Time.deltaTime, Space.World); // Actual translation based on velocity
+        // Separate checks for logic that only applies to individual states
+        if (state == AIState.Follow)
+        {
+            targetSpeed = MoveSpeed;
+        }
+        else if (state == AIState.Charge)
+        {
+            targetSpeed = MoveSpeed * 0.1f;
+        }
+        else if (state == AIState.Attack)
+        {
+            targetSpeed = LungeSpeed;
+        }
+        else if (state == AIState.Cooldown)
+        {
+            targetSpeed = 0.0f;
+        }
+
+        Accelerate(Vector3.right * (targetSpeed * faceDir - velocity.x) * Acceleration); // Accelerate toward the target
+        transform.Translate(velocity * Time.fixedDeltaTime, Space.World); // Actual translation based on velocity
+
+        transform.rotation = Quaternion.LookRotation(Vector3.forward * faceDir, Vector3.up);
+
+        /*while (GroundCollision())
+        {
+            transform.Translate(Vector3.up * 0.01f);
+        }*/
 
         // Particles to show charge and attack states (for testing)
         if (chargeParticles != null)
@@ -95,6 +131,14 @@ public class PlatformPatrollerAI : AIController
      */
     public void Accelerate(Vector3 accel)
     {
-        velocity += accel * Time.deltaTime;
+        velocity += accel * Time.fixedDeltaTime;
+    }
+
+    /**
+     * Basic ground collision method for prototyping
+     */
+    protected bool GroundCollision()
+    {
+        return Physics.OverlapBox(transform.position, mainCollider.size * 0.5f, transform.rotation, GroundMask).Length > 0;
     }
 }
