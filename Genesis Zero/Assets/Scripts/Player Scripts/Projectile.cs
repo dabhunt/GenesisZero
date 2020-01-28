@@ -8,10 +8,10 @@ public class Projectile : MonoBehaviour
     [Header("Settings")]
     public float speed = 30f;
     public float gravity = 0f;
-    public float lifeTime = 1f;
     public Vector3 direction;
 
     private Rigidbody rb;
+    private float lifeTime = 1f;
     private void Start()
     {
         rb = GetComponent<Rigidbody>();
