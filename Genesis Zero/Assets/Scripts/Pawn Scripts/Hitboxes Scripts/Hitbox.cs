@@ -23,6 +23,7 @@ public class Hitbox : MonoBehaviour
 
     public Collider Collider;
     public Pawn Source;         // Source is a reference to the pawn that spawned this hitbox. Optional, used if things like critchance is calculated
+    public GameObject DamageNumberObject;
     private List<GameObject> hittargets;
 
     private Vector3 lastposition;
@@ -141,6 +142,13 @@ public class Hitbox : MonoBehaviour
                         finaldamage *= Source.GetCritDamage().GetValue();
                     }
                 }
+
+                if (DamageNumberObject)
+                {
+                    GameObject emit = (GameObject)Instantiate(DamageNumberObject, new Vector3(transform.position.x, transform.position.y, transform.position.z - 3), Quaternion.identity);
+                    emit.GetComponent<DamageNumber>().SetNumber(Damage);
+                }
+
                 p.TakeDamage(Damage);
 
                 hittargets.Add(other.transform.root.gameObject);
