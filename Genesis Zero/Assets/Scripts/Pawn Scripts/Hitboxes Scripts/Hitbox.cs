@@ -145,7 +145,7 @@ public class Hitbox : MonoBehaviour
 
                 if (DamageNumberObject)
                 {
-                    GameObject emit = (GameObject)Instantiate(DamageNumberObject, new Vector3(transform.position.x, transform.position.y, transform.position.z - 3), Quaternion.identity);
+                    GameObject emit = (GameObject)Instantiate(DamageNumberObject, new Vector3(transform.position.x, transform.position.y + 1, transform.position.z - .5f), Quaternion.identity);
                     emit.GetComponent<DamageNumber>().SetNumber(Damage);
                 }
 
