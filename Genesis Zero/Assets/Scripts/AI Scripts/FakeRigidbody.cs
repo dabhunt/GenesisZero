@@ -23,6 +23,7 @@ public class FakeRigidbody : MonoBehaviour
     {
         tr = transform;
         rb = GetComponent<Rigidbody>();
+        rb.useGravity = false;
         rb.constraints = RigidbodyConstraints.FreezeRotation | RigidbodyConstraints.FreezePositionZ;
     }
 

@@ -19,7 +19,6 @@ public class PlatformPatrollerAI : AIController
     public float AvoidAmount = 1.0f; // How much to accelerate away from the target
     public float AvoidAccelLimit = 1.0f; // Limit on avoidance acceleration
 
-    private BoxCollider mainCollider; // Physical collider for movement
     public LayerMask GroundMask; // Layermask for ground objects
 
     public float PatrolSpeed = 5.0f; // Movement speed while patrolling
@@ -31,7 +30,6 @@ public class PlatformPatrollerAI : AIController
     protected void Awake()
     {
         frb = GetComponent<FakeRigidbody>();
-        mainCollider = GetComponent<BoxCollider>();
     }
 
     new protected void Start()
@@ -53,7 +51,7 @@ public class PlatformPatrollerAI : AIController
     {
         //base.Update();
 
-        if (Target == null || mainCollider == null) { return; }
+        if (Target == null) { return; }
 
         if (state == AIState.Follow || state == AIState.Charge || state == AIState.Attack || state == AIState.Cooldown)
         {

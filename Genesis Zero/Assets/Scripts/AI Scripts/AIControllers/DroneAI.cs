@@ -2,12 +2,15 @@
 using System.Collections.Generic;
 using UnityEngine;
 
+[RequireComponent(typeof(FakeRigidbody))]
 /**
  * Justin Couch
  * DroneAI is the class representing the flying drone enemy type.
  */
 public class DroneAI : AIController
 {
+    protected FakeRigidbody frb;
+
     private Vector3 lookDir = Vector3.up;
     public float RotationRate = 10f; // How fast to rotate
     public float MoveSpeed = 10f; // Maximum movement speed
@@ -25,10 +28,19 @@ public class DroneAI : AIController
     public ParticleSystem chargeParticles;
     public ParticleSystem attackParticles;
 
+    protected void Awake()
+    {
+        frb = GetComponent<FakeRigidbody>();
+    }
+
     new protected void Start()
     {
         base.Start();
         patrolDir = Mathf.RoundToInt(Mathf.Sign(Random.value - 0.5f));
+        if (Target == null)
+        {
+            Target = GameObject.FindGameObjectWithTag("Player").transform;
+        }
     }
 
     new protected void Update()
@@ -42,7 +54,7 @@ public class DroneAI : AIController
             // Rotation assumes that local up direction is forward
             lookDir = Vector3.Slerp(lookDir, Target.position - transform.position, RotationRate * Time.deltaTime); // Rotate to face target
             targetSpeed = MoveSpeed;
-            Accelerate((transform.position - Target.position).normalized * Mathf.Min(GetAvoidCloseness(), AvoidAccelLimit) * Acceleration * AvoidAmount); // Acceleration to keep away from the target
+            frb.Accelerate((transform.position - Target.position).normalized * Mathf.Min(GetAvoidCloseness(), AvoidAccelLimit) * Acceleration * AvoidAmount); // Acceleration to keep away from the target
         }
         else if (state == AIState.Patrol)
         {
@@ -55,10 +67,10 @@ public class DroneAI : AIController
             targetSpeed = 0.0f;
         }
 
-        Accelerate(transform.up * (targetSpeed - velocity.magnitude * Mathf.Clamp01(Vector3.Dot(transform.up, velocity.normalized))) * Acceleration); // Accelerate toward the target
-        Accelerate(-transform.right * velocity.magnitude * Vector3.Dot(transform.right, velocity.normalized) * SideDecel); // Deceleration to prevent sideways movement
+        frb.Accelerate(transform.up * (targetSpeed - velocity.magnitude * Mathf.Clamp01(Vector3.Dot(transform.up, velocity.normalized))) * Acceleration); // Accelerate toward the target
+        frb.Accelerate(-transform.right * velocity.magnitude * Vector3.Dot(transform.right, velocity.normalized) * SideDecel); // Deceleration to prevent sideways movement
         transform.rotation = Quaternion.LookRotation(Vector3.forward, lookDir); // Actual rotation
-        transform.Translate(velocity * Time.deltaTime, Space.World); // Actual translation based on velocity
+        //transform.Translate(velocity * Time.deltaTime, Space.World); // Actual translation based on velocity
 
         // Particles to show charge and attack states (for testing)
         if (chargeParticles != null)
@@ -90,13 +102,5 @@ public class DroneAI : AIController
                 attackParticles.Stop();
             }
         }
-    }
-
-    /**
-     * Accelerates the drone in the given direction
-     */
-    public void Accelerate(Vector3 accel)
-    {
-        velocity += accel * Time.deltaTime;
     }
 }
