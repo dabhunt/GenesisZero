@@ -198,6 +198,7 @@ GameObject:
   - component: {fileID: 476272641}
   - component: {fileID: 476272643}
   - component: {fileID: 476272642}
+  - component: {fileID: 476272644}
   m_Layer: 5
   m_Name: Skill Element
   m_TagString: Untagged
@@ -261,6 +262,20 @@ CanvasRenderer:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 476272640}
   m_CullTransparentMesh: 0
+--- !u!114 &476272644
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 476272640}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: ed987ed71b306f1438c43466bc2576cc, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  Icon: {fileID: 476272642}
+  StackNumber: 0
 --- !u!1 &579362982
 GameObject:
   m_ObjectHideFlags: 0
@@ -695,6 +710,7 @@ GameObject:
   - component: {fileID: 1600381137}
   - component: {fileID: 1600381136}
   - component: {fileID: 1600381135}
+  - component: {fileID: 1600381138}
   m_Layer: 5
   m_Name: Canvas
   m_TagString: Untagged
@@ -783,6 +799,21 @@ Canvas:
   m_SortingLayerID: -1262639549
   m_SortingOrder: 0
   m_TargetDisplay: 0
+--- !u!114 &1600381138
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1600381133}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 0500f72687d4dde4eb3bb3dec0feb7bf, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  StartPoint: {x: 0, y: 0}
+  Seperation: {x: 0, y: 0}
+  MaxColumns: 10
 --- !u!1 &2084672168
 GameObject:
   m_ObjectHideFlags: 0
