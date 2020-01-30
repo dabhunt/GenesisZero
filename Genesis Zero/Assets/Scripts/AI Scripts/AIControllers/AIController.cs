@@ -1,6 +1,7 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.Events;
 
 /**
  * Justin Couch
@@ -16,6 +17,8 @@ public class AIController : Pawn
     public Transform Target; // Target or player object to follow and attack
 
     protected float stateTime = 0.0f; // Duration of current state
+
+    public AIStateEvent StateChangeEvent; // Invoked whenever the state is changed and passes in the new state to called methods
 
     new protected void Update()
     {
@@ -98,6 +101,7 @@ public class AIController : Pawn
     {
         state = newState;
         stateTime = 0.0f;
+        StateChangeEvent.Invoke(state);
     }
 
     /**
@@ -140,3 +144,7 @@ public class AIController : Pawn
         }
     }
 }
+
+// Class for events where an AI state is passed as an argument
+[System.Serializable]
+public class AIStateEvent : UnityEvent<AIController.AIState> { }

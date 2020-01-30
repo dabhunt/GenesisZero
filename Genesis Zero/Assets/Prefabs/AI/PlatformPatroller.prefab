@@ -89,7 +89,7 @@ BoxCollider:
   m_GameObject: {fileID: 751653432839557203}
   m_Material: {fileID: 0}
   m_IsTrigger: 0
-  m_Enabled: 1
+  m_Enabled: 0
   serializedVersion: 2
   m_Size: {x: 1, y: 1, z: 1}
   m_Center: {x: 0, y: 0, z: 0}
@@ -110,7 +110,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!4 &751653433110049382
 Transform:
   m_ObjectHideFlags: 0
@@ -4971,14 +4971,24 @@ MonoBehaviour:
   Stats: {fileID: 11400000, guid: 56fcfcdb24ba56a47b7d667abc15dead, type: 2}
   BehaviorProperties: {fileID: 11400000, guid: 632ca5414802f174f9d20a08707e91f7, type: 2}
   Target: {fileID: 0}
+  StateChangeEvent:
+    m_PersistentCalls:
+      m_Calls:
+      - m_Target: {fileID: 7599204422373525046}
+        m_MethodName: JumpTowardTarget
+        m_Mode: 0
+        m_Arguments:
+          m_ObjectArgument: {fileID: 0}
+          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
+          m_IntArgument: 0
+          m_FloatArgument: 0
+          m_StringArgument: 
+          m_BoolArgument: 0
+        m_CallState: 2
   MoveSpeed: 10
-  LungeSpeed: 20
+  LungeSpeed: 10
+  JumpSpeed: 5
   Acceleration: 5
-  AvoidAmount: 1
-  AvoidAccelLimit: 1
-  GroundMask:
-    serializedVersion: 2
-    m_Bits: 1
   PatrolSpeed: 5
   chargeParticles: {fileID: 751653434026467008}
   attackParticles: {fileID: 751653433110049400}
@@ -5759,7 +5769,7 @@ ParticleSystem:
     sphericalDirectionAmount: 0
     randomPositionAmount: 0
     radius:
-      value: 2.44
+      value: 3.82
       mode: 0
       spread: 0
       speed:

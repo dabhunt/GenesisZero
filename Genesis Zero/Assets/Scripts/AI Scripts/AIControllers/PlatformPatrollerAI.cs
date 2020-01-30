@@ -12,14 +12,10 @@ public class PlatformPatrollerAI : AIController
     protected FakeRigidbody frb;
 
     public float MoveSpeed = 10f; // Maximum movement speed
-    public float LungeSpeed = 20f; // Maximum movement speed
+    public float LungeSpeed = 20f; // Lunging attack speed
+    public float JumpSpeed = 10f; // Vertical jump speed for lunge attack
     private float targetSpeed = 0.0f;
     public float Acceleration = 5.0f; // Rate of acceleration
-    private Vector3 velocity = Vector3.zero;
-    public float AvoidAmount = 1.0f; // How much to accelerate away from the target
-    public float AvoidAccelLimit = 1.0f; // Limit on avoidance acceleration
-
-    public LayerMask GroundMask; // Layermask for ground objects
 
     public float PatrolSpeed = 5.0f; // Movement speed while patrolling
     private int faceDir = 1; // Direction the enemy is facing: 1 = right, -1 = left
@@ -53,11 +49,14 @@ public class PlatformPatrollerAI : AIController
 
         if (Target == null) { return; }
 
-        if (state == AIState.Follow || state == AIState.Charge || state == AIState.Attack || state == AIState.Cooldown)
+        if (state == AIState.Follow || state == AIState.Charge || state == AIState.Cooldown)
         {
             faceDir = Mathf.RoundToInt(Mathf.Sign(Target.position.x - transform.position.x));
             targetSpeed = MoveSpeed;
-            //Accelerate((transform.position - Target.position).normalized * Mathf.Min(GetAvoidCloseness(), AvoidAccelLimit) * Acceleration * AvoidAmount); // Acceleration to keep away from the target
+        }
+        else if (state == AIState.Attack)
+        {
+            targetSpeed = LungeSpeed;
         }
         else if (state == AIState.Patrol)
         {
@@ -77,18 +76,12 @@ public class PlatformPatrollerAI : AIController
         {
             targetSpeed = MoveSpeed * 0.1f;
         }
-        else if (state == AIState.Attack)
-        {
-            targetSpeed = LungeSpeed;
-        }
         else if (state == AIState.Cooldown)
         {
             targetSpeed = 0.0f;
         }
 
-        frb.Accelerate(Vector3.right * (targetSpeed * faceDir - velocity.x) * Acceleration); // Accelerate toward the target
-        //transform.Translate(velocity * Time.fixedDeltaTime, Space.World); // Actual translation based on velocity
-
+        frb.Accelerate(Vector3.right * (targetSpeed * faceDir - frb.GetVelocity().x) * Acceleration); // Accelerate toward the target
         transform.rotation = Quaternion.LookRotation(Vector3.forward * faceDir, Vector3.up);
 
         // Particles to show charge and attack states (for testing)
@@ -120,6 +113,17 @@ public class PlatformPatrollerAI : AIController
             {
                 attackParticles.Stop();
             }
+        }
+    }
+
+    /**
+     * This initiates the lunge toward the target while attacking
+     */
+    public void JumpTowardTarget(AIState state)
+    {
+        if (state == AIState.Attack)
+        {
+            frb.AddVelocity(Vector3.up * JumpSpeed + Vector3.right * faceDir * LungeSpeed);
         }
     }
 }

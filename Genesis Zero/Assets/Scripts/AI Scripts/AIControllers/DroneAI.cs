@@ -17,7 +17,6 @@ public class DroneAI : AIController
     private float targetSpeed = 0.0f;
     public float Acceleration = 5.0f; // Rate of acceleration
     public float SideDecel = 1.0f; // Rate of deceleration for sideways velocity to create tighter movement
-    private Vector3 velocity = Vector3.zero;
     public float AvoidAmount = 1.0f; // How much to accelerate away from the target
     public float AvoidAccelLimit = 1.0f; // Limit on avoidance acceleration
 
@@ -67,8 +66,8 @@ public class DroneAI : AIController
             targetSpeed = 0.0f;
         }
 
-        frb.Accelerate(transform.up * (targetSpeed - velocity.magnitude * Mathf.Clamp01(Vector3.Dot(transform.up, velocity.normalized))) * Acceleration); // Accelerate toward the target
-        frb.Accelerate(-transform.right * velocity.magnitude * Vector3.Dot(transform.right, velocity.normalized) * SideDecel); // Deceleration to prevent sideways movement
+        frb.Accelerate(transform.up * (targetSpeed - frb.GetVelocity().magnitude * Mathf.Clamp01(Vector3.Dot(transform.up, frb.GetVelocity().normalized))) * Acceleration); // Accelerate toward the target
+        frb.Accelerate(-transform.right * frb.GetVelocity().magnitude * Vector3.Dot(transform.right, frb.GetVelocity().normalized) * SideDecel); // Deceleration to prevent sideways movement
         transform.rotation = Quaternion.LookRotation(Vector3.forward, lookDir); // Actual rotation
         //transform.Translate(velocity * Time.deltaTime, Space.World); // Actual translation based on velocity
 

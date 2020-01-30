@@ -5,7 +5,7 @@ using UnityEngine;
 [RequireComponent(typeof(Rigidbody))]
 /**
  * Justin Couch
- * FakeRigidbody is designed to act like a rigidbody, but moves instead with translation rather than through the physics engine.
+ * FakeRigidbody is designed to act like a rigidbody, but moves through translation rather than with the physics engine.
  */
 public class FakeRigidbody : MonoBehaviour
 {
@@ -45,12 +45,27 @@ public class FakeRigidbody : MonoBehaviour
         velocity += accel * Time.fixedDeltaTime;
     }
 
+    /**
+    * Instantly increases the velocity by the given vector
+    */
+    public void AddVelocity(Vector3 vel)
+    {
+        if (Vector3.Dot(velocity, vel) < 0)
+        {
+            velocity = Vector3.ProjectOnPlane(velocity, vel.normalized);
+        }
+        velocity += vel;
+    }
+
     private void OnCollisionStay(Collision collision)
     {
         for (int i = 0; i < collision.contactCount; i++)
         {
-            velocity = Vector3.ProjectOnPlane(velocity, collision.contacts[i].normal);
-            velocity -= velocity * (1.0f - Mathf.Abs(Vector3.Dot(velocity, collision.contacts[i].normal))) * friction * Time.fixedDeltaTime;
+            if (Vector3.Dot(velocity, collision.contacts[i].normal) < 0)
+            {
+                velocity = Vector3.ProjectOnPlane(velocity, collision.contacts[i].normal);
+                velocity -= velocity * (1.0f - Mathf.Abs(Vector3.Dot(velocity, collision.contacts[i].normal))) * friction * Time.fixedDeltaTime;
+            }
         }
     }
 }

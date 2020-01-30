@@ -21,7 +21,7 @@ public class ContainingCamera : MonoBehaviour
         cam = GetComponent<Camera>();
     }
 
-    protected void Update()
+    protected void FixedUpdate()
     {
         if (ViewObjects.Length == 0) { return; }
 
@@ -42,6 +42,6 @@ public class ContainingCamera : MonoBehaviour
         outsideAmount *= OutsideFactor;
         avgPos /= ViewObjects.Length;
 
-        transform.position = Vector3.Lerp(transform.position, avgPos + Vector3.back * (DefaultDistance + DistanceIncrease * outsideAmount), moveRate * Time.deltaTime);
+        transform.position = Vector3.Lerp(transform.position, avgPos + Vector3.back * (DefaultDistance + DistanceIncrease * outsideAmount), moveRate * Time.fixedDeltaTime);
     }
 }
