@@ -26,7 +26,7 @@ public class FillHealthBar : MonoBehaviour
     	// uses the player object to get info about player health
     	// fillvalue represents how filled in the healthbar is, from 0 to 100
         float fillvalue = player.GetHealth().GetValue();
-        print("fillvalue:"+ fillvalue);
+        //print("fillvalue:"+ fillvalue);
         // if player is at less than 33% of max hp, display a different color red for now
          if (fillvalue <= slider.maxValue / 3)
          {
