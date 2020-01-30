@@ -2084,7 +2084,7 @@ ParticleSystem:
     m_Curve:
       serializedVersion: 2
       minMaxState: 0
-      scalar: 1
+      scalar: 0.5
       minScalar: 0
       maxCurve:
         serializedVersion: 2
@@ -4873,7 +4873,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!4 &2000804235089814677
 Transform:
   m_ObjectHideFlags: 0
@@ -6940,7 +6940,7 @@ ParticleSystem:
     m_Curve:
       serializedVersion: 2
       minMaxState: 0
-      scalar: 1
+      scalar: 0.5
       minScalar: 0
       maxCurve:
         serializedVersion: 2
@@ -9712,7 +9712,7 @@ SphereCollider:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 2000804235349801773}
-  m_Material: {fileID: 0}
+  m_Material: {fileID: 13400000, guid: d8637a3e797a152468ab94066c728e5e, type: 2}
   m_IsTrigger: 0
   m_Enabled: 1
   serializedVersion: 2
@@ -9737,15 +9737,18 @@ MonoBehaviour:
     m_PersistentCalls:
       m_Calls: []
   RotationRate: 10
-  MoveSpeed: 5
-  Acceleration: 3
+  MoveSpeed: 8
+  Acceleration: 5
   SideDecel: 1.5
-  AvoidAmount: 3
-  AvoidAccelLimit: 2
+  AvoidAmount: 6
+  AvoidAccelLimit: 1.5
   PatrolSpeed: 1
   PatrolRotateRate: 30
   chargeParticles: {fileID: 2000804233892562995}
   attackParticles: {fileID: 2000804235089814667}
+  AttackProjectile: {fileID: 6641631083453567850, guid: 1b5e9b6d2186b0a499598904343c6fea,
+    type: 3}
+  AttackLaunchInterval: 0.2
 --- !u!54 &1692614117
 Rigidbody:
   m_ObjectHideFlags: 0

@@ -20,6 +20,19 @@ public class AIController : Pawn
 
     public AIStateEvent StateChangeEvent; // Invoked whenever the state is changed and passes in the new state to called methods
 
+    new protected void Start()
+    {
+        base.Start();
+        if (Target == null)
+        {
+            GameObject playerSearch = GameObject.FindGameObjectWithTag("Player");
+            if (playerSearch != null)
+            {
+                Target = playerSearch.transform;
+            }
+        }
+    }
+
     new protected void Update()
     {
         base.Update();

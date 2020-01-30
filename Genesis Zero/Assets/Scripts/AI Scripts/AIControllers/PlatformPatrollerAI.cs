@@ -32,10 +32,6 @@ public class PlatformPatrollerAI : AIController
     {
         base.Start();
         faceDir = Mathf.RoundToInt(Mathf.Sign(Random.value - 0.5f));
-        if (Target == null)
-        {
-            Target = GameObject.FindGameObjectWithTag("Player").transform;
-        }
     }
 
     new protected void Update()
@@ -45,8 +41,6 @@ public class PlatformPatrollerAI : AIController
 
     protected void FixedUpdate()
     {
-        //base.Update();
-
         if (Target == null) { return; }
 
         if (state == AIState.Follow || state == AIState.Charge || state == AIState.Cooldown)

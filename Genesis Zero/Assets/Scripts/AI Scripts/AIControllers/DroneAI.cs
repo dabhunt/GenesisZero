@@ -27,6 +27,10 @@ public class DroneAI : AIController
     public ParticleSystem chargeParticles;
     public ParticleSystem attackParticles;
 
+    public GameObject AttackProjectile;
+    public float AttackLaunchInterval = 1.0f;
+    private float attackLaunchTime = 0.0f;
+
     protected void Awake()
     {
         frb = GetComponent<FakeRigidbody>();
@@ -36,29 +40,23 @@ public class DroneAI : AIController
     {
         base.Start();
         patrolDir = Mathf.RoundToInt(Mathf.Sign(Random.value - 0.5f));
-        if (Target == null)
-        {
-            Target = GameObject.FindGameObjectWithTag("Player").transform;
-        }
     }
 
-    new protected void Update()
+    protected void FixedUpdate()
     {
-        base.Update();
-
         if (Target == null) { return; }
 
         if (state == AIState.Follow || state == AIState.Charge || state == AIState.Attack || state == AIState.Cooldown)
         {
             // Rotation assumes that local up direction is forward
-            lookDir = Vector3.Slerp(lookDir, Target.position - transform.position, RotationRate * Time.deltaTime); // Rotate to face target
+            lookDir = Vector3.Slerp(lookDir, Target.position - transform.position, RotationRate * Time.fixedDeltaTime); // Rotate to face target
             targetSpeed = MoveSpeed;
             frb.Accelerate((transform.position - Target.position).normalized * Mathf.Min(GetAvoidCloseness(), AvoidAccelLimit) * Acceleration * AvoidAmount); // Acceleration to keep away from the target
         }
         else if (state == AIState.Patrol)
         {
             //For now, patrolling just moves the drone in a circle
-            lookDir = Quaternion.AngleAxis(PatrolRotateRate * patrolDir * Time.deltaTime, Vector3.forward) * lookDir;
+            lookDir = Quaternion.AngleAxis(PatrolRotateRate * patrolDir * Time.fixedDeltaTime, Vector3.forward) * lookDir;
             targetSpeed = PatrolSpeed;
         }
         else if (state == AIState.Idle)
@@ -69,7 +67,6 @@ public class DroneAI : AIController
         frb.Accelerate(transform.up * (targetSpeed - frb.GetVelocity().magnitude * Mathf.Clamp01(Vector3.Dot(transform.up, frb.GetVelocity().normalized))) * Acceleration); // Accelerate toward the target
         frb.Accelerate(-transform.right * frb.GetVelocity().magnitude * Vector3.Dot(transform.right, frb.GetVelocity().normalized) * SideDecel); // Deceleration to prevent sideways movement
         transform.rotation = Quaternion.LookRotation(Vector3.forward, lookDir); // Actual rotation
-        //transform.Translate(velocity * Time.deltaTime, Space.World); // Actual translation based on velocity
 
         // Particles to show charge and attack states (for testing)
         if (chargeParticles != null)
@@ -101,5 +98,23 @@ public class DroneAI : AIController
                 attackParticles.Stop();
             }
         }
+
+        if (state == AIState.Attack)
+        {
+            if (attackLaunchTime <= 0)
+            {
+                attackLaunchTime = AttackLaunchInterval;
+                if (AttackProjectile != null)
+                {
+                    Instantiate(AttackProjectile, transform.position, transform.rotation);
+                }
+            }
+        }
+        else
+        {
+            attackLaunchTime = 0.0f;
+        }
+
+        attackLaunchTime = Mathf.Max(0.0f, attackLaunchTime - Time.fixedDeltaTime);
     }
 }
