@@ -155,7 +155,7 @@ public class Hitbox : MonoBehaviour
 
                 --MaxHits;
             }
-            else if (Intangible == false && other != GetComponent<Collider>() && !siblingcolliders)
+            else if (Intangible == false && other != GetComponent<Collider>() && !(other.GetComponentInParent<Hurtbox>() || other.GetComponent<Hurtbox>()) && !siblingcolliders)
             {
                 state = State.Deactive;
             }

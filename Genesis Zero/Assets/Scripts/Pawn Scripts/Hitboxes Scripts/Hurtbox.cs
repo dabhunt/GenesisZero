@@ -67,7 +67,7 @@ public class Hurtbox : MonoBehaviour
 
     private void OnCollisionEnter(Collision collision)
     {
-        Debug.Log("Colliding");
+        //Debug.Log("Colliding");
     }
 
     [ExecuteInEditMode]
