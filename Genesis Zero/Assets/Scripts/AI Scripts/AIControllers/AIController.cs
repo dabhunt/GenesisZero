@@ -132,11 +132,11 @@ public class AIController : Pawn
         if (BehaviorProperties != null)
         {
             Gizmos.color = Color.cyan;
-            Gizmos.DrawWireSphere(transform.position, BehaviorProperties.DetectRadius);
+            GizmosExtra.DrawWireCircle(transform.position, Vector3.forward, BehaviorProperties.DetectRadius);
             Gizmos.color = Color.yellow;
-            Gizmos.DrawWireSphere(transform.position, BehaviorProperties.AvoidRadius);
+            GizmosExtra.DrawWireCircle(transform.position, Vector3.forward, BehaviorProperties.AvoidRadius);
             Gizmos.color = Color.red;
-            Gizmos.DrawWireSphere(transform.position, BehaviorProperties.AttackRadius);
+            GizmosExtra.DrawWireCircle(transform.position, Vector3.forward, BehaviorProperties.AttackRadius);
         }
     }
 }
