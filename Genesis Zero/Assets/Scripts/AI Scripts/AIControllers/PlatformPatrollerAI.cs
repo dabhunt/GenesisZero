@@ -2,12 +2,15 @@
 using System.Collections.Generic;
 using UnityEngine;
 
+[RequireComponent(typeof(FakeRigidbody))]
 /**
  * Justin Couch
  * PlatformPatrollerAI is the class representing the platform patroller enemy type.
  */
 public class PlatformPatrollerAI : AIController
 {
+    protected FakeRigidbody frb;
+
     public float MoveSpeed = 10f; // Maximum movement speed
     public float LungeSpeed = 20f; // Maximum movement speed
     private float targetSpeed = 0.0f;
@@ -27,6 +30,7 @@ public class PlatformPatrollerAI : AIController
 
     protected void Awake()
     {
+        frb = GetComponent<FakeRigidbody>();
         mainCollider = GetComponent<BoxCollider>();
     }
 
@@ -84,15 +88,10 @@ public class PlatformPatrollerAI : AIController
             targetSpeed = 0.0f;
         }
 
-        Accelerate(Vector3.right * (targetSpeed * faceDir - velocity.x) * Acceleration); // Accelerate toward the target
-        transform.Translate(velocity * Time.fixedDeltaTime, Space.World); // Actual translation based on velocity
+        frb.Accelerate(Vector3.right * (targetSpeed * faceDir - velocity.x) * Acceleration); // Accelerate toward the target
+        //transform.Translate(velocity * Time.fixedDeltaTime, Space.World); // Actual translation based on velocity
 
         transform.rotation = Quaternion.LookRotation(Vector3.forward * faceDir, Vector3.up);
-
-        /*while (GroundCollision())
-        {
-            transform.Translate(Vector3.up * 0.01f);
-        }*/
 
         // Particles to show charge and attack states (for testing)
         if (chargeParticles != null)
@@ -124,21 +123,5 @@ public class PlatformPatrollerAI : AIController
                 attackParticles.Stop();
             }
         }
-    }
-
-    /**
-     * Accelerates the enemy in the given direction
-     */
-    public void Accelerate(Vector3 accel)
-    {
-        velocity += accel * Time.fixedDeltaTime;
-    }
-
-    /**
-     * Basic ground collision method for prototyping
-     */
-    protected bool GroundCollision()
-    {
-        return Physics.OverlapBox(transform.position, mainCollider.size * 0.5f, transform.rotation, GroundMask).Length > 0;
     }
 }

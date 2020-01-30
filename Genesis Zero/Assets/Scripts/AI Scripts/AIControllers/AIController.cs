@@ -17,7 +17,7 @@ public class AIController : Pawn
 
     protected float stateTime = 0.0f; // Duration of current state
 
-    protected void Update()
+    new protected void Update()
     {
         base.Update();
 

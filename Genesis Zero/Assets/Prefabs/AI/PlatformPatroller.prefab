@@ -4868,8 +4868,10 @@ GameObject:
   - component: {fileID: 751653433366621651}
   - component: {fileID: 751653433366621648}
   - component: {fileID: 7641278896583451245}
+  - component: {fileID: 4341553955257661781}
   - component: {fileID: 7599204422373525046}
   - component: {fileID: 1743832014}
+  - component: {fileID: 1385165931}
   m_Layer: 0
   m_Name: PlatformPatroller
   m_TagString: Untagged
@@ -4950,9 +4952,23 @@ BoxCollider:
   m_GameObject: {fileID: 751653433366621662}
   m_Material: {fileID: 13400000, guid: d8637a3e797a152468ab94066c728e5e, type: 2}
   m_IsTrigger: 0
-  m_Enabled: 1
+  m_Enabled: 0
   serializedVersion: 2
   m_Size: {x: 1, y: 2, z: 1}
+  m_Center: {x: 0, y: 0, z: 0}
+--- !u!136 &4341553955257661781
+CapsuleCollider:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 751653433366621662}
+  m_Material: {fileID: 13400000, guid: d8637a3e797a152468ab94066c728e5e, type: 2}
+  m_IsTrigger: 0
+  m_Enabled: 1
+  m_Radius: 0.5
+  m_Height: 2
+  m_Direction: 1
   m_Center: {x: 0, y: 0, z: 0}
 --- !u!114 &7599204422373525046
 MonoBehaviour:
@@ -4989,13 +5005,28 @@ Rigidbody:
   m_GameObject: {fileID: 751653433366621662}
   serializedVersion: 2
   m_Mass: 1
-  m_Drag: 0
+  m_Drag: 1
   m_AngularDrag: 0
   m_UseGravity: 0
   m_IsKinematic: 0
   m_Interpolate: 0
   m_Constraints: 120
   m_CollisionDetection: 0
+--- !u!114 &1385165931
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 751653433366621662}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 7dbd6c07a0f75de4d9ae0fcd40bb9aac, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  GravityFactor: 1.5
+  friction: 2
+  drag: 0.1
 --- !u!1 &751653434026467023
 GameObject:
   m_ObjectHideFlags: 0

@@ -10,7 +10,7 @@ public static class GizmosExtra
 {
     public static void DrawWireCircle(Vector3 position, Vector3 normalAxis, float radius)
     {
-        int segments = 30;
+        int segments = Mathf.Max(3, Mathf.CeilToInt(Mathf.Pow(radius, 0.5f)) * 10); // Dynamically adjust detail based on radius
         float segmentAngle = 360f / segments;
         Quaternion rot = Quaternion.AngleAxis(0.0f, normalAxis);
         Quaternion rotPrev = rot;

@@ -25,13 +25,13 @@ public class DroneAI : AIController
     public ParticleSystem chargeParticles;
     public ParticleSystem attackParticles;
 
-    protected void Start()
+    new protected void Start()
     {
         base.Start();
         patrolDir = Mathf.RoundToInt(Mathf.Sign(Random.value - 0.5f));
     }
 
-    protected void Update()
+    new protected void Update()
     {
         base.Update();
 
