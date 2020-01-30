@@ -13,11 +13,15 @@ public class FakeRigidbody : MonoBehaviour
     private Rigidbody rb;
 
     private Vector3 velocity = Vector3.zero;
+
+    /**
+     * Returns the current velocity
+     */
     public Vector3 GetVelocity() { return velocity; }
 
-    public float GravityFactor = 1.0f;
-    public float friction = 1.0f;
-    public float drag = 0.0f;
+    public float GravityFactor = 1.0f; // Multiplier for gravity in the physics project settings
+    public float friction = 1.0f; // How much to slow down when touching a surface
+    public float drag = 0.0f; // How much to slow down at all times
 
     private void Awake()
     {
@@ -57,6 +61,9 @@ public class FakeRigidbody : MonoBehaviour
         velocity += vel;
     }
 
+    /**
+     * Called whenever touching a surface
+     */
     private void OnCollisionStay(Collision collision)
     {
         for (int i = 0; i < collision.contactCount; i++)

@@ -18,6 +18,7 @@ public class PlatformPatrollerAI : AIController
     public float Acceleration = 5.0f; // Rate of acceleration
 
     public float PatrolSpeed = 5.0f; // Movement speed while patrolling
+    public float PatrolSwitchRate = 1.0f; // Rate at which the enemy switches directions while patrolling
     private int faceDir = 1; // Direction the enemy is facing: 1 = right, -1 = left
 
     public ParticleSystem chargeParticles;
@@ -55,6 +56,7 @@ public class PlatformPatrollerAI : AIController
         else if (state == AIState.Patrol)
         {
             targetSpeed = PatrolSpeed;
+            faceDir = Mathf.RoundToInt(Mathf.Sign(Mathf.Sin(Time.time * PatrolSwitchRate)));
         }
         else if (state == AIState.Idle)
         {
