@@ -155,6 +155,10 @@ public class Hitbox : MonoBehaviour
                     {
                         emit.GetComponent<DamageNumber>().SetColor(Color.red);
                     }
+                    else if(special && bp.damagemultipler < 1)
+                    {
+                        emit.GetComponent<DamageNumber>().SetColor(new Color(.25f,.25f,.25f));
+                    }
                 }
 
                 p.TakeDamage(finaldamage);
