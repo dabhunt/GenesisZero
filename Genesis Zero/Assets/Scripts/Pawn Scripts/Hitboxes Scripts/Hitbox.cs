@@ -117,9 +117,13 @@ public class Hitbox : MonoBehaviour
             {
                 //Debug.Log((other != collider) + " " + maxhits + " " + (other.GetComponentInParent<Hurtbox>() || other.GetComponent<Hurtbox>()) + " " + CanDamage(other) + " " + other.GetComponentInParent<Pawn>());
             }
-
-            bool siblingcolliders = hittargets.Contains(other.transform.root.gameObject);
-            if (other != GetComponent<Collider>() && MaxHits > 0 && (other.GetComponentInParent<Hurtbox>() || other.GetComponent<Hurtbox>()) && CanDamage(other) && other.GetComponentInParent<Pawn>() && !siblingcolliders)
+            bool siblingcolliders = false;
+            try
+            {
+                siblingcolliders = hittargets.Contains(other.transform.root.gameObject);
+            }
+            catch { }
+            if (other != GetComponent<Collider>() && MaxHits > 0 && (other.GetComponentInParent<Hurtbox>() || other.GetComponent<Hurtbox>()) && other.GetComponent<BodyPart>() && CanDamage(other) && other.GetComponentInParent<Pawn>() && !siblingcolliders)
             {
                 float finaldamage = Damage;
                 Pawn p = other.GetComponentInParent<Pawn>();
