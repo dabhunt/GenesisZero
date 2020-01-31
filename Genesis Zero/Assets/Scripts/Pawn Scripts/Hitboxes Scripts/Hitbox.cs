@@ -127,9 +127,9 @@ public class Hitbox : MonoBehaviour
             {
                 float finaldamage = Damage;
                 Pawn p = other.GetComponentInParent<Pawn>();
-
                 BodyPart bp = other.GetComponent<BodyPart>();
-                if (bp && bp.SpecialPart)
+                bool special = (bp && bp.SpecialPart);
+                if (special)
                 {
                     Debug.Log("Special hit " + other.transform.root.name);
                     finaldamage *= bp.damagemultipler;
@@ -151,6 +151,10 @@ public class Hitbox : MonoBehaviour
                 {
                     GameObject emit = (GameObject)Instantiate(DamageNumberObject, new Vector3(transform.position.x, transform.position.y + 1, transform.position.z - .5f), Quaternion.identity);
                     emit.GetComponent<DamageNumber>().SetNumber(finaldamage);
+                    if (special && bp.damagemultipler > 1)
+                    {
+                        emit.GetComponent<DamageNumber>().SetColor(Color.red);
+                    }
                 }
 
                 p.TakeDamage(finaldamage);
