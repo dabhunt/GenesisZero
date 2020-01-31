@@ -8,7 +8,6 @@ public class FillHealthBar : MonoBehaviour
 	public Slider slider;
 	public Pawn player;
     public Color fillColor;
-    public Color backFillColor;
     public Color lowHPcolor;
 
     void Awake()
@@ -33,7 +32,7 @@ public class FillHealthBar : MonoBehaviour
         // if player is at less than 33% of max hp, display a different color red for now
          if (fillvalue <= slider.maxValue / 3)
          {
-         	fillImage.color = Color.red;
+         	fillImage.color = lowHPcolor;
          }
          // if player is at more than 33% of max hp, display a different color  green for now
          else if (fillvalue > slider.maxValue / 3 )
