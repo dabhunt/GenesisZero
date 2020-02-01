@@ -38,7 +38,7 @@ public class Pawn : MonoBehaviour
     /**
      * The function that handles damage taken. Does not handle things like burning and knockback
      */
-    public void TakeDamage(float amount)
+    public float TakeDamage(float amount)
     {
         int chance = Random.Range(0, 100);
         if (chance > GetDodgeChance().GetValue() * 100) // Dodging will ignore damage
@@ -69,11 +69,13 @@ public class Pawn : MonoBehaviour
 
             // Damage
             GetHealth().AddValue(-finaldamage);
+            return finaldamage;
             //Debug.Log("Health Left:"+GetHealth().GetValue());
         }
         else
         {
             Debug.Log(transform.root.name + " Dodged!");
+            return 0;
             //Dodge Effect
         }
     }
@@ -105,11 +107,6 @@ public class Pawn : MonoBehaviour
             GetHealth().AddValue(-burndamage * Time.deltaTime);
             burntime -= Time.deltaTime;
         }
-        if (knockbackforce > 0)
-        {
-            Translate(knockbackvector.normalized * knockbackforce); // Move the pawn a certain distance
-            knockbackforce *= Mathf.Clamp(8f / GetWeight().GetValue(), 0, .95f);
-        }
         if (IsSlowed())
         {
             speed.AddBonus(-GetSpeed().GetMaxValue() * GetSlowedStatus().GetFactor(), Time.deltaTime);
@@ -122,8 +119,17 @@ public class Pawn : MonoBehaviour
         }
     }
 
-    // ------------------------- ACCESS FUNCTIONS ------------------------------//
-    public Statistic GetHealth()
+    protected void FixedUpdate()
+    {
+        if (knockbackforce > 0)
+        {
+            Translate(knockbackvector.normalized * knockbackforce); // Move the pawn a certain distance
+            knockbackforce *= Mathf.Clamp(8f / GetWeight().GetValue(), 0, .95f);
+        }
+    }
+
+        // ------------------------- ACCESS FUNCTIONS ------------------------------//
+        public Statistic GetHealth()
     {
         return health;
     }

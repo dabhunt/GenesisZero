@@ -20,6 +20,11 @@ public class Player : Pawn
         base.Update();
     }
 
+    new void FixedUpdate()
+    {
+        base.FixedUpdate();
+    }
+
     new public void TakeDamage(float amount)
     {
         //Add anything if there is class specific additions to taking damage
@@ -29,5 +34,10 @@ public class Player : Pawn
     public bool HasSkill(string name)
     {
         return SkillManager.HasSkill(name);
+    }
+
+    public SkillManager GetSkillManager()
+    {
+        return SkillManager;
     }
 }

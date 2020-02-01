@@ -11,6 +11,8 @@ public class SkillManager
     public SkillManager(Player p)
     {
         player = p;
+        Skills = new Dictionary<string, int>();
+        skillobjects = new List<SkillObject>();
     }
 
     /**

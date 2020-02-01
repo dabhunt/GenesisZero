@@ -14,6 +14,7 @@ public class Hitbox : MonoBehaviour
     State state;
 
     public float Damage;        // How much damage the hitbox can deal
+    public bool Critical;
 
     public bool HurtsAllies;    // Determines if this hitbox can harm the allies layer
     public bool HurtsEnemies;   // Determines if this hotbox can harm the enemies layer
@@ -141,27 +142,27 @@ public class Hitbox : MonoBehaviour
 
                 if (Source != null)
                 {
-                    if (Random.Range(0, 100) > Source.GetCritChance().GetValue() * 100)
+                    if (Critical)
                     {
                         finaldamage *= Source.GetCritDamage().GetValue();
                     }
                 }
 
+                float damagetaken = p.TakeDamage(finaldamage);
+
                 if (DamageNumberObject)
                 {
                     GameObject emit = (GameObject)Instantiate(DamageNumberObject, new Vector3(transform.position.x, transform.position.y + 1, transform.position.z - .5f), Quaternion.identity);
-                    emit.GetComponent<DamageNumber>().SetNumber(finaldamage);
+                    emit.GetComponent<DamageNumber>().SetNumber(damagetaken);
                     if (special && bp.damagemultipler > 1)
                     {
                         emit.GetComponent<DamageNumber>().SetColor(Color.red);
                     }
-                    else if(special && bp.damagemultipler < 1)
+                    else if (special && bp.damagemultipler < 1)
                     {
-                        emit.GetComponent<DamageNumber>().SetColor(new Color(.25f,.25f,.25f));
+                        emit.GetComponent<DamageNumber>().SetColor(new Color(.25f, .25f, .25f));
                     }
                 }
-
-                p.TakeDamage(finaldamage);
 
                 hittargets.Add(other.transform.root.gameObject);
 
@@ -183,12 +184,18 @@ public class Hitbox : MonoBehaviour
 
     /**
      * IMPORTANT FUNCTION, if hitbox is spawned from instantiate, this function should be called to initalize the hitbox with a source
-     * If no source is set, offensive stats like critchance will not be applied to the hitbox.
+     * If no source is set, offensive stats like critchance will not be applied to the hitbox. Returns true, if the bitbox crits
      */
-    public void InitializeHitbox(float damage, Pawn source)
+    public bool InitializeHitbox(float damage, Pawn source)
     {
         this.Damage = damage;
         this.Source = source;
+        if (Random.Range(0, 100) > Source.GetCritChance().GetValue() * 100)
+        {
+            Critical = true;
+            return true;
+        }
+        return false;
     }
 
     public bool CanDamage(Collider col)

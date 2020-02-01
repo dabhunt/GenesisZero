@@ -88,10 +88,6 @@ public class Statistic
         float diff = value - maxamount;
         maxamount = value;
         AddValue(diff);
-        if (maxamount < currentamount)
-        {
-            currentamount = maxamount;
-        }
     }
 
     /**
@@ -118,6 +114,7 @@ public class Statistic
 
         }
         Vector2 r = FillDifference(currentamount, GetBaseValue(), amount);
+        //Debug.Log(currentamount+" -> "+r.x);
         currentamount = r.x;
     }
 
@@ -170,6 +167,11 @@ public class Statistic
                 result.x = value + fill;
                 result.y = 0;
             }
+        }
+        else
+        {
+            result.x = value;
+            result.y = 0;
         }
 
 
