@@ -8,9 +8,7 @@ public class ScriptingExample : MonoBehaviour
     CinemachineVirtualCamera vcam;
     CinemachineFreeLook freelook;
 
-        public float camTimer = 5.0f;
-
-        void Start()
+    void Start()
     {
         // Create a Cinemachine brain on the main camera
         var brain = GameObject.Find("Main Camera").AddComponent<CinemachineBrain>();
@@ -47,11 +45,10 @@ public class ScriptingExample : MonoBehaviour
     }
 
     float lastSwapTime = 0;
-
-        void Update()
+    void Update()
     {
         // Switch cameras from time to time to show blending
-        if (Time.realtimeSinceStartup - lastSwapTime > camTimer)
+        if (Time.realtimeSinceStartup - lastSwapTime > 5)
         {
             freelook.enabled = !freelook.enabled;
             lastSwapTime = Time.realtimeSinceStartup;
