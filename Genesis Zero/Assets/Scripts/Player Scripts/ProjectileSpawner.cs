@@ -36,8 +36,9 @@ public class ProjectileSpawner : MonoBehaviour
     {
         if (fireAction > 0 && Time.time >= timeToFire)
         {
-            timeToFire = Time.time + 1 / fireRate; 
-            Instantiate(projectile, firePoint.transform.position, firePoint.transform.rotation);
+            timeToFire = Time.time + 1 / fireRate;
+            Vector3 spawnpoint = new Vector3(firePoint.transform.position.x, firePoint.transform.position.y, 0);
+            Instantiate(projectile, spawnpoint, firePoint.transform.rotation);
         }
     }
 }
