@@ -8,6 +8,8 @@ public class SkillManager
 
     private List<SkillObject> skillobjects;
     private Player player;
+    private int skillamount;
+
     public SkillManager(Player p)
     {
         player = p;
@@ -32,6 +34,7 @@ public class SkillManager
         }
 
         AddSkillStats(skill, true);
+        skillamount++;
     }
 
     /**
@@ -47,6 +50,7 @@ public class SkillManager
                 Skills.Remove(skill.name);
             }
             AddSkillStats(skill, false);
+            skillamount--;
         }
     }
 
@@ -101,5 +105,18 @@ public class SkillManager
         return skill;
     }
 
+    public List<SkillObject> GetSkillObjects()
+    {
+        return skillobjects;
+    }
+
+    public int GetSkillStack(string name)
+    {
+        return Skills[name];
+    }
+
+    public int GetAmount() {
+        return skillamount;
+    }
 
 }
