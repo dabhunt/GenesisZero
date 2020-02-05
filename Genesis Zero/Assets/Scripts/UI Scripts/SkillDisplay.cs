@@ -16,6 +16,9 @@ public class SkillDisplay : MonoBehaviour
     public SkillManager SkillManager;
     private List<GameObject> skilldisplay;
     public GameObject UIElement;
+    [Space]
+    public Vector2 Ability1Position;
+    public Vector2 Ability2Position;
 
     public int skillnumber;
     // Start is called before the first frame update
@@ -34,9 +37,10 @@ public class SkillDisplay : MonoBehaviour
     void Update()
     {
         //SkillManager = Player.GetSkillManager();
-        if (skillnumber != SkillManager.GetAmount())
+        if (skillnumber != SkillManager.GetAmount() || SkillManager.GetUpdated() == true)
         {
             skillnumber = SkillManager.GetAmount();
+            SkillManager.SetUpdated(false);
             UpdateDisplay();
         }
     }
@@ -70,5 +74,8 @@ public class SkillDisplay : MonoBehaviour
     {
         Gizmos.color = Color.gray;
         Gizmos.DrawWireSphere(transform.position + (Vector3)StartPoint, .1f);
+        Gizmos.color = Color.yellow;
+        Gizmos.DrawWireSphere(transform.position + (Vector3)Ability1Position, .3f);
+        Gizmos.DrawWireSphere(transform.position + (Vector3)Ability2Position, .3f);
     }
 }

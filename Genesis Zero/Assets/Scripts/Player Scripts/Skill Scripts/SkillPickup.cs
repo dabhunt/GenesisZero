@@ -34,10 +34,31 @@ public class SkillPickup : MonoBehaviour
 
             if (skill != null && added == false)
             {
-                p.GetSkillManager().AddSkill(skill);
-                added = true;
+                //Check if it's an ability, cant have more than one
+                if (skill.IsAbility && p.GetSkillManager().HasSkill(skill.name))
+                {
+                    // Pop-up prompt UI stuff for when there are dupicates
+                }
+                else
+                {
+                    // There are more than two abilities and a new ability is here
+                    if (skill.IsAbility && !p.GetSkillManager().HasSkill(skill.name) && p.GetSkillManager().GetAbilityAmount() >= 2)
+                    {
+                        // Prompt choice to swap out with current abilities
+                    }
+                    else
+                    {
+                        p.GetSkillManager().AddSkill(skill);
+                        added = true;
+                    }
+                }
             }
-            Destroy(gameObject);
+
+            if (added == true)
+            {
+                Destroy(gameObject);
+            }
+
         }
     }
 }

@@ -9,6 +9,11 @@ public class SkillManager
     private List<SkillObject> skillobjects;
     private Player player;
     private int skillamount;
+    private int abilityamount;
+    private string ability1 = "";
+    private string ability2 = "";
+
+    private bool updated;
 
     public SkillManager(Player p)
     {
@@ -31,6 +36,10 @@ public class SkillManager
         {
             skillobjects.Add(skill);
             Skills.Add(skill.name, 1);
+            if (skill.IsAbility)
+            {
+                abilityamount++;
+            }
         }
         AddSkillStats(skill, true);
         skillamount++;
@@ -47,6 +56,10 @@ public class SkillManager
             if (Skills[skill.name] <= 0)
             {
                 Skills.Remove(skill.name);
+                if (skill.IsAbility)
+                {
+                    abilityamount--;
+                }
             }
             AddSkillStats(skill, false);
             skillamount--;
@@ -79,6 +92,7 @@ public class SkillManager
      */
     public bool HasSkill(string name)
     {
+        bool hasskill = Skills.ContainsKey(name);
         return Skills.ContainsKey(name);
     }
 
@@ -120,8 +134,76 @@ public class SkillManager
         return 0;
     }
 
-    public int GetAmount() {
+    public int GetAmount()
+    {
         return skillamount;
     }
 
+    public int GetAbilityAmount()
+    {
+        return abilityamount;
+    }
+
+    public void SetAbility1(string name)
+    {
+        ability1 = name;
+        updated = true;
+    }
+
+    /**
+     * Returns the Skillobject for the ability in slot 1, if it doesn't exists, it reutrns null
+     */
+    public SkillObject GetAbility1()
+    {
+        foreach (SkillObject so in skillobjects)
+        {
+            if (so.name == ability1)
+            {
+                return so;
+            }
+        }
+        return null;
+    }
+
+    public void SetAbility2(string name)
+    {
+        ability2 = name;
+        updated = true;
+    }
+
+    /**
+     * Returns the Skillobject for the ability in slot 2, if it doesn't exists, it reutrns null
+     */
+    public SkillObject GetAbility2()
+    {
+        foreach (SkillObject so in skillobjects)
+        {
+            if (so.name == ability2)
+            {
+                return so;
+            }
+        }
+        return null;
+    }
+
+    /**
+     * Swaps the abilties.
+     */
+    public void SwapCurrentAbilities()
+    {
+        string temp = ability1;
+        ability2 = ability1;
+        ability1 = temp;
+        updated = true;
+    }
+
+    public void SetUpdated(bool boolean)
+    {
+        updated = boolean;
+    }
+
+    public bool GetUpdated()
+    {
+        return updated;
+    }
 }
