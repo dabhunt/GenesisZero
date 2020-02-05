@@ -25,14 +25,13 @@ public class SkillManager
     {
         if (Skills.ContainsKey(skill.name)) // Adds to the stack of skills
         {
-            Skills[skill.name] += 1;
+            Skills[skill.name] = Skills[skill.name] + 1;
         }
         else
         {
             skillobjects.Add(skill);
             Skills.Add(skill.name, 1);
         }
-
         AddSkillStats(skill, true);
         skillamount++;
     }
@@ -44,7 +43,7 @@ public class SkillManager
     {
         if (Skills.ContainsKey(skill.name)) // Removes the skill from the dictionary
         {
-            Skills[skill.name] -= 1;
+            Skills[skill.name] = Skills[skill.name] - 1;
             if (Skills[skill.name] <= 0)
             {
                 Skills.Remove(skill.name);
@@ -112,7 +111,13 @@ public class SkillManager
 
     public int GetSkillStack(string name)
     {
-        return Skills[name];
+        if (Skills.ContainsKey(name))
+        {
+            int num = Skills[name];
+            //Debug.Log(skillobjects.Count);
+            return num;
+        }
+        return 0;
     }
 
     public int GetAmount() {

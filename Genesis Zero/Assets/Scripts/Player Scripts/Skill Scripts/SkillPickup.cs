@@ -6,6 +6,7 @@ public class SkillPickup : MonoBehaviour
 {
     [Header("Mod or Ability")]
     public SkillObject skill;
+    private bool added;
     // Start is called before the first frame update
     void Start()
     {
@@ -31,9 +32,10 @@ public class SkillPickup : MonoBehaviour
                 p = other.GetComponentInParent<Player>();
             }
 
-            if (skill != null)
+            if (skill != null && added == false)
             {
                 p.GetSkillManager().AddSkill(skill);
+                added = true;
             }
             Destroy(gameObject);
         }

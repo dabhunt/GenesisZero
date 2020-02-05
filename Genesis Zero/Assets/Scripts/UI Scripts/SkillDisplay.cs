@@ -62,6 +62,7 @@ public class SkillDisplay : MonoBehaviour
             instance.transform.localScale = new Vector3(1,1,1);
             instance.GetComponent<SkillUIElement>().SetIcon(skills[i].Icon);
             instance.GetComponent<SkillUIElement>().SetStack(SkillManager.GetSkillStack(skills[i].name));
+            skilldisplay.Add(instance);
         }
     }
 
