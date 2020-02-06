@@ -7,6 +7,8 @@ public class SkillPickup : MonoBehaviour
     [Header("Mod or Ability")]
     public SkillObject skill;
     private bool added;
+    private bool isMod;
+    private GameObject target;
     // Start is called before the first frame update
     void Start()
     {
@@ -18,12 +20,26 @@ public class SkillPickup : MonoBehaviour
         {
             GetComponent<SimpleTooltip>().infoLeft = skill.Description;
         }
+        isMod = skill.IsAbility ? false : true;
+        target = GameObject.FindGameObjectWithTag("Player");
     }
 
     // Update is called once per frame
     void Update()
     {
         
+    }
+
+    private void FixedUpdate()
+    {
+        // Force pull for pickup
+        float distance = Vector2.Distance(transform.position, target.transform.position);
+        if (isMod && distance < 4)
+        {
+            Vector3 direction = target.transform.position - transform.position;
+            direction.y += 1;
+            GetComponent<Rigidbody>().AddForce((direction) * (1 - (distance / 4)) / 2, ForceMode.Impulse);
+        }
     }
 
     private void OnTriggerEnter(Collider other)
