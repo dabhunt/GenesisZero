@@ -39,6 +39,14 @@ public class SkillManager
             if (skill.IsAbility)
             {
                 abilityamount++;
+                if (ability1 == "")
+                {
+                    SetAbility1(skill.name);
+                }
+                else if (ability2 == "")
+                {
+                    SetAbility2(skill.name);
+                }
             }
         }
         AddSkillStats(skill, true);

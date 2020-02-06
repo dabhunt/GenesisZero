@@ -14,6 +14,10 @@ public class SkillPickup : MonoBehaviour
         {
             // Add default skill
         }
+        if (GetComponent<SimpleTooltip>())
+        {
+            GetComponent<SimpleTooltip>().infoLeft = skill.Description;
+        }
     }
 
     // Update is called once per frame

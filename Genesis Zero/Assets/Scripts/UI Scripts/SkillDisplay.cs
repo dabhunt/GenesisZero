@@ -66,7 +66,27 @@ public class SkillDisplay : MonoBehaviour
             instance.transform.localScale = new Vector3(1,1,1);
             instance.GetComponent<SkillUIElement>().SetIcon(skills[i].Icon);
             instance.GetComponent<SkillUIElement>().SetStack(SkillManager.GetSkillStack(skills[i].name));
+            instance.GetComponent<SimpleTooltip>().infoLeft = skills[i].Description;
             skilldisplay.Add(instance);
+
+            if (skills[i].IsAbility && skills[i].name == SkillManager.GetAbility1().name)
+            {
+                GameObject abil1 = (GameObject)Instantiate(UIElement, (Vector3)transform.position + (Vector3)Ability1Position, Quaternion.identity);
+                abil1.transform.parent = transform;
+                abil1.transform.localScale = new Vector3(1, 1, 1);
+                abil1.GetComponent<SkillUIElement>().SetIcon(skills[i].Icon);
+                abil1.GetComponent<SimpleTooltip>().infoLeft = skills[i].Description;
+                skilldisplay.Add(abil1);
+            }
+            else if (skills[i].IsAbility && skills[i].name == SkillManager.GetAbility2().name)
+            {
+                GameObject abil2 = (GameObject)Instantiate(UIElement, (Vector3)transform.position + (Vector3)Ability2Position, Quaternion.identity);
+                abil2.transform.parent = transform;
+                abil2.transform.localScale = new Vector3(1, 1, 1);
+                abil2.GetComponent<SkillUIElement>().SetIcon(skills[i].Icon);
+                abil2.GetComponent<SimpleTooltip>().infoLeft = skills[i].Description;
+                skilldisplay.Add(abil2);
+            }
         }
     }
 
