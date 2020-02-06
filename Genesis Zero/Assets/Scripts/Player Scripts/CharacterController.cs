@@ -13,9 +13,9 @@ public class CharacterController : MonoBehaviour
     [Header("Movement")]
     public float acceleration = 20f;
     public float jumpStrength = 6f;
+    public float doubleJumpStrength = 3f;
     public float distToGround = 0.5f; //dist from body origin to ground
-    public float distToCeiling = 0.5f;
-    public float bodyRadius = 0.59f; //radius of the spherecast for IsGrounded
+    public float bodyRadius = 0.5f; //radius of the spherecast for IsGrounded
     public LayerMask ground;
 
     [Header("Physics")]
@@ -39,7 +39,7 @@ public class CharacterController : MonoBehaviour
 
     private float vertVel;
     private float currentSpeed = 0;
-
+    private bool canDoubleJump = true;
     private void Awake()
     {
         rb = GetComponent<Rigidbody>();
@@ -55,7 +55,6 @@ public class CharacterController : MonoBehaviour
 
     private void FixedUpdate()
     {
-        ApplyDownForce();
         Aim();
         Move();
     }
@@ -76,6 +75,19 @@ public class CharacterController : MonoBehaviour
      */
     private void Move()
     {
+        if (!IsGrounded())
+        {
+            if (rb.velocity.y == 0)//if it's jumping and the velocity == 0 means it got stuck
+                vertVel = 0;
+            //if character is not moving upwards anymore reset vertVel so it can start falling
+            vertVel -= gravity * Time.fixedDeltaTime;
+            vertVel = Mathf.Min(vertVel, terminalVel);//lock falling speed at terminal velocity
+        }
+        else
+        {
+            vertVel = Mathf.Max(vertVel, 0);
+        }
+
         //Debug.Log(movementInput);
         if (movementInput.x != 0)
         {
@@ -108,7 +120,12 @@ public class CharacterController : MonoBehaviour
     public bool IsGrounded()
     {
         RaycastHit hit;
-        return Physics.SphereCast(transform.position, bodyRadius, Vector3.down, out hit, distToGround, ground, QueryTriggerInteraction.UseGlobal);
+        bool isGrounded = Physics.SphereCast(transform.position, bodyRadius, Vector3.down, out hit, distToGround, ground, QueryTriggerInteraction.UseGlobal);
+        if (isGrounded != false && hit.collider.isTrigger)
+            isGrounded = false;
+        if (isGrounded && canDoubleJump != true)
+            canDoubleJump = true;
+        return isGrounded;
     }
 
     /* This function is called with an event
@@ -121,28 +138,13 @@ public class CharacterController : MonoBehaviour
         {
             vertVel = jumpStrength;
         }
-    }
-
-    /* This function deals with the character's downwards force(gravity)
-     * If the player's not grounded, apply downward force. And zero it if player is grounded
-     */
-    private void ApplyDownForce()
-    {
-        if (!IsGrounded())
+        Debug.Log(canDoubleJump);
+        if (!IsGrounded() && canDoubleJump)
         {
-            if (rb.velocity.y == 0)//if it's jumping and the velocity == 0 means it got stuck
-                vertVel = 0;
-            //if character is not moving upwards anymore reset vertVel so it can start falling
-            vertVel -= gravity * Time.fixedDeltaTime;
-            vertVel = Mathf.Min(vertVel, terminalVel);//lock falling speed at terminal velocity
-        }
-        else
-        {
-            if (vertVel < 0)
-                vertVel = 0;
+            vertVel = jumpStrength;
+            canDoubleJump = false;
         }
     }
-
     /* This function control character aiming
      * Crosshair is moved using mouse/rightStick
      * Gun rotates to point at crosshair
@@ -156,5 +158,15 @@ public class CharacterController : MonoBehaviour
         float tmpAngle = Mathf.Atan2(aimVec.y, aimVec.x) * Mathf.Rad2Deg;
         if (tmpAngle != 0)
             gun.transform.localRotation = Quaternion.Euler(0, 0, tmpAngle);
+    }
+
+    /* This function checks if the model is blocked
+     * in a certain direction
+     */
+    private bool IsBlocked(Vector3 dir)
+    {
+        bool isBlock = false;
+
+        return isBlock;
     }
 }

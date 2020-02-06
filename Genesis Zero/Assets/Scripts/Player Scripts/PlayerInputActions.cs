@@ -40,7 +40,7 @@ public class @PlayerInputActions : IInputActionCollection, IDisposable
                     ""id"": ""0a784de5-0df8-4345-81b1-6cb16db6728f"",
                     ""expectedControlType"": ""Button"",
                     ""processors"": """",
-                    ""interactions"": ""Press(pressPoint=0.1,behavior=2)""
+                    ""interactions"": ""Press(pressPoint=0.1)""
                 },
                 {
                     ""name"": ""Fire"",
