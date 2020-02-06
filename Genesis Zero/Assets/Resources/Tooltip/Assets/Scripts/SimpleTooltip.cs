@@ -14,9 +14,15 @@ public class SimpleTooltip : MonoBehaviour, IPointerEnterHandler, IPointerExitHa
     private bool cursorInside = false;
     private bool isUIObject = false;
     private bool showing = false;
+    public float hoverDelay = .5f;
+    private bool timerActive = true;
+    private bool doOnce = false;
+    //timeLeft until tooltip is shown
+    private float timeLeft;
 
     private void Awake()
     {
+        timeLeft = hoverDelay;
         eventSystem = FindObjectOfType<EventSystem>();
         tooltipController = FindObjectOfType<STController>();
 
@@ -38,13 +44,33 @@ public class SimpleTooltip : MonoBehaviour, IPointerEnterHandler, IPointerExitHa
         if (!simpleTooltipStyle)
             simpleTooltipStyle = Resources.Load<SimpleTooltipStyle>("STDefault");
     }
-
+    public void ResetTimer()
+    {
+        timeLeft = hoverDelay;
+        timerActive = true;
+        doOnce = false;
+    }
     private void Update()
     {
         if (!cursorInside)
+        {
+            ResetTimer();
+            timerActive = false;
             return;
-
-        tooltipController.ShowTooltip();
+        }
+        timerActive = true;
+        if (timeLeft > 0.0f && timerActive)
+        {
+            timeLeft -= Time.deltaTime;
+        }
+        else if (timeLeft <= 0.0f && !doOnce)
+        {
+            timerActive = false;
+            doOnce = true;
+            timeLeft = 0.0f;
+            //tooltipController.ShowTooltip();
+            ShowTooltip();
+        }
     }
 
     public static STController AddTooltipPrefabToScene()
@@ -91,15 +117,21 @@ public class SimpleTooltip : MonoBehaviour, IPointerEnterHandler, IPointerExitHa
 
     public void ShowTooltip()
     {
-        showing = true;
         cursorInside = true;
+        if(doOnce == true){
+            showing = true;
 
-        // Update the text for both layers
-        tooltipController.SetCustomStyledText(infoLeft, simpleTooltipStyle, STController.TextAlign.Left);
-        tooltipController.SetCustomStyledText(infoRight, simpleTooltipStyle, STController.TextAlign.Right);
+            // Update the text for both layers
+            tooltipController.SetCustomStyledText(infoLeft, simpleTooltipStyle, STController.TextAlign.Left);
+            tooltipController.SetCustomStyledText(infoRight, simpleTooltipStyle, STController.TextAlign.Right);
 
-        // Then tell the controller to show it
-        tooltipController.ShowTooltip();
+            // Then tell the controller to show it
+            tooltipController.ShowTooltip();
+        } else
+        {
+           HideTooltip();
+        }
+       
     }
 
     public void HideTooltip()
