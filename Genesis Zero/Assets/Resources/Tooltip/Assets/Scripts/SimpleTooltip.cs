@@ -14,7 +14,7 @@ public class SimpleTooltip : MonoBehaviour, IPointerEnterHandler, IPointerExitHa
     private bool cursorInside = false;
     private bool isUIObject = false;
     private bool showing = false;
-    public float hoverDelay = .5f;
+    public float hoverDelay = 0.0f;
     private bool timerActive = true;
     private bool doOnce = false;
     //timeLeft until tooltip is shown
