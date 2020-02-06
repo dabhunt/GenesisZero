@@ -14,11 +14,13 @@ public class CharacterController : MonoBehaviour
     public float acceleration = 20f;
     public float jumpStrength = 6f;
     public float distToGround = 0.5f; //dist from body origin to ground
-    public float bodyRadius = 0.5f; //radius of the spherecast for IsGrounded
+    public float distToCeiling = 0.5f;
+    public float bodyRadius = 0.59f; //radius of the spherecast for IsGrounded
     public LayerMask ground;
 
     [Header("Physics")]
     public float gravity = 14f;
+    public float terminalVel = 16;
 
     [Header("Camera")]
     public Camera mainCam;
@@ -35,7 +37,7 @@ public class CharacterController : MonoBehaviour
     private Vector3 moveVec = Vector3.zero;
     private Vector3 aimVec = Vector3.zero;
 
-    private float vertForce;
+    private float vertVel;
     private float currentSpeed = 0;
 
     private void Awake()
@@ -74,11 +76,12 @@ public class CharacterController : MonoBehaviour
      */
     private void Move()
     {
-        
+        //Debug.Log(movementInput);
         if (movementInput.x != 0)
         {
-            currentSpeed += movementInput.x * acceleration * Time.fixedDeltaTime;
-            currentSpeed = Mathf.Min(Mathf.Abs(currentSpeed), Mathf.Abs(GetComponent<Player>().GetSpeed().GetValue())) * movementInput.x;
+            var input = movementInput.x < 0 ? Mathf.Floor(movementInput.x) : Mathf.Ceil(movementInput.x);// this is to deal with left stick returning floats
+            currentSpeed += input * acceleration * Time.fixedDeltaTime;
+            currentSpeed = Mathf.Min(Mathf.Abs(currentSpeed), Mathf.Abs(GetComponent<Player>().GetSpeed().GetValue())) * input;
         }
         else
         {
@@ -94,7 +97,7 @@ public class CharacterController : MonoBehaviour
             }
         }
         moveVec.x = currentSpeed;
-        moveVec.y = vertForce;
+        moveVec.y = vertVel;
         rb.velocity = transform.TransformDirection(moveVec);
     }
 
@@ -116,7 +119,7 @@ public class CharacterController : MonoBehaviour
         //Debug.Log(IsGrounded());
         if (IsGrounded())
         {
-            vertForce = jumpStrength;
+            vertVel = jumpStrength;
         }
     }
 
@@ -127,12 +130,16 @@ public class CharacterController : MonoBehaviour
     {
         if (!IsGrounded())
         {
-            vertForce -= gravity * Time.fixedDeltaTime;
+            if (rb.velocity.y == 0)//if it's jumping and the velocity == 0 means it got stuck
+                vertVel = 0;
+            //if character is not moving upwards anymore reset vertVel so it can start falling
+            vertVel -= gravity * Time.fixedDeltaTime;
+            vertVel = Mathf.Min(vertVel, terminalVel);//lock falling speed at terminal velocity
         }
         else
         {
-            if (vertForce < 0)
-                vertForce = 0;
+            if (vertVel < 0)
+                vertVel = 0;
         }
     }
 
