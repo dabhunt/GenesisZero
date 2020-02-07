@@ -38,7 +38,7 @@ RenderSettings:
   m_ReflectionIntensity: 1
   m_CustomReflection: {fileID: 0}
   m_Sun: {fileID: 0}
-  m_IndirectSpecularColor: {r: 0.44230494, g: 0.4913419, b: 0.5712218, a: 1}
+  m_IndirectSpecularColor: {r: 0.44230446, g: 0.49134123, b: 0.5712202, a: 1}
   m_UseRadianceAmbientProbe: 0
 --- !u!157 &3
 LightmapSettings:
@@ -11244,9 +11244,9 @@ GameObject:
   - component: {fileID: 1239869385}
   - component: {fileID: 1239869384}
   - component: {fileID: 1239869383}
-  - component: {fileID: 1239869382}
   - component: {fileID: 1239869381}
   - component: {fileID: 1239869390}
+  - component: {fileID: 1239869382}
   m_Layer: 8
   m_Name: Player
   m_TagString: Player
@@ -11276,13 +11276,12 @@ MonoBehaviour:
   m_GameObject: {fileID: 1239869380}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: f3320af02340e2b488ac7b90f7fbc2f2, type: 3}
+  m_Script: {fileID: 11500000, guid: 381d822ddfd775c4ba7f703097a3cb70, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
   projectile: {fileID: 7446024088350224124, guid: 082c3f5fa7950bb43b1cdf80af81d68d,
     type: 3}
   firePoint: {fileID: 1502879931}
-  fireRate: 5
 --- !u!114 &1239869383
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -11295,10 +11294,12 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 3ee1d0742058dc04fb4fc35e3da11838, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  acceleration: 20
+  acceleration: 40
   jumpStrength: 13
+  doubleJumpStrength: 10
   distToGround: 0.5
   bodyRadius: 0.5
+  airControlMult: 0.65
   ground:
     serializedVersion: 2
     m_Bits: 4294967295
@@ -11340,6 +11341,10 @@ MonoBehaviour:
     m_ActionId: 95a719cb-580b-4379-94fd-1776eeaec549
     m_ActionName: PlayerControls/Look/Aim[/Mouse/delta]
   - m_PersistentCalls:
+      m_Calls: []
+    m_ActionId: 0a784de5-0df8-4345-81b1-6cb16db6728f
+    m_ActionName: PlayerControls/Jump[/Keyboard/space]
+  - m_PersistentCalls:
       m_Calls:
       - m_Target: {fileID: 1239869383}
         m_MethodName: Jump
@@ -11352,16 +11357,24 @@ MonoBehaviour:
           m_StringArgument: 
           m_BoolArgument: 0
         m_CallState: 2
-    m_ActionId: 0a784de5-0df8-4345-81b1-6cb16db6728f
-    m_ActionName: PlayerControls/Jump[/Keyboard/space]
-  - m_PersistentCalls:
-      m_Calls: []
     m_ActionId: be22d5e4-0e46-40f3-9252-c020cfafbd37
     m_ActionName: PlayerControls/Fire[/Mouse/leftButton]
   - m_PersistentCalls:
       m_Calls: []
     m_ActionId: 5a85d603-2e77-42c4-8bdd-536b415de140
     m_ActionName: PlayerControls/Pause[/Keyboard/escape]
+  - m_PersistentCalls:
+      m_Calls: []
+    m_ActionId: 3dc8c984-4a1a-4303-9b44-a59d2dea0415
+    m_ActionName: PlayerControls/Pause[/Keyboard/escape]
+  - m_PersistentCalls:
+      m_Calls: []
+    m_ActionId: d34c41c0-3e49-4d96-8e5e-2de4da6a116c
+    m_ActionName: PlayerControls/Roll[/Keyboard/space]
+  - m_PersistentCalls:
+      m_Calls: []
+    m_ActionId: 37cdc43c-1b80-4a86-9c7c-e7179db50e60
+    m_ActionName: PlayerControls/Interact[/Keyboard/e]
   m_NeverAutoSwitchControlSchemes: 0
   m_DefaultControlScheme: 
   m_DefaultActionMap: PlayerControls
