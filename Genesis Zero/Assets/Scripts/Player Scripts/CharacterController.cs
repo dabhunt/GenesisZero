@@ -11,8 +11,8 @@ using UnityEngine;
 public class CharacterController : MonoBehaviour
 {
     [Header("Movement")]
-    public float acceleration = 20f;
-    public float jumpStrength = 13f;
+    public float acceleration = 35f;
+    public float jumpStrength = 12f;
     public float doubleJumpStrength = 10f;
     public float distToGround = 0.5f; //dist from body origin to ground
     public float bodyRadius = 0.5f; //radius of the spherecast for IsGrounded
@@ -20,9 +20,9 @@ public class CharacterController : MonoBehaviour
     public LayerMask ground;
 
     [Header("Physics")]
-    public float gravity = 14f;
-    public float terminalVel = 16;
-    public float fallSpeedMult = 1.6f;
+    public float gravity = 18f;
+    public float terminalVel = 15;
+    public float fallSpeedMult = 1.45f;
     public float airControlMult = 0.5f;
 
     [Header("Camera")]
@@ -60,9 +60,9 @@ public class CharacterController : MonoBehaviour
 
     private void FixedUpdate()
     {
+        ApplyGravity();
         Aim();
         Move();
-        ApplyGravity();
     }
 
     private void OnEnable()
@@ -81,24 +81,6 @@ public class CharacterController : MonoBehaviour
      */
     private void Move()
     {
-        if (!IsGrounded())
-        {
-            //check if character is stuck to ceiling and zero the speed so it can start falling
-            if (rb.velocity.y == 0)
-                vertVel = 0;
-            // multiplier to make character fall faster on the way down
-            var fallMult = rb.velocity.y < 0 ? fallSpeedMult : 1;
-            vertVel -= gravity * fallMult * Time.fixedDeltaTime;
-            Debug.Log(rb.velocity.y);
-            //lock falling speed at terminal velocity
-            if (vertVel < 0)
-                vertVel = Mathf.Max(vertVel, -terminalVel);
-        }
-        else
-        {
-            if (vertVel < 0)
-                vertVel = 0;
-        }
         //Debug.Log(movementInput);
         float multiplier = IsGrounded() ? 1 : airControlMult;
         //Debug.Log(multiplier);
@@ -107,7 +89,10 @@ public class CharacterController : MonoBehaviour
             // this is to deal with left stick returning floats
             var input = movementInput.x < 0 ? Mathf.Floor(movementInput.x) : Mathf.Ceil(movementInput.x);
             currentSpeed += input * multiplier * acceleration * Time.fixedDeltaTime;
-            currentSpeed = Mathf.Min(Mathf.Abs(currentSpeed), Mathf.Abs(GetComponent<Player>().GetSpeed().GetValue())) * input;
+            if (currentSpeed > 0)
+                currentSpeed = Mathf.Min(currentSpeed, GetComponent<Player>().GetSpeed().GetValue());
+            if (currentSpeed < 0)
+                currentSpeed = Mathf.Max(currentSpeed, -GetComponent<Player>().GetSpeed().GetValue());
         }
 
         if (movementInput.x == 0)
@@ -153,6 +138,7 @@ public class CharacterController : MonoBehaviour
         if (IsGrounded())
         {
             vertVel = jumpStrength;
+            canDoubleJump = true;
         }
         //Debug.Log(canDoubleJump);
         if (!IsGrounded() && canDoubleJump)
@@ -192,6 +178,24 @@ public class CharacterController : MonoBehaviour
 
     private void ApplyGravity()
     {
-        
+        if (!IsGrounded())
+        {
+            //check if character is stuck to ceiling and zero the speed so it can start falling
+            if (rb.velocity.y == 0)
+                vertVel = 0;
+            // multiplier to make character fall faster on the way down
+            var fallMult = rb.velocity.y < 0 ? fallSpeedMult : 1;
+            vertVel -= gravity * fallMult * Time.fixedDeltaTime;
+            Debug.Log(rb.velocity.y);
+            //lock falling speed at terminal velocity
+            if (vertVel < 0)
+                vertVel = Mathf.Max(vertVel, -terminalVel);
+        }
+        else
+        {
+            //resets vertVel when player's grounded
+            if (vertVel < 0)
+                vertVel = 0;
+        }
     }
 }
