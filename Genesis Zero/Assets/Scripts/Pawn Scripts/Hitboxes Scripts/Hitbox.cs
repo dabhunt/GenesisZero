@@ -132,12 +132,12 @@ public class Hitbox : MonoBehaviour
                 bool special = (bp && bp.SpecialPart);
                 if (special)
                 {
-                    Debug.Log("Special hit " + other.transform.root.name);
+                    //Debug.Log("Special hit " + other.transform.root.name);
                     finaldamage *= bp.damagemultipler;
                 }
                 else
                 {
-                    Debug.Log("Hit " + other.transform.root.name);
+                    //Debug.Log("Hit " + other.transform.root.name);
                 }
 
                 if (Source != null)

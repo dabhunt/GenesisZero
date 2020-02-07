@@ -40,6 +40,12 @@ public class SkillPickup : MonoBehaviour
             direction.y += 1;
             GetComponent<Rigidbody>().AddForce((direction) * (1 - (distance / 4)) / 2, ForceMode.Impulse);
         }
+        else if (isMod && GetComponent<Rigidbody>().velocity.magnitude > 12)
+        {
+            float mag = GetComponent<Rigidbody>().velocity.magnitude;
+            GetComponent<Rigidbody>().velocity = GetComponent<Rigidbody>().velocity.normalized * (mag *.9f);
+            //GetComponent<Rigidbody>().velocity *= .3f;
+        }
     }
 
     private void OnTriggerEnter(Collider other)
@@ -81,4 +87,5 @@ public class SkillPickup : MonoBehaviour
 
         }
     }
+
 }
