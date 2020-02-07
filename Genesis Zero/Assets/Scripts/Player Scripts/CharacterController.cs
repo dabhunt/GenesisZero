@@ -16,11 +16,13 @@ public class CharacterController : MonoBehaviour
     public float doubleJumpStrength = 3f;
     public float distToGround = 0.5f; //dist from body origin to ground
     public float bodyRadius = 0.5f; //radius of the spherecast for IsGrounded
+    
     public LayerMask ground;
 
     [Header("Physics")]
     public float gravity = 14f;
     public float terminalVel = 16;
+    public float fallSpeedMult = 1.6f;
 
     [Header("Camera")]
     public Camera mainCam;
@@ -77,11 +79,14 @@ public class CharacterController : MonoBehaviour
     {
         if (!IsGrounded())
         {
-            if (rb.velocity.y == 0)//if it's jumping and the velocity == 0 means it got stuck
+            //check if character is stuck to ceiling and zero the speed so it can start falling
+            if (rb.velocity.y == 0)
                 vertVel = 0;
-            //if character is not moving upwards anymore reset vertVel so it can start falling
-            vertVel -= gravity * Time.fixedDeltaTime;
-            vertVel = Mathf.Min(vertVel, terminalVel);//lock falling speed at terminal velocity
+            // multiplier to make character fall faster on the way down
+            var multiplier = rb.velocity.y <= 0 ? fallSpeedMult : 1;
+            vertVel -= gravity * multiplier * Time.fixedDeltaTime;
+            //lock falling speed at terminal velocity
+            vertVel = Mathf.Min(vertVel, terminalVel);
         }
         else
         {
@@ -91,7 +96,8 @@ public class CharacterController : MonoBehaviour
         //Debug.Log(movementInput);
         if (movementInput.x != 0)
         {
-            var input = movementInput.x < 0 ? Mathf.Floor(movementInput.x) : Mathf.Ceil(movementInput.x);// this is to deal with left stick returning floats
+            // this is to deal with left stick returning floats
+            var input = movementInput.x < 0 ? Mathf.Floor(movementInput.x) : Mathf.Ceil(movementInput.x);
             currentSpeed += input * acceleration * Time.fixedDeltaTime;
             currentSpeed = Mathf.Min(Mathf.Abs(currentSpeed), Mathf.Abs(GetComponent<Player>().GetSpeed().GetValue())) * input;
         }
