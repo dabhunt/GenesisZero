@@ -8,6 +8,13 @@ public class SkillManager
 
     private List<SkillObject> skillobjects;
     private Player player;
+    private int skillamount;
+    private int abilityamount;
+    private string ability1 = "";
+    private string ability2 = "";
+
+    private bool updated;
+
     public SkillManager(Player p)
     {
         player = p;
@@ -23,15 +30,27 @@ public class SkillManager
     {
         if (Skills.ContainsKey(skill.name)) // Adds to the stack of skills
         {
-            Skills[skill.name] += 1;
+            Skills[skill.name] = Skills[skill.name] + 1;
         }
         else
         {
             skillobjects.Add(skill);
             Skills.Add(skill.name, 1);
+            if (skill.IsAbility)
+            {
+                abilityamount++;
+                if (ability1 == "")
+                {
+                    SetAbility1(skill.name);
+                }
+                else if (ability2 == "")
+                {
+                    SetAbility2(skill.name);
+                }
+            }
         }
-
         AddSkillStats(skill, true);
+        skillamount++;
     }
 
     /**
@@ -41,12 +60,17 @@ public class SkillManager
     {
         if (Skills.ContainsKey(skill.name)) // Removes the skill from the dictionary
         {
-            Skills[skill.name] -= 1;
+            Skills[skill.name] = Skills[skill.name] - 1;
             if (Skills[skill.name] <= 0)
             {
                 Skills.Remove(skill.name);
+                if (skill.IsAbility)
+                {
+                    abilityamount--;
+                }
             }
             AddSkillStats(skill, false);
+            skillamount--;
         }
     }
 
@@ -76,6 +100,7 @@ public class SkillManager
      */
     public bool HasSkill(string name)
     {
+        bool hasskill = Skills.ContainsKey(name);
         return Skills.ContainsKey(name);
     }
 
@@ -101,5 +126,92 @@ public class SkillManager
         return skill;
     }
 
+    public List<SkillObject> GetSkillObjects()
+    {
+        return skillobjects;
+    }
 
+    public int GetSkillStack(string name)
+    {
+        if (Skills.ContainsKey(name))
+        {
+            int num = Skills[name];
+            //Debug.Log(skillobjects.Count);
+            return num;
+        }
+        return 0;
+    }
+
+    public int GetAmount()
+    {
+        return skillamount;
+    }
+
+    public int GetAbilityAmount()
+    {
+        return abilityamount;
+    }
+
+    public void SetAbility1(string name)
+    {
+        ability1 = name;
+        updated = true;
+    }
+
+    /**
+     * Returns the Skillobject for the ability in slot 1, if it doesn't exists, it reutrns null
+     */
+    public SkillObject GetAbility1()
+    {
+        foreach (SkillObject so in skillobjects)
+        {
+            if (so.name == ability1)
+            {
+                return so;
+            }
+        }
+        return null;
+    }
+
+    public void SetAbility2(string name)
+    {
+        ability2 = name;
+        updated = true;
+    }
+
+    /**
+     * Returns the Skillobject for the ability in slot 2, if it doesn't exists, it reutrns null
+     */
+    public SkillObject GetAbility2()
+    {
+        foreach (SkillObject so in skillobjects)
+        {
+            if (so.name == ability2)
+            {
+                return so;
+            }
+        }
+        return null;
+    }
+
+    /**
+     * Swaps the abilties.
+     */
+    public void SwapCurrentAbilities()
+    {
+        string temp = ability1;
+        ability2 = ability1;
+        ability1 = temp;
+        updated = true;
+    }
+
+    public void SetUpdated(bool boolean)
+    {
+        updated = boolean;
+    }
+
+    public bool GetUpdated()
+    {
+        return updated;
+    }
 }

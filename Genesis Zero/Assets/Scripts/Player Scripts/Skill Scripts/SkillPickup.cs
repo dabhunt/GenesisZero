@@ -6,6 +6,9 @@ public class SkillPickup : MonoBehaviour
 {
     [Header("Mod or Ability")]
     public SkillObject skill;
+    private bool added;
+    private bool isMod;
+    private GameObject target;
     // Start is called before the first frame update
     void Start()
     {
@@ -13,12 +16,30 @@ public class SkillPickup : MonoBehaviour
         {
             // Add default skill
         }
+        if (GetComponent<SimpleTooltip>())
+        {
+            GetComponent<SimpleTooltip>().infoLeft = skill.Description;
+        }
+        isMod = skill.IsAbility ? false : true;
+        target = GameObject.FindGameObjectWithTag("Player");
     }
 
     // Update is called once per frame
     void Update()
     {
         
+    }
+
+    private void FixedUpdate()
+    {
+        // Force pull for pickup
+        float distance = Vector2.Distance(transform.position, target.transform.position);
+        if (isMod && distance < 4)
+        {
+            Vector3 direction = target.transform.position - transform.position;
+            direction.y += 1;
+            GetComponent<Rigidbody>().AddForce((direction) * (1 - (distance / 4)) / 2, ForceMode.Impulse);
+        }
     }
 
     private void OnTriggerEnter(Collider other)
@@ -31,11 +52,33 @@ public class SkillPickup : MonoBehaviour
                 p = other.GetComponentInParent<Player>();
             }
 
-            if (skill != null)
+            if (skill != null && added == false)
             {
-                p.GetSkillManager().AddSkill(skill);
+                //Check if it's an ability, cant have more than one
+                if (skill.IsAbility && p.GetSkillManager().HasSkill(skill.name))
+                {
+                    // Pop-up prompt UI stuff for when there are dupicates
+                }
+                else
+                {
+                    // There are more than two abilities and a new ability is here
+                    if (skill.IsAbility && !p.GetSkillManager().HasSkill(skill.name) && p.GetSkillManager().GetAbilityAmount() >= 2)
+                    {
+                        // Prompt choice to swap out with current abilities
+                    }
+                    else
+                    {
+                        p.GetSkillManager().AddSkill(skill);
+                        added = true;
+                    }
+                }
             }
-            Destroy(gameObject);
+
+            if (added == true)
+            {
+                Destroy(gameObject);
+            }
+
         }
     }
 }
