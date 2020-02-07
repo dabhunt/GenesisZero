@@ -78,6 +78,7 @@ public class PlatformPatrollerAI : AIController
             targetSpeed = 0.0f;
         }
 
+        targetSpeed *= GetSpeed().GetValue();
         frb.Accelerate(Vector3.right * (targetSpeed * faceDir - frb.GetVelocity().x) * Acceleration); // Accelerate toward the target
         transform.rotation = Quaternion.LookRotation(Vector3.forward * faceDir, Vector3.up);
 

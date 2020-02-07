@@ -21,11 +21,6 @@ public class AIStateEffect : MonoBehaviour
         ai.StateChangeEvent.AddListener(OnStateChange);
     }
 
-    private void Update()
-    {
-        
-    }
-
     private void OnStateChange(AIController.AIState newState)
     {
         if (newState == EffectState)
