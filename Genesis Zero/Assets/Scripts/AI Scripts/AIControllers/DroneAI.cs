@@ -44,6 +44,7 @@ public class DroneAI : AIController
 
     protected void FixedUpdate()
     {
+        base.FixedUpdate();
         if (Target == null) { return; }
 
         if (state == AIState.Follow || state == AIState.Charge || state == AIState.Attack || state == AIState.Cooldown)

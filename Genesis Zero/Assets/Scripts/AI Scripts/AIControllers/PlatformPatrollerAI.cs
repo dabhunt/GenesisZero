@@ -42,6 +42,7 @@ public class PlatformPatrollerAI : AIController
 
     protected void FixedUpdate()
     {
+        base.FixedUpdate();
         if (Target == null) { return; }
 
         if (state == AIState.Follow || state == AIState.Charge || state == AIState.Cooldown)
