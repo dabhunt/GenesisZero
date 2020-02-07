@@ -17,6 +17,7 @@ public class CharacterController : MonoBehaviour
     public float distToGround = 0.5f; //dist from body origin to ground
     public float bodyRadius = 0.5f; //radius of the spherecast for IsGrounded
     public float airControlMult = 0.5f;
+    public float gravityMult = 1.5f;
     public LayerMask ground;
 
     [Header("Physics")]
@@ -58,6 +59,7 @@ public class CharacterController : MonoBehaviour
 
     private void FixedUpdate()
     {
+        ApplyGravity();
         Aim();
         Move();
     }
@@ -78,19 +80,6 @@ public class CharacterController : MonoBehaviour
      */
     private void Move()
     {
-        if (!IsGrounded())
-        {
-            if (rb.velocity.y == 0)//if it's jumping and the velocity == 0 means it got stuck
-                vertVel = 0;
-            //if character is not moving upwards anymore reset vertVel so it can start falling
-            vertVel -= gravity * Time.fixedDeltaTime;
-            vertVel = Mathf.Min(vertVel, terminalVel);//lock falling speed at terminal velocity
-        }
-        else
-        {
-            vertVel = Mathf.Max(vertVel, 0);
-        }
-
         //Debug.Log(movementInput);
         float multiplier = IsGrounded() ? 1 : airControlMult;
         //Debug.Log(multiplier);
@@ -186,5 +175,21 @@ public class CharacterController : MonoBehaviour
         bool isBlock = false;
 
         return isBlock;
+    }
+
+    private void ApplyGravity()
+    {
+        if (!IsGrounded())
+        {
+            if (rb.velocity.y == 0)//if it's jumping and the velocity == 0 means it got stuck
+                vertVel = 0;
+            //if character is not moving upwards anymore reset vertVel so it can start falling
+            vertVel -= gravity * Time.fixedDeltaTime;
+            vertVel = Mathf.Min(vertVel, terminalVel);//lock falling speed at terminal velocity
+        }
+        else
+        {
+            vertVel = Mathf.Max(vertVel, 0);
+        }
     }
 }
