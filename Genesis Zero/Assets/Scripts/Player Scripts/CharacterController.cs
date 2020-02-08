@@ -16,7 +16,7 @@ public class CharacterController : MonoBehaviour
     public float doubleJumpStrength = 10f;
     public float bodyHeight = 2f;
     public float bodyHeightOffset = 0.15f; // offset used for the sides casts
-    public float bodyWidth = 0.5f;
+    public float bodyWidth = 1f;
     public float bodyWidthOffset = 0.05f; // offset used for the feet/head casts
     public float rollDistance = 5f;
     public float rollSpeedMult = 1.5f;
@@ -38,6 +38,7 @@ public class CharacterController : MonoBehaviour
 
     private PlayerInputActions inputActions;
     private Rigidbody rb;
+    private CapsuleCollider capCollider;
     private Vector2 movementInput;
     private Vector2 aimInputMouse;
     private Vector2 aimInputController;
@@ -60,6 +61,7 @@ public class CharacterController : MonoBehaviour
     private void Awake()
     {
         rb = GetComponent<Rigidbody>();
+        capCollider = GetComponent<CapsuleCollider>();
         inputActions = new PlayerInputActions();
         inputActions.PlayerControls.Move.performed += ctx => movementInput = ctx.ReadValue<Vector2>();
         inputActions.PlayerControls.AimMouse.performed += ctx => aimInputMouse = ctx.ReadValue<Vector2>();
@@ -166,7 +168,9 @@ public class CharacterController : MonoBehaviour
             rollDirection = movementInput.x > 0 ? 1 : -1;
         else
             rollDirection =  isLookingRight ? 1 : -1;
-        //shrink 
+        //shrink
+        capCollider.center = new Vector3(0, -0.5f, 0);
+        capCollider.height = (bodyHeight / 2) - 0.02f;
     }
 
     /* This function keeps track of rolling state
@@ -194,10 +198,11 @@ public class CharacterController : MonoBehaviour
 
         if ((moveVec.x > 0 && IsBlocked(Vector3.right)) || (moveVec.x < 0 && IsBlocked(Vector3.left)))
         {
-            Debug.Log("Rolling is Blocked");
             isRolling = false;
             currentSpeed = 0;
             distanceRolled = 0;
+            capCollider.center = Vector3.zero;
+            capCollider.height = bodyHeight - 0.02f;
         }
     }
 
@@ -264,27 +269,27 @@ public class CharacterController : MonoBehaviour
 
         if (dir == Vector3.up)
         {
-            radius = (bodyWidth / 2) + bodyWidthOffset;
-            isBlock = Physics.SphereCast(transform.position, radius, Vector3.up, out hit, (bodyHeight / 2) - radius, immoveables, QueryTriggerInteraction.UseGlobal);
+            radius = (bodyWidth / 2) - bodyWidthOffset;
+            isBlock = Physics.SphereCast(transform.position, radius, Vector3.up, out hit, (bodyHeight / 2) - radius + bodyWidthOffset, immoveables, QueryTriggerInteraction.UseGlobal);
             if (isBlock && hit.collider.isTrigger)
                 isBlock = false;
         }
-        else if(dir == Vector3.down)
+        else if (dir == Vector3.down)
         {
-            radius = (bodyWidth / 2) + bodyWidthOffset;
-            isBlock = Physics.SphereCast(transform.position, radius, Vector3.down, out hit, (bodyHeight / 2) - radius, immoveables, QueryTriggerInteraction.UseGlobal);
+            radius = (bodyWidth / 2) - bodyWidthOffset;
+            isBlock = Physics.SphereCast(transform.position, radius, Vector3.down, out hit, (bodyHeight / 2) - radius + bodyWidthOffset, immoveables, QueryTriggerInteraction.UseGlobal);
             if (isBlock && hit.collider.isTrigger)
                 isBlock = false;
         }
-        else if(dir == Vector3.right)
+        else if (dir == Vector3.right)
         {
-            isBlock = Physics.BoxCast(transform.position, new Vector3(0, (bodyHeight / 2) - bodyHeightOffset, 0), Vector3.right, out hit, Quaternion.identity, bodyWidth, immoveables, QueryTriggerInteraction.UseGlobal);
+            isBlock = Physics.BoxCast(transform.position, new Vector3(0, (bodyHeight / 2) - bodyHeightOffset, 0), Vector3.right, out hit, Quaternion.identity, bodyWidth / 2, immoveables, QueryTriggerInteraction.UseGlobal);
             if (isBlock && hit.collider.isTrigger || hit.normal != Vector3.left)
                 isBlock = false;
         }
-        else if(dir == Vector3.left)
+        else if (dir == Vector3.left)
         {
-            isBlock = Physics.BoxCast(transform.position, new Vector3(0, (bodyHeight / 2) - bodyHeightOffset, 0), Vector3.left, out hit, Quaternion.identity, bodyWidth, immoveables, QueryTriggerInteraction.UseGlobal);
+            isBlock = Physics.BoxCast(transform.position, new Vector3(0, (bodyHeight / 2) - bodyHeightOffset, 0), Vector3.left, out hit, Quaternion.identity, bodyWidth / 2, immoveables, QueryTriggerInteraction.UseGlobal);
             if (isBlock && hit.collider.isTrigger || hit.normal != Vector3.right)
                 isBlock = false;
         }
