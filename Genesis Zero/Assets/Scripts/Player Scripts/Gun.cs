@@ -7,10 +7,12 @@ public class Gun : MonoBehaviour
     [Header("Settings")]
     public GameObject projectile;
     public Transform firePoint;
+
     private PlayerInputActions inputActions;
     private float timeToFire = 0;
     private Player player;
     private float fireAction;
+    private bool fired = false;
     private void Awake()
     {
         inputActions = new PlayerInputActions();
@@ -44,6 +46,15 @@ public class Gun : MonoBehaviour
             Vector3 spawnpoint = new Vector3(firePoint.transform.position.x, firePoint.transform.position.y, 0);
             GameObject instance = (GameObject)Instantiate(projectile, spawnpoint, firePoint.transform.rotation);
             instance.GetComponent<Hitbox>().InitializeHitbox(player.GetDamage().GetValue(), player);
+            fired = true;
         }
+        else
+        {
+            fired = false;
+        }
+    }
+    public bool getFired()
+    {
+        return fired;
     }
 }

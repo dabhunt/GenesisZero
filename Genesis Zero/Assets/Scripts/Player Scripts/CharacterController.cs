@@ -16,7 +16,6 @@ public class CharacterController : MonoBehaviour
     public float doubleJumpStrength = 10f;
     public float distToGround = 0.5f; //dist from body origin to ground
     public float bodyRadius = 0.5f; //radius of the spherecast for IsGrounded
-    
     public LayerMask ground;
 
     [Header("Physics")]
@@ -29,7 +28,7 @@ public class CharacterController : MonoBehaviour
     public Camera mainCam;
 
     [Header("Gun")]
-    public GameObject gun;
+    public GameObject gunObject;
     public GameObject crosshair;
     public float sensitivity;
 
@@ -40,10 +39,17 @@ public class CharacterController : MonoBehaviour
     private Vector2 aimInputController;
     private Vector3 moveVec = Vector3.zero;
     private Vector3 aimVec = Vector3.zero;
-
+    private float maxSpeed;
     private float vertVel;
     private float currentSpeed = 0;
     private bool canDoubleJump = true;
+
+    private Animator animator;
+    private Gun gun;
+    private bool isGrounded = false;
+    private bool isRolling = false;
+    private bool isLookingRight = true;
+    private bool gunFired = false;
     private void Awake()
     {
         rb = GetComponent<Rigidbody>();
@@ -51,11 +57,16 @@ public class CharacterController : MonoBehaviour
         inputActions.PlayerControls.Move.performed += ctx => movementInput = ctx.ReadValue<Vector2>();
         inputActions.PlayerControls.AimMouse.performed += ctx => aimInputMouse = ctx.ReadValue<Vector2>();
         inputActions.PlayerControls.AimController.performed += ctx => aimInputController = ctx.ReadValue<Vector2>();
+        animator = GetComponent<Animator>();
+        gun = GetComponent<Gun>();
     }
-
+    private void Start()
+    {
+        maxSpeed = GetComponent<Player>().GetSpeed().GetValue();
+    }
     private void Update()
     {
-        
+        AnimStateUpdate();
     }
 
     private void FixedUpdate()
@@ -89,10 +100,11 @@ public class CharacterController : MonoBehaviour
             // this is to deal with left stick returning floats
             var input = movementInput.x < 0 ? Mathf.Floor(movementInput.x) : Mathf.Ceil(movementInput.x);
             currentSpeed += input * multiplier * acceleration * Time.fixedDeltaTime;
+            maxSpeed = GetComponent<Player>().GetSpeed().GetValue();
             if (currentSpeed > 0)
-                currentSpeed = Mathf.Min(currentSpeed, GetComponent<Player>().GetSpeed().GetValue());
+                currentSpeed = Mathf.Min(currentSpeed, maxSpeed);
             if (currentSpeed < 0)
-                currentSpeed = Mathf.Max(currentSpeed, -GetComponent<Player>().GetSpeed().GetValue());
+                currentSpeed = Mathf.Max(currentSpeed, -maxSpeed);
         }
 
         if (movementInput.x == 0)
@@ -121,7 +133,7 @@ public class CharacterController : MonoBehaviour
     {
         RaycastHit hit;
         //bool isGrounded = Physics.BoxCast(transform.position, new Vector3(bodyRadius, 0, 0), Vector3.down, out hit, Quaternion.identity, distToGround, ground, QueryTriggerInteraction.UseGlobal);
-        bool isGrounded = Physics.SphereCast(transform.position, bodyRadius, Vector3.down, out hit, distToGround, ground, QueryTriggerInteraction.UseGlobal);
+        isGrounded = Physics.SphereCast(transform.position, bodyRadius, Vector3.down, out hit, distToGround, ground, QueryTriggerInteraction.UseGlobal);
         if (isGrounded != false && hit.collider.isTrigger)
             isGrounded = false;
         if (isGrounded && canDoubleJump != true)
@@ -162,8 +174,12 @@ public class CharacterController : MonoBehaviour
         aimVec.y = aimInputMouse.y - pos.y;
 
         float tmpAngle = Mathf.Atan2(aimVec.y, aimVec.x) * Mathf.Rad2Deg;
-        if (tmpAngle != 0)
-            gun.transform.localRotation = Quaternion.Euler(0, 0, tmpAngle);
+        if (!(tmpAngle < 120 && tmpAngle > 60))
+            gunObject.transform.localRotation = Quaternion.Euler(0, 0, tmpAngle);
+        if (tmpAngle < 60 && tmpAngle > -60)
+            isLookingRight = true;
+        else
+            isLookingRight = false;
     }
 
     /* This function checks if the model is blocked
@@ -186,7 +202,7 @@ public class CharacterController : MonoBehaviour
             // multiplier to make character fall faster on the way down
             var fallMult = rb.velocity.y < 0 ? fallSpeedMult : 1;
             vertVel -= gravity * fallMult * Time.fixedDeltaTime;
-            Debug.Log(rb.velocity.y);
+            //Debug.Log(rb.velocity.y);
             //lock falling speed at terminal velocity
             if (vertVel < 0)
                 vertVel = Mathf.Max(vertVel, -terminalVel);
@@ -197,5 +213,17 @@ public class CharacterController : MonoBehaviour
             if (vertVel < 0)
                 vertVel = 0;
         }
+    }
+    private void AnimStateUpdate()
+    {
+        var xSpeed = moveVec.x != 0 ? moveVec.x / maxSpeed : 0;
+        var ySpeed = moveVec.y != 0 ? moveVec.y / Mathf.Abs(moveVec.y) : 0;
+        gunFired = gun.getFired();
+        animator.SetFloat("xSpeed", xSpeed);
+        animator.SetFloat("ySpeed", ySpeed);
+        animator.SetBool("isGrounded", isGrounded);
+        animator.SetBool("isRolling", isRolling);
+        animator.SetBool("isLookingRight", isLookingRight);
+        animator.SetBool("gunFired", gunFired);
     }
 }
