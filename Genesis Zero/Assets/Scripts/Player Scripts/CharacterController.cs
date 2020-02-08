@@ -14,9 +14,11 @@ public class CharacterController : MonoBehaviour
     public float acceleration = 35f;
     public float jumpStrength = 12f;
     public float doubleJumpStrength = 10f;
-    public float distToGround = 0.5f; //dist from body origin to ground
-    public float bodyRadius = 0.5f; //radius of the spherecast for IsGrounded
-    public LayerMask ground;
+    public float bodyHeight = 2f;
+    public float bodyHeightOffset = 0.15f; // offset used for the sides casts
+    public float bodyWidth = 0.5f;
+    public float bodyWidthOffset = 0.05f; // offset used for the feet/head casts
+    public LayerMask immoveables; //LayerMask for bound checks
 
     [Header("Physics")]
     public float gravity = 18f;
@@ -50,6 +52,7 @@ public class CharacterController : MonoBehaviour
     private bool isRolling = false;
     private bool isLookingRight = true;
     private bool gunFired = false;
+
     private void Awake()
     {
         rb = GetComponent<Rigidbody>();
@@ -94,20 +97,37 @@ public class CharacterController : MonoBehaviour
     {
         //Debug.Log(movementInput);
         float multiplier = IsGrounded() ? 1 : airControlMult;
-        //Debug.Log(multiplier);
-        if (movementInput.x != 0)
-        {
-            // this is to deal with left stick returning floats
-            var input = movementInput.x < 0 ? Mathf.Floor(movementInput.x) : Mathf.Ceil(movementInput.x);
-            currentSpeed += input * multiplier * acceleration * Time.fixedDeltaTime;
-            maxSpeed = GetComponent<Player>().GetSpeed().GetValue();
-            if (currentSpeed > 0)
-                currentSpeed = Mathf.Min(currentSpeed, maxSpeed);
-            if (currentSpeed < 0)
-                currentSpeed = Mathf.Max(currentSpeed, -maxSpeed);
-        }
+        Debug.Log("blockedRight?:" + IsBlocked(Vector3.right));
+        Debug.Log("blockedLeft?:" + IsBlocked(Vector3.left));
 
-        if (movementInput.x == 0)
+        // this is to deal with left stick returning floats
+        var input = movementInput.x < 0 ? Mathf.Floor(movementInput.x) : Mathf.Ceil(movementInput.x);
+        maxSpeed = GetComponent<Player>().GetSpeed().GetValue();
+        if (movementInput.x < 0)
+        {
+            if (!IsBlocked(Vector3.left))
+            {
+                currentSpeed += input * multiplier * acceleration * Time.fixedDeltaTime;
+                currentSpeed = Mathf.Max(currentSpeed, -maxSpeed);
+            }
+            else
+            {
+                currentSpeed = 0;
+            }   
+        }
+        else if (movementInput.x > 0)
+        {
+            if (input > 0 && !IsBlocked(Vector3.right))
+            {
+                currentSpeed += input * multiplier * acceleration * Time.fixedDeltaTime;
+                currentSpeed = Mathf.Min(currentSpeed, maxSpeed);
+            }
+            else
+            {
+                currentSpeed = 0;
+            }
+        }
+        else
         {
             if (currentSpeed > 0)
             {
@@ -131,11 +151,7 @@ public class CharacterController : MonoBehaviour
      */
     public bool IsGrounded()
     {
-        RaycastHit hit;
-        //bool isGrounded = Physics.BoxCast(transform.position, new Vector3(bodyRadius, 0, 0), Vector3.down, out hit, Quaternion.identity, distToGround, ground, QueryTriggerInteraction.UseGlobal);
-        isGrounded = Physics.SphereCast(transform.position, bodyRadius, Vector3.down, out hit, distToGround, ground, QueryTriggerInteraction.UseGlobal);
-        if (isGrounded != false && hit.collider.isTrigger)
-            isGrounded = false;
+        isGrounded = IsBlocked(Vector3.down);
         if (isGrounded && canDoubleJump != true)
             canDoubleJump = true;
         return isGrounded;
@@ -174,9 +190,8 @@ public class CharacterController : MonoBehaviour
         aimVec.y = aimInputMouse.y - pos.y;
 
         float tmpAngle = Mathf.Atan2(aimVec.y, aimVec.x) * Mathf.Rad2Deg;
-        if (!(tmpAngle < 120 && tmpAngle > 60))
-            gunObject.transform.localRotation = Quaternion.Euler(0, 0, tmpAngle);
-        if (tmpAngle < 60 && tmpAngle > -60)
+        gunObject.transform.localRotation = Quaternion.Euler(0, 0, tmpAngle);
+        if (tmpAngle < 89 && tmpAngle > -91)
             isLookingRight = true;
         else
             isLookingRight = false;
@@ -188,7 +203,39 @@ public class CharacterController : MonoBehaviour
     private bool IsBlocked(Vector3 dir)
     {
         bool isBlock = false;
+        RaycastHit hit;
+        float radius;
 
+        if (dir == Vector3.up)
+        {
+            radius = (bodyWidth / 2) + bodyWidthOffset;
+            isBlock = Physics.SphereCast(transform.position, radius, Vector3.up, out hit, (bodyHeight / 2) - radius, immoveables, QueryTriggerInteraction.UseGlobal);
+            if (isBlock && hit.collider.isTrigger)
+                isBlock = false;
+        }
+        else if(dir == Vector3.down)
+        {
+            radius = (bodyWidth / 2) + bodyWidthOffset;
+            isBlock = Physics.SphereCast(transform.position, radius, Vector3.down, out hit, (bodyHeight / 2) - radius, immoveables, QueryTriggerInteraction.UseGlobal);
+            if (isBlock && hit.collider.isTrigger)
+                isBlock = false;
+        }
+        else if(dir == Vector3.right)
+        {
+            isBlock = Physics.BoxCast(transform.position, new Vector3(0, (bodyHeight / 2) - bodyHeightOffset, 0), Vector3.right, out hit, Quaternion.identity, bodyWidth, immoveables, QueryTriggerInteraction.UseGlobal);
+            if (isBlock && hit.collider.isTrigger)
+                isBlock = false;
+        }
+        else if(dir == Vector3.left)
+        {
+            isBlock = Physics.BoxCast(transform.position, new Vector3(0, (bodyHeight / 2) - bodyHeightOffset, 0), Vector3.left, out hit, Quaternion.identity, bodyWidth, immoveables, QueryTriggerInteraction.UseGlobal);
+            if (isBlock && hit.collider.isTrigger)
+                isBlock = false;
+        }
+        else
+        {
+            Debug.LogError("IsBlocked() direction Vector is invalid, try Vector3.up, etc.");
+        }
         return isBlock;
     }
 
@@ -197,7 +244,7 @@ public class CharacterController : MonoBehaviour
         if (!IsGrounded())
         {
             //check if character is stuck to ceiling and zero the speed so it can start falling
-            if (rb.velocity.y == 0)
+            if (IsBlocked(Vector3.up))
                 vertVel = 0;
             // multiplier to make character fall faster on the way down
             var fallMult = rb.velocity.y < 0 ? fallSpeedMult : 1;
