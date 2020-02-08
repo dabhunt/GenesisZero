@@ -14,9 +14,13 @@ public class CharacterController : MonoBehaviour
     public float acceleration = 35f;
     public float jumpStrength = 12f;
     public float doubleJumpStrength = 10f;
-    public float distToGround = 0.5f; //dist from body origin to ground
-    public float bodyRadius = 0.5f; //radius of the spherecast for IsGrounded
-    public LayerMask ground;
+    public float bodyHeight = 2f;
+    public float bodyHeightOffset = 0.15f; // offset used for the sides casts
+    public float bodyWidth = 0.5f;
+    public float bodyWidthOffset = 0.05f; // offset used for the feet/head casts
+    public float rollDistance = 5f;
+    public float rollSpeedMult = 1.5f;
+    public LayerMask immoveables; //LayerMask for bound checks
 
     [Header("Physics")]
     public float gravity = 18f;
@@ -43,13 +47,16 @@ public class CharacterController : MonoBehaviour
     private float vertVel;
     private float currentSpeed = 0;
     private bool canDoubleJump = true;
-
+    private float distanceRolled = 0;
+    private int rollDirection;
     private Animator animator;
     private Gun gun;
     private bool isGrounded = false;
     private bool isRolling = false;
     private bool isLookingRight = true;
     private bool gunFired = false;
+    private Vector3 lastRollingPosition;
+
     private void Awake()
     {
         rb = GetComponent<Rigidbody>();
@@ -60,19 +67,23 @@ public class CharacterController : MonoBehaviour
         animator = GetComponent<Animator>();
         gun = GetComponent<Gun>();
     }
+
     private void Start()
     {
         maxSpeed = GetComponent<Player>().GetSpeed().GetValue();
     }
+
     private void Update()
     {
         AnimStateUpdate();
+        //LogDebug();
     }
 
     private void FixedUpdate()
     {
         ApplyGravity();
         Aim();
+        UpdateDodgeRoll();
         Move();
     }
 
@@ -92,37 +103,102 @@ public class CharacterController : MonoBehaviour
      */
     private void Move()
     {
-        //Debug.Log(movementInput);
         float multiplier = IsGrounded() ? 1 : airControlMult;
-        //Debug.Log(multiplier);
-        if (movementInput.x != 0)
+        // this is to deal with left stick returning floats
+        var input = movementInput.x < 0 ? Mathf.Floor(movementInput.x) : Mathf.Ceil(movementInput.x);
+        // grabbing maxSpeed from player class
+        maxSpeed = GetComponent<Player>().GetSpeed().GetValue();
+        // if the state is not rolling
+        if (!isRolling)
         {
-            // this is to deal with left stick returning floats
-            var input = movementInput.x < 0 ? Mathf.Floor(movementInput.x) : Mathf.Ceil(movementInput.x);
-            currentSpeed += input * multiplier * acceleration * Time.fixedDeltaTime;
-            maxSpeed = GetComponent<Player>().GetSpeed().GetValue();
-            if (currentSpeed > 0)
-                currentSpeed = Mathf.Min(currentSpeed, maxSpeed);
-            if (currentSpeed < 0)
-                currentSpeed = Mathf.Max(currentSpeed, -maxSpeed);
-        }
-
-        if (movementInput.x == 0)
-        {
-            if (currentSpeed > 0)
+            if (movementInput.x < 0)
             {
-                currentSpeed -= acceleration * Time.fixedDeltaTime;
-                currentSpeed = Mathf.Max(currentSpeed, 0);
+                if (!IsBlocked(Vector3.left))
+                {
+                    currentSpeed += input * multiplier * acceleration * Time.fixedDeltaTime;
+                    currentSpeed = Mathf.Max(currentSpeed, -maxSpeed);
+                }
+                else
+                {
+                    currentSpeed = 0;
+                }   
             }
-            else if (currentSpeed < 0)
+            else if (movementInput.x > 0)
             {
-                currentSpeed += acceleration * Time.fixedDeltaTime;
-                currentSpeed = Mathf.Min(currentSpeed, 0);
+                if (input > 0 && !IsBlocked(Vector3.right))
+                {
+                    currentSpeed += input * multiplier * acceleration * Time.fixedDeltaTime;
+                    currentSpeed = Mathf.Min(currentSpeed, maxSpeed);
+                }
+                else
+                {
+                    currentSpeed = 0;
+                }
+            }
+            else
+            {
+                if (currentSpeed > 0)
+                {
+                    currentSpeed -= acceleration * Time.fixedDeltaTime;
+                    currentSpeed = Mathf.Max(currentSpeed, 0);
+                }
+                else if (currentSpeed < 0)
+                {
+                    currentSpeed += acceleration * Time.fixedDeltaTime;
+                    currentSpeed = Mathf.Min(currentSpeed, 0);
+                }
             }
         }
         moveVec.x = currentSpeed;
         moveVec.y = vertVel;
         rb.velocity = transform.TransformDirection(moveVec);
+    }
+
+    /* This function is invoked when player press 
+     * roll button for dodgerolling. 
+     * It will put the player into rolling state
+     */
+    public void DodgeRoll()
+    {
+        isRolling = true;
+        lastRollingPosition = transform.position;
+        if (movementInput.x != 0)
+            rollDirection = movementInput.x > 0 ? 1 : -1;
+        else
+            rollDirection =  isLookingRight ? 1 : -1;
+        //shrink 
+    }
+
+    /* This function keeps track of rolling state
+     * and make player exit rolling state if necessary
+     */
+    private void UpdateDodgeRoll()
+    {
+        if (isRolling)
+        {
+            if (distanceRolled < rollDistance)
+            {
+                currentSpeed = rollDirection * maxSpeed * rollSpeedMult;
+                distanceRolled += Vector3.Distance(transform.position, lastRollingPosition);
+            }
+            else
+            {
+                isRolling = false;
+                //resets speed only when it's on the ground
+                // this is to stop it from jitter in mid air
+                currentSpeed = IsGrounded() ? 0 : currentSpeed;
+                distanceRolled = 0;
+            }
+            lastRollingPosition = transform.position;
+        }
+
+        if ((moveVec.x > 0 && IsBlocked(Vector3.right)) || (moveVec.x < 0 && IsBlocked(Vector3.left)))
+        {
+            Debug.Log("Rolling is Blocked");
+            isRolling = false;
+            currentSpeed = 0;
+            distanceRolled = 0;
+        }
     }
 
     /* This checks if the character is currently on the ground
@@ -131,28 +207,23 @@ public class CharacterController : MonoBehaviour
      */
     public bool IsGrounded()
     {
-        RaycastHit hit;
-        //bool isGrounded = Physics.BoxCast(transform.position, new Vector3(bodyRadius, 0, 0), Vector3.down, out hit, Quaternion.identity, distToGround, ground, QueryTriggerInteraction.UseGlobal);
-        isGrounded = Physics.SphereCast(transform.position, bodyRadius, Vector3.down, out hit, distToGround, ground, QueryTriggerInteraction.UseGlobal);
-        if (isGrounded != false && hit.collider.isTrigger)
-            isGrounded = false;
+        isGrounded = IsBlocked(Vector3.down);
         if (isGrounded && canDoubleJump != true)
             canDoubleJump = true;
         return isGrounded;
     }
 
-    /* This function is called with an event
-     * invoked when player press jump button
+    /* This function is called with an event invoked
+     * when player press jump button to make player jump
      */
     public void Jump()
     {
-        //Debug.Log(IsGrounded());
         if (IsGrounded())
         {
             vertVel = jumpStrength;
             canDoubleJump = true;
         }
-        //Debug.Log(canDoubleJump);
+        
         if (!IsGrounded() && canDoubleJump)
         {
             vertVel = doubleJumpStrength;
@@ -163,6 +234,7 @@ public class CharacterController : MonoBehaviour
                 moveVec.x = 0;
         }
     }
+
     /* This function control character aiming
      * Crosshair is moved using mouse/rightStick
      * Gun rotates to point at crosshair
@@ -174,35 +246,68 @@ public class CharacterController : MonoBehaviour
         aimVec.y = aimInputMouse.y - pos.y;
 
         float tmpAngle = Mathf.Atan2(aimVec.y, aimVec.x) * Mathf.Rad2Deg;
-        if (!(tmpAngle < 120 && tmpAngle > 60))
-            gunObject.transform.localRotation = Quaternion.Euler(0, 0, tmpAngle);
-        if (tmpAngle < 60 && tmpAngle > -60)
+        gunObject.transform.localRotation = Quaternion.Euler(0, 0, tmpAngle);
+        if (tmpAngle < 89 && tmpAngle > -91)
             isLookingRight = true;
         else
             isLookingRight = false;
     }
 
     /* This function checks if the model is blocked
-     * in a certain direction
+     * in a certain direction(argument == Vector3.up/Vector3.down.....)
      */
     private bool IsBlocked(Vector3 dir)
     {
         bool isBlock = false;
+        RaycastHit hit;
+        float radius;
 
+        if (dir == Vector3.up)
+        {
+            radius = (bodyWidth / 2) + bodyWidthOffset;
+            isBlock = Physics.SphereCast(transform.position, radius, Vector3.up, out hit, (bodyHeight / 2) - radius, immoveables, QueryTriggerInteraction.UseGlobal);
+            if (isBlock && hit.collider.isTrigger)
+                isBlock = false;
+        }
+        else if(dir == Vector3.down)
+        {
+            radius = (bodyWidth / 2) + bodyWidthOffset;
+            isBlock = Physics.SphereCast(transform.position, radius, Vector3.down, out hit, (bodyHeight / 2) - radius, immoveables, QueryTriggerInteraction.UseGlobal);
+            if (isBlock && hit.collider.isTrigger)
+                isBlock = false;
+        }
+        else if(dir == Vector3.right)
+        {
+            isBlock = Physics.BoxCast(transform.position, new Vector3(0, (bodyHeight / 2) - bodyHeightOffset, 0), Vector3.right, out hit, Quaternion.identity, bodyWidth, immoveables, QueryTriggerInteraction.UseGlobal);
+            if (isBlock && hit.collider.isTrigger || hit.normal != Vector3.left)
+                isBlock = false;
+        }
+        else if(dir == Vector3.left)
+        {
+            isBlock = Physics.BoxCast(transform.position, new Vector3(0, (bodyHeight / 2) - bodyHeightOffset, 0), Vector3.left, out hit, Quaternion.identity, bodyWidth, immoveables, QueryTriggerInteraction.UseGlobal);
+            if (isBlock && hit.collider.isTrigger || hit.normal != Vector3.right)
+                isBlock = false;
+        }
+        else
+        {
+            Debug.LogError("IsBlocked() direction Vector is invalid, try Vector3.up, etc.");
+        }
         return isBlock;
     }
 
+    /* This fuction applies gravity to player
+     * when the player's off the ground
+     */
     private void ApplyGravity()
     {
         if (!IsGrounded())
         {
             //check if character is stuck to ceiling and zero the speed so it can start falling
-            if (rb.velocity.y == 0)
-                vertVel = 0;
+            if (IsBlocked(Vector3.up))
+                vertVel = -2;
             // multiplier to make character fall faster on the way down
             var fallMult = rb.velocity.y < 0 ? fallSpeedMult : 1;
             vertVel -= gravity * fallMult * Time.fixedDeltaTime;
-            //Debug.Log(rb.velocity.y);
             //lock falling speed at terminal velocity
             if (vertVel < 0)
                 vertVel = Mathf.Max(vertVel, -terminalVel);
@@ -214,6 +319,10 @@ public class CharacterController : MonoBehaviour
                 vertVel = 0;
         }
     }
+
+    /* This function updates information
+     * about the player's state for animations
+     */
     private void AnimStateUpdate()
     {
         var xSpeed = moveVec.x != 0 ? moveVec.x / maxSpeed : 0;
@@ -225,5 +334,18 @@ public class CharacterController : MonoBehaviour
         animator.SetBool("isRolling", isRolling);
         animator.SetBool("isLookingRight", isLookingRight);
         animator.SetBool("gunFired", gunFired);
+    }
+
+
+    private void LogDebug()
+    {
+        //Debug.Log(movementInput);
+        //Debug.Log("blockedRight?:" + IsBlocked(Vector3.right));
+        //Debug.Log("blockedLeft?:" + IsBlocked(Vector3.left));
+        //Debug.Log(rb.velocity.y);
+        //Debug.Log("lastRollingPosition: " + lastRollingPosition);
+        //Debug.Log(IsGrounded());
+        //Debug.Log(canDoubleJump);
+        Debug.Log("distanceRolled: " + distanceRolled);
     }
 }
