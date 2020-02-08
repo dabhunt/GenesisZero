@@ -5,8 +5,10 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.InputSystem;
 
-[RequireComponent(typeof(Collider))]
+[RequireComponent(typeof(SphereCollider))]
+[RequireComponent(typeof(CapsuleCollider))]
 [RequireComponent(typeof(Rigidbody))]
 public class CharacterController : MonoBehaviour
 {
@@ -14,9 +16,7 @@ public class CharacterController : MonoBehaviour
     public float acceleration = 35f;
     public float jumpStrength = 12f;
     public float doubleJumpStrength = 10f;
-    public float bodyHeight = 2f;
-    public float bodyHeightOffset = 0.15f; // offset used for the sides casts
-    public float bodyWidth = 1f;
+    public float bodyHeightOffset = -0.15f; // offset used for the sides casts
     public float bodyWidthOffset = 0.05f; // offset used for the feet/head casts
     public float rollDistance = 5f;
     public float rollSpeedMult = 1.5f;
@@ -38,7 +38,8 @@ public class CharacterController : MonoBehaviour
 
     private PlayerInputActions inputActions;
     private Rigidbody rb;
-    private CapsuleCollider capCollider;
+    private CapsuleCollider capsuleCollider;
+    private SphereCollider sphereCollider;
     private Vector2 movementInput;
     private Vector2 aimInputMouse;
     private Vector2 aimInputController;
@@ -61,7 +62,8 @@ public class CharacterController : MonoBehaviour
     private void Awake()
     {
         rb = GetComponent<Rigidbody>();
-        capCollider = GetComponent<CapsuleCollider>();
+        capsuleCollider = GetComponent<CapsuleCollider>();
+        sphereCollider = GetComponent<SphereCollider>();
         inputActions = new PlayerInputActions();
         inputActions.PlayerControls.Move.performed += ctx => movementInput = ctx.ReadValue<Vector2>();
         inputActions.PlayerControls.AimMouse.performed += ctx => aimInputMouse = ctx.ReadValue<Vector2>();
@@ -160,17 +162,20 @@ public class CharacterController : MonoBehaviour
      * roll button for dodgerolling. 
      * It will put the player into rolling state
      */
-    public void DodgeRoll()
+    public void DodgeRoll(InputAction.CallbackContext ctx)
     {
-        isRolling = true;
-        lastRollingPosition = transform.position;
-        if (movementInput.x != 0)
-            rollDirection = movementInput.x > 0 ? 1 : -1;
-        else
-            rollDirection =  isLookingRight ? 1 : -1;
-        //shrink
-        capCollider.center = new Vector3(0, -0.5f, 0);
-        capCollider.height = (bodyHeight / 2) - 0.02f;
+        if (ctx.started)
+        {
+            Debug.Log("DodgeRoll");
+            isRolling = true;
+            lastRollingPosition = transform.position;
+            if (movementInput.x != 0)
+                rollDirection = movementInput.x > 0 ? 1 : -1;
+            else
+                rollDirection =  isLookingRight ? 1 : -1;
+            capsuleCollider.enabled = false;
+            sphereCollider.enabled = true;
+        }
     }
 
     /* This function keeps track of rolling state
@@ -187,22 +192,33 @@ public class CharacterController : MonoBehaviour
             }
             else
             {
-                isRolling = false;
-                //resets speed only when it's on the ground
-                // this is to stop it from jitter in mid air
                 currentSpeed = IsGrounded() ? 0 : currentSpeed;
-                distanceRolled = 0;
+                //make sure player doesn't get stuck under blocks
+                if (IsBlocked(Vector3.up))
+                    distanceRolled = rollDistance - sphereCollider.radius;
+                else
+                    isRolling = false;
             }
+
+            if ((rollDirection > 0 && IsBlocked(Vector3.right)) || (rollDirection < 0 && IsBlocked(Vector3.left)))
+            {   
+                distanceRolled = 0;
+                //make sure player doesn't get stuck under blocks
+                if (IsBlocked(Vector3.up))
+                    distanceRolled = rollDistance - sphereCollider.radius;
+                else
+                    isRolling = false;
+            }
+
             lastRollingPosition = transform.position;
         }
-
-        if ((moveVec.x > 0 && IsBlocked(Vector3.right)) || (moveVec.x < 0 && IsBlocked(Vector3.left)))
+        else
         {
-            isRolling = false;
-            currentSpeed = 0;
+            if (!capsuleCollider.enabled)
+                capsuleCollider.enabled = true;
+            if (sphereCollider.enabled)
+                sphereCollider.enabled = false;
             distanceRolled = 0;
-            capCollider.center = Vector3.zero;
-            capCollider.height = bodyHeight - 0.02f;
         }
     }
 
@@ -221,22 +237,26 @@ public class CharacterController : MonoBehaviour
     /* This function is called with an event invoked
      * when player press jump button to make player jump
      */
-    public void Jump()
-    {
-        if (IsGrounded())
+    public void Jump(InputAction.CallbackContext ctx)
+    {   
+        if (ctx.started)
         {
-            vertVel = jumpStrength;
-            canDoubleJump = true;
-        }
-        
-        if (!IsGrounded() && canDoubleJump)
-        {
-            vertVel = doubleJumpStrength;
-            canDoubleJump = false;
-            if (moveVec.x > 0 && movementInput.x <= 0)
-                moveVec.x = 0;
-            if (moveVec.x < 0 && movementInput.x >= 0)
-                moveVec.x = 0;
+            Debug.Log("Jumped");
+            if (IsGrounded())
+            {
+                vertVel = jumpStrength;
+                canDoubleJump = true;
+            }
+            
+            if (!IsGrounded() && canDoubleJump)
+            {
+                vertVel = doubleJumpStrength;
+                canDoubleJump = false;
+                if (moveVec.x > 0 && movementInput.x <= 0)
+                    moveVec.x = 0;
+                if (moveVec.x < 0 && movementInput.x >= 0)
+                    moveVec.x = 0;
+            }
         }
     }
 
@@ -265,31 +285,34 @@ public class CharacterController : MonoBehaviour
     {
         bool isBlock = false;
         RaycastHit hit;
-        float radius;
+        
+        float radius = capsuleCollider.radius;
+        float maxDist = (capsuleCollider.height / 2) - radius;
+        Vector3 rayCenter = isRolling ? transform.position - sphereCollider.center : transform.position;
+        float boxHalf = isRolling ? (sphereCollider.radius / 2) + bodyHeightOffset : (capsuleCollider.height / 2) + bodyHeightOffset;
+        Vector3 halfExtends = new Vector3(0, boxHalf, 0);
 
         if (dir == Vector3.up)
         {
-            radius = (bodyWidth / 2) - bodyWidthOffset;
-            isBlock = Physics.SphereCast(transform.position, radius, Vector3.up, out hit, (bodyHeight / 2) - radius + bodyWidthOffset, immoveables, QueryTriggerInteraction.UseGlobal);
+            isBlock = Physics.SphereCast(transform.position, radius, Vector3.up, out hit, maxDist, immoveables, QueryTriggerInteraction.UseGlobal);
             if (isBlock && hit.collider.isTrigger)
                 isBlock = false;
         }
         else if (dir == Vector3.down)
         {
-            radius = (bodyWidth / 2) - bodyWidthOffset;
-            isBlock = Physics.SphereCast(transform.position, radius, Vector3.down, out hit, (bodyHeight / 2) - radius + bodyWidthOffset, immoveables, QueryTriggerInteraction.UseGlobal);
+            isBlock = Physics.SphereCast(transform.position, radius, Vector3.down, out hit, maxDist, immoveables, QueryTriggerInteraction.UseGlobal);
             if (isBlock && hit.collider.isTrigger)
                 isBlock = false;
         }
         else if (dir == Vector3.right)
         {
-            isBlock = Physics.BoxCast(transform.position, new Vector3(0, (bodyHeight / 2) - bodyHeightOffset, 0), Vector3.right, out hit, Quaternion.identity, bodyWidth / 2, immoveables, QueryTriggerInteraction.UseGlobal);
+            isBlock = Physics.BoxCast(rayCenter, halfExtends, Vector3.right, out hit, Quaternion.identity, capsuleCollider.radius + bodyWidthOffset, immoveables, QueryTriggerInteraction.UseGlobal);
             if (isBlock && hit.collider.isTrigger || hit.normal != Vector3.left)
                 isBlock = false;
         }
         else if (dir == Vector3.left)
         {
-            isBlock = Physics.BoxCast(transform.position, new Vector3(0, (bodyHeight / 2) - bodyHeightOffset, 0), Vector3.left, out hit, Quaternion.identity, bodyWidth / 2, immoveables, QueryTriggerInteraction.UseGlobal);
+            isBlock = Physics.BoxCast(rayCenter, halfExtends, Vector3.left, out hit, Quaternion.identity, capsuleCollider.radius + bodyWidthOffset, immoveables, QueryTriggerInteraction.UseGlobal);
             if (isBlock && hit.collider.isTrigger || hit.normal != Vector3.right)
                 isBlock = false;
         }
