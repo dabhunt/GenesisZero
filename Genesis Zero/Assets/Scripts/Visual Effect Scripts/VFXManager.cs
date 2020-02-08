@@ -58,4 +58,8 @@ public class VFXManager : MonoBehaviour
         PlayEffect(name, position, 0, "");
     }
 
+    public void PlayGraphEffect(string name, Vector3 position)
+    {
+        GameObject effect = Instantiate(Resources.Load<GameObject>("Effects/GraphVFX/" + name), position, Quaternion.identity);
+    }
 }
