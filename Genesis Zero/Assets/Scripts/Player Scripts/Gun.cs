@@ -38,7 +38,7 @@ public class Gun : MonoBehaviour
         inputActions.Disable();
     }
 
-    public void Shoot()
+    public bool Shoot()
     {
         if (fireAction > 0 && Time.time >= timeToFire)
         {
@@ -52,9 +52,6 @@ public class Gun : MonoBehaviour
         {
             fired = false;
         }
-    }
-    public bool getFired()
-    {
         return fired;
     }
 }
