@@ -36,10 +36,13 @@ public class CharacterController : MonoBehaviour
     public GameObject crosshair;
     public float sensitivity;
 
+    //Component parts used in this Scripts
     private PlayerInputActions inputActions;
     private Rigidbody rb;
     private CapsuleCollider capsuleCollider;
     private SphereCollider sphereCollider;
+
+    //This chunk relates to movement/aim values
     private Vector2 movementInput;
     private Vector2 aimInputMouse;
     private Vector2 aimInputController;
@@ -51,6 +54,8 @@ public class CharacterController : MonoBehaviour
     private bool canDoubleJump = true;
     private float distanceRolled = 0;
     private int rollDirection;
+
+    //This chunk of variables is related to Animation
     private Animator animator;
     private Gun gun;
     private bool isGrounded = false;
@@ -80,6 +85,7 @@ public class CharacterController : MonoBehaviour
     private void Update()
     {
         AnimStateUpdate();
+        gunFired = gun.Shoot();
         //LogDebug();
     }
 
@@ -110,11 +116,11 @@ public class CharacterController : MonoBehaviour
         float multiplier = IsGrounded() ? 1 : airControlMult;
         // this is to deal with left stick returning floats
         var input = movementInput.x < 0 ? Mathf.Floor(movementInput.x) : Mathf.Ceil(movementInput.x);
-        // grabbing maxSpeed from player class
         maxSpeed = GetComponent<Player>().GetSpeed().GetValue();
         // if the state is not rolling
         if (!isRolling)
         {
+            //If move left key is pressed accelerate left
             if (movementInput.x < 0)
             {
                 if (!IsBlocked(Vector3.left))
@@ -127,6 +133,7 @@ public class CharacterController : MonoBehaviour
                     currentSpeed = 0;
                 }   
             }
+            //If move right key is pressed accelerate right
             else if (movementInput.x > 0)
             {
                 if (input > 0 && !IsBlocked(Vector3.right))
@@ -139,6 +146,7 @@ public class CharacterController : MonoBehaviour
                     currentSpeed = 0;
                 }
             }
+            //If no movement keys are pressed then decelerate til stop
             else
             {
                 if (currentSpeed > 0)
@@ -164,6 +172,8 @@ public class CharacterController : MonoBehaviour
      */
     public void DodgeRoll(InputAction.CallbackContext ctx)
     {
+        //Events triggers multiple time
+        // this condition is to make sure it only activate once
         if (ctx.started)
         {
             Debug.Log("DodgeRoll");
@@ -173,6 +183,7 @@ public class CharacterController : MonoBehaviour
                 rollDirection = movementInput.x > 0 ? 1 : -1;
             else
                 rollDirection =  isLookingRight ? 1 : -1;
+            //Shrink*
             capsuleCollider.enabled = false;
             sphereCollider.enabled = true;
         }
@@ -185,6 +196,7 @@ public class CharacterController : MonoBehaviour
     {
         if (isRolling)
         {
+            //continue rolling if rollDistance is not reached
             if (distanceRolled < rollDistance)
             {
                 currentSpeed = rollDirection * maxSpeed * rollSpeedMult;
@@ -200,6 +212,7 @@ public class CharacterController : MonoBehaviour
                     isRolling = false;
             }
 
+            //interupts roll if it's blocked
             if ((rollDirection > 0 && IsBlocked(Vector3.right)) || (rollDirection < 0 && IsBlocked(Vector3.left)))
             {   
                 distanceRolled = 0;
@@ -214,6 +227,7 @@ public class CharacterController : MonoBehaviour
         }
         else
         {
+            //unShrink*
             if (!capsuleCollider.enabled)
                 capsuleCollider.enabled = true;
             if (sphereCollider.enabled)
@@ -223,7 +237,7 @@ public class CharacterController : MonoBehaviour
     }
 
     /* This checks if the character is currently on the ground
-     * LayerMask named ground controls what surfaces 
+     * LayerMask named immoveables controls what surfaces 
      * group the player can jump on
      */
     public bool IsGrounded()
@@ -239,6 +253,8 @@ public class CharacterController : MonoBehaviour
      */
     public void Jump(InputAction.CallbackContext ctx)
     {   
+        //Events triggers multiple time
+        // this condition is to make sure it only activate once
         if (ctx.started)
         {
             Debug.Log("Jumped");
@@ -355,7 +371,6 @@ public class CharacterController : MonoBehaviour
     {
         var xSpeed = moveVec.x != 0 ? moveVec.x / maxSpeed : 0;
         var ySpeed = moveVec.y != 0 ? moveVec.y / Mathf.Abs(moveVec.y) : 0;
-        gunFired = gun.getFired();
         animator.SetFloat("xSpeed", xSpeed);
         animator.SetFloat("ySpeed", ySpeed);
         animator.SetBool("isGrounded", isGrounded);
