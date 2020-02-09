@@ -11,6 +11,7 @@ GameObject:
   - component: {fileID: 8233687240993079132}
   - component: {fileID: 2175728691502881661}
   - component: {fileID: 5007453256466231256}
+  - component: {fileID: -7419312514077244889}
   m_Layer: 0
   m_Name: Sparks
   m_TagString: Untagged
@@ -65,7 +66,7 @@ VisualEffect:
         m_Overridden: 0
     m_Vector2f:
       m_Array:
-      - m_Value: {x: 0.01, y: 0.08}
+      - m_Value: {x: 0.03, y: 0.14}
         m_Name: Size Min/Max
         m_Overridden: 1
       - m_Value: {x: 0.5, y: 2}
@@ -78,6 +79,12 @@ VisualEffect:
       m_Array:
       - m_Value: {x: 0, y: 5, z: 10}
         m_Name: Initial Velocity_vector
+        m_Overridden: 1
+      - m_Value: {x: 0, y: -9.81, z: 0}
+        m_Name: Gravity Vector
+        m_Overridden: 1
+      - m_Value: {x: 2, y: 3, z: 2}
+        m_Name: Bounds_size
         m_Overridden: 1
     m_Vector4f:
       m_Array: []
@@ -168,3 +175,16 @@ VFXRenderer:
   m_SortingLayerID: 0
   m_SortingLayer: 0
   m_SortingOrder: 0
+--- !u!114 &-7419312514077244889
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 6414825715766418841}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: e29267bb7bdaee74b8609f6c5f877a4a, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  time: 1
