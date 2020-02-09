@@ -117,48 +117,45 @@ public class CharacterController : MonoBehaviour
         // this is to deal with left stick returning floats
         var input = movementInput.x < 0 ? Mathf.Floor(movementInput.x) : Mathf.Ceil(movementInput.x);
         maxSpeed = GetComponent<Player>().GetSpeed().GetValue();
-        // if the state is not rolling
-        if (!isRolling)
+
+        //If move left key is pressed accelerate left
+        if (movementInput.x < 0)
         {
-            //If move left key is pressed accelerate left
-            if (movementInput.x < 0)
+            if (!IsBlocked(Vector3.left))
             {
-                if (!IsBlocked(Vector3.left))
-                {
-                    currentSpeed += input * multiplier * acceleration * Time.fixedDeltaTime;
-                    currentSpeed = Mathf.Max(currentSpeed, -maxSpeed);
-                }
-                else
-                {
-                    currentSpeed = 0;
-                }   
+                currentSpeed += input * multiplier * acceleration * Time.fixedDeltaTime;
+                currentSpeed = Mathf.Max(currentSpeed, -maxSpeed);
             }
-            //If move right key is pressed accelerate right
-            else if (movementInput.x > 0)
-            {
-                if (input > 0 && !IsBlocked(Vector3.right))
-                {
-                    currentSpeed += input * multiplier * acceleration * Time.fixedDeltaTime;
-                    currentSpeed = Mathf.Min(currentSpeed, maxSpeed);
-                }
-                else
-                {
-                    currentSpeed = 0;
-                }
-            }
-            //If no movement keys are pressed then decelerate til stop
             else
             {
-                if (currentSpeed > 0)
-                {
-                    currentSpeed -= acceleration * Time.fixedDeltaTime;
-                    currentSpeed = Mathf.Max(currentSpeed, 0);
-                }
-                else if (currentSpeed < 0)
-                {
-                    currentSpeed += acceleration * Time.fixedDeltaTime;
-                    currentSpeed = Mathf.Min(currentSpeed, 0);
-                }
+                currentSpeed = 0;
+            }   
+        }
+        //If move right key is pressed accelerate right
+        else if (movementInput.x > 0)
+        {
+            if (input > 0 && !IsBlocked(Vector3.right))
+            {
+                currentSpeed += input * multiplier * acceleration * Time.fixedDeltaTime;
+                currentSpeed = Mathf.Min(currentSpeed, maxSpeed);
+            }
+            else
+            {
+                currentSpeed = 0;
+            }
+        }
+        //If no movement keys are pressed then decelerate til stop
+        else
+        {
+            if (currentSpeed > 0)
+            {
+                currentSpeed -= acceleration * Time.fixedDeltaTime;
+                currentSpeed = Mathf.Max(currentSpeed, 0);
+            }
+            else if (currentSpeed < 0)
+            {
+                currentSpeed += acceleration * Time.fixedDeltaTime;
+                currentSpeed = Mathf.Min(currentSpeed, 0);
             }
         }
         moveVec.x = currentSpeed;
@@ -178,6 +175,9 @@ public class CharacterController : MonoBehaviour
         {
             Debug.Log("DodgeRoll");
             isRolling = true;
+            //Disable certain input during dodgeroll
+            inputActions.PlayerControls.Move.Disable();
+            inputActions.PlayerControls.Fire.Disable();
             lastRollingPosition = transform.position;
             if (movementInput.x != 0)
                 rollDirection = movementInput.x > 0 ? 1 : -1;
@@ -232,6 +232,9 @@ public class CharacterController : MonoBehaviour
                 capsuleCollider.enabled = true;
             if (sphereCollider.enabled)
                 sphereCollider.enabled = false;
+            //re-enable the input again
+            inputActions.PlayerControls.Move.Disable();
+            inputActions.PlayerControls.Fire.Disable();
             distanceRolled = 0;
         }
     }
