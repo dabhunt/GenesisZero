@@ -233,8 +233,8 @@ public class CharacterController : MonoBehaviour
             if (sphereCollider.enabled)
                 sphereCollider.enabled = false;
             //re-enable the input again
-            inputActions.PlayerControls.Move.Disable();
-            inputActions.PlayerControls.Fire.Disable();
+            inputActions.PlayerControls.Move.Enable();
+            inputActions.PlayerControls.Fire.Enable();
             distanceRolled = 0;
         }
     }
