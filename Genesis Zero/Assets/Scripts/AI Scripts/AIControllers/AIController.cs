@@ -254,6 +254,12 @@ public class AIController : Pawn
             GizmosExtra.DrawWireCircle(transform.position, Vector3.forward, BehaviorProperties.AttackRadius);
         }
     }
+
+    public override float TakeDamage(float amount, Pawn source)
+    {
+        Debug.Log("Enemy Damaged");
+        return base.TakeDamage(amount, source);
+    }
 }
 
 // Class for events where an AI state is passed as an argument
