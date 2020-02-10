@@ -44,6 +44,7 @@ public class DroneAI : AIController
 
     protected void FixedUpdate()
     {
+        base.FixedUpdate();
         if (Target == null) { return; }
 
         if (state == AIState.Follow || state == AIState.Charge || state == AIState.Attack || state == AIState.Cooldown)
@@ -64,6 +65,7 @@ public class DroneAI : AIController
             targetSpeed = 0.0f;
         }
 
+        targetSpeed *= GetSpeed().GetValue();
         frb.Accelerate(transform.up * (targetSpeed - frb.GetVelocity().magnitude * Mathf.Clamp01(Vector3.Dot(transform.up, frb.GetVelocity().normalized))) * Acceleration); // Accelerate toward the target
         frb.Accelerate(-transform.right * frb.GetVelocity().magnitude * Vector3.Dot(transform.right, frb.GetVelocity().normalized) * SideDecel); // Deceleration to prevent sideways movement
         transform.rotation = Quaternion.LookRotation(Vector3.forward, lookDir); // Actual rotation
