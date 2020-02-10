@@ -15,6 +15,7 @@ public class AIController : Pawn
     protected AIState state = AIState.Patrol; // Current behavior state
 
     public Transform Target; // Target or player object to follow and attack
+    protected bool targetVisible = false;
 
     protected float stateTime = 0.0f; // Duration of current state
 
@@ -51,6 +52,11 @@ public class AIController : Pawn
             return;
         }
 
+        if (Target != null)
+        {
+            CheckTargetVisibility();
+        }
+
         if (IsStunned())
         {
             ChangeState(AIState.Patrol);
@@ -66,7 +72,7 @@ public class AIController : Pawn
 
         if (tracker != null)
         {
-            if (state == AIState.Patrol || state == AIState.Idle || TargetVisible())
+            if (state == AIState.Patrol || state == AIState.Idle || targetVisible)
             {
                 tracker.StopTracking();
                 tracker.ClearTrackedPoints();
@@ -87,18 +93,18 @@ public class AIController : Pawn
     {
         if (state == AIState.Patrol) // State when moving around while not following player
         {
-            if (GetDistanceToTarget() <= BehaviorProperties.DetectRadius && TargetVisible())
+            if (GetDistanceToTarget() <= BehaviorProperties.DetectRadius && targetVisible)
             {
                 ChangeState(AIState.Follow);
             }
         }
         else if (state == AIState.Follow) // State when following player to attack
         {
-            if (BehaviorProperties.StopFollowingWhenOutOfRange && (GetDistanceToTarget() > BehaviorProperties.DetectRadius || !TargetVisible()))
+            if (BehaviorProperties.StopFollowingWhenOutOfRange && (GetDistanceToTarget() > BehaviorProperties.DetectRadius || !targetVisible))
             {
                 ChangeState(AIState.Patrol);
             }
-            else if (GetDistanceToTarget() <= BehaviorProperties.AttackRadius && TargetVisible())
+            else if (GetDistanceToTarget() <= BehaviorProperties.AttackRadius && targetVisible)
             {
                 ChangeState(AIState.Charge);
             }
@@ -170,7 +176,7 @@ public class AIController : Pawn
     {
         if (Target != null && BehaviorProperties != null)
         {
-            return TargetVisible() ? Mathf.Max(0.0f, BehaviorProperties.AvoidRadius - GetDistanceToTarget()) : 0.0f;
+            return targetVisible ? Mathf.Max(0.0f, BehaviorProperties.AvoidRadius - GetDistanceToTarget()) : 0.0f;
         }
         return 0.0f;
     }
@@ -178,7 +184,7 @@ public class AIController : Pawn
     /**
      * Returns whether the target is visible
      */
-    protected bool TargetVisible()
+    private void CheckTargetVisibility()
     {
         if (Target != null && BehaviorProperties != null)
         {
@@ -196,15 +202,17 @@ public class AIController : Pawn
                             //Debug.Log(curHit.transform.name);
                             if (!curHit.transform.IsChildOf(transform) && !curHit.transform.IsChildOf(Target))
                             {
-                                return false;
+                                targetVisible = false;
+                                return;
                             }
                         }
                     }
                 }
             }
-            return true;
+            targetVisible = true;
+            return;
         }
-        return false;
+        targetVisible = false;
     }
 
     /**
@@ -214,7 +222,7 @@ public class AIController : Pawn
     {
         if (Target == null) { return Vector3.zero; }
 
-        if (TargetVisible())
+        if (targetVisible)
         {
             return Target.position;
         }
@@ -230,7 +238,7 @@ public class AIController : Pawn
      */
     protected void OnDrawGizmos()
     {
-        if (TargetVisible())
+        if (targetVisible)
         {
             Gizmos.color = Color.green;
             Gizmos.DrawLine(transform.position, Target.position);
