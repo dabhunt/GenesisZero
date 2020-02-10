@@ -1,4 +1,5 @@
-﻿using System.Collections;
+﻿using System;
+using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using System.Linq;
@@ -18,6 +19,7 @@ public class ObjectTracker : MonoBehaviour
     private bool tracking = false;
     public float AutoDequeueDistance = -1.0f; // If the tracker is closer than this distance to the oldest point, it will be dequeued
     private bool reachedEnd = false;
+    public Func<bool> GiveUpCondition = () => { return false; }; // Used for deciding when the tracker should stop trying to track/follow the target
 
     private void FixedUpdate()
     {
@@ -44,6 +46,11 @@ public class ObjectTracker : MonoBehaviour
             {
                 DequeueFirstPoint();
             }
+        }
+
+        if (GiveUpCondition())
+        {
+            reachedEnd = true;
         }
     }
 

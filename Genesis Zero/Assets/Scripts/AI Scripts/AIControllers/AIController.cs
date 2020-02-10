@@ -22,21 +22,25 @@ public class AIController : Pawn
 
     public AIStateEvent StateChangeEvent; // Invoked whenever the state is changed and passes in the new state to called methods
 
-    private ObjectTracker tracker;
+    protected ObjectTracker tracker;
 
     new protected void Start()
     {
         base.Start();
+        tracker = GetComponent<ObjectTracker>();
         if (Target == null)
         {
             GameObject playerSearch = GameObject.FindGameObjectWithTag("Player");
             if (playerSearch != null)
             {
-                Target = playerSearch.transform;
+                SetTarget(playerSearch.transform);
             }
         }
+    }
 
-        tracker = GetComponent<ObjectTracker>();
+    protected virtual void SetTarget(Transform tr)
+    {
+        Target = tr;
         if (tracker != null)
         {
             tracker.Target = Target;
@@ -82,7 +86,7 @@ public class AIController : Pawn
             else
             {
                 tracker.StartTracking();
-                if (tracker.HasReachedEnd())
+                if (tracker.HasReachedEnd() || tracker.GiveUpCondition())
                 {
                     ChangeState(AIState.Patrol);
                 }

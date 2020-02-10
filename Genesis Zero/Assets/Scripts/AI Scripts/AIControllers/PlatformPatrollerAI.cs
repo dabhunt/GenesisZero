@@ -20,6 +20,7 @@ public class PlatformPatrollerAI : AIController
     public float PatrolSpeed = 5.0f; // Movement speed while patrolling
     public float PatrolSwitchRate = 1.0f; // Rate at which the enemy switches directions while patrolling
     private int faceDir = 1; // Direction the enemy is facing: 1 = right, -1 = left
+    public float MaxFollowHeight = 5.0f; // Maximum height above the enemy for which the target will be tracked after going out of sight
 
     public ParticleSystem chargeParticles;
     public ParticleSystem attackParticles;
@@ -38,6 +39,15 @@ public class PlatformPatrollerAI : AIController
     new protected void Update()
     {
         base.Update();
+    }
+
+    protected override void SetTarget(Transform tr)
+    {
+        base.SetTarget(tr);
+        if (Target != null && tracker != null)
+        {
+            tracker.GiveUpCondition = () => { return tracker.PeekFirstPoint().y > transform.position.y + MaxFollowHeight; };
+        }
     }
 
     new protected void FixedUpdate()
