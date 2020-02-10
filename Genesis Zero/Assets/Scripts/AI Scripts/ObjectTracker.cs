@@ -11,11 +11,13 @@ public class ObjectTracker : MonoBehaviour
 {
     public Transform Target;
     private Queue<Vector3> points = new Queue<Vector3>();
+    private int pointsAdded = 0;
     public int MaxPoints = 100;
     public float TrackInterval = 0.1f;
     private float trackTime = 0.0f;
     private bool tracking = false;
     public float AutoDequeueDistance = -1.0f; // If the tracker is closer than this distance to the oldest point, it will be dequeued
+    private bool reachedEnd = false;
 
     private void FixedUpdate()
     {
@@ -24,14 +26,11 @@ public class ObjectTracker : MonoBehaviour
         if (tracking)
         {
             trackTime -= Time.fixedDeltaTime;
-            if (trackTime <= 0)
+            if (trackTime <= 0 && points.Count < MaxPoints && pointsAdded < MaxPoints)
             {
                 points.Enqueue(Target.position);
                 trackTime = TrackInterval;
-                while (points.Count > MaxPoints)
-                {
-                    points.Dequeue();
-                }
+                pointsAdded++;
             }
         }
         else
@@ -43,7 +42,7 @@ public class ObjectTracker : MonoBehaviour
         {
             if (Vector3.Distance(transform.position, points.Peek()) <= AutoDequeueDistance)
             {
-                points.Dequeue();
+                DequeueFirstPoint();
             }
         }
     }
@@ -70,6 +69,24 @@ public class ObjectTracker : MonoBehaviour
     public void ClearTrackedPoints()
     {
         points.Clear();
+    }
+
+    /**
+     * Resets the state of the tracker
+     */
+    public void Reset()
+    {
+        points.Clear();
+        reachedEnd = false;
+        pointsAdded = 0;
+    }
+
+    /**
+     * Returns whether the tracker has reached the end of the points
+     */
+    public bool HasReachedEnd()
+    {
+        return reachedEnd;
     }
 
     /**
@@ -102,6 +119,10 @@ public class ObjectTracker : MonoBehaviour
     {
         if (points.Count > 0)
         {
+            if (points.Count == 1)
+            {
+                reachedEnd = true;
+            }
             return points.Dequeue();
         }
         else

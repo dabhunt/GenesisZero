@@ -77,11 +77,15 @@ public class AIController : Pawn
             if (state == AIState.Patrol || state == AIState.Idle || targetVisible)
             {
                 tracker.StopTracking();
-                tracker.ClearTrackedPoints();
+                tracker.Reset();
             }
             else
             {
                 tracker.StartTracking();
+                if (tracker.HasReachedEnd())
+                {
+                    ChangeState(AIState.Patrol);
+                }
             }
         }
 
