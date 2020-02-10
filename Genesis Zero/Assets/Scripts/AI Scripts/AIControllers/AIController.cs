@@ -60,7 +60,7 @@ public class AIController : Pawn
     }
 
     /**
-     * State logic meant to be called in Update
+     * State logic meant to be called in FixedUpdate
      */
     private void StateUpdate()
     {

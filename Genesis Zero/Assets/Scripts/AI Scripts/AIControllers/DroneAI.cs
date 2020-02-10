@@ -42,7 +42,7 @@ public class DroneAI : AIController
         patrolDir = Mathf.RoundToInt(Mathf.Sign(Random.value - 0.5f));
     }
 
-    protected void FixedUpdate()
+    new protected void FixedUpdate()
     {
         base.FixedUpdate();
         if (Target == null) { return; }

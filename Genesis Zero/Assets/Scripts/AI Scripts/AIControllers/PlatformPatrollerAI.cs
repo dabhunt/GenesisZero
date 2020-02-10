@@ -40,7 +40,7 @@ public class PlatformPatrollerAI : AIController
         base.Update();
     }
 
-    protected void FixedUpdate()
+    new protected void FixedUpdate()
     {
         base.FixedUpdate();
         if (Target == null) { return; }
