@@ -33,9 +33,9 @@ public class AIController : Pawn
         }
     }
 
-    new protected void Update()
+    new protected void FixedUpdate()
     {
-        base.Update();
+        base.FixedUpdate();
 
         if (BehaviorProperties == null)
         {
@@ -58,13 +58,6 @@ public class AIController : Pawn
 
         //Debug.Log(state);
     }
-
-    /*new protected void FixedUpdate()
-    {
-        base.FixedUpdate();
-
-        if (Target == null) { return; }
-    }*/
 
     /**
      * State logic meant to be called in Update
@@ -111,7 +104,7 @@ public class AIController : Pawn
             }
         }
 
-        stateTime += Time.deltaTime;
+        stateTime += Time.fixedDeltaTime;
     }
 
     /**
@@ -154,7 +147,7 @@ public class AIController : Pawn
         {
             if (BehaviorProperties.UseLineOfSight)
             {
-                return !Physics.Linecast(transform.position, Target.position, BehaviorProperties.SightMask, QueryTriggerInteraction.Ignore)
+                return !Physics.Linecast(transform.position, Target.position, BehaviorProperties.SightMask, QueryTriggerInteraction.Ignore);
             }
             else
             {
