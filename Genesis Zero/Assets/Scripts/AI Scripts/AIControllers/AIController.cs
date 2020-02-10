@@ -59,6 +59,13 @@ public class AIController : Pawn
         //Debug.Log(state);
     }
 
+    /*new protected void FixedUpdate()
+    {
+        base.FixedUpdate();
+
+        if (Target == null) { return; }
+    }*/
+
     /**
      * State logic meant to be called in Update
      */
@@ -139,6 +146,22 @@ public class AIController : Pawn
             return Mathf.Max(0.0f, BehaviorProperties.AvoidRadius - GetDistanceToTarget());
         }
         return 0.0f;
+    }
+
+    protected bool TargetVisible()
+    {
+        if (Target != null && BehaviorProperties != null)
+        {
+            if (BehaviorProperties.UseLineOfSight)
+            {
+                return !Physics.Linecast(transform.position, Target.position, BehaviorProperties.SightMask, QueryTriggerInteraction.Ignore)
+            }
+            else
+            {
+                return true;
+            }
+        }
+        return false;
     }
 
     /**
