@@ -74,7 +74,7 @@ public class Pawn : MonoBehaviour
         }
         else
         {
-            //Debug.Log(transform.root.name + " Dodged!");
+            Debug.Log(transform.root.name + " Dodged!");
             return 0;
             //Dodge Effect
         }

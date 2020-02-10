@@ -5,15 +5,11 @@ using UnityEngine;
 public class Player : Pawn
 {
     SkillManager SkillManager;
-
-    private void Awake()
-    {
-        SkillManager = new SkillManager(this);
-    }
     // Start is called before the first frame update
     new void Start()
     {
         Time.fixedDeltaTime = .01f; // <- this is here as a placeholder, no other good place to have this.
+        SkillManager = new SkillManager(this);
         base.Start();
     }
 

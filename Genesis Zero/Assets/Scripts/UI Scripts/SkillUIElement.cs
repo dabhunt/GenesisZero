@@ -29,15 +29,6 @@ public class SkillUIElement : MonoBehaviour
         {
             GetComponentInChildren<Text>().text = "x" + stacknumber;
         }
-        else
-        {
-            GetComponentInChildren<Text>().text = "";
-        }
-    }
-
-    public void SetStack(int num)
-    {
-        UpdateSkillUIElement(Icon.sprite, num);
     }
 
     public void AddStack(int num)
@@ -45,7 +36,7 @@ public class SkillUIElement : MonoBehaviour
         UpdateSkillUIElement(Icon.sprite, StackNumber + num);
     }
 
-    public void SetIcon(Sprite icon)
+    public void ChangeIcon(Sprite icon)
     {
         UpdateSkillUIElement(icon, StackNumber);
     }

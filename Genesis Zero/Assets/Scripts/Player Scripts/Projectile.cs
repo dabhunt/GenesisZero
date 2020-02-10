@@ -25,17 +25,13 @@ public class Projectile : MonoBehaviour
 
     private void Update()
     {
-
+        
     }
 
     private void Move()
     {
-        bool collided = CheckCollisions();
-        if (collided == false)
-        {
-            direction = speed * transform.right * Time.fixedDeltaTime;
-            transform.position += direction;
-        }
+        direction = speed * transform.right * Time.fixedDeltaTime;
+        transform.position += direction;
     }
 
     private void DestroyObject()
@@ -51,24 +47,5 @@ public class Projectile : MonoBehaviour
     public void SetDirection(Vector3 vec)
     {
         direction = vec;
-    }
-
-    public bool CheckCollisions()
-    {
-        RaycastHit hit;
-        if (GetComponent<SphereCollider>())
-        {
-            SphereCollider col = GetComponent<SphereCollider>();
-            bool hitdetect = Physics.SphereCast(transform.position, col.radius, transform.right, out hit, (speed * Time.fixedDeltaTime));
-            if (hitdetect && hit.collider != col)
-            {
-                Vector3 dir = speed * transform.right * Time.fixedDeltaTime;
-                dir = dir.normalized * (hit.distance + col.radius * 2);
-                
-                transform.position += dir;
-                return true;
-            }
-        }
-        return false;
     }
 }
