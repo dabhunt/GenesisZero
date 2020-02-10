@@ -11,9 +11,9 @@ using UnityEngine.Events;
 public class AIStateEffect : MonoBehaviour
 {
     private AIController ai;
-    public AIController.AIState EffectState;
-    public UnityEvent StateEnterEvent;
-    public UnityEvent StateExitEvent;
+    public AIController.AIState EffectState; // Relevant state to track
+    public UnityEvent StateEnterEvent; // Invoked when the state is entered
+    public UnityEvent StateExitEvent; // Invoked when the state is exited
 
     private void Awake()
     {

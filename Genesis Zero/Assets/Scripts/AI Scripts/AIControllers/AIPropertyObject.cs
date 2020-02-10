@@ -17,4 +17,7 @@ public class AIPropertyObject : ScriptableObject
     public float AttackCooldownTime = 1.0f;
     public float AttackRadius = 0.5f;
     public bool StopFollowingWhenOutOfRange = false;
+    public bool UseLineOfSight = true;
+    public LayerMask SightMask = 1;
+    public int MaxSightCastHits = 4;
 }

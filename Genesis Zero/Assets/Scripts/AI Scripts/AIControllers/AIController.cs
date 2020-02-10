@@ -15,10 +15,13 @@ public class AIController : Pawn
     protected AIState state = AIState.Patrol; // Current behavior state
 
     public Transform Target; // Target or player object to follow and attack
+    protected bool targetVisible = false;
 
     protected float stateTime = 0.0f; // Duration of current state
 
     public AIStateEvent StateChangeEvent; // Invoked whenever the state is changed and passes in the new state to called methods
+
+    private ObjectTracker tracker;
 
     new protected void Start()
     {
@@ -31,16 +34,27 @@ public class AIController : Pawn
                 Target = playerSearch.transform;
             }
         }
+
+        tracker = GetComponent<ObjectTracker>();
+        if (tracker != null)
+        {
+            tracker.Target = Target;
+        }
     }
 
-    new protected void Update()
+    new protected void FixedUpdate()
     {
-        base.Update();
+        base.FixedUpdate();
 
         if (BehaviorProperties == null)
         {
             Debug.LogError("No AI Properties assigned to " + transform.name, gameObject);
             return;
+        }
+
+        if (Target != null)
+        {
+            CheckTargetVisibility();
         }
 
         if (IsStunned())
@@ -56,28 +70,41 @@ public class AIController : Pawn
             ChangeState(AIState.Idle);
         }
 
+        if (tracker != null)
+        {
+            if (state == AIState.Patrol || state == AIState.Idle || targetVisible)
+            {
+                tracker.StopTracking();
+                tracker.ClearTrackedPoints();
+            }
+            else
+            {
+                tracker.StartTracking();
+            }
+        }
+
         //Debug.Log(state);
     }
 
     /**
-     * State logic meant to be called in Update
+     * State logic meant to be called in FixedUpdate
      */
     private void StateUpdate()
     {
         if (state == AIState.Patrol) // State when moving around while not following player
         {
-            if (GetDistanceToTarget() <= BehaviorProperties.DetectRadius)
+            if (GetDistanceToTarget() <= BehaviorProperties.DetectRadius && targetVisible)
             {
                 ChangeState(AIState.Follow);
             }
         }
         else if (state == AIState.Follow) // State when following player to attack
         {
-            if (BehaviorProperties.StopFollowingWhenOutOfRange && GetDistanceToTarget() > BehaviorProperties.DetectRadius)
+            if (BehaviorProperties.StopFollowingWhenOutOfRange && (GetDistanceToTarget() > BehaviorProperties.DetectRadius || !targetVisible))
             {
                 ChangeState(AIState.Patrol);
             }
-            else if (GetDistanceToTarget() <= BehaviorProperties.AttackRadius)
+            else if (GetDistanceToTarget() <= BehaviorProperties.AttackRadius && targetVisible)
             {
                 ChangeState(AIState.Charge);
             }
@@ -104,7 +131,7 @@ public class AIController : Pawn
             }
         }
 
-        stateTime += Time.deltaTime;
+        stateTime += Time.fixedDeltaTime;
     }
 
     /**
@@ -115,6 +142,19 @@ public class AIController : Pawn
         state = newState;
         stateTime = 0.0f;
         StateChangeEvent.Invoke(state);
+
+        if (tracker != null)
+        {
+            if (newState != AIState.Patrol && newState != AIState.Idle)
+            {
+                //tracker.StartTracking();
+            }
+            else
+            {
+                //tracker.StopTracking();
+                tracker.ClearTrackedPoints();
+            }
+        }
     }
 
     /**
@@ -136,9 +176,61 @@ public class AIController : Pawn
     {
         if (Target != null && BehaviorProperties != null)
         {
-            return Mathf.Max(0.0f, BehaviorProperties.AvoidRadius - GetDistanceToTarget());
+            return targetVisible ? Mathf.Max(0.0f, BehaviorProperties.AvoidRadius - GetDistanceToTarget()) : 0.0f;
         }
         return 0.0f;
+    }
+
+    /**
+     * Returns whether the target is visible
+     */
+    private void CheckTargetVisibility()
+    {
+        if (Target != null && BehaviorProperties != null)
+        {
+            if (BehaviorProperties.UseLineOfSight)
+            {
+                Vector3 toTarget = Target.position - transform.position;
+                RaycastHit[] sightHits = new RaycastHit[BehaviorProperties.MaxSightCastHits];
+                if (Physics.RaycastNonAlloc(transform.position, toTarget.normalized, sightHits, toTarget.magnitude, BehaviorProperties.SightMask, QueryTriggerInteraction.Ignore) > 0)
+                {
+                    for (int i = 0; i < sightHits.Length; i++)
+                    {
+                        RaycastHit curHit = sightHits[i];
+                        if (curHit.collider != null)
+                        {
+                            //Debug.Log(curHit.transform.name);
+                            if (!curHit.transform.IsChildOf(transform) && !curHit.transform.IsChildOf(Target))
+                            {
+                                targetVisible = false;
+                                return;
+                            }
+                        }
+                    }
+                }
+            }
+            targetVisible = true;
+            return;
+        }
+        targetVisible = false;
+    }
+
+    /**
+     * Calculates the best point to go in order to follow the target
+     */
+    protected Vector3 GetTargetFollowPoint()
+    {
+        if (Target == null) { return Vector3.zero; }
+
+        if (targetVisible)
+        {
+            return Target.position;
+        }
+        else if (tracker != null)
+        {
+            return tracker.PeekFirstPoint();
+        }
+        return Vector3.zero;
     }
 
     /**
@@ -146,6 +238,12 @@ public class AIController : Pawn
      */
     protected void OnDrawGizmos()
     {
+        if (targetVisible)
+        {
+            Gizmos.color = Color.green;
+            Gizmos.DrawLine(transform.position, Target.position);
+        }
+
         if (BehaviorProperties != null)
         {
             Gizmos.color = Color.cyan;
