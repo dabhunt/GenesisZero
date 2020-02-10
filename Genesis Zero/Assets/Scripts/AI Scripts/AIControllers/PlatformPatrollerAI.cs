@@ -44,11 +44,10 @@ public class PlatformPatrollerAI : AIController
     {
         base.FixedUpdate();
         if (Target == null) { return; }
-        Vector3 targetPos = GetTargetFollowPoint();
 
         if (state == AIState.Follow || state == AIState.Charge || state == AIState.Cooldown)
         {
-            faceDir = Mathf.RoundToInt(Mathf.Sign(targetPos.x - transform.position.x));
+            faceDir = Mathf.RoundToInt(Mathf.Sign(targetPosition.x - transform.position.x));
             targetSpeed = MoveSpeed;
         }
         else if (state == AIState.Attack)

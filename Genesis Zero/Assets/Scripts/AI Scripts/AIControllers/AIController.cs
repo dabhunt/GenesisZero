@@ -15,6 +15,7 @@ public class AIController : Pawn
     protected AIState state = AIState.Patrol; // Current behavior state
 
     public Transform Target; // Target or player object to follow and attack
+    protected Vector3 targetPosition = Vector3.zero; // Position to move to
     protected bool targetVisible = false;
 
     protected float stateTime = 0.0f; // Duration of current state
@@ -56,6 +57,7 @@ public class AIController : Pawn
         {
             CheckTargetVisibility();
         }
+        targetPosition = GetTargetFollowPoint();
 
         if (IsStunned())
         {
