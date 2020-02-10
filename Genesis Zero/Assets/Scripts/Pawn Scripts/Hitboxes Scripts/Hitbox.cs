@@ -190,7 +190,7 @@ public class Hitbox : MonoBehaviour
     {
         this.Damage = damage;
         this.Source = source;
-        if (Random.Range(0, 100) < Source.GetCritChance().GetValue() * 100)
+        if (Random.Range(0, 100) > Source.GetCritChance().GetValue() * 100)
         {
             Critical = true;
             return true;

@@ -14,7 +14,7 @@
                     "interactions": ""
                 },
                 {
-                    "name": "AimMouse",
+                    "name": "Look/Aim",
                     "type": "PassThrough",
                     "id": "95a719cb-580b-4379-94fd-1776eeaec549",
                     "expectedControlType": "Vector3",
@@ -22,25 +22,17 @@
                     "interactions": ""
                 },
                 {
-                    "name": "AimController",
+                    "name": "Jump",
                     "type": "PassThrough",
                     "id": "0a784de5-0df8-4345-81b1-6cb16db6728f",
-                    "expectedControlType": "Vector2",
-                    "processors": "",
-                    "interactions": ""
-                },
-                {
-                    "name": "Jump",
-                    "type": "Button",
-                    "id": "be22d5e4-0e46-40f3-9252-c020cfafbd37",
                     "expectedControlType": "Button",
                     "processors": "",
-                    "interactions": "Press(pressPoint=0.1)"
+                    "interactions": "Press(pressPoint=0.1,behavior=2)"
                 },
                 {
                     "name": "Fire",
                     "type": "PassThrough",
-                    "id": "5a85d603-2e77-42c4-8bdd-536b415de140",
+                    "id": "be22d5e4-0e46-40f3-9252-c020cfafbd37",
                     "expectedControlType": "Button",
                     "processors": "",
                     "interactions": ""
@@ -48,23 +40,7 @@
                 {
                     "name": "Pause",
                     "type": "Button",
-                    "id": "3dc8c984-4a1a-4303-9b44-a59d2dea0415",
-                    "expectedControlType": "",
-                    "processors": "",
-                    "interactions": ""
-                },
-                {
-                    "name": "Roll",
-                    "type": "Button",
-                    "id": "d34c41c0-3e49-4d96-8e5e-2de4da6a116c",
-                    "expectedControlType": "Button",
-                    "processors": "",
-                    "interactions": "Press(pressPoint=0.1)"
-                },
-                {
-                    "name": "Interact",
-                    "type": "Button",
-                    "id": "37cdc43c-1b80-4a86-9c7c-e7179db50e60",
+                    "id": "5a85d603-2e77-42c4-8bdd-536b415de140",
                     "expectedControlType": "",
                     "processors": "",
                     "interactions": ""
@@ -155,7 +131,18 @@
                     "interactions": "",
                     "processors": "",
                     "groups": "Keyboard&Mouse",
-                    "action": "AimMouse",
+                    "action": "Look/Aim",
+                    "isComposite": false,
+                    "isPartOfComposite": false
+                },
+                {
+                    "name": "",
+                    "id": "5cfccf92-0a9f-4c28-8175-bc5f1eaae715",
+                    "path": "<Gamepad>/rightStick",
+                    "interactions": "",
+                    "processors": "",
+                    "groups": "Gamepads",
+                    "action": "Look/Aim",
                     "isComposite": false,
                     "isPartOfComposite": false
                 },
@@ -163,6 +150,17 @@
                     "name": "",
                     "id": "f9207609-d0e5-499a-934d-2010d2baab7c",
                     "path": "<Keyboard>/w",
+                    "interactions": "",
+                    "processors": "",
+                    "groups": "Keyboard&Mouse",
+                    "action": "Jump",
+                    "isComposite": false,
+                    "isPartOfComposite": false
+                },
+                {
+                    "name": "",
+                    "id": "47a6b6f2-5fa0-41b1-bd83-f18f531766f3",
+                    "path": "<Keyboard>/space",
                     "interactions": "",
                     "processors": "",
                     "groups": "Keyboard&Mouse",
@@ -222,61 +220,6 @@
                     "processors": "",
                     "groups": "Keyboard&Mouse",
                     "action": "Pause",
-                    "isComposite": false,
-                    "isPartOfComposite": false
-                },
-                {
-                    "name": "",
-                    "id": "54a9844b-62ee-4e59-a494-1c1b31377443",
-                    "path": "<Keyboard>/space",
-                    "interactions": "",
-                    "processors": "",
-                    "groups": "Keyboard&Mouse",
-                    "action": "Roll",
-                    "isComposite": false,
-                    "isPartOfComposite": false
-                },
-                {
-                    "name": "",
-                    "id": "40390624-88f0-4c90-8485-f4cd3cbce95c",
-                    "path": "<Gamepad>/leftTrigger",
-                    "interactions": "",
-                    "processors": "",
-                    "groups": "Gamepads",
-                    "action": "Roll",
-                    "isComposite": false,
-                    "isPartOfComposite": false
-                },
-                {
-                    "name": "",
-                    "id": "628acdc3-f2b8-4a1d-b722-524bb7cd51a8",
-                    "path": "<Keyboard>/e",
-                    "interactions": "",
-                    "processors": "",
-                    "groups": "Keyboard&Mouse",
-                    "action": "Interact",
-                    "isComposite": false,
-                    "isPartOfComposite": false
-                },
-                {
-                    "name": "",
-                    "id": "b5839926-24aa-4340-ae7a-8836656242df",
-                    "path": "<Gamepad>/buttonNorth",
-                    "interactions": "",
-                    "processors": "",
-                    "groups": "Gamepads",
-                    "action": "Interact",
-                    "isComposite": false,
-                    "isPartOfComposite": false
-                },
-                {
-                    "name": "",
-                    "id": "7c108ba2-49c9-40b4-9b24-2cf7fd7d360d",
-                    "path": "<Gamepad>/rightStick",
-                    "interactions": "",
-                    "processors": "",
-                    "groups": "",
-                    "action": "AimController",
                     "isComposite": false,
                     "isPartOfComposite": false
                 }
