@@ -46,13 +46,14 @@ public class DroneAI : AIController
     {
         base.FixedUpdate();
         if (Target == null) { return; }
+        Vector3 targetPos = GetTargetFollowPoint();
 
         if (state == AIState.Follow || state == AIState.Charge || state == AIState.Attack || state == AIState.Cooldown)
         {
             // Rotation assumes that local up direction is forward
-            lookDir = Vector3.Slerp(lookDir, Target.position - transform.position, RotationRate * Time.fixedDeltaTime); // Rotate to face target
+            lookDir = Vector3.Slerp(lookDir, targetPos - transform.position, RotationRate * Time.fixedDeltaTime); // Rotate to face target
             targetSpeed = MoveSpeed;
-            frb.Accelerate((transform.position - Target.position).normalized * Mathf.Min(GetAvoidCloseness(), AvoidAccelLimit) * Acceleration * AvoidAmount); // Acceleration to keep away from the target
+            frb.Accelerate((transform.position - targetPos).normalized * Mathf.Min(GetAvoidCloseness(), AvoidAccelLimit) * Acceleration * AvoidAmount); // Acceleration to keep away from the target
         }
         else if (state == AIState.Patrol)
         {

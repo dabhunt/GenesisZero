@@ -20,6 +20,8 @@ public class AIController : Pawn
 
     public AIStateEvent StateChangeEvent; // Invoked whenever the state is changed and passes in the new state to called methods
 
+    private ObjectTracker tracker;
+
     new protected void Start()
     {
         base.Start();
@@ -30,6 +32,12 @@ public class AIController : Pawn
             {
                 Target = playerSearch.transform;
             }
+        }
+
+        tracker = GetComponent<ObjectTracker>();
+        if (tracker != null)
+        {
+            tracker.Target = Target;
         }
     }
 
@@ -56,6 +64,19 @@ public class AIController : Pawn
             ChangeState(AIState.Idle);
         }
 
+        if (tracker != null)
+        {
+            if (state == AIState.Patrol || state == AIState.Idle || TargetVisible())
+            {
+                tracker.StopTracking();
+                tracker.ClearTrackedPoints();
+            }
+            else
+            {
+                tracker.StartTracking();
+            }
+        }
+
         //Debug.Log(state);
     }
 
@@ -77,7 +98,7 @@ public class AIController : Pawn
             {
                 ChangeState(AIState.Patrol);
             }
-            else if (GetDistanceToTarget() <= BehaviorProperties.AttackRadius)
+            else if (GetDistanceToTarget() <= BehaviorProperties.AttackRadius && TargetVisible())
             {
                 ChangeState(AIState.Charge);
             }
@@ -115,6 +136,19 @@ public class AIController : Pawn
         state = newState;
         stateTime = 0.0f;
         StateChangeEvent.Invoke(state);
+
+        if (tracker != null)
+        {
+            if (newState != AIState.Patrol && newState != AIState.Idle)
+            {
+                //tracker.StartTracking();
+            }
+            else
+            {
+                //tracker.StopTracking();
+                tracker.ClearTrackedPoints();
+            }
+        }
     }
 
     /**
@@ -136,11 +170,14 @@ public class AIController : Pawn
     {
         if (Target != null && BehaviorProperties != null)
         {
-            return Mathf.Max(0.0f, BehaviorProperties.AvoidRadius - GetDistanceToTarget());
+            return TargetVisible() ? Mathf.Max(0.0f, BehaviorProperties.AvoidRadius - GetDistanceToTarget()) : 0.0f;
         }
         return 0.0f;
     }
 
+    /**
+     * Returns whether the target is visible
+     */
     protected bool TargetVisible()
     {
         if (Target != null && BehaviorProperties != null)
@@ -168,6 +205,24 @@ public class AIController : Pawn
             return true;
         }
         return false;
+    }
+
+    /**
+     * Calculates the best point to go in order to follow the target
+     */
+    protected Vector3 GetTargetFollowPoint()
+    {
+        if (Target == null) { return Vector3.zero; }
+
+        if (TargetVisible())
+        {
+            return Target.position;
+        }
+        else if (tracker != null)
+        {
+            return tracker.PeekFirstPoint();
+        }
+        return Vector3.zero;
     }
 
     /**

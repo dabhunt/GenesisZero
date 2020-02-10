@@ -9632,6 +9632,7 @@ GameObject:
   - component: {fileID: 2000804235349801763}
   - component: {fileID: 2000804235349801762}
   - component: {fileID: 2000804235349801766}
+  - component: {fileID: 2037691598}
   - component: {fileID: 1692614117}
   - component: {fileID: 1692614116}
   m_Layer: 0
@@ -9749,6 +9750,22 @@ MonoBehaviour:
   AttackProjectile: {fileID: 6641631083453567850, guid: 1b5e9b6d2186b0a499598904343c6fea,
     type: 3}
   AttackLaunchInterval: 0.2
+--- !u!114 &2037691598
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2000804235349801773}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: ac520db0e3073fd4c858c9b6df353b26, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  Target: {fileID: 0}
+  MaxPoints: 100
+  TrackInterval: 0.1
+  AutoDequeueDistance: 3
 --- !u!54 &1692614117
 Rigidbody:
   m_ObjectHideFlags: 0

@@ -1,6 +1,7 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using System.Linq;
 
 /**
  * Justin Couch
@@ -14,6 +15,7 @@ public class ObjectTracker : MonoBehaviour
     public float TrackInterval = 0.1f;
     private float trackTime = 0.0f;
     private bool tracking = false;
+    public float AutoDequeueDistance = -1.0f; // If the tracker is closer than this distance to the oldest point, it will be dequeued
 
     private void FixedUpdate()
     {
@@ -24,22 +26,30 @@ public class ObjectTracker : MonoBehaviour
             trackTime -= Time.fixedDeltaTime;
             if (trackTime <= 0)
             {
-                if (points.Count >= MaxPoints)
+                points.Enqueue(Target.position);
+                trackTime = TrackInterval;
+                while (points.Count > MaxPoints)
                 {
                     points.Dequeue();
                 }
-                points.Enqueue(Target.position);
-                trackTime = TrackInterval;
             }
         }
         else
         {
             trackTime = 0.0f;
         }
+
+        if (AutoDequeueDistance >= 0 && points.Count > 0)
+        {
+            if (Vector3.Distance(transform.position, points.Peek()) <= AutoDequeueDistance)
+            {
+                points.Dequeue();
+            }
+        }
     }
 
     /**
-     * Sets the tracker to begin tracking the position of the target.
+     * Sets the tracker to begin tracking the position of the target
      */
     public void StartTracking()
     {
@@ -47,7 +57,7 @@ public class ObjectTracker : MonoBehaviour
     }
 
     /**
-     * Sets the tracker to stop tracking the position of the target.
+     * Sets the tracker to stop tracking the position of the target
      */
     public void StopTracking()
     {
@@ -55,7 +65,7 @@ public class ObjectTracker : MonoBehaviour
     }
 
     /**
-     * Clears the list of tracked points.
+     * Clears the list of tracked points
      */
     public void ClearTrackedPoints()
     {
@@ -63,7 +73,7 @@ public class ObjectTracker : MonoBehaviour
     }
 
     /**
-     * Returns the number of tracked points.
+     * Returns the number of tracked points
      */
     public int GetPointCount()
     {
@@ -71,7 +81,22 @@ public class ObjectTracker : MonoBehaviour
     }
 
     /**
-     * Gets the oldest tracked point and dequeues it.
+     * Gets the oldest tracked point
+     */
+    public Vector3 PeekFirstPoint()
+    {
+        if (points.Count > 0)
+        {
+            return points.Peek();
+        }
+        else
+        {
+            return Vector3.zero;
+        }
+    }
+
+    /**
+     * Gets the oldest tracked point and dequeues it
      */
     public Vector3 DequeueFirstPoint()
     {
@@ -82,6 +107,15 @@ public class ObjectTracker : MonoBehaviour
         else
         {
             return Vector3.zero;
+        }
+    }
+
+    private void OnDrawGizmos()
+    {
+        Gizmos.color = Color.magenta;
+        for (int i = 0; i < points.Count; i++)
+        {
+            Gizmos.DrawWireSphere(points.ElementAt(i), 0.1f);
         }
     }
 }
