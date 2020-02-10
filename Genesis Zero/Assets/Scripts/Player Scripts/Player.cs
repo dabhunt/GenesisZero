@@ -32,7 +32,7 @@ public class Player : Pawn
     public override float TakeDamage(float amount, Pawn source)
     {
         //Add anything if there is class specific additions to taking damage
-        return base.TakeDamage(amount);
+        return base.TakeDamage(amount, source);
     }
 
     public bool HasSkill(string name)
