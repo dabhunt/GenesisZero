@@ -66,14 +66,14 @@ public class AIController : Pawn
     {
         if (state == AIState.Patrol) // State when moving around while not following player
         {
-            if (GetDistanceToTarget() <= BehaviorProperties.DetectRadius)
+            if (GetDistanceToTarget() <= BehaviorProperties.DetectRadius && TargetVisible())
             {
                 ChangeState(AIState.Follow);
             }
         }
         else if (state == AIState.Follow) // State when following player to attack
         {
-            if (BehaviorProperties.StopFollowingWhenOutOfRange && GetDistanceToTarget() > BehaviorProperties.DetectRadius)
+            if (BehaviorProperties.StopFollowingWhenOutOfRange && (GetDistanceToTarget() > BehaviorProperties.DetectRadius || !TargetVisible()))
             {
                 ChangeState(AIState.Patrol);
             }
