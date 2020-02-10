@@ -12728,9 +12728,9 @@ GameObject:
   - component: {fileID: 1239869385}
   - component: {fileID: 1239869384}
   - component: {fileID: 1239869383}
+  - component: {fileID: 1239869382}
   - component: {fileID: 1239869381}
   - component: {fileID: 1239869390}
-  - component: {fileID: 1239869382}
   m_Layer: 8
   m_Name: Player
   m_TagString: Player
@@ -12760,12 +12760,13 @@ MonoBehaviour:
   m_GameObject: {fileID: 1239869380}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 381d822ddfd775c4ba7f703097a3cb70, type: 3}
+  m_Script: {fileID: 11500000, guid: f3320af02340e2b488ac7b90f7fbc2f2, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
   projectile: {fileID: 7446024088350224124, guid: 082c3f5fa7950bb43b1cdf80af81d68d,
     type: 3}
   firePoint: {fileID: 1502879931}
+  fireRate: 5
 --- !u!114 &1239869383
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -12780,20 +12781,14 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   acceleration: 20
   jumpStrength: 13
-  doubleJumpStrength: 10
-  bodyHeightOffset: -0.15
-  bodyWidthOffset: 0.05
-  rollDistance: 5
-  rollSpeedMult: 1.5
-  immoveables:
+  distToGround: 0.51
+  bodyRadius: 0.5
+  ground:
     serializedVersion: 2
-    m_Bits: 0
+    m_Bits: 4294967295
   gravity: 20
-  terminalVel: 15
-  fallSpeedMult: 1.45
-  airControlMult: 0.5
   mainCam: {fileID: 1932838408}
-  gunObject: {fileID: 0}
+  gun: {fileID: 1043372102}
   crosshair: {fileID: 0}
   sensitivity: 0
 --- !u!114 &1239869384
