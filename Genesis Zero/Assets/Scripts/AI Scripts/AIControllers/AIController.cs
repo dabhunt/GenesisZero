@@ -147,12 +147,25 @@ public class AIController : Pawn
         {
             if (BehaviorProperties.UseLineOfSight)
             {
-                return !Physics.Linecast(transform.position, Target.position, BehaviorProperties.SightMask, QueryTriggerInteraction.Ignore);
+                Vector3 toTarget = Target.position - transform.position;
+                RaycastHit[] sightHits = new RaycastHit[BehaviorProperties.MaxSightCastHits];
+                if (Physics.RaycastNonAlloc(transform.position, toTarget.normalized, sightHits, toTarget.magnitude, BehaviorProperties.SightMask, QueryTriggerInteraction.Ignore) > 0)
+                {
+                    for (int i = 0; i < sightHits.Length; i++)
+                    {
+                        RaycastHit curHit = sightHits[i];
+                        if (curHit.collider != null)
+                        {
+                            //Debug.Log(curHit.transform.name);
+                            if (!curHit.transform.IsChildOf(transform) && !curHit.transform.IsChildOf(Target))
+                            {
+                                return false;
+                            }
+                        }
+                    }
+                }
             }
-            else
-            {
-                return true;
-            }
+            return true;
         }
         return false;
     }
@@ -162,6 +175,12 @@ public class AIController : Pawn
      */
     protected void OnDrawGizmos()
     {
+        if (TargetVisible())
+        {
+            Gizmos.color = Color.green;
+            Gizmos.DrawLine(transform.position, Target.position);
+        }
+
         if (BehaviorProperties != null)
         {
             Gizmos.color = Color.cyan;

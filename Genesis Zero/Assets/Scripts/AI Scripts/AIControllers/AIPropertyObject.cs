@@ -19,4 +19,5 @@ public class AIPropertyObject : ScriptableObject
     public bool StopFollowingWhenOutOfRange = false;
     public bool UseLineOfSight = true;
     public LayerMask SightMask = 1;
+    public int MaxSightCastHits = 4;
 }
