@@ -20,4 +20,5 @@ public class AIPropertyObject : ScriptableObject
     public bool UseLineOfSight = true;
     public LayerMask SightMask = 1;
     public int MaxSightCastHits = 4;
+    public float MaxAlertTrackTime = 5.0f;
 }

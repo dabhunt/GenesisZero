@@ -29,10 +29,10 @@ public class Player : Pawn
         base.FixedUpdate();
     }
 
-    new public void TakeDamage(float amount)
+    public override float TakeDamage(float amount, Pawn source)
     {
         //Add anything if there is class specific additions to taking damage
-        base.TakeDamage(amount);
+        return base.TakeDamage(amount, source);
     }
 
     public bool HasSkill(string name)

@@ -38,8 +38,8 @@ public class Pawn : MonoBehaviour
     /**
      * The function that handles damage taken. Does not handle things like burning and knockback
      */
-    public float TakeDamage(float amount)
-    {
+    public virtual float TakeDamage(float amount, Pawn source)
+    { 
         int chance = Random.Range(0, 100);
         if (chance > GetDodgeChance().GetValue() * 100) // Dodging will ignore damage
         {

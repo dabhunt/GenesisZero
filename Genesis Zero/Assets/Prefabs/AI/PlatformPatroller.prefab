@@ -4918,6 +4918,8 @@ GameObject:
   - component: {fileID: 1691705310207626296}
   - component: {fileID: 1743832014}
   - component: {fileID: 1385165931}
+  - component: {fileID: 9165788198344305358}
+  - component: {fileID: 3739019229038373442}
   m_Layer: 0
   m_Name: PlatformPatroller
   m_TagString: Untagged
@@ -5040,6 +5042,7 @@ MonoBehaviour:
   Acceleration: 5
   PatrolSpeed: 5
   PatrolSwitchRate: 1.5
+  MaxFollowHeight: 5
   chargeParticles: {fileID: 751653434026467008}
   attackParticles: {fileID: 751653433110049400}
 --- !u!114 &4884162759698704238
@@ -5055,7 +5058,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   Target: {fileID: 0}
-  MaxPoints: 100
+  MaxPoints: 20
   TrackInterval: 0.1
   AutoDequeueDistance: 2
 --- !u!114 &1691705310207626296
@@ -5130,6 +5133,37 @@ MonoBehaviour:
   GravityFactor: 1.5
   friction: 2
   drag: 0.1
+--- !u!95 &9165788198344305358
+Animator:
+  serializedVersion: 3
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 751653433366621662}
+  m_Enabled: 1
+  m_Avatar: {fileID: 0}
+  m_Controller: {fileID: 22100000, guid: 16bfca665e762b54ab0f86df05b9b2f4, type: 2}
+  m_CullingMode: 0
+  m_UpdateMode: 0
+  m_ApplyRootMotion: 0
+  m_LinearVelocityBlending: 0
+  m_WarningMessage: 
+  m_HasTransformHierarchy: 1
+  m_AllowConstantClipSamplingOptimization: 1
+  m_KeepAnimatorControllerStateOnDisable: 0
+--- !u!114 &3739019229038373442
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 751653433366621662}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 01ce23c1053aff742846bd80b9391bb1, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
 --- !u!1 &751653434026467023
 GameObject:
   m_ObjectHideFlags: 0

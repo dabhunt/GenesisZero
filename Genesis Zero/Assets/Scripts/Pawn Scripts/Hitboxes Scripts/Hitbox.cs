@@ -148,7 +148,7 @@ public class Hitbox : MonoBehaviour
                     }
                 }
 
-                float damagetaken = p.TakeDamage(finaldamage);
+                float damagetaken = p.TakeDamage(finaldamage, Source);
 
                 if (DamageNumberObject)
                 {
