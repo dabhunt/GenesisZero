@@ -1,8 +1,8 @@
 ﻿using UnityEngine.Audio;
 using System;
 using UnityEngine;
-
-// Code by Brackeys
+using System.Collections;
+using System.Collections.Generic;
 
 public class AudioManager : MonoBehaviour
 {
@@ -10,6 +10,8 @@ public class AudioManager : MonoBehaviour
     public Sound[] sounds;
 
     public static AudioManager instance;
+
+    List<Sound> Playlist = new List<Sound>();
 
     // Use this for initialization
     void Awake()
@@ -23,13 +25,20 @@ public class AudioManager : MonoBehaviour
         }
         DontDestroyOnLoad(gameObject);
 
+        sounds = Resources.LoadAll("Sounds", typeof(AudioClip));
+
         foreach (Sound s in sounds)
         {
+            Playlist.Add(s);
             s.source = gameObject.AddComponent<AudioSource>();
             s.source.clip = s.clip;
             s.source.volume = s.volume;
             s.source.pitch = s.pitch;
             s.source.loop = s.loop;
+            if (s.playOnAwake)
+            {
+                s.source.Play();
+            }
         }
     }
 
@@ -48,7 +57,7 @@ public class AudioManager : MonoBehaviour
 
     public void Play (string name)
     {
-        Sound s = Array.Find(sounds, sound => sound.name == name);
+        Sound s = List.Find(instance.Playlist, Sound => Sound.name == name);
         if (s == null)
         {
             Debug.LogWarning("Audio: " + name + " not found!");

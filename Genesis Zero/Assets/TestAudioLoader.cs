@@ -2,20 +2,18 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-public class TestSound : MonoBehaviour
+public class TestAudioLoader : MonoBehaviour
 {
+    public int track;
     // Start is called before the first frame update
     void Start()
     {
-        FindObjectOfType<AudioManager>().Play("Pillar Men");
+        FindObjectOfType<AudioLoader>().PlaySound(track);
     }
 
     // Update is called once per frame
     void Update()
     {
-        /*if (Input.GetKeyDown(KeyCode.O))
-        {
-            FindObjectOfType<AudioManager>().Play();
-        }*/
+        
     }
 }
