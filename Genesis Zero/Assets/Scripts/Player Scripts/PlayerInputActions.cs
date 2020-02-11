@@ -44,11 +44,11 @@ public class @PlayerInputActions : IInputActionCollection, IDisposable
                 },
                 {
                     ""name"": ""Jump"",
-                    ""type"": ""Button"",
+                    ""type"": ""PassThrough"",
                     ""id"": ""be22d5e4-0e46-40f3-9252-c020cfafbd37"",
                     ""expectedControlType"": ""Button"",
                     ""processors"": """",
-                    ""interactions"": ""Press(pressPoint=0.1)""
+                    ""interactions"": ""Press""
                 },
                 {
                     ""name"": ""Fire"",
