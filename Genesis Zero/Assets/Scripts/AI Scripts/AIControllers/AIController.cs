@@ -120,6 +120,14 @@ public class AIController : Pawn
     }
 
     /**
+     * Returns the current state of the AI
+     */
+    public AIState GetState()
+    {
+        return state;
+    }
+
+    /**
      * State logic meant to be called in FixedUpdate
      */
     private void StateUpdate()
