@@ -1,6 +1,7 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.UI;
 
 /**
  * Kenny Doan
@@ -16,9 +17,11 @@ public class SkillDisplay : MonoBehaviour
     public SkillManager SkillManager;
     private List<GameObject> skilldisplay;
     public GameObject UIElement;
+    public GameObject PopupElement;
     [Space]
     public Vector2 Ability1Position;
     public Vector2 Ability2Position;
+    public Vector2 PopupPosition;
 
     public int skillnumber;
     // Start is called before the first frame update
@@ -41,6 +44,13 @@ public class SkillDisplay : MonoBehaviour
         {
             skillnumber = SkillManager.GetAmount();
             SkillManager.SetUpdated(false);
+            if (SkillManager.GetAddedSkill() != null)
+            {
+                SkillObject s = SkillManager.GetAddedSkill();
+                PopupElement.GetComponent<SkillPopupDisplay>().SetPopup(s.Icon, s.name, s.Description);
+                PopupElement.GetComponent<SkillPopupDisplay>().Popup();
+                SkillManager.SetAddedSKill(null);
+            }
             UpdateDisplay();
         }
     }
@@ -97,5 +107,7 @@ public class SkillDisplay : MonoBehaviour
         Gizmos.color = Color.yellow;
         Gizmos.DrawWireSphere(transform.position + (Vector3)Ability1Position, .3f);
         Gizmos.DrawWireSphere(transform.position + (Vector3)Ability2Position, .3f);
+        Gizmos.color = Color.green;
+        Gizmos.DrawWireCube(transform.position + (Vector3)PopupPosition, new Vector3(3,1,0));
     }
 }
