@@ -7,7 +7,7 @@ using UnityEngine;
  * Justin Couch
  * Basic test class for making an object move and jump.
  */
-public class SimplePlayerMove : MonoBehaviour
+public class SimplePlayerMove : Pawn
 {
     private FakeRigidbody frb;
     public float MoveSpeed = 1.0f;
@@ -19,18 +19,38 @@ public class SimplePlayerMove : MonoBehaviour
         frb = GetComponent<FakeRigidbody>();
     }
 
-    private void FixedUpdate()
+    new private void FixedUpdate()
     {
         float moveInput = (Input.GetKey(KeyCode.RightArrow) ? 1.0f : 0.0f) - (Input.GetKey(KeyCode.LeftArrow) ? 1.0f : 0.0f);
 
         frb.Accelerate(Vector3.right * (moveInput * MoveSpeed - frb.GetVelocity().x) * MoveAcceleration);
     }
 
-    private void Update()
+    new private void Update()
     {
         if (Input.GetKeyDown(KeyCode.UpArrow))
         {
             frb.AddVelocity(Vector3.up * JumpSpeed);
+        }
+
+        if (Input.GetKeyDown(KeyCode.Space))
+        {
+            AIController[] allEnemies = FindObjectsOfType<AIController>();
+            AIController closestEnemy = null;
+            float closeDist = Mathf.Infinity;
+            foreach (AIController curEnemy in allEnemies)
+            {
+                if ((transform.position - curEnemy.transform.position).sqrMagnitude < closeDist && curEnemy.gameObject.activeInHierarchy)
+                {
+                    closeDist = (transform.position - curEnemy.transform.position).sqrMagnitude;
+                    closestEnemy = curEnemy;
+                }
+            }
+
+            if (closestEnemy != null)
+            {
+                closestEnemy.TakeDamage(1.0f, this);
+            }
         }
     }
 }

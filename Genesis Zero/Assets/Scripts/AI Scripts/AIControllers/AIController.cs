@@ -16,6 +16,9 @@ public class AIController : Pawn
 
     public Transform Target; // Target or player object to follow and attack
     protected Vector3 targetPosition = Vector3.zero; // Position to move to
+    protected Vector3 alertPoint = Vector3.zero; // Position to move to when alerted
+    protected bool alertTracking = false; // Whether the target following type is alert-based (moving to alert point)
+    private float alertTrackTime = 0.0f;
     protected bool targetVisible = false;
 
     protected float stateTime = 0.0f; // Duration of current state
@@ -27,6 +30,13 @@ public class AIController : Pawn
     new protected void Start()
     {
         base.Start();
+
+        if (BehaviorProperties == null)
+        {
+            Debug.LogError("No AI Properties assigned to " + transform.name, gameObject);
+            //return;
+        }
+
         tracker = GetComponent<ObjectTracker>();
         if (Target == null)
         {
@@ -50,12 +60,6 @@ public class AIController : Pawn
     new protected void FixedUpdate()
     {
         base.FixedUpdate();
-
-        if (BehaviorProperties == null)
-        {
-            Debug.LogError("No AI Properties assigned to " + transform.name, gameObject);
-            return;
-        }
 
         if (Target != null)
         {
@@ -83,7 +87,7 @@ public class AIController : Pawn
                 tracker.StopTracking();
                 tracker.Reset();
             }
-            else
+            else if (!alertTracking)
             {
                 tracker.StartTracking();
                 if (tracker.HasReachedEnd() || tracker.GiveUpCondition())
@@ -91,6 +95,25 @@ public class AIController : Pawn
                     ChangeState(AIState.Patrol);
                 }
             }
+        }
+
+        if (alertTracking)
+        {
+            alertTrackTime += Time.fixedDeltaTime;
+            if (targetVisible)
+            {
+                alertTracking = false;
+            }
+
+            if (alertTrackTime >= BehaviorProperties.MaxAlertTrackTime)
+            {
+                alertTracking = false;
+                ChangeState(AIState.Patrol);
+            }
+        }
+        else
+        {
+            alertTrackTime = 0.0f;
         }
 
         //Debug.Log(state);
@@ -103,7 +126,7 @@ public class AIController : Pawn
     {
         if (state == AIState.Patrol) // State when moving around while not following player
         {
-            if (GetDistanceToTarget() <= BehaviorProperties.DetectRadius && targetVisible)
+            if ((GetDistanceToTarget() <= BehaviorProperties.DetectRadius && targetVisible) || alertTracking)
             {
                 ChangeState(AIState.Follow);
             }
@@ -162,8 +185,13 @@ public class AIController : Pawn
             else
             {
                 //tracker.StopTracking();
-                tracker.ClearTrackedPoints();
+                tracker.Reset();
             }
+        }
+
+        if (newState == AIState.Patrol || newState == AIState.Charge)
+        {
+            alertTracking = false;
         }
     }
 
@@ -236,8 +264,14 @@ public class AIController : Pawn
         {
             return Target.position;
         }
+
+        if (alertTracking)
+        {
+            return alertPoint;
+        }
         else if (tracker != null)
         {
+            alertTracking = false;
             return tracker.PeekFirstPoint();
         }
         return Vector3.zero;
@@ -254,6 +288,12 @@ public class AIController : Pawn
             Gizmos.DrawLine(transform.position, Target.position);
         }
 
+        if (alertTracking)
+        {
+            Gizmos.color = Color.blue;
+            Gizmos.DrawLine(transform.position, alertPoint);
+        }
+
         if (BehaviorProperties != null)
         {
             Gizmos.color = Color.cyan;
@@ -268,6 +308,11 @@ public class AIController : Pawn
     public override float TakeDamage(float amount, Pawn source)
     {
         Debug.Log("Enemy Damaged");
+        if (state == AIState.Patrol || state == AIState.Idle || alertTracking)
+        {
+            alertPoint = source.transform.position;
+            alertTracking = true;
+        }
         return base.TakeDamage(amount, source);
     }
 }
