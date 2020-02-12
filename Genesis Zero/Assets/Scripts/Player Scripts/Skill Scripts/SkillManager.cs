@@ -7,6 +7,7 @@ public class SkillManager
     Dictionary<string, int> Skills;
 
     private List<SkillObject> skillobjects;
+    private SkillObject AddedSkill; //Null when no skills have been added recently
     private Player player;
     private int skillamount;
     private int abilityamount;
@@ -49,6 +50,7 @@ public class SkillManager
                 }
             }
         }
+        AddedSkill = skill;
         AddSkillStats(skill, true);
         skillamount++;
     }
@@ -69,6 +71,7 @@ public class SkillManager
                     abilityamount--;
                 }
             }
+            AddedSkill = null;
             AddSkillStats(skill, false);
             skillamount--;
         }
@@ -213,5 +216,15 @@ public class SkillManager
     public bool GetUpdated()
     {
         return updated;
+    }
+
+    public SkillObject GetAddedSkill()
+    {
+        return AddedSkill;
+    }
+
+    public void SetAddedSKill(SkillObject so)
+    {
+        AddedSkill = so;
     }
 }
