@@ -119,7 +119,7 @@ public class CharacterController : MonoBehaviour
         maxSpeed = GetComponent<Player>().GetSpeed().GetValue();
 
         //If move left key is pressed accelerate left
-        if (movementInput.x < 0)
+        if (!isRolling && movementInput.x < 0)
         {
             if (!IsBlocked(Vector3.left))
             {
@@ -132,7 +132,7 @@ public class CharacterController : MonoBehaviour
             }   
         }
         //If move right key is pressed accelerate right
-        else if (movementInput.x > 0)
+        else if (!isRolling && movementInput.x > 0)
         {
             if (input > 0 && !IsBlocked(Vector3.right))
             {
@@ -171,13 +171,11 @@ public class CharacterController : MonoBehaviour
     {
         //Events triggers multiple time
         // this condition is to make sure it only activate once
-        if (ctx.started)
+        if (ctx.performed)
         {
             Debug.Log("DodgeRoll");
             isRolling = true;
-            //Disable certain input during dodgeroll
-            inputActions.PlayerControls.Move.Disable();
-            inputActions.PlayerControls.Fire.Disable();
+            distanceRolled = 0;
             lastRollingPosition = transform.position;
             if (movementInput.x != 0)
                 rollDirection = movementInput.x > 0 ? 1 : -1;
@@ -215,7 +213,6 @@ public class CharacterController : MonoBehaviour
             //interupts roll if it's blocked
             if ((rollDirection > 0 && IsBlocked(Vector3.right)) || (rollDirection < 0 && IsBlocked(Vector3.left)))
             {   
-                distanceRolled = 0;
                 //make sure player doesn't get stuck under blocks
                 if (IsBlocked(Vector3.up))
                     distanceRolled = rollDistance - sphereCollider.radius;
@@ -232,10 +229,6 @@ public class CharacterController : MonoBehaviour
                 capsuleCollider.enabled = true;
             if (sphereCollider.enabled)
                 sphereCollider.enabled = false;
-            //re-enable the input again
-            inputActions.PlayerControls.Move.Enable();
-            inputActions.PlayerControls.Fire.Enable();
-            distanceRolled = 0;
         }
     }
 
@@ -258,23 +251,26 @@ public class CharacterController : MonoBehaviour
     {   
         //Events triggers multiple time
         // this condition is to make sure it only activate once
-        if (ctx.started)
+        if (ctx.performed)
         {
-            Debug.Log("Jumped");
             if (IsGrounded())
             {
+                Debug.Log("Jumped");
                 vertVel = jumpStrength;
                 canDoubleJump = true;
             }
-            
-            if (!IsGrounded() && canDoubleJump)
+            else
             {
-                vertVel = doubleJumpStrength;
-                canDoubleJump = false;
-                if (moveVec.x > 0 && movementInput.x <= 0)
-                    moveVec.x = 0;
-                if (moveVec.x < 0 && movementInput.x >= 0)
-                    moveVec.x = 0;
+                if (canDoubleJump)
+                {
+                    Debug.Log("DJumped");
+                    vertVel = doubleJumpStrength;
+                    canDoubleJump = false;
+                    if (moveVec.x > 0 && movementInput.x <= 0)
+                        moveVec.x = 0;
+                    if (moveVec.x < 0 && movementInput.x >= 0)
+                        moveVec.x = 0;  
+                }
             }
         }
     }
@@ -305,8 +301,8 @@ public class CharacterController : MonoBehaviour
         bool isBlock = false;
         RaycastHit hit;
         
-        float radius = capsuleCollider.radius;
-        float maxDist = (capsuleCollider.height / 2) - radius;
+        float radius = capsuleCollider.radius - bodyWidthOffset;
+        float maxDist = (capsuleCollider.height / 2) - radius + bodyWidthOffset;
         Vector3 rayCenter = isRolling ? transform.position - sphereCollider.center : transform.position;
         float boxHalf = isRolling ? (sphereCollider.radius / 2) + bodyHeightOffset : (capsuleCollider.height / 2) + bodyHeightOffset;
         Vector3 halfExtends = new Vector3(0, boxHalf, 0);
@@ -320,6 +316,7 @@ public class CharacterController : MonoBehaviour
         else if (dir == Vector3.down)
         {
             isBlock = Physics.SphereCast(transform.position, radius, Vector3.down, out hit, maxDist, immoveables, QueryTriggerInteraction.UseGlobal);
+            Debug.Log(isBlock);
             if (isBlock && hit.collider.isTrigger)
                 isBlock = false;
         }
@@ -337,7 +334,7 @@ public class CharacterController : MonoBehaviour
         }
         else
         {
-            Debug.LogError("IsBlocked() direction Vector is invalid, try Vector3.up, etc.");
+            Debug.LogError("Invalid Vector used in IsBlocked");
         }
         return isBlock;
     }
@@ -351,7 +348,10 @@ public class CharacterController : MonoBehaviour
         {
             //check if character is stuck to ceiling and zero the speed so it can start falling
             if (IsBlocked(Vector3.up))
-                vertVel = -2;
+            {
+                vertVel = -1;
+                Debug.Log("stuckUP");
+            }
             // multiplier to make character fall faster on the way down
             var fallMult = rb.velocity.y < 0 ? fallSpeedMult : 1;
             vertVel -= gravity * fallMult * Time.fixedDeltaTime;
