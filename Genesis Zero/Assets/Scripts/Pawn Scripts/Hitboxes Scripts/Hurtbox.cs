@@ -71,7 +71,7 @@ public class Hurtbox : MonoBehaviour
         if (GetComponent<Pawn>() && GetComponent<Pawn>().GetKnockBackForce() > 0 && collision.collider.isTrigger == false)
         {
             Vector2 vel = GetComponent<Rigidbody>().velocity;
-            Debug.Log(gameObject.name + ": " + vel.magnitude);
+            //Debug.Log(gameObject.name + ": " + vel.magnitude);
 
             float damage = (int)(vel.magnitude * 5) / 2;
             GetComponent<Pawn>().TakeDamage(damage, null);
