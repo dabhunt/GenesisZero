@@ -31,7 +31,7 @@ public class VFXManager : MonoBehaviour
      * delay: how long until it plays
      * emitter: name of the other effect when it dies
      */
-    public void PlayEffect(string name, Vector3 position, float delay, string emitter)
+    public GameObject PlayEffect(string name, Vector3 position, float delay, string emitter)
     {
         GameObject effect = Instantiate(Resources.Load<GameObject>("Effects/" + name), position, Quaternion.identity);
 
@@ -46,20 +46,27 @@ public class VFXManager : MonoBehaviour
         {
             vfx.SetEmitter(emit);
         }
+
+        return effect;
     }
 
-    public void PlayEffect(string name, Vector3 position, float delay)
+    public GameObject PlayEffect(string name, Vector3 position, float delay)
     {
-        PlayEffect(name, position, delay, "");
+        return PlayEffect(name, position, delay, "");
     }
 
-    public void PlayEffect(string name, Vector3 position)
+    public GameObject PlayEffect(string name, Vector3 position)
     {
-        PlayEffect(name, position, 0, "");
+        return PlayEffect(name, position, 0, "");
     }
 
     public void PlayGraphEffect(string name, Vector3 position)
     {
         GameObject effect = Instantiate(Resources.Load<GameObject>("Effects/GraphVFX/" + name), position, Quaternion.identity);
+    }
+
+    public GameObject PlayEffectReturn(string name, Vector3 position, float delay, string emitter)
+    {
+        return PlayEffect(name, position, delay, emitter);
     }
 }

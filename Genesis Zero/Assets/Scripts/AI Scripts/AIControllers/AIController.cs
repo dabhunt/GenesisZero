@@ -316,7 +316,7 @@ public class AIController : Pawn
     public override float TakeDamage(float amount, Pawn source)
     {
         Debug.Log("Enemy Damaged");
-        if (state == AIState.Patrol || state == AIState.Idle || alertTracking)
+        if (source && (state == AIState.Patrol || state == AIState.Idle || alertTracking))
         {
             alertPoint = source.transform.position;
             alertTracking = true;

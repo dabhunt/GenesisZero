@@ -68,6 +68,36 @@ public class Hurtbox : MonoBehaviour
     private void OnCollisionEnter(Collision collision)
     {
         //Debug.Log("Colliding");
+        if (GetComponent<Pawn>() && GetComponent<Pawn>().GetKnockBackForce() > 0 && collision.collider.isTrigger == false)
+        {
+            Vector2 vel = GetComponent<Rigidbody>().velocity;
+            Debug.Log(gameObject.name + ": " + vel.magnitude);
+
+            float damage = (int)(vel.magnitude * 5) / 2;
+            GetComponent<Pawn>().TakeDamage(damage, null);
+            GameObject dn = VFXManager.instance.PlayEffect("DamageNumber", transform.position);
+            dn.GetComponent<DamageNumber>().SetNumber(damage);
+
+            Vector3 newVec = GetComponent<Rigidbody>().velocity * 1 / 2;
+            GetComponent<Rigidbody>().velocity = - newVec;
+
+            if (collision.gameObject.GetComponent<Pawn>())
+            {
+                collision.gameObject.GetComponent<Pawn>().TakeDamage(vel.magnitude * 5, null);
+                GameObject dn2 = VFXManager.instance.PlayEffect("DamageNumber", collision.transform.position);
+                dn2.GetComponent<DamageNumber>().SetNumber(damage);
+                collision.gameObject.GetComponent<Rigidbody>().velocity += newVec/2;
+            }
+
+            GetComponent<Pawn>().SetKnockBackForce(0);
+            /**
+            Vector2 kdir = GetComponent<Pawn>().GetKnockBackVector();
+            float kangle = Mathf.Atan2(kdir.y, kdir.x);
+            Vector2 cdir = collision.transform.position - transform.position;
+            float cangle = Mathf.Atan2(cdir.y, cdir.x);
+            GetComponent<Pawn>().KnockBack(GetComponent<Pawn>().GetKnockBackVector() * -1, 0);
+                */
+        }
     }
 
     [ExecuteInEditMode]
@@ -85,7 +115,7 @@ public class Hurtbox : MonoBehaviour
                     {
                         Gizmos.color = Color.yellow;
                     }
-                    else if(bp.damagemultipler < 1)
+                    else if (bp.damagemultipler < 1)
                     {
                         Gizmos.color = Color.grey;
                     }

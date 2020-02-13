@@ -22,6 +22,9 @@ public class Hitbox : MonoBehaviour
     public bool Intangible;     // If True, then the hitbox can pass through walls
     public int MaxHits = 1;     // Number of times the hitbox can hit something
 
+    public float Knockbackforce;        // Force of knockback 
+    public bool DirectionalKnockback;   // If true, the knockback direction is equal to the direction the hitbox is moving
+
     public Collider Collider;
     public Pawn Source;         // Source is a reference to the pawn that spawned this hitbox. Optional, used if things like critchance is calculated
     public GameObject DamageNumberObject;
@@ -146,6 +149,20 @@ public class Hitbox : MonoBehaviour
                     {
                         finaldamage *= Source.GetCritDamage().GetValue();
                     }
+                }
+
+                if (Knockbackforce > 0)
+                {
+                    if (DirectionalKnockback && Source != null)
+                    {
+                        p.KnockBack(transform.position - Source.transform.position, Knockbackforce);
+                    }
+                    else
+                    {
+                        //Debug.Log("Knockback! : " + Knockbackforce);
+                        p.KnockBack(p.transform.position - transform.position, Knockbackforce);
+                    }
+
                 }
 
                 float damagetaken = p.TakeDamage(finaldamage, Source);
