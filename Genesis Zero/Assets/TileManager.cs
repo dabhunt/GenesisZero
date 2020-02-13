@@ -4,9 +4,15 @@ using UnityEngine;
 
 public class TileManager : MonoBehaviour
 {
-	//public float Zoffset;
+	//Public Variables (Visible in Inspector)
+	public int maxBuildingWidth = 5;
+	public int minBuildingWidth = 2;
+	public int maxBuildingTileCount = 24;
+	public int minBuildingTileCount = 8;
+	public int numberOfBuildings = 3;
 	public GameObject[] tilePrefabs;
 	
+	//Private Variables
 	private float currentPos = 22.0f;
 	private float tileLength = 22.0f;
 	private float tileHeight = 6.5f;
@@ -15,9 +21,10 @@ public class TileManager : MonoBehaviour
     // Start is called before the first frame update
     private void Start()
     {
-        generateBuilding(3, 16);
-		generateBuilding(2, 8);
-		generateBuilding(3, 12);
+        for (int i = 0; i < numberOfBuildings; ++i)
+		{
+			generateBuilding(Random.Range(minBuildingWidth, maxBuildingWidth), Random.Range(minBuildingTileCount, maxBuildingTileCount));
+		}
     }
 
     // Update is called once per frame
@@ -29,15 +36,15 @@ public class TileManager : MonoBehaviour
 	private void generateBuilding(int width, int TileCount)
 	{
 		//Variables
-		Vector3 spawnVector = new Vector3(1,0,0) * currentPos;
-		float currentPosClone = currentPos;
+		Vector3 spawnVector = new Vector3(1,0,0) * currentPos; //spawnVector for tiles
+		float currentPosClone = currentPos; //Function scope copy of currentPos
 		int end = TileCount; // Equals 0 when all tiles are placed
-		int floorWidth = width;
+		int floorWidth = width; //Total width of current floor in tiles (x axis)
 		int shift = width; // Equals 0 when floor is complete
-		int height = 1;
+		int height = 1; //Current building height (# of floors)
 		
 		//Create Building
-		spawnVector.z += 2;
+		spawnVector.z += 2; //Initialize spawnVector Z position
 		
 		while (end > 0)
 		{
@@ -49,42 +56,51 @@ public class TileManager : MonoBehaviour
 			//Transform Position & Update
 			if (shift <= 0)
 			{
+				//Randomly Select Case (0-4)
 				int tileRand;
 				if (floorWidth > 2) tileRand = Random.Range(0, 4);
 				else tileRand = 0;
 				
-				if (tileRand == 0) shift = floorWidth;
-				if (tileRand == 1)
+				if (tileRand == 0) shift = floorWidth; // Case 0
+				else if (tileRand == 1) //Case 1
 				{
 					floorWidth -= 1;
 					shift = floorWidth;
 				}
-				if (tileRand == 2)
+				else if (tileRand == 2) //Case 2
 				{
-					floorWidth -= 2;
+					//Temporarily disabled due to unintended behavior
+					//floorWidth -= 2;
+					//shift = floorWidth;
+					//currentPosClone += Random.Range(0.0f, 44.0f)
+					
+					//Replacement Behavior
+					floorWidth -= 1;
 					shift = floorWidth;
-					currentPosClone += Random.Range(0.0f, 44.0f);
 				}
-				if (tileRand == 3)
+				else if (tileRand == 3) //Case 3
 				{
 					floorWidth -= 1;
 					shift = floorWidth;
 					currentPosClone += 22.0f;
 				}
 				
+				//Set spawnVector for next floor
 				spawnVector = new Vector3(1,0,0) * currentPosClone;
 				spawnVector.y += tileHeight * height;
 				spawnVector.z += 2;
 				height++;
 			}
+			//Spawn tile and move spawnVector
 			newTile.transform.position = spawnVector;
 			spawnVector.x += tileLength;
 			
+			//Iterate counting variables
 			shift--;
 			end--;
 		}
 		
-		//Shift currentPos
+		//Shift currentPos for next building
 		currentPos += tileLength * width;
 		currentPos += Random.Range(10.0f, 30.0f);
 	}
