@@ -75,7 +75,7 @@ public class Hurtbox : MonoBehaviour
 
             float damage = (int)(vel.magnitude * 5) / 2;
             GetComponent<Pawn>().TakeDamage(damage, null);
-            GameObject dn = VFXManager.instance.PlayEffect("DamageNumber", transform.position);
+            GameObject dn = VFXManager.instance.PlayEffect("DamageNumber", new Vector3(transform.position.x, transform.position.y + 1, transform.position.z - .5f));
             dn.GetComponent<DamageNumber>().SetNumber(damage);
 
             Vector3 newVec = GetComponent<Rigidbody>().velocity * 1 / 2;
@@ -84,7 +84,7 @@ public class Hurtbox : MonoBehaviour
             if (collision.gameObject.GetComponent<Pawn>())
             {
                 collision.gameObject.GetComponent<Pawn>().TakeDamage(vel.magnitude * 5, null);
-                GameObject dn2 = VFXManager.instance.PlayEffect("DamageNumber", collision.transform.position);
+                GameObject dn2 = VFXManager.instance.PlayEffect("DamageNumber", new Vector3(collision.transform.position.x, collision.transform.position.y + 1, collision.transform.position.z - .5f));
                 dn2.GetComponent<DamageNumber>().SetNumber(damage);
                 collision.gameObject.GetComponent<Rigidbody>().velocity += newVec/2;
             }

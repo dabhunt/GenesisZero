@@ -27,7 +27,7 @@ public class Hitbox : MonoBehaviour
 
     public Collider Collider;
     public Pawn Source;         // Source is a reference to the pawn that spawned this hitbox. Optional, used if things like critchance is calculated
-    public GameObject DamageNumberObject;
+    //public GameObject DamageNumberObject;
     private List<GameObject> hittargets;
 
     private Vector3 lastposition;
@@ -167,19 +167,17 @@ public class Hitbox : MonoBehaviour
 
                 float damagetaken = p.TakeDamage(finaldamage, Source);
 
-                if (DamageNumberObject)
+                GameObject emit = VFXManager.instance.PlayEffect("DamageNumber", new Vector3(transform.position.x, transform.position.y + 1, transform.position.z - .5f));
+                emit.GetComponent<DamageNumber>().SetNumber(damagetaken);
+                if (special && bp.damagemultipler > 1)
                 {
-                    GameObject emit = (GameObject)Instantiate(DamageNumberObject, new Vector3(transform.position.x, transform.position.y + 1, transform.position.z - .5f), Quaternion.identity);
-                    emit.GetComponent<DamageNumber>().SetNumber(damagetaken);
-                    if (special && bp.damagemultipler > 1)
-                    {
-                        emit.GetComponent<DamageNumber>().SetColor(Color.red);
-                    }
-                    else if (special && bp.damagemultipler < 1)
-                    {
-                        emit.GetComponent<DamageNumber>().SetColor(new Color(.25f, .25f, .25f));
-                    }
+                    emit.GetComponent<DamageNumber>().SetColor(Color.red);
                 }
+                else if (special && bp.damagemultipler < 1)
+                {
+                    emit.GetComponent<DamageNumber>().SetColor(new Color(.25f, .25f, .25f));
+                }
+
 
                 hittargets.Add(other.transform.root.gameObject);
 
