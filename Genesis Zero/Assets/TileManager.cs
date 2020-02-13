@@ -43,7 +43,7 @@ public class TileManager : MonoBehaviour
 		{
 			//Create new tile and set parent to TileManager
 			GameObject newTile;
-			newTile = Instantiate(tilePrefabs[Random.Range(0, 7)]) as GameObject;
+			newTile = Instantiate(tilePrefabs[Random.Range(0, tilePrefabs.Length)]) as GameObject;
 			newTile.transform.SetParent(transform);
 			
 			//Transform Position & Update
