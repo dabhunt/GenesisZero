@@ -11,6 +11,7 @@ public class TileManager : MonoBehaviour
 	public int minBuildingTileCount = 8;
 	public int numberOfBuildings = 3;
 	public GameObject[] tilePrefabs;
+	public GameObject[] enemyPrefabs;
 	
 	//Private Variables
 	private float currentPos = 22.0f;
@@ -94,6 +95,19 @@ public class TileManager : MonoBehaviour
 			//Spawn tile and move spawnVector
 			newTile.transform.position = spawnVector;
 			spawnVector.x += tileLength;
+			
+			//Spawn Enemy
+			if (Random.Range(0, 3) == 0)
+			{
+				GameObject newEnemy = Instantiate(enemyPrefabs[Random.Range(0, enemyPrefabs.Length)]) as GameObject;
+				spawnVector.y += 3;
+				spawnVector.x -= 11;
+				spawnVector.z -= 2;
+				newEnemy.transform.position = spawnVector;
+				spawnVector.y -= 3;
+				spawnVector.x += 11;
+				spawnVector.z += 2;
+			}
 			
 			//Iterate counting variables
 			shift--;
