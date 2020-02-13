@@ -49,23 +49,23 @@ public class TileManager : MonoBehaviour
 			//Transform Position & Update
 			if (shift <= 0)
 			{
-				int binRand;
-				if (floorWidth > 2) binRand = Random.Range(0, 4);
-				else binRand = 0;
+				int tileRand;
+				if (floorWidth > 2) tileRand = Random.Range(0, 4);
+				else tileRand = 0;
 				
-				if (binRand == 0) shift = floorWidth;
-				if (binRand == 1)
+				if (tileRand == 0) shift = floorWidth;
+				if (tileRand == 1)
 				{
 					floorWidth -= 1;
 					shift = floorWidth;
 				}
-				if (binRand == 2)
+				if (tileRand == 2)
 				{
 					floorWidth -= 2;
 					shift = floorWidth;
 					currentPosClone += Random.Range(0.0f, 44.0f);
 				}
-				if (binRand == 3)
+				if (tileRand == 3)
 				{
 					floorWidth -= 1;
 					shift = floorWidth;
