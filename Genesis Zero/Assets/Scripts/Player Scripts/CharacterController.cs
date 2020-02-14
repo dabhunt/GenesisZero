@@ -13,9 +13,8 @@ using UnityEngine.InputSystem;
 public class CharacterController : MonoBehaviour
 {
     [Header("Movement")]
-    public float acceleration = 3f;
-    public float maxJumpSpeed = 12f;
-    public float jumpHeight = 6f;
+    public float acceleration = 35f;
+    public float jumpStrength = 12f;
     public float doubleJumpStrength = 10f;
     public float bodyHeightOffset = -0.1f; // offset used for the sides casts
     public float bodyWidthOffset = 0.05f; // offset used for the feet/head casts
@@ -32,7 +31,7 @@ public class CharacterController : MonoBehaviour
 
     [Header("Physics")]
     public float gravity = 18f;
-    public float terminalVel = 15;
+    public float terminalVel = 16f;
     public float fallSpeedMult = 1.45f;
     public float airControlMult = 0.5f;
     public float slopeRayDistMult = 1.25f;
@@ -111,6 +110,7 @@ public class CharacterController : MonoBehaviour
         //UpdateDodgeRoll();
         Move();
         UpdateJump();
+        DrawDebugLines();
     }
 
     private void OnEnable()
@@ -123,6 +123,12 @@ public class CharacterController : MonoBehaviour
         inputActions.Disable();
     }
 
+    private void DrawDebugLines()
+    {
+        if (!debug) return;
+
+        Debug.DrawLine(transform.position, transform.position + moveVec * 2, Color.red);
+    }
     private void CalculateForwardDirection()
     {
         if (!isGrounded)
@@ -132,7 +138,6 @@ public class CharacterController : MonoBehaviour
         }
 
         moveVec = Vector3.Cross(groundHitInfo.normal, transform.forward);
-        Debug.Log(moveVec);
     }
 
     private void CalculateGroundAngle()
@@ -164,7 +169,6 @@ public class CharacterController : MonoBehaviour
      */
     private void Move()
     {
-        RaycastHit hit;
         float multiplier = isGrounded ? 1 : airControlMult;
         // this is to deal with left stick returning floats
         var input = movementInput.x < 0 ? Mathf.Floor(movementInput.x) : Mathf.Ceil(movementInput.x);
@@ -176,22 +180,25 @@ public class CharacterController : MonoBehaviour
 
         if (isRolling) return;
 
-        if (input > 0)
+        if (input != 0)
         {
-            currentSpeed += multiplier * acceleration * Time.fixedDeltaTime;
-            Mathf.Min(currentSpeed, maxSpeed);
-        }
-        else if (input < 0)
-        {
-            currentSpeed -= multiplier * acceleration * Time.fixedDeltaTime;
-            Mathf.Max(currentSpeed, -maxSpeed);
+            currentSpeed += input * multiplier * acceleration * Time.fixedDeltaTime;
+            currentSpeed = Mathf.Clamp(currentSpeed, -maxSpeed, maxSpeed);
         }
         else
         {
-            currentSpeed = 0;
+            if (currentSpeed > 0)
+            {
+                currentSpeed -= acceleration * Time.fixedDeltaTime;
+                currentSpeed = Mathf.Max(currentSpeed, 0);
+            }
+            if (currentSpeed < 0)
+            {
+                currentSpeed += acceleration * Time.fixedDeltaTime;
+                currentSpeed = Mathf.Min(currentSpeed, 0);
+            }
         }
-        Debug.Log(currentSpeed);
-        //transform.position += moveVec * currentSpeed * Time.fixedDeltaTime;
+        transform.position += moveVec * currentSpeed * Time.fixedDeltaTime;
     }
 
     /* This function is called with an event invoked
@@ -206,8 +213,15 @@ public class CharacterController : MonoBehaviour
             {
                 animator.SetTrigger("startJump");
                 isJumping = true;
-                jumpApexY = transform.position.y + jumpHeight;
-                Debug.Log(jumpApexY);
+                vertVel = jumpStrength;
+            }
+            else
+            {
+                if (canDoubleJump)
+                {
+                    animator.SetTrigger("startJump");
+                    vertVel = doubleJumpStrength;
+                }
             }
         }
     }
@@ -215,8 +229,12 @@ public class CharacterController : MonoBehaviour
     private void UpdateJump()
     {
         if (!isJumping) return;
-        if (transform.position.y < jumpApexY)
-            transform.position += Vector3.up * maxJumpSpeed * Time.fixedDeltaTime;
+        float startVel = vertVel;
+        if (vertVel > 0)
+        {
+            vertVel -= gravity * Time.fixedDeltaTime;
+            transform.position += Vector3.up * (startVel * Time.fixedDeltaTime + (0.5f * -gravity) * Mathf.Pow(Time.fixedDeltaTime, 2));
+        }
         else
             isJumping = false;
     }
@@ -226,9 +244,12 @@ public class CharacterController : MonoBehaviour
      */
     private void ApplyGravity()
     {
+        float startVel = vertVel;
         if (!isGrounded && !isJumping)
         {
-            transform.position += Vector3.down * gravity * Time.fixedDeltaTime;
+            vertVel -= gravity * fallSpeedMult * Time.fixedDeltaTime;
+            vertVel = Mathf.Clamp(vertVel, -terminalVel, 0);
+            transform.position += Vector3.up * (startVel * Time.fixedDeltaTime + (0.5f * fallSpeedMult * -gravity) * Mathf.Pow(Time.fixedDeltaTime, 2));
         }
     }
 
@@ -298,24 +319,6 @@ public class CharacterController : MonoBehaviour
                 sphereCollider.enabled = false;
         }
     }
-
-    /* This function just return a RaycastHit that
-     * will be used to determine if a player is going up/down a slope
-     */
-    private RaycastHit OnSlope()
-    {
-        RaycastHit hit;
-        float maxDist = slopeRayDistMult * capsuleCollider.height / 2;
-        if (!isGrounded)
-            onSlope = false;
-        if(Physics.SphereCast(transform.position, capsuleCollider.radius, Vector3.down, out hit, maxDist, immoveables, QueryTriggerInteraction.UseGlobal))
-            if (hit.normal != Vector3.up)
-                onSlope = true;
-            else
-                onSlope = false;
-        return hit;
-    }
-
     /* This function control character aiming
      * Crosshair is moved using mouse/rightStick
      * Gun rotates to point at crosshair
