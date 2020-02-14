@@ -97,10 +97,10 @@ public class CharacterController : MonoBehaviour
 
     private void FixedUpdate()
     {
+        ApplyGravity();
         Aim();
         UpdateDodgeRoll();
         UpdateMove();
-        ApplyGravity();
     }
 
     private void OnEnable()
@@ -169,19 +169,27 @@ public class CharacterController : MonoBehaviour
             hit = OnSlope();
             if (onSlope)
             {
-                // if hit.normal.x is same direction as movementInput
-                // the character is going down slope, up otherwise
-                if (currentSpeed > 0)
+                if (!isJumping)
                 {
-                    if (hit.normal.x > 0)
-                        vertVel = -gravity * slopeForceMult * Mathf.Abs(currentSpeed) * Time.fixedDeltaTime;
+                    // if hit.normal.x is same direction as movementInput
+                    // the character is going down slope, up otherwise
+                    if (currentSpeed > 0)
+                    {
+                        if (hit.normal.x > 0)
+                            vertVel = -gravity * slopeForceMult * Mathf.Abs(currentSpeed) * Time.fixedDeltaTime;
+                    }
+                    else if (currentSpeed < 0)
+                    {
+                        if (hit.normal.x < 0)
+                            vertVel = -gravity * slopeForceMult * Mathf.Abs(currentSpeed) * Time.fixedDeltaTime;
+                    }
                 }
-                else if (currentSpeed < 0)
-                {
-                    if (hit.normal.x < 0)
-                        vertVel = -gravity * slopeForceMult * Mathf.Abs(currentSpeed) * Time.fixedDeltaTime;
-                }
-            }          
+            }
+            else
+            {
+                if (!isJumping)
+                    vertVel = 0;
+            }     
         }
         moveVec.x = currentSpeed;
         moveVec.y = vertVel;
@@ -238,16 +246,9 @@ public class CharacterController : MonoBehaviour
             //interupts roll if it's blocked
             if ((rollDirection > 0 && IsBlocked(Vector3.right)) || (rollDirection < 0 && IsBlocked(Vector3.left)))
             {   
-                //make sure player doesn't get stuck under blocks
-                if (IsBlocked(Vector3.up))
-                {
-                    distanceRolled = rollDistance - sphereCollider.radius;
-                }
-                else
-                {
+                isRolling = false;
+                if (currentSpeed != 0)
                     currentSpeed = 0;
-                    isRolling = false;
-                }
             }
 
             lastRollingPosition = transform.position;
@@ -327,9 +328,7 @@ public class CharacterController : MonoBehaviour
             isLookingRight = false;
 
         if (fireInput > 0)
-        {
             gun.Shoot();
-        }
     }
 
     /* This function checks if the model is blocked
@@ -382,7 +381,7 @@ public class CharacterController : MonoBehaviour
      */
     private void ApplyGravity()
     {
-        if (!IsBlocked(Vector3.down))
+        if (!IsBlocked(Vector3.down) || isJumping)
         {
             //check if character is stuck to ceiling and zero the speed so it can start falling
             if (IsBlocked(Vector3.up))
@@ -391,14 +390,16 @@ public class CharacterController : MonoBehaviour
             var fallMult = rb.velocity.y < 0 ? fallSpeedMult : 1;
             vertVel -= gravity * fallMult * Time.fixedDeltaTime;
             //lock falling speed at terminal velocity
-            if (vertVel < 0)
+            if (vertVel < 0) 
+            {
                 vertVel = Mathf.Max(vertVel, -terminalVel);
+                if (IsBlocked(Vector3.down))
+                {
+                    isJumping = false;
+                    vertVel = 0;
+                }
+            }
         }
-        else
-        {
-            if (vertVel < 0)
-                vertVel = 0;
-        } 
     }
 
     /* This function updates information
@@ -414,7 +415,6 @@ public class CharacterController : MonoBehaviour
         animator.SetBool("isGrounded", isGrounded);
         animator.SetBool("isRolling", isRolling);
         animator.SetBool("isLookingRight", isLookingRight);
-        animator.SetBool("gunFired", gunFired);
     }
     
     private void LogDebug()

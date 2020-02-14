@@ -9,7 +9,6 @@ public class Gun : MonoBehaviour
     public Transform firePoint;
 
     private float timeToFire = 0;
-    private bool gunFired;
     private Player player;
     private Animator animator;
     private void Start()
