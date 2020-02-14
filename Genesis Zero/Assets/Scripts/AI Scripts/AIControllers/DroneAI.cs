@@ -108,7 +108,12 @@ public class DroneAI : AIController
                 attackLaunchTime = AttackLaunchInterval;
                 if (AttackProjectile != null)
                 {
-                    Instantiate(AttackProjectile, transform.position, transform.rotation);
+                    GameObject spawnedProjectile = Instantiate(AttackProjectile, transform.position, transform.rotation);
+                    Hitbox spawnedHitbox = spawnedProjectile.GetComponent<Hitbox>();
+                    if (spawnedHitbox != null)
+                    {
+                        spawnedHitbox.Damage *= GetDamage().GetValue();
+                    }
                 }
             }
         }
