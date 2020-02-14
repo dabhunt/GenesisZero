@@ -13,8 +13,9 @@ using UnityEngine.InputSystem;
 public class CharacterController : MonoBehaviour
 {
     [Header("Movement")]
-    public float acceleration = 35f;
-    public float jumpStrength = 12f;
+    public float acceleration = 3f;
+    public float maxJumpSpeed = 12f;
+    public float jumpHeight = 6f;
     public float doubleJumpStrength = 10f;
     public float bodyHeightOffset = -0.1f; // offset used for the sides casts
     public float bodyWidthOffset = 0.05f; // offset used for the feet/head casts
@@ -62,18 +63,19 @@ public class CharacterController : MonoBehaviour
     private float currentSpeed = 0;
     private bool canDoubleJump = false;
     private float distanceRolled = 0;
+    private float jumpApexY;
     private int rollDirection;
     private Vector3 lastRollingPosition;
 
     //This chunk of variables is related to Animation
     private Animator animator;
     private Gun gun;
-    private bool isGrounded = false;
-    private bool isJumping = true;
-    private bool isRolling = false;
-    private bool isLookingRight = true;
-    private bool gunFired = false;
-    private bool onSlope = false;
+    private bool isGrounded;
+    private bool isJumping;
+    private bool isRolling;
+    private bool isLookingRight;
+    private bool gunFired;
+    private bool onSlope;
     
 
     private void Awake()
@@ -103,10 +105,12 @@ public class CharacterController : MonoBehaviour
 
     private void FixedUpdate()
     {
+        CheckGround();
         ApplyGravity();
         Aim();
         UpdateDodgeRoll();
         Move();
+        UpdateJump();
     }
 
     private void OnEnable()
@@ -146,6 +150,7 @@ public class CharacterController : MonoBehaviour
         if (IsBlocked(Vector3.down))
         {
             isGrounded = true;
+            canDoubleJump = true;
         }
         else
         {
@@ -170,47 +175,60 @@ public class CharacterController : MonoBehaviour
         if (groundAngle >= maxGroundAngle) return;
 
         if (isRolling) return;
+        if (input > 0)
+        {
 
-        if (movementInput.x < 0)
-        {
-            if (!IsBlocked(Vector3.left))
-            {
-                currentSpeed += input * multiplier * acceleration * Time.fixedDeltaTime;
-                currentSpeed = Mathf.Max(currentSpeed, -maxSpeed);
-            }
-            else
-            {
-                currentSpeed = 0;
-            }   
         }
-        //If move right key is pressed accelerate right
-        else if (movementInput.x > 0)
+        else if (input < 0)
         {
-            if (!IsBlocked(Vector3.right))
-            {
-                currentSpeed += input * multiplier * acceleration * Time.fixedDeltaTime;
-                currentSpeed = Mathf.Min(currentSpeed, maxSpeed);
-            }
-            else
-            {
-                currentSpeed = 0;
-            }
+
         }
-        //If no movement keys are pressed then decelerate til stop
         else
         {
-            if (currentSpeed > 0)
+            
+        }
+        currentSpeed += multiplier * acceleration * Time.fixedDeltaTime;
+        Mathf.Clamp(currentSpeed, -maxSpeed, maxSpeed);
+        Debug.Log(currentSpeed);
+        transform.position += moveVec * currentSpeed * Time.fixedDeltaTime;
+    }
+
+    /* This function is called with an event invoked
+     * when player press jump button to make player jump
+     */
+    public void Jump(InputAction.CallbackContext ctx)
+    {   
+        if (ctx.performed)
+        {
+            //if (isRolling) return;
+            if (isGrounded)
             {
-                currentSpeed -= acceleration * Time.fixedDeltaTime;
-                currentSpeed = Mathf.Max(currentSpeed, 0);
-            }
-            else if (currentSpeed < 0)
-            {
-                currentSpeed += acceleration * Time.fixedDeltaTime;
-                currentSpeed = Mathf.Min(currentSpeed, 0);
+                animator.SetTrigger("startJump");
+                isJumping = true;
+                jumpApexY = transform.position.y + jumpHeight;
+                Debug.Log(jumpApexY);
             }
         }
-        transform.position += moveVec * currentSpeed * Time.fixedDeltaTime;
+    }
+
+    private void UpdateJump()
+    {
+        if (!isJumping) return;
+        if (transform.position.y < jumpApexY)
+            transform.position += Vector3.up * maxJumpSpeed * Time.fixedDeltaTime;
+        else
+            isJumping = false;
+    }
+
+    /* This fuction applies gravity to player
+     * when the player's off the ground
+     */
+    private void ApplyGravity()
+    {
+        if (!isGrounded && !isJumping)
+        {
+            transform.position += Vector3.down * gravity * Time.fixedDeltaTime;
+        }
     }
 
     /* This function is invoked when player press 
@@ -298,36 +316,6 @@ public class CharacterController : MonoBehaviour
         return hit;
     }
 
-    /* This function is called with an event invoked
-     * when player press jump button to make player jump
-     */
-    public void Jump(InputAction.CallbackContext ctx)
-    {   
-        if (ctx.performed)
-        {
-            if (IsBlocked(Vector3.down) && !isRolling)
-            {
-                animator.SetTrigger("startJump");
-                isJumping = true;
-                vertVel = jumpStrength;
-                canDoubleJump = true;
-            }
-            else
-            {
-                if (canDoubleJump)
-                {
-                    animator.SetTrigger("startJump");
-                    vertVel = doubleJumpStrength;
-                    canDoubleJump = false;
-                    if (moveVec.x > 0 && movementInput.x <= 0)
-                        moveVec.x = 0;
-                    if (moveVec.x < 0 && movementInput.x >= 0)
-                        moveVec.x = 0;  
-                }
-            }
-        }
-    }
-
     /* This function control character aiming
      * Crosshair is moved using mouse/rightStick
      * Gun rotates to point at crosshair
@@ -394,17 +382,6 @@ public class CharacterController : MonoBehaviour
         return isBlock;
     }
 
-    /* This fuction applies gravity to player
-     * when the player's off the ground
-     */
-    private void ApplyGravity()
-    {
-        if (!isGrounded)
-        {
-            transform.position += 
-        }
-    }
-
     /* This function updates information
      * about the player's state for animations
      */
@@ -412,7 +389,6 @@ public class CharacterController : MonoBehaviour
     {
         var xSpeed = moveVec.x != 0 ? moveVec.x / maxSpeed : 0;
         var ySpeed = moveVec.y;
-        isGrounded = IsBlocked(Vector3.down);
         animator.SetFloat("xSpeed", xSpeed);
         animator.SetFloat("ySpeed", ySpeed);
         animator.SetBool("isGrounded", isGrounded);

@@ -11416,12 +11416,14 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   acceleration: 35
-  jumpStrength: 12
+  jumpStrength: 3
   doubleJumpStrength: 9
   bodyHeightOffset: -0.05
   bodyWidthOffset: 0.05
   rollDistance: 5
   rollSpeedMult: 1.5
+  maxGroundAngle: 120
+  debug: 0
   immoveables:
     serializedVersion: 2
     m_Bits: 4294967295
@@ -11527,7 +11529,7 @@ Rigidbody:
   serializedVersion: 2
   m_Mass: 1
   m_Drag: 0
-  m_AngularDrag: 0.05
+  m_AngularDrag: 0
   m_UseGravity: 0
   m_IsKinematic: 0
   m_Interpolate: 0
