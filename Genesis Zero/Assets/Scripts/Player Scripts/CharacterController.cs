@@ -9,15 +9,14 @@ using UnityEngine.InputSystem;
 
 [RequireComponent(typeof(SphereCollider))]
 [RequireComponent(typeof(CapsuleCollider))]
-[RequireComponent(typeof(Rigidbody))]
 public class CharacterController : MonoBehaviour
 {
     [Header("Movement")]
     public float acceleration = 35f;
     public float jumpStrength = 12f;
     public float doubleJumpStrength = 10f;
-    public float bodyHeightOffset = -0.1f; // offset used for the sides casts
-    public float bodyWidthOffset = 0.05f; // offset used for the feet/head casts
+    public float horCastPadding = 0.1f; // offset used for the sides casts
+    public float vertCastPadding = 0.05f; // offset used for the feet/head casts
     public float rollDistance = 5f;
     public float rollSpeedMult = 1.5f;
     public float maxGroundAngle = 120f;
@@ -126,7 +125,6 @@ public class CharacterController : MonoBehaviour
     private void DrawDebugLines()
     {
         if (!debug) return;
-
         Debug.DrawLine(transform.position, transform.position + moveVec * 2, Color.red);
     }
     private void CalculateForwardDirection()
@@ -156,6 +154,8 @@ public class CharacterController : MonoBehaviour
         {
             isGrounded = true;
             canDoubleJump = true;
+            if (!isJumping)
+                vertVel = 0;
         }
         else
         {
@@ -170,6 +170,7 @@ public class CharacterController : MonoBehaviour
     private void Move()
     {
         float multiplier = isGrounded ? 1 : airControlMult;
+        float startVel = currentSpeed;
         // this is to deal with left stick returning floats
         var input = movementInput.x < 0 ? Mathf.Floor(movementInput.x) : Mathf.Ceil(movementInput.x);
         maxSpeed = GetComponent<Player>().GetSpeed().GetValue();
@@ -184,6 +185,16 @@ public class CharacterController : MonoBehaviour
         {
             currentSpeed += input * multiplier * acceleration * Time.fixedDeltaTime;
             currentSpeed = Mathf.Clamp(currentSpeed, -maxSpeed, maxSpeed);
+            if (currentSpeed > 0 && IsBlocked(Vector3.right))
+            {
+                currentSpeed = 0;
+                return;
+            }
+            if (currentSpeed < 0 && IsBlocked(Vector3.left))
+            {
+                currentSpeed = 0;
+                return;
+            }
         }
         else
         {
@@ -198,7 +209,7 @@ public class CharacterController : MonoBehaviour
                 currentSpeed = Mathf.Min(currentSpeed, 0);
             }
         }
-        transform.position += moveVec * currentSpeed * Time.fixedDeltaTime;
+        transform.position += moveVec * (startVel * Time.fixedDeltaTime + (0.5f * acceleration * input) * Mathf.Pow(Time.fixedDeltaTime, 2));
     }
 
     /* This function is called with an event invoked
@@ -220,7 +231,13 @@ public class CharacterController : MonoBehaviour
                 if (canDoubleJump)
                 {
                     animator.SetTrigger("startJump");
+                    isJumping = true;
+                    canDoubleJump = false;
                     vertVel = doubleJumpStrength;
+                    if (currentSpeed > 0 && movementInput.x <= 0)
+                        currentSpeed = 0;
+                    if (currentSpeed < 0 && movementInput.x >= 0)
+                        currentSpeed = 0;  
                 }
             }
         }
@@ -230,13 +247,18 @@ public class CharacterController : MonoBehaviour
     {
         if (!isJumping) return;
         float startVel = vertVel;
+
+        if (IsBlocked(Vector3.up))
+            vertVel = -1;
         if (vertVel > 0)
         {
             vertVel -= gravity * Time.fixedDeltaTime;
             transform.position += Vector3.up * (startVel * Time.fixedDeltaTime + (0.5f * -gravity) * Mathf.Pow(Time.fixedDeltaTime, 2));
         }
         else
+        {
             isJumping = false;
+        }
     }
 
     /* This fuction applies gravity to player
@@ -245,7 +267,10 @@ public class CharacterController : MonoBehaviour
     private void ApplyGravity()
     {
         float startVel = vertVel;
-        if (!isGrounded && !isJumping)
+        if (isGrounded)
+            return;
+
+        if (!isJumping)
         {
             vertVel -= gravity * fallSpeedMult * Time.fixedDeltaTime;
             vertVel = Mathf.Clamp(vertVel, -terminalVel, 0);
@@ -348,10 +373,10 @@ public class CharacterController : MonoBehaviour
         bool isBlock = false;
         RaycastHit hit;
         
-        float radius = capsuleCollider.radius - bodyWidthOffset;
-        float maxDist = (capsuleCollider.height / 2) - radius + bodyWidthOffset;
+        float radius = capsuleCollider.radius - vertCastPadding;
+        float maxDist = (capsuleCollider.height / 2) - radius + vertCastPadding;
         Vector3 rayCenter = isRolling ? transform.position - sphereCollider.center : transform.position;
-        float boxHalf = isRolling ? (sphereCollider.radius / 2) + bodyHeightOffset : (capsuleCollider.height / 2) + bodyHeightOffset;
+        float boxHalf = isRolling ? (sphereCollider.radius / 2) - horCastPadding : (capsuleCollider.height / 2) - horCastPadding;
         Vector3 halfExtends = new Vector3(0, boxHalf, 0);
 
         if (dir == Vector3.up)
@@ -368,13 +393,13 @@ public class CharacterController : MonoBehaviour
         }
         else if (dir == Vector3.right)
         {
-            isBlock = Physics.BoxCast(rayCenter, halfExtends, Vector3.right, out hit, Quaternion.identity, capsuleCollider.radius + bodyWidthOffset, immoveables, QueryTriggerInteraction.UseGlobal);
+            isBlock = Physics.BoxCast(rayCenter, halfExtends, Vector3.right, out hit, Quaternion.identity, capsuleCollider.radius + vertCastPadding, immoveables, QueryTriggerInteraction.UseGlobal);
             if (isBlock && hit.collider.isTrigger || hit.normal != Vector3.left)
                 isBlock = false;
         }
         else if (dir == Vector3.left)
         {
-            isBlock = Physics.BoxCast(rayCenter, halfExtends, Vector3.left, out hit, Quaternion.identity, capsuleCollider.radius + bodyWidthOffset, immoveables, QueryTriggerInteraction.UseGlobal);
+            isBlock = Physics.BoxCast(rayCenter, halfExtends, Vector3.left, out hit, Quaternion.identity, capsuleCollider.radius + vertCastPadding, immoveables, QueryTriggerInteraction.UseGlobal);
             if (isBlock && hit.collider.isTrigger || hit.normal != Vector3.right)
                 isBlock = false;
         }
