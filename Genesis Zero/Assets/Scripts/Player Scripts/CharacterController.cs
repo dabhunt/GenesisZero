@@ -108,7 +108,7 @@ public class CharacterController : MonoBehaviour
         CheckGround();
         ApplyGravity();
         Aim();
-        UpdateDodgeRoll();
+        //UpdateDodgeRoll();
         Move();
         UpdateJump();
     }
@@ -168,8 +168,8 @@ public class CharacterController : MonoBehaviour
         float multiplier = isGrounded ? 1 : airControlMult;
         // this is to deal with left stick returning floats
         var input = movementInput.x < 0 ? Mathf.Floor(movementInput.x) : Mathf.Ceil(movementInput.x);
-        float maxSpeed = GetComponent<Player>().GetSpeed().GetValue();
-        Debug.Log("MAX", maxSpeed);
+        maxSpeed = GetComponent<Player>().GetSpeed().GetValue();
+
         CalculateForwardDirection();
 
         if (groundAngle >= maxGroundAngle) return;
@@ -191,7 +191,7 @@ public class CharacterController : MonoBehaviour
             currentSpeed = 0;
         }
         Debug.Log(currentSpeed);
-        transform.position += moveVec * currentSpeed * Time.fixedDeltaTime;
+        //transform.position += moveVec * currentSpeed * Time.fixedDeltaTime;
     }
 
     /* This function is called with an event invoked
@@ -297,7 +297,6 @@ public class CharacterController : MonoBehaviour
             if (sphereCollider.enabled)
                 sphereCollider.enabled = false;
         }
-        transform.position += moveVec * currentSpeed * Time.fixedDeltaTime;
     }
 
     /* This function just return a RaycastHit that
