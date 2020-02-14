@@ -39,7 +39,7 @@ public class Pawn : MonoBehaviour
      * The function that handles damage taken. Does not handle things like burning and knockback
      */
     public virtual float TakeDamage(float amount, Pawn source)
-    { 
+    {
         int chance = Random.Range(0, 100);
         if (chance > GetDodgeChance().GetValue() * 100) // Dodging will ignore damage
         {
@@ -123,13 +123,13 @@ public class Pawn : MonoBehaviour
     {
         if (knockbackforce > 0)
         {
-            Translate(knockbackvector.normalized * knockbackforce); // Move the pawn a certain distance
-            knockbackforce *= Mathf.Clamp(8f / GetWeight().GetValue(), 0, .95f);
+            GetStunnedStatus().AddTime(Time.fixedDeltaTime);
+            knockbackforce *= Mathf.Clamp(9.5f / GetWeight().GetValue(), 0, .99f);
         }
     }
 
-        // ------------------------- ACCESS FUNCTIONS ------------------------------//
-        public Statistic GetHealth()
+    // ------------------------- ACCESS FUNCTIONS ------------------------------//
+    public Statistic GetHealth()
     {
         return health;
     }
@@ -228,8 +228,30 @@ public class Pawn : MonoBehaviour
 
     public void KnockBack(Vector3 direction, float force)
     {
+        //Debug.Log(direction+" "+force);
         knockbackvector = direction;
         knockbackforce = force;
+        knockbackforce *= Mathf.Clamp(9.5f / GetWeight().GetValue(), 0, .99f);
+        float knockback = Mathf.Clamp(knockbackforce, 0, 100f);
+        if (GetComponent<Rigidbody>())
+        {
+            GetComponent<Rigidbody>().AddForce(knockbackvector.normalized * knockback, ForceMode.Impulse);
+        }
+    }
+
+    public void SetKnockBackForce(float force)
+    {
+        knockbackforce = force;
+    }
+
+    public Vector3 GetKnockBackVector()
+    {
+        return knockbackvector;
+    }
+
+    public float GetKnockBackForce()
+    {
+        return knockbackforce;
     }
 
     public bool IsSlowed()
@@ -242,7 +264,8 @@ public class Pawn : MonoBehaviour
         return slowed;
     }
 
-    public void Slow(float factor, float time){
+    public void Slow(float factor, float time)
+    {
         slowed.SetFactor(factor);
         slowtime = time;
     }
