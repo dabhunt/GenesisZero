@@ -168,27 +168,28 @@ public class CharacterController : MonoBehaviour
         float multiplier = isGrounded ? 1 : airControlMult;
         // this is to deal with left stick returning floats
         var input = movementInput.x < 0 ? Mathf.Floor(movementInput.x) : Mathf.Ceil(movementInput.x);
-        maxSpeed = GetComponent<Player>().GetSpeed().GetValue();
-
+        float maxSpeed = GetComponent<Player>().GetSpeed().GetValue();
+        Debug.Log("MAX", maxSpeed);
         CalculateForwardDirection();
 
         if (groundAngle >= maxGroundAngle) return;
 
         if (isRolling) return;
+
         if (input > 0)
         {
-
+            currentSpeed += multiplier * acceleration * Time.fixedDeltaTime;
+            Mathf.Min(currentSpeed, maxSpeed);
         }
         else if (input < 0)
         {
-
+            currentSpeed -= multiplier * acceleration * Time.fixedDeltaTime;
+            Mathf.Max(currentSpeed, -maxSpeed);
         }
         else
         {
-            
+            currentSpeed = 0;
         }
-        currentSpeed += multiplier * acceleration * Time.fixedDeltaTime;
-        Mathf.Clamp(currentSpeed, -maxSpeed, maxSpeed);
         Debug.Log(currentSpeed);
         transform.position += moveVec * currentSpeed * Time.fixedDeltaTime;
     }
