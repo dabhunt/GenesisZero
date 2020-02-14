@@ -20,7 +20,14 @@ public class CharacterController : MonoBehaviour
     public float bodyWidthOffset = 0.05f; // offset used for the feet/head casts
     public float rollDistance = 5f;
     public float rollSpeedMult = 1.5f;
+    public float maxGroundAngle = 120f;
+    public bool debug;
     public LayerMask immoveables; //LayerMask for bound checks
+
+    private RaycastHit groundHitInfo;
+    private Vector3 moveVec = Vector3.right;
+    private float groundAngle;
+
 
     [Header("Physics")]
     public float gravity = 18f;
@@ -49,7 +56,6 @@ public class CharacterController : MonoBehaviour
     private float fireInput;
     private Vector2 aimInputMouse;
     private Vector2 aimInputController;
-    private Vector3 moveVec = Vector3.zero;
     private Vector3 aimVec = Vector3.zero;
     private float maxSpeed;
     private float vertVel;
@@ -93,7 +99,6 @@ public class CharacterController : MonoBehaviour
     {
         AnimStateUpdate();
         //LogDebug();
-        Debug.Log(isJumping);
     }
 
     private void FixedUpdate()
@@ -101,7 +106,7 @@ public class CharacterController : MonoBehaviour
         ApplyGravity();
         Aim();
         UpdateDodgeRoll();
-        UpdateMove();
+        Move();
     }
 
     private void OnEnable()
@@ -113,11 +118,46 @@ public class CharacterController : MonoBehaviour
     {
         inputActions.Disable();
     }
+
+    private void CalculateForwardDirection()
+    {
+        if (!isGrounded)
+        {
+            moveVec = transform.right;
+            return;
+        }
+
+        moveVec = Vector3.Cross(groundHitInfo.normal, transform.forward);
+        Debug.Log(moveVec);
+    }
+
+    private void CalculateGroundAngle()
+    {
+        if (!isGrounded)
+        {
+            groundAngle = 90;
+            return;
+        }
+        groundAngle = Vector3.Angle(groundHitInfo.normal, transform.right);
+    }
+
+    private void CheckGround()
+    {
+        if (IsBlocked(Vector3.down))
+        {
+            isGrounded = true;
+        }
+        else
+        {
+            isGrounded = false;
+        }
+    }
+
     /* This controls the character general movements
      * It updates the movement vector every frame then apply
      * it based on the input
      */
-    private void UpdateMove()
+    private void Move()
     {
         RaycastHit hit;
         float multiplier = isGrounded ? 1 : airControlMult;
@@ -125,76 +165,52 @@ public class CharacterController : MonoBehaviour
         var input = movementInput.x < 0 ? Mathf.Floor(movementInput.x) : Mathf.Ceil(movementInput.x);
         maxSpeed = GetComponent<Player>().GetSpeed().GetValue();
 
-        if (!isRolling)
+        CalculateForwardDirection();
+
+        if (groundAngle >= maxGroundAngle) return;
+
+        if (isRolling) return;
+
+        if (movementInput.x < 0)
         {
-            //If move left key is pressed accelerate left
-            if (movementInput.x < 0)
+            if (!IsBlocked(Vector3.left))
             {
-                if (!IsBlocked(Vector3.left))
-                {
-                    currentSpeed += input * multiplier * acceleration * Time.fixedDeltaTime;
-                    currentSpeed = Mathf.Max(currentSpeed, -maxSpeed);
-                }
-                else
-                {
-                    currentSpeed = 0;
-                }   
-            }
-            //If move right key is pressed accelerate right
-            else if (movementInput.x > 0)
-            {
-                if (input > 0 && !IsBlocked(Vector3.right))
-                {
-                    currentSpeed += input * multiplier * acceleration * Time.fixedDeltaTime;
-                    currentSpeed = Mathf.Min(currentSpeed, maxSpeed);
-                }
-                else
-                {
-                    currentSpeed = 0;
-                }
-            }
-            //If no movement keys are pressed then decelerate til stop
-            else
-            {
-                if (currentSpeed > 0)
-                {
-                    currentSpeed -= acceleration * Time.fixedDeltaTime;
-                    currentSpeed = Mathf.Max(currentSpeed, 0);
-                }
-                else if (currentSpeed < 0)
-                {
-                    currentSpeed += acceleration * Time.fixedDeltaTime;
-                    currentSpeed = Mathf.Min(currentSpeed, 0);
-                }
-            }
-            hit = OnSlope();
-            if (onSlope)
-            {
-                if (!isJumping)
-                {
-                    // if hit.normal.x is same direction as movementInput
-                    // the character is going down slope, up otherwise
-                    if (currentSpeed > 0)
-                    {
-                        if (hit.normal.x > 0)
-                            vertVel = -gravity * slopeForceMult * Mathf.Abs(currentSpeed) * Time.fixedDeltaTime;
-                    }
-                    else if (currentSpeed < 0)
-                    {
-                        if (hit.normal.x < 0)
-                            vertVel = -gravity * slopeForceMult * Mathf.Abs(currentSpeed) * Time.fixedDeltaTime;
-                    }
-                }
+                currentSpeed += input * multiplier * acceleration * Time.fixedDeltaTime;
+                currentSpeed = Mathf.Max(currentSpeed, -maxSpeed);
             }
             else
             {
-                if (!isJumping && IsBlocked(Vector3.down))
-                    vertVel = 0;
-            }     
+                currentSpeed = 0;
+            }   
         }
-        moveVec.x = currentSpeed;
-        moveVec.y = vertVel;
-        rb.velocity = transform.TransformDirection(moveVec);
+        //If move right key is pressed accelerate right
+        else if (movementInput.x > 0)
+        {
+            if (!IsBlocked(Vector3.right))
+            {
+                currentSpeed += input * multiplier * acceleration * Time.fixedDeltaTime;
+                currentSpeed = Mathf.Min(currentSpeed, maxSpeed);
+            }
+            else
+            {
+                currentSpeed = 0;
+            }
+        }
+        //If no movement keys are pressed then decelerate til stop
+        else
+        {
+            if (currentSpeed > 0)
+            {
+                currentSpeed -= acceleration * Time.fixedDeltaTime;
+                currentSpeed = Mathf.Max(currentSpeed, 0);
+            }
+            else if (currentSpeed < 0)
+            {
+                currentSpeed += acceleration * Time.fixedDeltaTime;
+                currentSpeed = Mathf.Min(currentSpeed, 0);
+            }
+        }
+        transform.position += moveVec * currentSpeed * Time.fixedDeltaTime;
     }
 
     /* This function is invoked when player press 
@@ -262,6 +278,7 @@ public class CharacterController : MonoBehaviour
             if (sphereCollider.enabled)
                 sphereCollider.enabled = false;
         }
+        transform.position += moveVec * currentSpeed * Time.fixedDeltaTime;
     }
 
     /* This function just return a RaycastHit that
@@ -354,8 +371,8 @@ public class CharacterController : MonoBehaviour
         }
         else if (dir == Vector3.down)
         {
-            isBlock = Physics.SphereCast(transform.position, radius, Vector3.down, out hit, maxDist, immoveables, QueryTriggerInteraction.UseGlobal);
-            if (isBlock && hit.collider.isTrigger)
+            isBlock = Physics.SphereCast(transform.position, radius, Vector3.down, out groundHitInfo, maxDist, immoveables, QueryTriggerInteraction.UseGlobal);
+            if (isBlock && groundHitInfo.collider.isTrigger)
                 isBlock = false;
         }
         else if (dir == Vector3.right)
@@ -382,25 +399,9 @@ public class CharacterController : MonoBehaviour
      */
     private void ApplyGravity()
     {
-        if (isJumping || !IsBlocked(Vector3.down))
+        if (!isGrounded)
         {
-            Debug.Log("in");
-            //check if character is stuck to ceiling and zero the speed so it can start falling
-            if (IsBlocked(Vector3.up))
-                vertVel = -1;
-            // multiplier to make character fall faster on the way down
-            var fallMult = rb.velocity.y < 0 ? fallSpeedMult : 1;
-            vertVel -= gravity * fallMult * Time.fixedDeltaTime;
-            //lock falling speed at terminal velocity
-            if (vertVel < 0)
-            {
-                vertVel = Mathf.Max(vertVel, -terminalVel);
-                if (IsBlocked(Vector3.down))
-                {
-                    isJumping = false;
-                    vertVel = 0;
-                }
-            }
+            transform.position += 
         }
     }
 
