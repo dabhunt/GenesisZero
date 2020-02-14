@@ -93,6 +93,7 @@ public class CharacterController : MonoBehaviour
     {
         AnimStateUpdate();
         //LogDebug();
+        Debug.Log(isJumping);
     }
 
     private void FixedUpdate()
@@ -187,7 +188,7 @@ public class CharacterController : MonoBehaviour
             }
             else
             {
-                if (!isJumping)
+                if (!isJumping && IsBlocked(Vector3.down))
                     vertVel = 0;
             }     
         }
@@ -287,7 +288,7 @@ public class CharacterController : MonoBehaviour
     {   
         if (ctx.performed)
         {
-            if (IsBlocked(Vector3.down))
+            if (IsBlocked(Vector3.down) && !isRolling)
             {
                 animator.SetTrigger("startJump");
                 isJumping = true;
@@ -381,8 +382,9 @@ public class CharacterController : MonoBehaviour
      */
     private void ApplyGravity()
     {
-        if (!IsBlocked(Vector3.down) || isJumping)
+        if (isJumping || !IsBlocked(Vector3.down))
         {
+            Debug.Log("in");
             //check if character is stuck to ceiling and zero the speed so it can start falling
             if (IsBlocked(Vector3.up))
                 vertVel = -1;
@@ -390,7 +392,7 @@ public class CharacterController : MonoBehaviour
             var fallMult = rb.velocity.y < 0 ? fallSpeedMult : 1;
             vertVel -= gravity * fallMult * Time.fixedDeltaTime;
             //lock falling speed at terminal velocity
-            if (vertVel < 0) 
+            if (vertVel < 0)
             {
                 vertVel = Mathf.Max(vertVel, -terminalVel);
                 if (IsBlocked(Vector3.down))
