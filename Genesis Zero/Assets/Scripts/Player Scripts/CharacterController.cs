@@ -273,7 +273,7 @@ public class CharacterController : MonoBehaviour
         float maxDist = slopeRayDistMult * capsuleCollider.height / 2;
         if (!isGrounded)
             onSlope = false;
-        if(Physics.Raycast(transform.position, Vector3.down, out hit, maxDist, immoveables))
+        if(Physics.SphereCast(transform.position, capsuleCollider.radius, Vector3.down, out hit, maxDist, immoveables, QueryTriggerInteraction.UseGlobal))
             if (hit.normal != Vector3.up)
                 onSlope = true;
             else
