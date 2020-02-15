@@ -13,7 +13,7 @@ public class Player : Pawn
     // Start is called before the first frame update
     new void Start()
     {
-        Time.fixedDeltaTime = .01f; // <- this is here as a placeholder, no other good place to have this.
+        //Time.fixedDeltaTime = .01f; // <- this is here as a placeholder, no other good place to have this.
         base.Start();
     }
 

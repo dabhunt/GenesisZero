@@ -18,6 +18,10 @@ public class VFXScript : MonoBehaviour
     void Start()
     {
         ps = gameObject.GetComponent<ParticleSystem>();
+        if (ps == null)
+        {
+            ps = gameObject.GetComponentInChildren<ParticleSystem>();
+        }
         played = false;
     }
 
