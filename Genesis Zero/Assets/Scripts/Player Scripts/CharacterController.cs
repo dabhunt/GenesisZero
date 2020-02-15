@@ -318,7 +318,6 @@ public class CharacterController : MonoBehaviour
         else if (dir == Vector3.down)
         {
             isBlock = Physics.SphereCast(transform.position, radius, Vector3.down, out hit, maxDist, immoveables, QueryTriggerInteraction.UseGlobal);
-            Debug.Log(isBlock);
             if (isBlock && hit.collider.isTrigger)
                 isBlock = false;
         }
