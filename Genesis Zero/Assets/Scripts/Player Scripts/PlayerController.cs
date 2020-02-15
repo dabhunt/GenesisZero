@@ -87,9 +87,9 @@ public class PlayerController : MonoBehaviour
 
     private void Start()
     {
-        /*if (GetComponent<Player>() != null){
+        if (GetComponent<Player>() != null){
             maxSpeed = GetComponent<Player>().GetSpeed().GetValue();
-        }*/
+        }
     }
 
     private void Update()
