@@ -7,21 +7,21 @@ public class Restart : MonoBehaviour
 {
     //private Player player;
     private GameObject temp;
-    private bool restartingScene;
+    public bool exitingScene;
 
     void Start()
     {
     	temp = GameObject.FindWithTag("Player");
-    	restartingScene = false;
+    	exitingScene = false;
         //player = temp.GetComponent<Player>();
     }
     void Update(){
     	//if player is dead, restart the scene
     	if (temp == null){
-    		restartingScene = true;
+    		exitingScene = true;
     		RestartScene();
     	} else{
-    		restartingScene = false;
+    		exitingScene = false;
     	}
     }
 
@@ -32,7 +32,7 @@ public class Restart : MonoBehaviour
 		//Load it
 		SceneManager.LoadScene(scene, LoadSceneMode.Single);
     }
-    public bool isRestartingScene (){
-    	return restartingScene;
+    public bool ExitingScene(){
+    	return exitingScene;
     }
 }

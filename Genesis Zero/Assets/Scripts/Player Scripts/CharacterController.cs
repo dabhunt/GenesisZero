@@ -79,7 +79,9 @@ public class CharacterController : MonoBehaviour
 
     private void Start()
     {
-        maxSpeed = GetComponent<Player>().GetSpeed().GetValue();
+        if (GetComponent<Player>() != null){
+            maxSpeed = GetComponent<Player>().GetSpeed().GetValue();
+        }
     }
 
     private void Update()
