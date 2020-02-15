@@ -9,32 +9,26 @@ using UnityEngine.InputSystem;
 
 [RequireComponent(typeof(SphereCollider))]
 [RequireComponent(typeof(CapsuleCollider))]
-public class CharacterController : MonoBehaviour
+public class PlayerController : MonoBehaviour
 {
     [Header("Movement")]
     public float acceleration = 35f;
     public float jumpStrength = 12f;
     public float doubleJumpStrength = 10f;
     public float horCastPadding = 0.1f; // offset used for the sides casts
-    public float vertCastPadding = 0.05f; // offset used for the feet/head casts
+    public float vertCastPadding = 0.1f; // offset used for the feet/head casts
     public float rollDistance = 5f;
     public float rollSpeedMult = 1.5f;
-    public float maxGroundAngle = 120f;
     public bool debug;
     public LayerMask immoveables; //LayerMask for bound checks
 
-    private RaycastHit groundHitInfo;
-    private Vector3 moveVec = Vector3.right;
-    private float groundAngle;
-
-
     [Header("Physics")]
     public float gravity = 18f;
-    public float terminalVel = 16f;
+    public float terminalVel = 24f;
     public float fallSpeedMult = 1.45f;
     public float airControlMult = 0.5f;
+    public float airSpeedMult = 0.85f;
     public float slopeRayDistMult = 1.25f;
-    public float slopeForceMult = 0.35f;
 
     [Header("Camera")]
     public Camera mainCam;
@@ -46,39 +40,40 @@ public class CharacterController : MonoBehaviour
 
     //Component parts used in this Scripts
     private PlayerInputActions inputActions;
-    private Rigidbody rb;
     private CapsuleCollider capsuleCollider;
     private SphereCollider sphereCollider;
 
-    //This chunk relates to movement/aim values
+    //This chunk relates to movements
     private Vector2 movementInput;
-    private float fireInput;
-    private Vector2 aimInputMouse;
-    private Vector2 aimInputController;
-    private Vector3 aimVec = Vector3.zero;
+    private RaycastHit groundHitInfo;
+    private Vector3 moveVec = Vector3.right;
     private float maxSpeed;
     private float vertVel;
     private float currentSpeed = 0;
     private bool canDoubleJump = false;
     private float distanceRolled = 0;
-    private float jumpApexY;
     private int rollDirection;
     private Vector3 lastRollingPosition;
 
-    //This chunk of variables is related to Animation
+
+    //This chunk relate to aim
+    private Vector2 aimInputMouse;
+    private Vector2 aimInputController;
+    private Vector3 aimVec = Vector3.zero;
+    private float fireInput;
+
+    //This chunk of variables is related to Animation/state
     private Animator animator;
-    private Gun gun;
     private bool isGrounded;
     private bool isJumping;
     private bool isRolling;
     private bool isLookingRight;
-    private bool gunFired;
-    private bool onSlope;
+
+    private Gun gun;
     
 
     private void Awake()
     {
-        rb = GetComponent<Rigidbody>();
         capsuleCollider = GetComponent<CapsuleCollider>();
         sphereCollider = GetComponent<SphereCollider>();
         inputActions = new PlayerInputActions();
@@ -106,7 +101,7 @@ public class CharacterController : MonoBehaviour
         CheckGround();
         ApplyGravity();
         Aim();
-        //UpdateDodgeRoll();
+        UpdateDodgeRoll();
         Move();
         UpdateJump();
         DrawDebugLines();
@@ -122,47 +117,6 @@ public class CharacterController : MonoBehaviour
         inputActions.Disable();
     }
 
-    private void DrawDebugLines()
-    {
-        if (!debug) return;
-        Debug.DrawLine(transform.position, transform.position + moveVec * 2, Color.red);
-    }
-    private void CalculateForwardDirection()
-    {
-        if (!isGrounded)
-        {
-            moveVec = transform.right;
-            return;
-        }
-
-        moveVec = Vector3.Cross(groundHitInfo.normal, transform.forward);
-    }
-
-    private void CalculateGroundAngle()
-    {
-        if (!isGrounded)
-        {
-            groundAngle = 90;
-            return;
-        }
-        groundAngle = Vector3.Angle(groundHitInfo.normal, transform.right);
-    }
-
-    private void CheckGround()
-    {
-        if (IsBlocked(Vector3.down))
-        {
-            isGrounded = true;
-            canDoubleJump = true;
-            if (!isJumping)
-                vertVel = 0;
-        }
-        else
-        {
-            isGrounded = false;
-        }
-    }
-
     /* This controls the character general movements
      * It updates the movement vector every frame then apply
      * it based on the input
@@ -174,17 +128,18 @@ public class CharacterController : MonoBehaviour
         // this is to deal with left stick returning floats
         var input = movementInput.x < 0 ? Mathf.Floor(movementInput.x) : Mathf.Ceil(movementInput.x);
         maxSpeed = GetComponent<Player>().GetSpeed().GetValue();
-
+        
         CalculateForwardDirection();
-
-        if (groundAngle >= maxGroundAngle) return;
-
         if (isRolling) return;
 
         if (input != 0)
         {
             currentSpeed += input * multiplier * acceleration * Time.fixedDeltaTime;
-            currentSpeed = Mathf.Clamp(currentSpeed, -maxSpeed, maxSpeed);
+            if (isGrounded)
+                currentSpeed = Mathf.Clamp(currentSpeed, -maxSpeed, maxSpeed);
+            else
+                currentSpeed = Mathf.Clamp(currentSpeed, -maxSpeed * airSpeedMult, maxSpeed * airSpeedMult);
+            
             if (currentSpeed > 0 && IsBlocked(Vector3.right))
             {
                 currentSpeed = 0;
@@ -210,6 +165,20 @@ public class CharacterController : MonoBehaviour
             }
         }
         transform.position += moveVec * (startVel * Time.fixedDeltaTime + (0.5f * acceleration * input) * Mathf.Pow(Time.fixedDeltaTime, 2));
+    }
+
+    /* This function is called in Move()
+     * to calculate the move vector in order to deal with ramps and such
+     */
+    private void CalculateForwardDirection()
+    {
+        if (!isGrounded)
+        {
+            moveVec = transform.right;
+            return;
+        }
+
+        moveVec = Vector3.Cross(groundHitInfo.normal, transform.forward);
     }
 
     /* This function is called with an event invoked
@@ -243,6 +212,8 @@ public class CharacterController : MonoBehaviour
         }
     }
 
+    /* This function is used to update the jump cylce and its behavior
+     */
     private void UpdateJump()
     {
         if (!isJumping) return;
@@ -261,8 +232,38 @@ public class CharacterController : MonoBehaviour
         }
     }
 
+    /* This function is used to get information about the player
+     * relative to the ground, it also adjust the player's position
+     * if the player is somehow stuck underground
+     */
+    private void CheckGround()
+    {
+        RaycastHit hit;
+
+        if (IsBlocked(Vector3.down))
+        {
+            isGrounded = true;
+            canDoubleJump = true;
+
+            if (groundHitInfo.distance < (capsuleCollider.height * 0.5) - capsuleCollider.radius + vertCastPadding)
+                transform.position = Vector3.Lerp(transform.position, transform.position + Vector3.up * ((capsuleCollider.height * 0.5f) - capsuleCollider.radius), 5 * Time.fixedDeltaTime);
+
+            if (!isJumping)
+                vertVel = 0;
+        }
+        else
+        {
+            isGrounded = false;
+            if (Physics.Raycast(transform.position, Vector3.down, out hit, ((capsuleCollider.height * 0.5f) * slopeRayDistMult), immoveables));
+                if (hit.normal == Vector3.up)
+                    return;
+                else
+                    groundHitInfo = hit;
+        }
+    }
+
     /* This fuction applies gravity to player
-     * when the player's off the ground
+     * when the player is falling
      */
     private void ApplyGravity()
     {
@@ -307,32 +308,29 @@ public class CharacterController : MonoBehaviour
      */
     private void UpdateDodgeRoll()
     {
+        float rollSpeed = maxSpeed * rollSpeedMult;
         if (isRolling)
         {
+            //interupts roll if it's blocked
+            if ((rollDirection > 0 && IsBlocked(Vector3.right)) || (rollDirection < 0 && IsBlocked(Vector3.left)))
+            {   
+                isRolling = false;
+            }
+
+            transform.position += moveVec * rollDirection * rollSpeed * Time.fixedDeltaTime;
             //continue rolling if rollDistance is not reached
             if (distanceRolled < rollDistance)
             {
-                currentSpeed = rollDirection * maxSpeed * rollSpeedMult;
                 distanceRolled += Vector3.Distance(transform.position, lastRollingPosition);
             }
             else
             {
-                currentSpeed = isGrounded ? 0 : currentSpeed;
                 //make sure player doesn't get stuck under blocks
                 if (IsBlocked(Vector3.up))
                     distanceRolled = rollDistance - sphereCollider.radius;
                 else
                     isRolling = false;
             }
-
-            //interupts roll if it's blocked
-            if ((rollDirection > 0 && IsBlocked(Vector3.right)) || (rollDirection < 0 && IsBlocked(Vector3.left)))
-            {   
-                isRolling = false;
-                if (currentSpeed != 0)
-                    currentSpeed = 0;
-            }
-
             lastRollingPosition = transform.position;
         }
         else
@@ -344,6 +342,7 @@ public class CharacterController : MonoBehaviour
                 sphereCollider.enabled = false;
         }
     }
+
     /* This function control character aiming
      * Crosshair is moved using mouse/rightStick
      * Gun rotates to point at crosshair
@@ -415,8 +414,8 @@ public class CharacterController : MonoBehaviour
      */
     private void AnimStateUpdate()
     {
-        var xSpeed = moveVec.x != 0 ? moveVec.x / maxSpeed : 0;
-        var ySpeed = moveVec.y;
+        var xSpeed = currentSpeed != 0 ? currentSpeed / maxSpeed : 0;
+        var ySpeed = vertVel;
         animator.SetFloat("xSpeed", xSpeed);
         animator.SetFloat("ySpeed", ySpeed);
         animator.SetBool("isGrounded", isGrounded);
@@ -424,6 +423,12 @@ public class CharacterController : MonoBehaviour
         animator.SetBool("isLookingRight", isLookingRight);
     }
     
+    private void DrawDebugLines()
+    {
+        if (!debug) return;
+        Debug.DrawLine(transform.position, transform.position + moveVec * 2, Color.red);
+    }
+
     private void LogDebug()
     {
         //Debug.Log(movementInput);
