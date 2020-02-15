@@ -112,7 +112,7 @@ public class DroneAI : AIController
                     Hitbox spawnedHitbox = spawnedProjectile.GetComponent<Hitbox>();
                     if (spawnedHitbox != null)
                     {
-                        spawnedHitbox.Damage *= GetDamage().GetValue();
+                        spawnedHitbox.InitializeHitbox(GetDamage().GetValue(), this);
                     }
                 }
             }
