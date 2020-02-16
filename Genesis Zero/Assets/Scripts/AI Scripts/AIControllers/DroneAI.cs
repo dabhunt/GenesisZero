@@ -42,16 +42,17 @@ public class DroneAI : AIController
         patrolDir = Mathf.RoundToInt(Mathf.Sign(Random.value - 0.5f));
     }
 
-    protected void FixedUpdate()
+    new protected void FixedUpdate()
     {
+        base.FixedUpdate();
         if (Target == null) { return; }
 
         if (state == AIState.Follow || state == AIState.Charge || state == AIState.Attack || state == AIState.Cooldown)
         {
             // Rotation assumes that local up direction is forward
-            lookDir = Vector3.Slerp(lookDir, Target.position - transform.position, RotationRate * Time.fixedDeltaTime); // Rotate to face target
+            lookDir = Vector3.Slerp(lookDir, targetPosition - transform.position, RotationRate * Time.fixedDeltaTime); // Rotate to face target
             targetSpeed = MoveSpeed;
-            frb.Accelerate((transform.position - Target.position).normalized * Mathf.Min(GetAvoidCloseness(), AvoidAccelLimit) * Acceleration * AvoidAmount); // Acceleration to keep away from the target
+            frb.Accelerate((transform.position - targetPosition).normalized * Mathf.Min(GetAvoidCloseness(), AvoidAccelLimit) * Acceleration * AvoidAmount); // Acceleration to keep away from the target
         }
         else if (state == AIState.Patrol)
         {
@@ -64,6 +65,7 @@ public class DroneAI : AIController
             targetSpeed = 0.0f;
         }
 
+        targetSpeed *= GetSpeed().GetValue();
         frb.Accelerate(transform.up * (targetSpeed - frb.GetVelocity().magnitude * Mathf.Clamp01(Vector3.Dot(transform.up, frb.GetVelocity().normalized))) * Acceleration); // Accelerate toward the target
         frb.Accelerate(-transform.right * frb.GetVelocity().magnitude * Vector3.Dot(transform.right, frb.GetVelocity().normalized) * SideDecel); // Deceleration to prevent sideways movement
         transform.rotation = Quaternion.LookRotation(Vector3.forward, lookDir); // Actual rotation
@@ -106,7 +108,12 @@ public class DroneAI : AIController
                 attackLaunchTime = AttackLaunchInterval;
                 if (AttackProjectile != null)
                 {
-                    Instantiate(AttackProjectile, transform.position, transform.rotation);
+                    GameObject spawnedProjectile = Instantiate(AttackProjectile, transform.position, transform.rotation);
+                    Hitbox spawnedHitbox = spawnedProjectile.GetComponent<Hitbox>();
+                    if (spawnedHitbox != null)
+                    {
+                        spawnedHitbox.Damage *= GetDamage().GetValue();
+                    }
                 }
             }
         }

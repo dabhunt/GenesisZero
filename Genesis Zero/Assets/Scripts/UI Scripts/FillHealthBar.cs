@@ -1,4 +1,4 @@
-﻿using System.Collections;
+using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
@@ -6,14 +6,16 @@ public class FillHealthBar : MonoBehaviour
 {
 	public Image fillImage;
 	public Slider slider;
-	public Pawn player;
     public Color fillColor;
     public Color lowHPcolor;
+    private Player player;
 
     void Awake()
     {
     	//get slider component
         slider = GetComponent<Slider>();
+        GameObject temp = GameObject.FindWithTag("Player");
+        player = temp.GetComponent<Player>();
     }
     void Update()
     {

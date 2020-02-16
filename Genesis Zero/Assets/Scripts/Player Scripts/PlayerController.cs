@@ -7,10 +7,13 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.InputSystem;
 
-[RequireComponent(typeof(SphereCollider))]
 [RequireComponent(typeof(CapsuleCollider))]
 public class PlayerController : MonoBehaviour
 {
+    [Header("CharacterDims")]
+    public float characterHeight = 1.8f;
+    public float characterWidth = 0.3f;
+
     [Header("Movement")]
     public float acceleration = 35f;
     public float jumpStrength = 12f;
@@ -38,10 +41,8 @@ public class PlayerController : MonoBehaviour
     public GameObject crosshair;
     public float sensitivity;
 
-    //Component parts used in this Scripts
+    //Component parts used in this Script
     private PlayerInputActions inputActions;
-    private CapsuleCollider capsuleCollider;
-    private SphereCollider sphereCollider;
 
     //This chunk relates to movements
     private Vector2 movementInput;
@@ -74,8 +75,6 @@ public class PlayerController : MonoBehaviour
 
     private void Awake()
     {
-        capsuleCollider = GetComponent<CapsuleCollider>();
-        sphereCollider = GetComponent<SphereCollider>();
         inputActions = new PlayerInputActions();
         inputActions.PlayerControls.Move.performed += ctx => movementInput = ctx.ReadValue<Vector2>();
         inputActions.PlayerControls.AimMouse.performed += ctx => aimInputMouse = ctx.ReadValue<Vector2>();
@@ -87,7 +86,9 @@ public class PlayerController : MonoBehaviour
 
     private void Start()
     {
-        maxSpeed = GetComponent<Player>().GetSpeed().GetValue();
+        /*if (GetComponent<Player>() != null){
+            maxSpeed = GetComponent<Player>().GetSpeed().GetValue();
+        }*/
     }
 
     private void Update()
@@ -245,8 +246,9 @@ public class PlayerController : MonoBehaviour
             isGrounded = true;
             canDoubleJump = true;
 
-            if (groundHitInfo.distance < (capsuleCollider.height * 0.5) - capsuleCollider.radius + vertCastPadding)
-                transform.position = Vector3.Lerp(transform.position, transform.position + Vector3.up * ((capsuleCollider.height * 0.5f) - capsuleCollider.radius), 5 * Time.fixedDeltaTime);
+            if (Physics.Raycast(transform.position, Vector3.down, out hit, characterHeight * 0.5f, immoveables))
+                if (hit.distance < 0.5f * characterHeight + vertCastPadding)
+                    transform.position = Vector3.Lerp(transform.position, transform.position + Vector3.up * characterHeight * 0.5f, 5 * Time.fixedDeltaTime);
 
             if (!isJumping)
                 vertVel = 0;
@@ -254,7 +256,7 @@ public class PlayerController : MonoBehaviour
         else
         {
             isGrounded = false;
-            if (Physics.Raycast(transform.position, Vector3.down, out hit, ((capsuleCollider.height * 0.5f) * slopeRayDistMult), immoveables));
+            if (Physics.Raycast(transform.position, Vector3.down, out hit, characterHeight * 0.5f * slopeRayDistMult, immoveables))
                 if (hit.normal == Vector3.up)
                     return;
                 else
@@ -297,9 +299,6 @@ public class PlayerController : MonoBehaviour
                 rollDirection = movementInput.x > 0 ? 1 : -1;
             else
                 rollDirection =  isLookingRight ? 1 : -1;
-            //Shrink*
-            capsuleCollider.enabled = false;
-            sphereCollider.enabled = true;
         }
     }
 
@@ -327,19 +326,11 @@ public class PlayerController : MonoBehaviour
             {
                 //make sure player doesn't get stuck under blocks
                 if (IsBlocked(Vector3.up))
-                    distanceRolled = rollDistance - sphereCollider.radius;
+                    distanceRolled = rollDistance - 0.5f;
                 else
                     isRolling = false;
             }
             lastRollingPosition = transform.position;
-        }
-        else
-        {
-            //unShrink*
-            if (!capsuleCollider.enabled)
-                capsuleCollider.enabled = true;
-            if (sphereCollider.enabled)
-                sphereCollider.enabled = false;
         }
     }
 
@@ -372,10 +363,11 @@ public class PlayerController : MonoBehaviour
         bool isBlock = false;
         RaycastHit hit;
         
-        float radius = capsuleCollider.radius - vertCastPadding;
-        float maxDist = (capsuleCollider.height / 2) - radius + vertCastPadding;
-        Vector3 rayCenter = isRolling ? transform.position - sphereCollider.center : transform.position;
-        float boxHalf = isRolling ? (sphereCollider.radius / 2) - horCastPadding : (capsuleCollider.height / 2) - horCastPadding;
+        float radius = 0.5f * characterWidth - vertCastPadding;
+        float maxDist = 0.5f * characterHeight - radius + vertCastPadding;
+        Vector3 halfY = new Vector3 (0, characterHeight * 0.5f, 0);
+        Vector3 boxCenter = isRolling ? transform.position - halfY : transform.position;
+        float boxHalf = isRolling ? 0.25f * characterHeight - horCastPadding : 0.5f * characterHeight - horCastPadding;
         Vector3 halfExtends = new Vector3(0, boxHalf, 0);
 
         if (dir == Vector3.up)
@@ -392,13 +384,13 @@ public class PlayerController : MonoBehaviour
         }
         else if (dir == Vector3.right)
         {
-            isBlock = Physics.BoxCast(rayCenter, halfExtends, Vector3.right, out hit, Quaternion.identity, capsuleCollider.radius + vertCastPadding, immoveables, QueryTriggerInteraction.UseGlobal);
+            isBlock = Physics.BoxCast(boxCenter, halfExtends, Vector3.right, out hit, Quaternion.identity, 0.5f * characterWidth + vertCastPadding, immoveables, QueryTriggerInteraction.UseGlobal);
             if (isBlock && hit.collider.isTrigger || hit.normal != Vector3.left)
                 isBlock = false;
         }
         else if (dir == Vector3.left)
         {
-            isBlock = Physics.BoxCast(rayCenter, halfExtends, Vector3.left, out hit, Quaternion.identity, capsuleCollider.radius + vertCastPadding, immoveables, QueryTriggerInteraction.UseGlobal);
+            isBlock = Physics.BoxCast(boxCenter, halfExtends, Vector3.left, out hit, Quaternion.identity, 0.5f * characterWidth + vertCastPadding, immoveables, QueryTriggerInteraction.UseGlobal);
             if (isBlock && hit.collider.isTrigger || hit.normal != Vector3.right)
                 isBlock = false;
         }

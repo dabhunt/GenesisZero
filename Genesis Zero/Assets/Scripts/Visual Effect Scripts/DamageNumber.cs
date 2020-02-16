@@ -9,7 +9,7 @@ public class DamageNumber : MonoBehaviour
     private float damage;
     public float time = .5f;
     private float starttime;
-    public Color color = Color.black;
+    public Color color;
     private float multi;
 
     private void Start()

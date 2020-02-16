@@ -5,11 +5,15 @@ using UnityEngine;
 public class Player : Pawn
 {
     SkillManager SkillManager;
+
+    private void Awake()
+    {
+        SkillManager = new SkillManager(this);
+    }
     // Start is called before the first frame update
     new void Start()
     {
-        Time.fixedDeltaTime = .01f; // <- this is here as a placeholder, no other good place to have this.
-        SkillManager = new SkillManager(this);
+        //Time.fixedDeltaTime = .01f; // <- this is here as a placeholder, no other good place to have this.
         base.Start();
     }
 
@@ -25,10 +29,10 @@ public class Player : Pawn
         base.FixedUpdate();
     }
 
-    new public void TakeDamage(float amount)
+    public override float TakeDamage(float amount, Pawn source)
     {
         //Add anything if there is class specific additions to taking damage
-        base.TakeDamage(amount);
+        return base.TakeDamage(amount, source);
     }
 
     public bool HasSkill(string name)
