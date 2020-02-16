@@ -341,8 +341,11 @@ public class PlayerController : MonoBehaviour
     private void Aim()
     {
         Vector3 pos = mainCam.ScreenToWorldPoint(aimInputMouse);
+        pos.z = 0;
         Debug.Log("mouse " + pos);
         Debug.Log("Cross " + crosshair.transform.position);
+
+        crosshair.transform.position = pos;
         /*
         aimVec.x = aimInputMouse.x - pos.x; 
         aimVec.y = aimInputMouse.y - pos.y;
