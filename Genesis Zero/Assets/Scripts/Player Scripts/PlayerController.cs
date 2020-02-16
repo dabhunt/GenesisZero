@@ -340,7 +340,10 @@ public class PlayerController : MonoBehaviour
      */
     private void Aim()
     {
-        Vector3 pos = mainCam.WorldToScreenPoint(transform.position);
+        Vector3 pos = mainCam.ScreenToWorldPoint(aimInputMouse);
+        Debug.Log("mouse " + pos);
+        Debug.Log("Cross " + crosshair.transform.position);
+        /*
         aimVec.x = aimInputMouse.x - pos.x; 
         aimVec.y = aimInputMouse.y - pos.y;
 
@@ -350,9 +353,10 @@ public class PlayerController : MonoBehaviour
             isLookingRight = true;
         else
             isLookingRight = false;
-
+        
         if (fireInput > 0)
             gun.Shoot();
+        */
     }
 
     /* This function checks if the model is blocked

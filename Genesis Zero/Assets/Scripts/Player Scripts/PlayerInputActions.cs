@@ -30,7 +30,7 @@ public class @PlayerInputActions : IInputActionCollection, IDisposable
                     ""name"": ""AimMouse"",
                     ""type"": ""PassThrough"",
                     ""id"": ""95a719cb-580b-4379-94fd-1776eeaec549"",
-                    ""expectedControlType"": ""Vector3"",
+                    ""expectedControlType"": ""Vector2"",
                     ""processors"": """",
                     ""interactions"": """"
                 },
