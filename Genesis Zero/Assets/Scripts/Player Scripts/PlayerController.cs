@@ -6,6 +6,7 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.InputSystem;
+using Cinemachine;
 
 [RequireComponent(typeof(CapsuleCollider))]
 public class PlayerController : MonoBehaviour
@@ -39,7 +40,7 @@ public class PlayerController : MonoBehaviour
     [Header("Gun")]
     public GameObject gunObject;
     public GameObject crosshair;
-    public float sensitivity;
+    public float gamePadSens = 15f;
 
     //Component parts used in this Script
     private PlayerInputActions inputActions;
@@ -60,7 +61,6 @@ public class PlayerController : MonoBehaviour
     //This chunk relate to aim
     private Vector2 aimInputMouse;
     private Vector2 aimInputController;
-    private Vector3 aimVec = Vector3.zero;
     private float fireInput;
 
     //This chunk of variables is related to Animation/state
@@ -86,9 +86,8 @@ public class PlayerController : MonoBehaviour
 
     private void Start()
     {
-        /*if (GetComponent<Player>() != null){
-            maxSpeed = GetComponent<Player>().GetSpeed().GetValue();
-        }*/
+        Cursor.visible = false;
+        Cursor.lockState = CursorLockMode.Confined;
     }
 
     private void Update()
@@ -339,27 +338,31 @@ public class PlayerController : MonoBehaviour
      * Gun rotates to point at crosshair
      */
     private void Aim()
-    {
-        Vector3 pos = mainCam.ScreenToWorldPoint(aimInputMouse);
-        pos.z = 0;
-        Debug.Log("mouse " + pos);
-        Debug.Log("Cross " + crosshair.transform.position);
+    {   
+        if (aimInputMouse != Vector2.zero)
+        {
+            Vector3 pos = new Vector3(Input.mousePosition.x, Input.mousePosition.y, 1.65f * Mathf.Abs(mainCam.transform.position.z));
+            Vector3 mousePosition = mainCam.ScreenToWorldPoint(pos);
+            mousePosition.z = 0;
+            crosshair.transform.position = mousePosition;
+        }
 
-        crosshair.transform.position = pos;
-        /*
-        aimVec.x = aimInputMouse.x - pos.x; 
-        aimVec.y = aimInputMouse.y - pos.y;
+        if (aimInputController != Vector2.zero)
+        {
+            crosshair.transform.position += ((Vector3)aimInputController) * gamePadSens * Time.fixedDeltaTime;
+        }
 
-        float tmpAngle = Mathf.Atan2(aimVec.y, aimVec.x) * Mathf.Rad2Deg;
-        gunObject.transform.localRotation = Quaternion.Euler(0, 0, tmpAngle);
-        if (tmpAngle < 89 && tmpAngle > -91)
+        float xDist = crosshair.transform.position.x - gunObject.transform.position.x;
+        float yDist = crosshair.transform.position.y - gunObject.transform.position.y;
+        float aimAngle = Mathf.Atan2(yDist, xDist) * Mathf.Rad2Deg;
+        gunObject.transform.localRotation = Quaternion.Euler(0, 0, aimAngle);
+        if (Mathf.Abs(aimAngle) < 81)
             isLookingRight = true;
         else
             isLookingRight = false;
-        
+
         if (fireInput > 0)
             gun.Shoot();
-        */
     }
 
     /* This function checks if the model is blocked

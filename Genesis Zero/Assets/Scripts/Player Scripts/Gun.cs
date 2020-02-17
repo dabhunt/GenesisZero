@@ -7,7 +7,8 @@ public class Gun : MonoBehaviour
     [Header("Settings")]
     public GameObject projectile;
     public Transform firePoint;
-    public float spreadAngle = 1f;
+    [Range(0.0f, 10.0f)]
+    public float spreadAngle = 5f;
 
 
     private float timeToFire = 0;
