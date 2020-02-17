@@ -30,7 +30,7 @@ public class @PlayerInputActions : IInputActionCollection, IDisposable
                     ""name"": ""AimMouse"",
                     ""type"": ""PassThrough"",
                     ""id"": ""95a719cb-580b-4379-94fd-1776eeaec549"",
-                    ""expectedControlType"": ""Vector3"",
+                    ""expectedControlType"": ""Vector2"",
                     ""processors"": """",
                     ""interactions"": """"
                 },
@@ -163,8 +163,8 @@ public class @PlayerInputActions : IInputActionCollection, IDisposable
                 },
                 {
                     ""name"": """",
-                    ""id"": ""3b124ca6-b944-45a8-9c20-0c1ffa5c5550"",
-                    ""path"": ""<Mouse>/position"",
+                    ""id"": ""b6feffaf-2c8d-4a14-b402-106d8813f640"",
+                    ""path"": ""<Mouse>/delta"",
                     ""interactions"": """",
                     ""processors"": """",
                     ""groups"": ""Keyboard&Mouse"",
