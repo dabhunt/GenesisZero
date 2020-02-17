@@ -815,7 +815,7 @@ GameObject:
   - component: {fileID: 7791957062173608678}
   - component: {fileID: 954251547505110457}
   m_Layer: 0
-  m_Name: ybot
+  m_Name: Player2-16
   m_TagString: Player
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -884,16 +884,16 @@ MonoBehaviour:
   m_GameObject: {fileID: 7791957062173608679}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: ad9969dd1bd56bf4cb4fb162ec60f29c, type: 3}
+  m_Script: {fileID: 11500000, guid: f06ca8c9ec0efae4bbd24b40993c4b66, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
   characterHeight: 1.8
   characterWidth: 0.3
   acceleration: 35
   jumpStrength: 12
-  doubleJumpStrength: 10
+  doubleJumpStrength: 12
   horCastPadding: 0.1
-  vertCastPadding: 0.025
+  vertCastPadding: 0.1
   rollDistance: 5
   rollSpeedMult: 1.5
   fallJumpDelay: 0.2
@@ -912,6 +912,7 @@ MonoBehaviour:
   gunObject: {fileID: 7791957063403999347}
   crosshair: {fileID: 485450260}
   gamePadSens: 15
+  triggerResetTime: 0.25
 --- !u!114 &7791957062173608675
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -993,7 +994,7 @@ MonoBehaviour:
   m_DefaultControlScheme: 
   m_DefaultActionMap: PlayerControls
   m_SplitScreenIndex: 0
-  m_Camera: {fileID: 0}
+  m_Camera: {fileID: 4306719083894487179}
 --- !u!114 &7791957062173608672
 MonoBehaviour:
   m_ObjectHideFlags: 0
