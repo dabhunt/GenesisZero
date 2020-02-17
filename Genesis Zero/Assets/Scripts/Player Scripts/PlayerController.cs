@@ -23,8 +23,10 @@ public class PlayerController : MonoBehaviour
     public float vertCastPadding = 0.1f; // offset used for the feet/head casts
     public float rollDistance = 5f;
     public float rollSpeedMult = 1.5f;
-    public bool debug;
+    public float fallJumpDelay = 0.2f;
+    public float jumpBufferTime = 0.2f;
     public LayerMask immoveables; //LayerMask for bound checks
+    public bool debug;
 
     [Header("Physics")]
     public float gravity = 18f;
@@ -52,7 +54,9 @@ public class PlayerController : MonoBehaviour
     private float maxSpeed;
     private float vertVel;
     private float currentSpeed = 0;
-    private bool canDoubleJump = false;
+    private bool canDoubleJump;
+    private bool canJump;
+    private float jumpPressedTime;
     private float distanceRolled = 0;
     private int rollDirection;
     private Vector3 lastRollingPosition;
@@ -188,26 +192,25 @@ public class PlayerController : MonoBehaviour
     {   
         if (ctx.performed)
         {
-            //if (isRolling) return;
-            if (isGrounded)
+            if (isRolling) return;
+            // canJump allow player to jump after an amount of time when falling off edge
+            jumpPressedTime = jumpBufferTime;
+            if (isGrounded || canJump)
             {
                 animator.SetTrigger("startJump");
                 isJumping = true;
                 vertVel = jumpStrength;
             }
-            else
+            else if (!isGrounded && canDoubleJump)
             {
-                if (canDoubleJump)
-                {
-                    animator.SetTrigger("startJump");
-                    isJumping = true;
-                    canDoubleJump = false;
-                    vertVel = doubleJumpStrength;
-                    if (currentSpeed > 0 && movementInput.x <= 0)
-                        currentSpeed = 0;
-                    if (currentSpeed < 0 && movementInput.x >= 0)
-                        currentSpeed = 0;  
-                }
+                animator.SetTrigger("startJump");
+                isJumping = true;
+                canDoubleJump = false;
+                vertVel = doubleJumpStrength;
+                if (currentSpeed > 0 && movementInput.x <= 0)
+                    currentSpeed = 0;
+                if (currentSpeed < 0 && movementInput.x >= 0)
+                    currentSpeed = 0; 
             }
         }
     }
@@ -216,11 +219,36 @@ public class PlayerController : MonoBehaviour
      */
     private void UpdateJump()
     {
-        if (!isJumping) return;
-        float startVel = vertVel;
+        if (jumpPressedTime > 0)
+            jumpPressedTime -= Time.fixedDeltaTime;
+        else
+            jumpPressedTime = 0;
 
+        if (isGrounded)
+        {
+            canJump = true;
+            canDoubleJump = true;
+        }
+        else
+        {
+            StartCoroutine(DelayToggleCanJump(fallJumpDelay));
+        }
+
+        if (!isJumping)
+        {
+            if (isGrounded && jumpPressedTime > 0)
+            {
+                jumpPressedTime = 0;
+                isJumping = true;
+                vertVel = jumpStrength;
+            }
+            return;
+        }
+
+        float startVel = vertVel;
         if (IsBlocked(Vector3.up))
             vertVel = -1;
+        
         if (vertVel > 0)
         {
             vertVel -= gravity * Time.fixedDeltaTime;
@@ -243,8 +271,6 @@ public class PlayerController : MonoBehaviour
         if (IsBlocked(Vector3.down))
         {
             isGrounded = true;
-            canDoubleJump = true;
-
             if (Physics.Raycast(transform.position, Vector3.down, out hit, characterHeight * 0.5f, immoveables))
                 if (hit.distance < 0.5f * characterHeight + vertCastPadding)
                     transform.position = Vector3.Lerp(transform.position, transform.position + Vector3.up * characterHeight * 0.5f, 5 * Time.fixedDeltaTime);
@@ -429,6 +455,12 @@ public class PlayerController : MonoBehaviour
     {
         if (!debug) return;
         Debug.DrawLine(transform.position, transform.position + moveVec * 2, Color.red);
+    }
+
+    private IEnumerator DelayToggleCanJump(float time)
+    {
+        yield return new WaitForSeconds(time);
+        canJump = false;
     }
 
     private void LogDebug()
