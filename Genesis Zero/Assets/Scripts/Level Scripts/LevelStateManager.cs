@@ -29,4 +29,27 @@ public class LevelStateManager : MonoBehaviour
             Destroy(gameObject);
         }
     }
+
+    /*
+     * Invokes the level exit event when a level is left
+     */
+    public static void GoToLevel(string nextLevel)
+    {
+        if (instance != null)
+        {
+            instance.levelExitEvent.Invoke();
+        }
+        SceneManager.LoadScene(nextLevel);
+    }
+
+    /*
+     * Invokes the level enter event when a level is loaded
+     */
+    public void OnLevelWasLoaded(int level)
+    {
+        if (instance != null)
+        {
+            instance.levelEnterEvent.Invoke();
+        }
+    }
 }
