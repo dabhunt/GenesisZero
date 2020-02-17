@@ -43,10 +43,12 @@ public class PlayerController : MonoBehaviour
     public GameObject gunObject;
     public GameObject crosshair;
     public float gamePadSens = 15f;
-
+    private float timeToFire = 0;
+    [Header("Animations")]
+    public float triggerResetTime = 0.25f;
     //Component parts used in this Script
     private PlayerInputActions inputActions;
-
+    private Player player;
     //This chunk relates to movements
     private Vector2 movementInput;
     private RaycastHit groundHitInfo;
@@ -92,6 +94,7 @@ public class PlayerController : MonoBehaviour
     {
         Cursor.visible = false;
         Cursor.lockState = CursorLockMode.Confined;
+        player = GetComponent<Player>();
     }
 
     private void Update()
@@ -198,12 +201,14 @@ public class PlayerController : MonoBehaviour
             if (isGrounded || canJump)
             {
                 animator.SetTrigger("startJump");
+                StartCoroutine(ResetTrigger("startJump", triggerResetTime));
                 isJumping = true;
                 vertVel = jumpStrength;
             }
             else if (!isGrounded && canDoubleJump)
             {
-                animator.SetTrigger("startJump");
+                animator.SetTrigger("startDoubleJump");
+                StartCoroutine(ResetTrigger("startDoubleJump", triggerResetTime));
                 isJumping = true;
                 canDoubleJump = false;
                 vertVel = doubleJumpStrength;
@@ -317,6 +322,7 @@ public class PlayerController : MonoBehaviour
         if (ctx.performed)
         {
             animator.SetTrigger("startRoll");
+            StartCoroutine(ResetTrigger("startRoll", triggerResetTime));
             isRolling = true;
             distanceRolled = 0;
             lastRollingPosition = transform.position;
@@ -339,6 +345,8 @@ public class PlayerController : MonoBehaviour
             if ((rollDirection > 0 && IsBlocked(Vector3.right)) || (rollDirection < 0 && IsBlocked(Vector3.left)))
             {   
                 isRolling = false;
+                animator.SetTrigger("endRoll");
+                StartCoroutine(ResetTrigger("endRoll", triggerResetTime));
             }
 
             transform.position += moveVec * rollDirection * rollSpeed * Time.fixedDeltaTime;
@@ -353,7 +361,11 @@ public class PlayerController : MonoBehaviour
                 if (IsBlocked(Vector3.up))
                     distanceRolled = rollDistance - 0.5f;
                 else
+                {
                     isRolling = false;
+                    animator.SetTrigger("endRoll");
+                    StartCoroutine(ResetTrigger("endRoll", triggerResetTime));
+                }
             }
             lastRollingPosition = transform.position;
         }
@@ -388,7 +400,15 @@ public class PlayerController : MonoBehaviour
             isLookingRight = false;
 
         if (fireInput > 0)
-            gun.Shoot();
+        {
+            if (Time.time > timeToFire)
+            {
+                timeToFire = Time.time + 1 / player.GetAttackSpeed().GetValue();
+                gun.Shoot();
+                animator.SetTrigger("gunFired");
+                StartCoroutine(ResetTrigger("gunFired", triggerResetTime));
+            }
+        }
     }
 
     /* This function checks if the model is blocked
@@ -461,6 +481,12 @@ public class PlayerController : MonoBehaviour
     {
         yield return new WaitForSeconds(time);
         canJump = false;
+    }
+
+    private IEnumerator ResetTrigger(string trigger, float time)
+    {
+        yield return new WaitForSeconds(time);
+        animator.ResetTrigger(trigger);
     }
 
     private void LogDebug()
