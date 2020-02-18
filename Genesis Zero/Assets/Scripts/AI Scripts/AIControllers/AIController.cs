@@ -69,7 +69,7 @@ public class AIController : Pawn
 
         if (IsStunned())
         {
-            ChangeState(AIState.Patrol);
+            ChangeState(AIState.Idle);
         }
         else if (Target != null)
         {
@@ -132,6 +132,11 @@ public class AIController : Pawn
      */
     private void StateUpdate()
     {
+        if (state == AIState.Idle)
+        {
+            ChangeState(AIState.Patrol);
+        }
+
         if (state == AIState.Patrol) // State when moving around while not following player
         {
             if ((GetDistanceToTarget() <= BehaviorProperties.DetectRadius && targetVisible) || alertTracking)
@@ -180,9 +185,13 @@ public class AIController : Pawn
      */
     public void ChangeState(AIState newState)
     {
+        bool stateDifferent = state != newState;
         state = newState;
-        stateTime = 0.0f;
-        StateChangeEvent.Invoke(state);
+        if (stateDifferent)
+        {
+            stateTime = 0.0f;
+            StateChangeEvent.Invoke(state);
+        }
 
         if (tracker != null)
         {
