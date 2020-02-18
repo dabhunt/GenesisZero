@@ -45,7 +45,7 @@ public class CharacterAimFootIK : MonoBehaviour
             Chest.rotation = OriginalChestRotation;
             Anim.SetLayerWeight(1, 0);
         }
-        else
+        if (Anim.GetBool("isRolling") == false)
         {
             Anim.SetLayerWeight(1, 1);
             Chest.LookAt(Target);
