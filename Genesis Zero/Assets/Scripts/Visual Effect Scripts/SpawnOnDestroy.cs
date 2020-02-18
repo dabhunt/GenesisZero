@@ -3,13 +3,15 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.SceneManagement;
 
+
 public class SpawnOnDestroy : MonoBehaviour
 {
     public string vfxName;
-    public string soundName;
-    public int amount;
+    public string[] sounds = new string[0];
     public bool quitting;
     private Restart restartScript;
+    public int amount;
+    private AudioManager aManager;
     //bool applicationIsQuitting;
     // Start is called before the first frame update
     // Update is called once per frame
@@ -18,6 +20,7 @@ public class SpawnOnDestroy : MonoBehaviour
         quitting = false;
         GameObject temp = GameObject.FindWithTag("EventSystem");
         restartScript = temp.GetComponent<Restart>();
+        aManager = FindObjectOfType<AudioManager>();
     }
 
 
@@ -29,10 +32,13 @@ public class SpawnOnDestroy : MonoBehaviour
         }
         // otherwise play the effect
         else{
-            if (soundName != "")
+            if (sounds.Length > 0)
             {
             //if string is not empty, calls audio manager to play sound based on string
-              FindObjectOfType<AudioManager>().PlaySoundOneShot(soundName);
+            // note this only works if audio manager has been told to load the sound at the beginnning of the game
+                int rng = Random.Range(1, sounds.Length);
+                rng --;
+              aManager.PlaySoundOneShot(sounds[rng]);
             }
             //if vfx string is not empty
             if (vfxName != "")
