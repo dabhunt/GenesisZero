@@ -21,6 +21,7 @@ public class ContainingCamera : MonoBehaviour
     {
         cam = GetComponent<Camera>();
 
+        // Stop tracking objects that are deactivated
         List<Transform> viewTransforms = ViewObjects.ToList();
         for (int i = 0; i < viewTransforms.Count; i++)
         {
@@ -41,6 +42,8 @@ public class ContainingCamera : MonoBehaviour
         float outsideAmount = 0.0f;
         for (int i = 0; i < ViewObjects.Length; i++)
         {
+            if (ViewObjects[i] == null) { continue; }
+
             if (i > 0)
             {
                 avgPos += ViewObjects[i].position; // Get average position of objects

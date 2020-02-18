@@ -106,7 +106,16 @@ public class DroneExploderAI : AIController
             GameObject spawnedExplosion = Instantiate(Explosion, transform.position, Quaternion.identity);
             Hitbox spawnedHitbox = spawnedExplosion.GetComponent<Hitbox>();
             spawnedHitbox.InitializeHitbox(GetDamage().GetValue(), this);
+            spawnedExplosion.GetComponent<ProjectileTest>().DestroyEvent.AddListener(DestroySelf);
         }
         gameObject.SetActive(false);
+    }
+
+    /*
+     * Wrapper function to destroy self with no parameters.
+     */
+    private void DestroySelf()
+    {
+        Destroy(gameObject);
     }
 }
