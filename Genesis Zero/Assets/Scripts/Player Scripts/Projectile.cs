@@ -33,7 +33,7 @@ public class Projectile : MonoBehaviour
         bool collided = CheckCollisions();
         if (collided == false)
         {
-            direction = speed * transform.right * Time.fixedDeltaTime;
+            direction = speed * transform.forward * Time.fixedDeltaTime;
             transform.position += direction;
         }
     }
@@ -59,10 +59,10 @@ public class Projectile : MonoBehaviour
         if (GetComponent<SphereCollider>())
         {
             SphereCollider col = GetComponent<SphereCollider>();
-            bool hitdetect = Physics.SphereCast(transform.position, col.radius, transform.right, out hit, (speed * Time.fixedDeltaTime));
+            bool hitdetect = Physics.SphereCast(transform.position, col.radius, transform.forward, out hit, (speed * Time.fixedDeltaTime));
             if (hitdetect && hit.collider != col)
             {
-                Vector3 dir = speed * transform.right * Time.fixedDeltaTime;
+                Vector3 dir = speed * transform.forward * Time.fixedDeltaTime;
                 dir = dir.normalized * (hit.distance + col.radius * 2);
                 
                 transform.position += dir;

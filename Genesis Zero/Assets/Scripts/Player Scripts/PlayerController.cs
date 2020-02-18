@@ -92,7 +92,7 @@ public class PlayerController : MonoBehaviour
 
     private void Start()
     {
-        Cursor.visible = false;
+        Cursor.visible = true;
         Cursor.lockState = CursorLockMode.Confined;
         player = GetComponent<Player>();
     }
@@ -181,11 +181,11 @@ public class PlayerController : MonoBehaviour
     {
         if (!isGrounded)
         {
-            moveVec = transform.right;
+            moveVec = transform.forward;
             return;
         }
 
-        moveVec = Vector3.Cross(groundHitInfo.normal, transform.forward);
+        moveVec = Vector3.Cross(groundHitInfo.normal, -transform.right);
     }
 
     /* This function is called with an event invoked
@@ -379,7 +379,7 @@ public class PlayerController : MonoBehaviour
     {   
         if (aimInputMouse != Vector2.zero)
         {
-            Vector3 pos = new Vector3(Input.mousePosition.x, Input.mousePosition.y, 1.65f * Mathf.Abs(mainCam.transform.position.z));
+            Vector3 pos = new Vector3(Input.mousePosition.x, Input.mousePosition.y, Mathf.Abs(mainCam.transform.position.z - transform.position.z));
             Vector3 mousePosition = mainCam.ScreenToWorldPoint(pos);
             mousePosition.z = 0;
             crosshair.transform.position = mousePosition;
@@ -393,7 +393,7 @@ public class PlayerController : MonoBehaviour
         float xDist = crosshair.transform.position.x - gunObject.transform.position.x;
         float yDist = crosshair.transform.position.y - gunObject.transform.position.y;
         float aimAngle = Mathf.Atan2(yDist, xDist) * Mathf.Rad2Deg;
-        gunObject.transform.localRotation = Quaternion.Euler(0, 0, aimAngle);
+        gunObject.transform.localRotation = Quaternion.Euler(-aimAngle, 0, 0);
         if (Mathf.Abs(aimAngle) < 81)
             isLookingRight = true;
         else
