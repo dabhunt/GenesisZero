@@ -199,67 +199,6 @@ MonoBehaviour:
   useVolumetric: 1
   featuresFoldout: 1
   showAdditionalSettings: 0
---- !u!1 &485450260
-GameObject:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  serializedVersion: 6
-  m_Component:
-  - component: {fileID: 485450261}
-  m_Layer: 0
-  m_Name: Crosshair
-  m_TagString: Untagged
-  m_Icon: {fileID: 0}
-  m_NavMeshLayer: 0
-  m_StaticEditorFlags: 0
-  m_IsActive: 1
---- !u!4 &485450261
-Transform:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 485450260}
-  m_LocalRotation: {x: -0, y: -0.7071068, z: -0, w: 0.7071068}
-  m_LocalPosition: {x: 0, y: -21.122025, z: 39.7012}
-  m_LocalScale: {x: 1, y: 1, z: 1}
-  m_Children:
-  - {fileID: 1159408428}
-  m_Father: {fileID: 7791957062173608681}
-  m_RootOrder: 3
-  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!1 &1159408427
-GameObject:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  serializedVersion: 6
-  m_Component:
-  - component: {fileID: 1159408428}
-  m_Layer: 0
-  m_Name: Sphere
-  m_TagString: Untagged
-  m_Icon: {fileID: 0}
-  m_NavMeshLayer: 0
-  m_StaticEditorFlags: 0
-  m_IsActive: 1
---- !u!4 &1159408428
-Transform:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1159408427}
-  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 0, y: 0, z: 0}
-  m_LocalScale: {x: 0.1, y: 0.1, z: 0.1}
-  m_Children: []
-  m_Father: {fileID: 485450261}
-  m_RootOrder: 0
-  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &1589350574
 GameObject:
   m_ObjectHideFlags: 0
@@ -292,7 +231,7 @@ Transform:
   - {fileID: 1602183714}
   - {fileID: 8795018}
   m_Father: {fileID: 7791957062173608681}
-  m_RootOrder: 5
+  m_RootOrder: 4
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 70.521}
 --- !u!33 &1589350576
 MeshFilter:
@@ -619,7 +558,7 @@ Transform:
   - {fileID: 7791957062396044587}
   - {fileID: 7791957063756115494}
   m_Father: {fileID: 7791957062173608681}
-  m_RootOrder: 4
+  m_RootOrder: 3
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &7791957061950225839
 GameObject:
@@ -908,7 +847,6 @@ Transform:
   - {fileID: 7791957062864673965}
   - {fileID: 7791957062984042030}
   - {fileID: 7791957062490327587}
-  - {fileID: 485450261}
   - {fileID: 7791957061934652505}
   - {fileID: 1589350577}
   m_Father: {fileID: 0}
@@ -963,7 +901,7 @@ MonoBehaviour:
   slopeRayDistMult: 1.25
   mainCam: {fileID: 0}
   gunObject: {fileID: 1589350574}
-  crosshair: {fileID: 485450260}
+  crosshair: {fileID: 0}
   gamePadSens: 15
   triggerResetTime: 0.25
 --- !u!114 &7791957062173608675

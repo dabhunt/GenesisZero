@@ -74,7 +74,8 @@ public class PlayerController : MonoBehaviour
     private bool isGrounded;
     private bool isJumping;
     private bool isRolling;
-    private bool isLookingRight;
+    private bool isLookingRight = true;
+    private bool isAimingRight;
 
     private Gun gun;
     
@@ -153,15 +154,23 @@ public class PlayerController : MonoBehaviour
             }
 
             currentSpeed += input * multiplier * acceleration * Time.fixedDeltaTime;
+
+            //This is to calculate air control speeds
             if (isGrounded)
                 currentSpeed = Mathf.Clamp(currentSpeed, -maxSpeed, maxSpeed);
             else
                 currentSpeed = Mathf.Clamp(currentSpeed, -maxSpeed * airSpeedMult, maxSpeed * airSpeedMult);
-
-            if (input > 0 && transform.localRotation.y != 90)
-                transform.Rotate(Vector3.up, 90);
-            if (input < 0 && transform.localRotation.y != -90)
-                transform.Rotate(Vector3.up, -90);
+            //Rotation depending on input
+            if (input > 0 && transform.eulerAngles.y != 90)
+            {
+                transform.rotation = Quaternion.Euler(0, 90, 0);
+                isLookingRight = true;
+            }
+            if (input < 0 && transform.eulerAngles.y != -90)
+            {
+                transform.rotation = Quaternion.Euler(0, -90, 0);
+                isLookingRight = false;
+            }
         }
         else
         {
@@ -176,7 +185,7 @@ public class PlayerController : MonoBehaviour
                 currentSpeed = Mathf.Min(currentSpeed, 0);
             }
         }
-        transform.position += moveVec * (startVel * Time.fixedDeltaTime + (0.5f * acceleration) * Mathf.Pow(Time.fixedDeltaTime, 2));
+        transform.position += moveVec * (startVel * Time.fixedDeltaTime + (0.5f * acceleration * Mathf.Abs(input)) * Mathf.Pow(Time.fixedDeltaTime, 2));
     }
 
     /* This function is called in Move()
@@ -334,7 +343,19 @@ public class PlayerController : MonoBehaviour
             if (movementInput.x != 0)
                 rollDirection = movementInput.x > 0 ? 1 : -1;
             else
-                rollDirection =  isLookingRight ? 1 : -1;
+                rollDirection =  isAimingRight ? 1 : -1;
+
+            if (rollDirection < 0 && isLookingRight)
+            {
+                transform.rotation = Quaternion.Euler(0, -90, 0);
+                isLookingRight = false;
+            }
+            if (rollDirection > 0 && !isLookingRight)
+            {
+                transform.rotation = Quaternion.Euler(0, 90, 0);
+                isLookingRight = true;
+            }
+
         }
     }
 
@@ -354,7 +375,7 @@ public class PlayerController : MonoBehaviour
                 StartCoroutine(ResetTrigger("endRoll", triggerResetTime));
             }
 
-            transform.position += moveVec * rollDirection * rollSpeed * Time.fixedDeltaTime;
+            transform.position += moveVec * rollSpeed * Time.fixedDeltaTime;
             //continue rolling if rollDistance is not reached
             if (distanceRolled < rollDistance)
             {
@@ -395,15 +416,23 @@ public class PlayerController : MonoBehaviour
             crosshair.transform.position += ((Vector3)aimInputController) * gamePadSens * Time.fixedDeltaTime;
         }
 
-        float xDist = crosshair.transform.position.x - gunObject.transform.position.x;
-        float yDist = crosshair.transform.position.y - gunObject.transform.position.y;
+        /*
+        float xDist = crosshair.transform.position.x - transform.position.x;
+        float yDist = crosshair.transform.position.y - transform.position.y;
         float aimAngle = Mathf.Atan2(yDist, xDist) * Mathf.Rad2Deg;
+        */
+        gunObject.transform.LookAt(crosshair.transform);
+        if (transform.position.x < crosshair.transform.position.x)
+            isAimingRight = true;
+        else
+            isAimingRight = false;
+        /*
         gunObject.transform.localRotation = Quaternion.Euler(-aimAngle, 0, 0);
         if (Mathf.Abs(aimAngle) < 81)
-            isLookingRight = true;
+            isAimingRight = true;
         else
-            isLookingRight = false;
-
+            isAimingRight = false;
+        */
         if (fireInput > 0)
         {
             if (Time.time > timeToFire)
@@ -474,6 +503,7 @@ public class PlayerController : MonoBehaviour
         animator.SetBool("isGrounded", isGrounded);
         animator.SetBool("isRolling", isRolling);
         animator.SetBool("isLookingRight", isLookingRight);
+        animator.SetBool("isAimingRight", isAimingRight);
     }
     
     private void DrawDebugLines()
