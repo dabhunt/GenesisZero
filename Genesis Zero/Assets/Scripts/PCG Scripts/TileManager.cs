@@ -101,7 +101,7 @@ public class TileManager : MonoBehaviour
 			spawnVector.x += tileLength;
 			
 			//Spawn Enemy
-			if (Random.Range(0, 3) == 0)
+			if (Random.Range(0, 1) == 0)
 			{
 				GameObject newEnemy = Instantiate(enemyPrefabs[Random.Range(0, enemyPrefabs.Length)]) as GameObject;
 				spawnVector.y += 3;
