@@ -71,11 +71,11 @@ public class Projectile : MonoBehaviour
                 {
                     if (GetComponent<Hitbox>().CheckCollisions(hit.collider))
                     {
-                        coll = false;
+                        coll = true;
                     }
                     else
                     {
-                        coll = true;
+                        coll = false;
                     }
                 }
                 return true;

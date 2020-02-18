@@ -77,28 +77,19 @@ public class Hitbox : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-        if (state == State.Deactive)
-        {
-            Destroy(this.gameObject);
-        }
 
     }
 
     private void FixedUpdate()
     {
-        /**
-        RaycastHit hit;
-        Vector3 pos = collider.transform.position;
-        Vector3 direction = pos - lastposition;
-        float distance = Mathf.Abs(Vector3.Distance(pos, lastposition)) * 10;
-        //Debug.Log(direction +" "+ Mathf.Abs(Vector3.Distance(pos, lastposition)) * 10);
-        Debug.DrawRay(pos, direction,Color.blue, distance);
-        if (Physics.Raycast(pos, direction, out hit, distance, LayerMask.NameToLayer("Allies")))
+        if (state == State.Deactive)
         {
-            //Debug.Log("Rayed: " + hit.collider.gameObject.name);
+            try
+            {
+                Destroy(this.gameObject);
+            }
+            catch { }
         }
-        lastposition = collider.transform.position;
-    */
     }
 
 
@@ -117,10 +108,6 @@ public class Hitbox : MonoBehaviour
 
         if (state == State.Colliding)
         {
-            if (other != GetComponent<Collider>())
-            {
-                //Debug.Log((other != collider) + " " + maxhits + " " + (other.GetComponentInParent<Hurtbox>() || other.GetComponent<Hurtbox>()) + " " + CanDamage(other) + " " + other.GetComponentInParent<Pawn>());
-            }
             bool siblingcolliders = false;
             try
             {
@@ -181,22 +168,21 @@ public class Hitbox : MonoBehaviour
                 hittargets.Add(other.transform.root.gameObject);
 
                 --MaxHits;
-                return true;
             }
             else if (Intangible == false && other != GetComponent<Collider>() && !(other.GetComponentInParent<Hurtbox>() || other.GetComponent<Hurtbox>()) && !siblingcolliders)
             {
                 state = State.Deactive;
-                return false;
+                return true;
             }
 
             if (MaxHits <= 0)
             {
                 state = State.Deactive;
-                return false;
+                return true;
             }
 
         }
-        return true;
+        return false;
     }
 
     /**
