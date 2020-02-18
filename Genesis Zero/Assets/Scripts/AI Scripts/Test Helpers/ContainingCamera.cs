@@ -1,6 +1,7 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using System.Linq;
 
 [RequireComponent(typeof(Camera))]
 /**
@@ -19,6 +20,17 @@ public class ContainingCamera : MonoBehaviour
     protected void Awake()
     {
         cam = GetComponent<Camera>();
+
+        List<Transform> viewTransforms = ViewObjects.ToList();
+        for (int i = 0; i < viewTransforms.Count; i++)
+        {
+            if(!viewTransforms[i].gameObject.activeInHierarchy)
+            {
+                viewTransforms.RemoveAt(i);
+                i--;
+            }
+        }
+        ViewObjects = viewTransforms.ToArray();
     }
 
     protected void FixedUpdate()
