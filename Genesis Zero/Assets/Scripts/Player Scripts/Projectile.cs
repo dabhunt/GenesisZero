@@ -12,6 +12,7 @@ public class Projectile : MonoBehaviour
 
     private Rigidbody rb;
     private float lifeTime = 1f;
+    private bool coll;
     private void Start()
     {
         rb = GetComponent<Rigidbody>();
@@ -31,7 +32,7 @@ public class Projectile : MonoBehaviour
     private void Move()
     {       
         bool collided = CheckCollisions();
-        if (collided == false)
+        if (coll == false)
         {
             direction = speed * transform.forward * Time.fixedDeltaTime;
             transform.position += direction;
@@ -64,7 +65,19 @@ public class Projectile : MonoBehaviour
             {
                 Vector3 dir = speed * transform.forward * Time.fixedDeltaTime;
                 dir = dir.normalized * (hit.distance + col.radius * 2);
+                //Debug.Log(transform.position +" : "+ hit.point);
                 transform.position = hit.point;
+                if (GetComponent<Hitbox>())
+                {
+                    if (GetComponent<Hitbox>().CheckCollisions(hit.collider))
+                    {
+                        coll = false;
+                    }
+                    else
+                    {
+                        coll = true;
+                    }
+                }
                 return true;
             }
         }

@@ -108,7 +108,7 @@ public class Hitbox : MonoBehaviour
         CheckCollisions(other);
     }
 
-    public void CheckCollisions(Collider other)
+    public bool CheckCollisions(Collider other)
     {
         if (state == State.Active)
         {
@@ -178,23 +178,25 @@ public class Hitbox : MonoBehaviour
                     emit.GetComponent<DamageNumber>().SetColor(new Color(.25f, .25f, .25f));
                 }
 
-
                 hittargets.Add(other.transform.root.gameObject);
 
                 --MaxHits;
+                return true;
             }
             else if (Intangible == false && other != GetComponent<Collider>() && !(other.GetComponentInParent<Hurtbox>() || other.GetComponent<Hurtbox>()) && !siblingcolliders)
             {
                 state = State.Deactive;
+                return false;
             }
 
             if (MaxHits <= 0)
             {
                 state = State.Deactive;
+                return false;
             }
 
         }
-
+        return true;
     }
 
     /**
