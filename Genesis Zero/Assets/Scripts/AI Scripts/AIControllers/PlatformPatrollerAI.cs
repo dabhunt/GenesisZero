@@ -24,6 +24,8 @@ public class PlatformPatrollerAI : AIController
 
     public ParticleSystem chargeParticles;
     public ParticleSystem attackParticles;
+    public GameObject AttackHitbox;
+    private Transform spawnedHitboxObj; // Refernce to currently spawned hitbox object
 
     protected void Awake()
     {
@@ -132,6 +134,32 @@ public class PlatformPatrollerAI : AIController
         if (state == AIState.Attack)
         {
             frb.AddVelocity(Vector3.up * JumpSpeed + Vector3.right * faceDir * LungeSpeed);
+        }
+    }
+
+    /**
+     * This spawns the hitbox to damage the player while lunging
+     */
+    public void SpawnAttackHitbox()
+    {
+        if (AttackHitbox != null)
+        {
+            spawnedHitboxObj = Instantiate(AttackHitbox, Vector3.zero, Quaternion.identity, transform).transform;
+            spawnedHitboxObj.localPosition = Vector3.zero;
+            spawnedHitboxObj.localRotation = Quaternion.identity;
+            Hitbox spawnedHitbox = spawnedHitboxObj.GetComponent<Hitbox>();
+            spawnedHitbox.InitializeHitbox(GetDamage().GetValue(), this);
+        }
+    }
+    
+    /**
+     * Cleans up currently spawned attack hitbox
+     */
+    public void DestroyAttackHitbox()
+    {
+        if (spawnedHitboxObj != null)
+        {
+            Destroy(spawnedHitboxObj.gameObject);
         }
     }
 }
