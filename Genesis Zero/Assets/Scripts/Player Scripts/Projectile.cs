@@ -29,7 +29,7 @@ public class Projectile : MonoBehaviour
     }
 
     private void Move()
-    {
+    {       
         bool collided = CheckCollisions();
         if (collided == false)
         {
@@ -64,8 +64,7 @@ public class Projectile : MonoBehaviour
             {
                 Vector3 dir = speed * transform.forward * Time.fixedDeltaTime;
                 dir = dir.normalized * (hit.distance + col.radius * 2);
-                
-                transform.position += dir;
+                transform.position = hit.point;
                 return true;
             }
         }
