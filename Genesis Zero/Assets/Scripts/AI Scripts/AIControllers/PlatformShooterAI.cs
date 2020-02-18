@@ -118,7 +118,7 @@ public class PlatformShooterAI : AIController
                 attackLaunchTime = AttackLaunchInterval;
                 if (AttackProjectile != null)
                 {
-                    GameObject spawnedProjectile = Instantiate(AttackProjectile, transform.position, Quaternion.LookRotation(Vector3.forward, Vector3.right * faceDir));
+                    GameObject spawnedProjectile = Instantiate(AttackProjectile, transform.position, Quaternion.LookRotation(Vector3.forward, (Target.position - transform.position).normalized));
                     Hitbox spawnedHitbox = spawnedProjectile.GetComponent<Hitbox>();
                     if (spawnedHitbox != null)
                     {
