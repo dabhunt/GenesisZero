@@ -131,7 +131,7 @@ public class PlayerController : MonoBehaviour
     private void Move()
     {
         float multiplier = isGrounded ? 1 : airControlMult;
-        float startVel = currentSpeed;
+        float startVel = Mathf.Abs(currentSpeed);
         // this is to deal with left stick returning floats
         var input = movementInput.x < 0 ? Mathf.Floor(movementInput.x) : Mathf.Ceil(movementInput.x);
         maxSpeed = GetComponent<Player>().GetSpeed().GetValue();
@@ -141,22 +141,27 @@ public class PlayerController : MonoBehaviour
 
         if (input != 0)
         {
+            if (input > 0 && IsBlocked(Vector3.right))
+            {
+                currentSpeed = 0;
+                return;
+            }
+            if (input < 0 && IsBlocked(Vector3.left))
+            {
+                currentSpeed = 0;
+                return;
+            }
+
             currentSpeed += input * multiplier * acceleration * Time.fixedDeltaTime;
             if (isGrounded)
                 currentSpeed = Mathf.Clamp(currentSpeed, -maxSpeed, maxSpeed);
             else
                 currentSpeed = Mathf.Clamp(currentSpeed, -maxSpeed * airSpeedMult, maxSpeed * airSpeedMult);
-            
-            if (currentSpeed > 0 && IsBlocked(Vector3.right))
-            {
-                currentSpeed = 0;
-                return;
-            }
-            if (currentSpeed < 0 && IsBlocked(Vector3.left))
-            {
-                currentSpeed = 0;
-                return;
-            }
+
+            if (input > 0 && transform.localRotation.y != 90)
+                transform.Rotate(Vector3.up, 90);
+            if (input < 0 && transform.localRotation.y != -90)
+                transform.Rotate(Vector3.up, -90);
         }
         else
         {
@@ -171,7 +176,7 @@ public class PlayerController : MonoBehaviour
                 currentSpeed = Mathf.Min(currentSpeed, 0);
             }
         }
-        transform.position += moveVec * (startVel * Time.fixedDeltaTime + (0.5f * acceleration * input) * Mathf.Pow(Time.fixedDeltaTime, 2));
+        transform.position += moveVec * (startVel * Time.fixedDeltaTime + (0.5f * acceleration) * Mathf.Pow(Time.fixedDeltaTime, 2));
     }
 
     /* This function is called in Move()
