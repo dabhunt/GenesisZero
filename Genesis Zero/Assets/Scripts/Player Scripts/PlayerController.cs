@@ -92,7 +92,7 @@ public class PlayerController : MonoBehaviour
 
     private void Start()
     {
-        Cursor.visible = false;
+        Cursor.visible = true;
         Cursor.lockState = CursorLockMode.Confined;
         player = GetComponent<Player>();
     }
@@ -384,7 +384,7 @@ public class PlayerController : MonoBehaviour
     {   
         if (aimInputMouse != Vector2.zero)
         {
-            Vector3 pos = new Vector3(Input.mousePosition.x, Input.mousePosition.y, 1.65f * Mathf.Abs(mainCam.transform.position.z));
+            Vector3 pos = new Vector3(Input.mousePosition.x, Input.mousePosition.y, Mathf.Abs(mainCam.transform.position.z - transform.position.z));
             Vector3 mousePosition = mainCam.ScreenToWorldPoint(pos);
             mousePosition.z = 0;
             crosshair.transform.position = mousePosition;
