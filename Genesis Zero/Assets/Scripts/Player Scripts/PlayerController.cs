@@ -511,7 +511,7 @@ public class PlayerController : MonoBehaviour
      */
     private void AnimStateUpdate()
     {
-        var xSpeed = currentSpeed != 0 ? currentSpeed / maxSpeed : 0;
+        var xSpeed = GetCurrentSpeed();
         var ySpeed = vertVel;
         animator.SetFloat("xSpeed", xSpeed);
         animator.SetFloat("ySpeed", ySpeed);
@@ -523,6 +523,11 @@ public class PlayerController : MonoBehaviour
         if (xSpeed == 0 && walkSoundPlaying){
             sound.StopWalk();
         }
+    }
+    public float GetCurrentSpeed()
+    {
+        var xSpeed = currentSpeed != 0 ? currentSpeed / maxSpeed : 0;
+        return xSpeed;
     }
     
     private void DrawDebugLines()
