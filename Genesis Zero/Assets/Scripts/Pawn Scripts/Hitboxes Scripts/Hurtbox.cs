@@ -67,29 +67,33 @@ public class Hurtbox : MonoBehaviour
 
     private void OnCollisionEnter(Collision collision)
     {
+        Vector2 vel = GetComponent<Rigidbody>().velocity;
+        Vector2 hitdir = collision.GetContact(0).point - transform.position;
+        float angle = Vector2.Angle(hitdir, vel);
         //Debug.Log("Colliding");
-        if (GetComponent<Pawn>() && GetComponent<Pawn>().GetKnockBackForce() > 0 && collision.collider.isTrigger == false)
+        if (GetComponent<Pawn>() && GetComponent<Pawn>().GetKnockBackForce() > 3 && vel.magnitude > 4 && collision.collider.isTrigger == false)
         {
-            Vector2 vel = GetComponent<Rigidbody>().velocity;
-            //Debug.Log(gameObject.name + ": " + vel.magnitude);
-
-            float damage = (int)(vel.magnitude * 5) / 2;
-            GetComponent<Pawn>().TakeDamage(damage, null);
-            GameObject dn = VFXManager.instance.PlayEffect("DamageNumber", new Vector3(transform.position.x, transform.position.y + 1, transform.position.z - .5f));
-            dn.GetComponent<DamageNumber>().SetNumber(damage);
-
-            Vector3 newVec = GetComponent<Rigidbody>().velocity * 1 / 2;
-            GetComponent<Rigidbody>().velocity = - newVec;
-
-            if (collision.gameObject.GetComponent<Pawn>())
+            if (Mathf.Abs(angle) < 75)  // if the object hits the other object directly, then they take the damage
             {
-                collision.gameObject.GetComponent<Pawn>().TakeDamage(vel.magnitude * 5, null);
-                GameObject dn2 = VFXManager.instance.PlayEffect("DamageNumber", new Vector3(collision.transform.position.x, collision.transform.position.y + 1, collision.transform.position.z - .5f));
-                dn2.GetComponent<DamageNumber>().SetNumber(damage);
-                collision.gameObject.GetComponent<Rigidbody>().velocity += newVec/2;
-            }
+                float damage = (int)(vel.magnitude * 4) / 2;
+                GetComponent<Pawn>().TakeDamage(damage, null);
+                GameObject dn = VFXManager.instance.PlayEffect("DamageNumber", new Vector3(transform.position.x, transform.position.y + 1, transform.position.z - .5f));
+                dn.GetComponent<DamageNumber>().SetNumber(damage);
 
-            GetComponent<Pawn>().SetKnockBackForce(0);
+                Vector3 newVec = GetComponent<Rigidbody>().velocity * 1 / 2;
+                GetComponent<Rigidbody>().velocity = -newVec;
+
+                if (collision.gameObject.GetComponent<Pawn>())
+                {
+                    collision.gameObject.GetComponent<Pawn>().TakeDamage(vel.magnitude * 5, null);
+                    GameObject dn2 = VFXManager.instance.PlayEffect("DamageNumber", new Vector3(collision.transform.position.x, collision.transform.position.y + 1, collision.transform.position.z - .5f));
+                    dn2.GetComponent<DamageNumber>().SetNumber(damage);
+                    collision.gameObject.GetComponent<Rigidbody>().velocity += newVec / 2;
+                }
+
+                GetComponent<Pawn>().SetKnockBackForce(0);
+            }
+            
             /**
             Vector2 kdir = GetComponent<Pawn>().GetKnockBackVector();
             float kangle = Mathf.Atan2(kdir.y, kdir.x);
