@@ -1,7 +1,7 @@
 ﻿/* CharacterController class deals with general input processing for
  * movements, aiming, shooting.
  */
-
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
@@ -69,6 +69,8 @@ public class PlayerController : MonoBehaviour
     private Vector2 aimInputController;
     private float fireInput;
 
+     private Gun gun;
+
     //This chunk of variables is related to Animation/state
     private Animator animator;
     private bool isGrounded;
@@ -77,7 +79,9 @@ public class PlayerController : MonoBehaviour
     private bool isLookingRight = true;
     private bool isAimingRight;
 
-    private Gun gun;
+    //sound variables
+    private bool walkSoundPlaying = false;
+    private PlayerSounds sound;
     
 
     private void Awake()
@@ -87,6 +91,7 @@ public class PlayerController : MonoBehaviour
         inputActions.PlayerControls.AimMouse.performed += ctx => aimInputMouse = ctx.ReadValue<Vector2>();
         inputActions.PlayerControls.AimController.performed += ctx => aimInputController = ctx.ReadValue<Vector2>();
         inputActions.PlayerControls.Fire.performed += ctx => fireInput = ctx.ReadValue<float>();
+        sound =FindObjectOfType<AudioManager>().GetComponent<PlayerSounds>();
         animator = GetComponent<Animator>();
         gun = GetComponent<Gun>();
     }
@@ -193,10 +198,18 @@ public class PlayerController : MonoBehaviour
      */
     private void CalculateForwardDirection()
     {
+        var xSpeed = currentSpeed != 0 ? currentSpeed / maxSpeed : 0;
         if (!isGrounded)
         {
             moveVec = transform.forward;
+            walkSoundPlaying = false;
+            sound.StopWalk();
             return;
+        //if they are on the ground, and their speed is greater than .1, and walk sound is not playing, start playing it
+        } else if (Math.Abs(xSpeed) > 0.05f && !walkSoundPlaying)
+        {
+            walkSoundPlaying = true;
+            sound.Walk();
         }
 
         moveVec = Vector3.Cross(groundHitInfo.normal, -transform.right);
@@ -215,6 +228,7 @@ public class PlayerController : MonoBehaviour
             if (isGrounded || canJump)
             {
                 animator.SetTrigger("startJump");
+                sound.Jump();
                 StartCoroutine(ResetTrigger("startJump", triggerResetTime));
                 isJumping = true;
                 vertVel = jumpStrength;
@@ -440,6 +454,7 @@ public class PlayerController : MonoBehaviour
                 timeToFire = Time.time + 1 / player.GetAttackSpeed().GetValue();
                 gun.Shoot();
                 animator.SetTrigger("gunFired");
+                sound.GunShot();
                 StartCoroutine(ResetTrigger("gunFired", triggerResetTime));
             }
         }
@@ -504,6 +519,10 @@ public class PlayerController : MonoBehaviour
         animator.SetBool("isRolling", isRolling);
         animator.SetBool("isLookingRight", isLookingRight);
         animator.SetBool("isAimingRight", isAimingRight);
+        // if speed 
+        if (xSpeed == 0 && walkSoundPlaying){
+            sound.StopWalk();
+        }
     }
     
     private void DrawDebugLines()
