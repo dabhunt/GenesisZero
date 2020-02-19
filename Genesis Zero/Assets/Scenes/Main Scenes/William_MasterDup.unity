@@ -914,6 +914,7 @@ GameObject:
   - component: {fileID: 308918630}
   - component: {fileID: 308918629}
   - component: {fileID: 308918631}
+  - component: {fileID: 308918632}
   m_Layer: 0
   m_Name: AudioManager
   m_TagString: Untagged
@@ -961,6 +962,57 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   allSounds:
   - {fileID: 8300000, guid: 162019867c5439e4986abe5d18f1aa85, type: 3}
+  - {fileID: 8300000, guid: 3cbda35070346dc4ea151187d545439c, type: 3}
+  - {fileID: 8300000, guid: ba22265bb1c7507489e864ffeca82dfb, type: 3}
+  - {fileID: 8300000, guid: f38540a5405319f4f8e4650008e70618, type: 3}
+  - {fileID: 8300000, guid: c91c72968dae10343bcec87eb213d5fc, type: 3}
+  - {fileID: 8300000, guid: f1af1329da6b83249ba234d21f11448c, type: 3}
+  - {fileID: 8300000, guid: a00532657f23dcc45848ff3f15cc88b9, type: 3}
+  - {fileID: 8300000, guid: 2d436d5b9d82d43468eb437be0abd6e8, type: 3}
+  - {fileID: 8300000, guid: b5b059b66af79c34aab00f6fb1ae2595, type: 3}
+  - {fileID: 8300000, guid: d7672e2417f8185429e47fb1ed2a88a9, type: 3}
+  - {fileID: 8300000, guid: 53f188f7344555248b17a73be34876c4, type: 3}
+  - {fileID: 8300000, guid: 311e71ac0e0eb294f892afc18d7ef64b, type: 3}
+  - {fileID: 8300000, guid: 08766aa7d25252242829f8808f53ecc0, type: 3}
+  - {fileID: 8300000, guid: fd7cb7a4236046f4cabc06ebd2b6a86d, type: 3}
+  ambient:
+  - {fileID: 8300000, guid: 06507e3db5d78ff4ea1a46b5f50892e2, type: 3}
+  MasterAmbientVolume: 0
+  MasterSoundVolume: 0
+--- !u!114 &308918632
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 308918628}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: cd99636ece0ce3f4da50ca0abd18102e, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  walk: SFX_Running
+  gunshot:
+  - SFX_Gunshot-001
+  - SFX_Gunshot-002
+  - SFX_Gunshot-003
+  - SFX_Gunshot-004
+  - SFX_Gunshot-005
+  - SFX_Gunshot-006
+  jump:
+  - SFX_Jump-001
+  - SFX_Jump-002
+  - SFX_Jump-003
+  - SFX_Jump-004
+  - SFX_Jump-005
+  - SFX_Jump-006
+  land:
+  - SFX_Jump-001
+  - SFX_Jump-002
+  - SFX_Jump-003
+  - SFX_Jump-004
+  - SFX_Jump-005
+  - SFX_Jump-006
 --- !u!1 &314697777
 GameObject:
   m_ObjectHideFlags: 0
@@ -1712,7 +1764,7 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 617089331}
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 13.6, y: -3.3564916, z: 28.736603}
+  m_LocalPosition: {x: 12.22, y: -3.3564916, z: 28.736603}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children:
   - {fileID: 338686238}
@@ -2263,7 +2315,7 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 905681073}
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 25, y: 1.9, z: -35.6}
+  m_LocalPosition: {x: 15.728417, y: 1.9, z: -35.6}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children:
   - {fileID: 1477407521}
@@ -3595,7 +3647,7 @@ Light:
   m_BounceIntensity: 1
   m_ColorTemperature: 6570
   m_UseColorTemperature: 1
-  m_BoundingSphereOverride: {x: 0, y: 5.5e-44, z: 0, w: 1.6114932e-38}
+  m_BoundingSphereOverride: {x: 0, y: 0, z: 0, w: -18.162354}
   m_UseBoundingSphereOverride: 0
   m_ShadowRadius: 0
   m_ShadowAngle: 0
@@ -4520,7 +4572,7 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1632414319}
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 25, y: 1.9, z: -35.6}
+  m_LocalPosition: {x: 15.728417, y: 1.9, z: -35.6}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children:
   - {fileID: 1932838403}
@@ -6329,27 +6381,22 @@ PrefabInstance:
     - target: {fileID: 3765591379090702703, guid: fbd57d770a213ee4b9761bfee4ec886c,
         type: 3}
       propertyPath: m_BoundingSphereOverride.x
-      value: 8.18e-43
+      value: 4
       objectReference: {fileID: 0}
     - target: {fileID: 3765591379090702703, guid: fbd57d770a213ee4b9761bfee4ec886c,
         type: 3}
       propertyPath: m_BoundingSphereOverride.y
-      value: 3.7757738e-17
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 3765591379090702703, guid: fbd57d770a213ee4b9761bfee4ec886c,
         type: 3}
       propertyPath: m_BoundingSphereOverride.z
-      value: 8.18e-43
+      value: -1.7281006e+38
       objectReference: {fileID: 0}
     - target: {fileID: 3765591379090702703, guid: fbd57d770a213ee4b9761bfee4ec886c,
         type: 3}
       propertyPath: m_BoundingSphereOverride.w
-      value: 1.1126953e-16
-      objectReference: {fileID: 0}
-    - target: {fileID: 3765591379913481326, guid: fbd57d770a213ee4b9761bfee4ec886c,
-        type: 3}
-      propertyPath: m_LocalPosition.z
-      value: 0
+      value: 0.3203125
       objectReference: {fileID: 0}
     - target: {fileID: 3765591380462936652, guid: fbd57d770a213ee4b9761bfee4ec886c,
         type: 3}
@@ -6364,7 +6411,7 @@ PrefabInstance:
     - target: {fileID: 3765591380545108936, guid: fbd57d770a213ee4b9761bfee4ec886c,
         type: 3}
       propertyPath: m_LocalPosition.x
-      value: 24.801582
+      value: 15.53
       objectReference: {fileID: 0}
     - target: {fileID: 3765591380545108936, guid: fbd57d770a213ee4b9761bfee4ec886c,
         type: 3}
@@ -6714,22 +6761,22 @@ PrefabInstance:
     - target: {fileID: 6995730127578616132, guid: e7d03f9fab36e7e4db6535b7f84981ce,
         type: 3}
       propertyPath: m_BoundingSphereOverride.x
-      value: 1
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 6995730127578616132, guid: e7d03f9fab36e7e4db6535b7f84981ce,
         type: 3}
       propertyPath: m_BoundingSphereOverride.y
-      value: 9.2e-44
+      value: 2.3510647e-38
       objectReference: {fileID: 0}
     - target: {fileID: 6995730127578616132, guid: e7d03f9fab36e7e4db6535b7f84981ce,
         type: 3}
       propertyPath: m_BoundingSphereOverride.z
-      value: 2.489e-41
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 6995730127578616132, guid: e7d03f9fab36e7e4db6535b7f84981ce,
         type: 3}
       propertyPath: m_BoundingSphereOverride.w
-      value: 1.1865856e-15
+      value: -3.0092844e-15
       objectReference: {fileID: 0}
     - target: {fileID: 6995730127578616132, guid: e7d03f9fab36e7e4db6535b7f84981ce,
         type: 3}
