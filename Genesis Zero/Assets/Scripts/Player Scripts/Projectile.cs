@@ -65,7 +65,7 @@ public class Projectile : MonoBehaviour
             {
                 Vector3 dir = speed * transform.forward * Time.fixedDeltaTime;
                 dir = dir.normalized * (hit.distance + col.radius * 2);
-                //Debug.Log(transform.position +" : "+ hit.point);
+                //Debug.Log(hit.collider.gameObject.name);
                 transform.position = hit.point;
                 if (GetComponent<Hitbox>())
                 {

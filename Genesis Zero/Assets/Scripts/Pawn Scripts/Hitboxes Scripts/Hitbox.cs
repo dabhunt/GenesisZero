@@ -114,7 +114,7 @@ public class Hitbox : MonoBehaviour
                 siblingcolliders = hittargets.Contains(other.transform.root.gameObject);
             }
             catch { }
-            if (other != GetComponent<Collider>() && MaxHits > 0 && (other.GetComponentInParent<Hurtbox>() || other.GetComponent<Hurtbox>()) && other.GetComponent<BodyPart>() && CanDamage(other) && other.GetComponentInParent<Pawn>() && !siblingcolliders)
+            if (other != GetComponent<Collider>() && MaxHits > 0 && (other.GetComponentInParent<Hurtbox>() || other.GetComponent<Hurtbox>()) && CanDamage(other) && (other.GetComponentInParent<Pawn>() || other.GetComponent<Pawn>()) && !siblingcolliders)
             {
                 float finaldamage = Damage;
                 Pawn p = other.GetComponentInParent<Pawn>();
@@ -169,7 +169,7 @@ public class Hitbox : MonoBehaviour
 
                 --MaxHits;
             }
-            else if (Intangible == false && other != GetComponent<Collider>() && !(other.GetComponentInParent<Hurtbox>() || other.GetComponent<Hurtbox>()) && !siblingcolliders)
+            else if (Intangible == false && other != GetComponent<Collider>() && !(other.GetComponentInParent<Hurtbox>() || other.GetComponent<Hurtbox>()) && !siblingcolliders && !other.isTrigger)
             {
                 state = State.Deactive;
                 return true;
