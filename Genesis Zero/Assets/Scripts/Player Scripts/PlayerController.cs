@@ -205,7 +205,8 @@ public class PlayerController : MonoBehaviour
             walkSoundPlaying = false;
             sound.StopWalk();
             return;
-        } else if (Math.Abs(xSpeed) > 0.1f && !walkSoundPlaying)
+        //if they are on the ground, and their speed is greater than .1, and walk sound is not playing, start playing it
+        } else if (Math.Abs(xSpeed) > 0.05f && !walkSoundPlaying)
         {
             walkSoundPlaying = true;
             sound.Walk();
@@ -518,7 +519,8 @@ public class PlayerController : MonoBehaviour
         animator.SetBool("isRolling", isRolling);
         animator.SetBool("isLookingRight", isLookingRight);
         animator.SetBool("isAimingRight", isAimingRight);
-        if (xSpeed < .05f && walkSoundPlaying){
+        // if speed 
+        if (xSpeed == 0 && walkSoundPlaying){
             sound.StopWalk();
         }
     }
