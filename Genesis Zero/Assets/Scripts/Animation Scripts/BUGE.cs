@@ -1,7 +1,7 @@
-using System.Collections;
+﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
-
+using System;
 public class BUGE : MonoBehaviour
 {
 	// private GameObject bugObj;
@@ -22,6 +22,7 @@ public class BUGE : MonoBehaviour
      public float acceleration;
      public float deacceleration;
     public float sinAmplitude = 0.1f;
+    public float AmplitudeWhileRunning = .3f;
     public float sinFrequency = 1.2f;
     public float followXoffset = .6f;
 
@@ -72,8 +73,13 @@ public class BUGE : MonoBehaviour
              //speedvar += distMulti;
              this.transform.position = Vector3.MoveTowards(this.transform.position, follow, speedvar * Time.deltaTime);
          }
+        //exaggerate the sin wave while the player runs vs the sin while floating idle next to player
+     	var sin = sinAmplitude;
+     	if (curSpeed > Math.Abs(0.5f) )
+     	{sin = AmplitudeWhileRunning;}
         Vector3 sinPos = this.transform.position;
-        sinPos.y += Mathf.Sin (Time.fixedTime * Mathf.PI * sinFrequency) * sinAmplitude;
+        sinPos.y += Mathf.Sin (Time.fixedTime * Mathf.PI * sinFrequency) * sin;
+        sinPos.x += Mathf.Sin (Time.fixedTime * Mathf.PI * sinFrequency) * sinAmplitude;
         this.transform.position = sinPos;
          
 
