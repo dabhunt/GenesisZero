@@ -40,8 +40,6 @@ public class OverHeat : MonoBehaviour
     		if (isOverheated)
     			isOverheated = false;
     	}
-    	print("heat: "+heat);
-    	print("coolDelay: "+coolDelay);
 	}
     public bool IsOverheated()
     {
