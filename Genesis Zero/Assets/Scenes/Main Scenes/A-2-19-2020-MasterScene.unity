@@ -1910,6 +1910,28 @@ MeshFilter:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 533339125}
   m_Mesh: {fileID: 10202, guid: 0000000000000000e000000000000000, type: 0}
+--- !u!1 &549187894 stripped
+GameObject:
+  m_CorrespondingSourceObject: {fileID: 2904619426794866949, guid: 0c2cf6f095941194faad534297a5f033,
+    type: 3}
+  m_PrefabInstance: {fileID: 1469166450010415129}
+  m_PrefabAsset: {fileID: 0}
+--- !u!114 &549187899
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 549187894}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: b2ad7c3299fe37c4899d3c83eb2e36a9, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  fillImage: {fileID: 1469166450010415130}
+  lowHeatColor: {r: 0.33333334, g: 0.8352941, b: 0.94509804, a: 0}
+  overHeatColor: {r: 0.8773585, g: 0.028969401, b: 0.028969401, a: 0}
+  lerpTime: 0.3
 --- !u!1 &617089331
 GameObject:
   m_ObjectHideFlags: 0
@@ -6755,8 +6777,40 @@ PrefabInstance:
       propertyPath: runtimeWindow
       value: 
       objectReference: {fileID: 0}
+    - target: {fileID: 6792289580718366922, guid: 0c2cf6f095941194faad534297a5f033,
+        type: 3}
+      propertyPath: m_Color.r
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 6792289580718366922, guid: 0c2cf6f095941194faad534297a5f033,
+        type: 3}
+      propertyPath: m_Color.g
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 6792289580718366922, guid: 0c2cf6f095941194faad534297a5f033,
+        type: 3}
+      propertyPath: m_Color.b
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 6792289580718366922, guid: 0c2cf6f095941194faad534297a5f033,
+        type: 3}
+      propertyPath: m_FillAmount
+      value: 0.159
+      objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 0c2cf6f095941194faad534297a5f033, type: 3}
+--- !u!114 &1469166450010415130 stripped
+MonoBehaviour:
+  m_CorrespondingSourceObject: {fileID: 6792289580718366922, guid: 0c2cf6f095941194faad534297a5f033,
+    type: 3}
+  m_PrefabInstance: {fileID: 1469166450010415129}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: fe87c0e1cc204ed48ad3b37840f39efc, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
 --- !u!1001 &2696814816326377552
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -6767,7 +6821,17 @@ PrefabInstance:
     - target: {fileID: 2141654868405849165, guid: fbd57d770a213ee4b9761bfee4ec886c,
         type: 3}
       propertyPath: coolRatePerSecond
-      value: 0.8
+      value: 25
+      objectReference: {fileID: 0}
+    - target: {fileID: 2141654868405849165, guid: fbd57d770a213ee4b9761bfee4ec886c,
+        type: 3}
+      propertyPath: maxHeat
+      value: 100
+      objectReference: {fileID: 0}
+    - target: {fileID: 2141654868405849165, guid: fbd57d770a213ee4b9761bfee4ec886c,
+        type: 3}
+      propertyPath: heatAddedPerShot
+      value: 7
       objectReference: {fileID: 0}
     - target: {fileID: 3606125383311708822, guid: fbd57d770a213ee4b9761bfee4ec886c,
         type: 3}

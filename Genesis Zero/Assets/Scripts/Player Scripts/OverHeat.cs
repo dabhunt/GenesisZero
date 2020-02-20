@@ -20,12 +20,15 @@ public class OverHeat : MonoBehaviour
     {
        InvokeRepeating("Timer", 1/ticksPerSecond , 1/ticksPerSecond); 
     }
+    public void Increment(float amount){
+    	heat += amount;
+    }
     public float CalculateBloom()
     {
     	//also adds heat because this is called whenever the player successfully fires a shot
     	coolDelay = delayBeforeCooling;
-    	heat +=heatAddedPerShot;
-    	return bloomMultiplier * heat*.1f; 
+    	Increment(heatAddedPerShot);
+    	return (.1f * bloomMultiplier) * heat; 
     }
     public void Timer(){
     	// if heat is greater than 0 the gun cools down
@@ -33,7 +36,7 @@ public class OverHeat : MonoBehaviour
     	if (heat > 0 && coolDelay <= 0){
     		heat -= (coolRatePerSecond/ticksPerSecond);
     	} else{
-    		heat = 0;
+    		
     		if (isOverheated)
     			isOverheated = false;
     	}
@@ -47,5 +50,13 @@ public class OverHeat : MonoBehaviour
     		isOverheated = true;
     	}
     	return isOverheated;
+    }
+    public float GetHeat()
+    {
+    	return heat;
+    }
+       public float GetMaxHeat()
+    {
+    	return maxHeat;
     }
 }
