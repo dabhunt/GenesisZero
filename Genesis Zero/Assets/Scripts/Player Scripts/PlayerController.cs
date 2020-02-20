@@ -49,6 +49,7 @@ public class PlayerController : MonoBehaviour
     //Component parts used in this Script
     private PlayerInputActions inputActions;
     private Player player;
+    private OverHeat overheat;
     //This chunk relates to movements
     private Vector2 movementInput;
     private RaycastHit groundHitInfo;
@@ -94,6 +95,7 @@ public class PlayerController : MonoBehaviour
         sound =FindObjectOfType<AudioManager>().GetComponent<PlayerSounds>();
         animator = GetComponent<Animator>();
         gun = GetComponent<Gun>();
+        overheat = GetComponent<OverHeat>();
     }
 
     private void Start()
@@ -449,7 +451,7 @@ public class PlayerController : MonoBehaviour
         */
         if (fireInput > 0)
         {
-            if (Time.time > timeToFire)
+            if (Time.time > timeToFire && !overheat.IsOverheated())
             {
                 timeToFire = Time.time + 1 / player.GetAttackSpeed().GetValue();
                 gun.Shoot();

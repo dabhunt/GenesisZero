@@ -12,6 +12,7 @@ public class ProjectileSpawner : MonoBehaviour
     private PlayerInputActions inputActions;
     private float timeToFire = 0;
     private float fireAction;
+
     private void Awake()
     {
         inputActions = new PlayerInputActions();
