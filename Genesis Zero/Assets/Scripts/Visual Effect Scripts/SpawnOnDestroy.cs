@@ -22,7 +22,7 @@ public class SpawnOnDestroy : MonoBehaviour
     //bool applicationIsQuitting;
     // Start is called before the first frame update
     // Update is called once per frame
-    void Awake()
+    void Start()
     {
         quitting = false;
         GameObject temp = GameObject.FindWithTag("EventSystem");
