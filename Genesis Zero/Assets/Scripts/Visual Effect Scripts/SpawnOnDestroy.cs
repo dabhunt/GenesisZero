@@ -10,7 +10,14 @@ public class SpawnOnDestroy : MonoBehaviour
     public string[] sounds = new string[0];
     public bool quitting;
     private Restart restartScript;
-    public int amount;
+    //.3f is 30% drop chance
+    public float EssenceDropChance;
+    public float ModifierDropChance;
+    public GameObject EssencePrefab;
+    public GameObject ModifierPrefab;
+
+    public SkillObject[] ModTypes;
+   
     private AudioManager aManager;
     //bool applicationIsQuitting;
     // Start is called before the first frame update
@@ -43,11 +50,21 @@ public class SpawnOnDestroy : MonoBehaviour
             //if vfx string is not empty
             if (vfxName != "")
             {
-                for (int i = 0; i < amount; i++)
-                {
-                    //Calls VFX manager to play desired VFX effect based on string
-                    GameObject emit = VFXManager.instance.PlayEffect(vfxName, new Vector3(transform.position.x, transform.position.y, transform.position.z));
-                }
+                //Calls VFX manager to play desired VFX effect based on string
+                GameObject emit = VFXManager.instance.PlayEffect(vfxName, new Vector3(transform.position.x, transform.position.y, transform.position.z));
+                
+            }
+             // if essence drop chance exceeds the random value from 0 to 1.0f, it drops
+            if (EssenceDropChance >= Random.value)
+            {
+                Instantiate(EssencePrefab, new Vector3(transform.position.x, transform.position.y, 0), Quaternion.identity);
+            }
+            // if modifier drop chance exceeds the random value from 0 to 1.0f, it drops
+            if (ModifierDropChance > Random.value)
+            {
+                GameObject randMod = Instantiate(ModifierPrefab, new Vector3(transform.position.x, transform.position.y, 0), Quaternion.identity);
+                SkillPickup pickup = randMod.GetComponent<SkillPickup>();
+                pickup.skill = ModTypes[Random.Range(0,ModTypes.Length-1)];
             }
         }
 
