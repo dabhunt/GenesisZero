@@ -10,10 +10,8 @@ public class EssenceFill : MonoBehaviour
     public int TotalCapsules;
     private Player player;
 
-
-    void Awake()
+    void Start()
     {
-        //will use this code once essence is stored on the player
        GameObject temp = GameObject.FindWithTag("Player");
        player = temp.GetComponent<Player>();
        TestEssence = player.GetEssenceAmount();
@@ -33,6 +31,7 @@ public class EssenceFill : MonoBehaviour
     {
     	print("calculating essence...");
     	float essenceQuantity = player.GetEssenceAmount();
+    	print("essenceQuantity:" + essenceQuantity);
     	int capsuleCount = 0;
     	//check if the player has more essence than can be stored
     	if (essenceQuantity <= EssencePerCapsule*TotalCapsules){

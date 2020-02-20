@@ -31,7 +31,7 @@ public class BUGE : MonoBehaviour
      private float distance;
      private float prevSpeed;
 
-    void Awake()
+    void Start()
     {
 		GameObject temp = GameObject.FindWithTag("Player");
 		playerController = temp.GetComponent<PlayerController>();
