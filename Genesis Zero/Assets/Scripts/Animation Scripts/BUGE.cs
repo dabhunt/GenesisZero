@@ -79,7 +79,7 @@ public class BUGE : MonoBehaviour
      	{sin = AmplitudeWhileRunning;}
         Vector3 sinPos = this.transform.position;
         sinPos.y += Mathf.Sin (Time.fixedTime * Mathf.PI * sinFrequency) * sin;
-        sinPos.x += Mathf.Sin (Time.fixedTime * Mathf.PI * sinFrequency) * sinAmplitude;
+        sinPos.x += Mathf.Sin (Time.fixedTime * Mathf.PI * sinFrequency) * sinAmplitude/4;
         this.transform.position = sinPos;
          
 
