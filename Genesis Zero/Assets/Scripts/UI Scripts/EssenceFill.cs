@@ -29,9 +29,7 @@ public class EssenceFill : MonoBehaviour
     }
     void CalculateEssenceUI()
     {
-    	print("calculating essence...");
     	float essenceQuantity = player.GetEssenceAmount();
-    	print("essenceQuantity:" + essenceQuantity);
     	int capsuleCount = 0;
     	//check if the player has more essence than can be stored
     	if (essenceQuantity <= EssencePerCapsule*TotalCapsules){
