@@ -5,6 +5,7 @@ using UnityEngine;
 public class Player : Pawn
 {
     SkillManager SkillManager;
+    public Statistic Essence;
 
     private void Awake()
     {
@@ -14,6 +15,7 @@ public class Player : Pawn
     new void Start()
     {
         //Time.fixedDeltaTime = .01f; // <- this is here as a placeholder, no other good place to have this.
+        InitializePlayerStats();
         base.Start();
     }
 
@@ -43,5 +45,32 @@ public class Player : Pawn
     public SkillManager GetSkillManager()
     {
         return SkillManager;
+    }
+
+    public void InitializePlayerStats()
+    {
+        Essence = new Statistic(500); Essence.SetValue(0);
+    }
+
+    public Statistic GetEssence()
+    {
+        return Essence;
+    }
+
+    public float GetEssenceAmount()
+    {
+        return Essence.GetValue();
+    }
+
+    public void SetEssence(float amount)
+    {
+        float num = amount + Essence.GetValue();
+        Mathf.Clamp(num, 0, 500);
+        GetEssence().SetValue(num);
+    }
+
+    public void AddEssence(int amount)
+    {
+        SetEssence(GetEssenceAmount() + amount);
     }
 }

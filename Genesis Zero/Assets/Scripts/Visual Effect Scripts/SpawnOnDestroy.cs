@@ -22,7 +22,7 @@ public class SpawnOnDestroy : MonoBehaviour
     //bool applicationIsQuitting;
     // Start is called before the first frame update
     // Update is called once per frame
-    void Awake()
+    void Start()
     {
         quitting = false;
         GameObject temp = GameObject.FindWithTag("EventSystem");
@@ -54,15 +54,14 @@ public class SpawnOnDestroy : MonoBehaviour
                 GameObject emit = VFXManager.instance.PlayEffect(vfxName, new Vector3(transform.position.x, transform.position.y, transform.position.z));
                 
             }
+             // if essence drop chance exceeds the random value from 0 to 1.0f, it drops
             if (EssenceDropChance >= Random.value)
             {
-                print("dropping Essence...");
                 Instantiate(EssencePrefab, new Vector3(transform.position.x, transform.position.y, 0), Quaternion.identity);
             }
-            //if (ModifierDropChance >= (Random.value))
+            // if modifier drop chance exceeds the random value from 0 to 1.0f, it drops
             if (ModifierDropChance > Random.value)
             {
-                print("dropping randomly chosen Mod...");
                 GameObject randMod = Instantiate(ModifierPrefab, new Vector3(transform.position.x, transform.position.y, 0), Quaternion.identity);
                 SkillPickup pickup = randMod.GetComponent<SkillPickup>();
                 pickup.skill = ModTypes[Random.Range(0,ModTypes.Length-1)];
