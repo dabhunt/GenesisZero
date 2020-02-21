@@ -77,28 +77,19 @@ public class Hitbox : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-        if (state == State.Deactive)
-        {
-            Destroy(this.gameObject);
-        }
 
     }
 
     private void FixedUpdate()
     {
-        /**
-        RaycastHit hit;
-        Vector3 pos = collider.transform.position;
-        Vector3 direction = pos - lastposition;
-        float distance = Mathf.Abs(Vector3.Distance(pos, lastposition)) * 10;
-        //Debug.Log(direction +" "+ Mathf.Abs(Vector3.Distance(pos, lastposition)) * 10);
-        Debug.DrawRay(pos, direction,Color.blue, distance);
-        if (Physics.Raycast(pos, direction, out hit, distance, LayerMask.NameToLayer("Allies")))
+        if (state == State.Deactive)
         {
-            //Debug.Log("Rayed: " + hit.collider.gameObject.name);
+            try
+            {
+                Destroy(this.gameObject);
+            }
+            catch { }
         }
-        lastposition = collider.transform.position;
-    */
     }
 
 
@@ -108,7 +99,7 @@ public class Hitbox : MonoBehaviour
         CheckCollisions(other);
     }
 
-    public void CheckCollisions(Collider other)
+    public bool CheckCollisions(Collider other)
     {
         if (state == State.Active)
         {
@@ -117,17 +108,13 @@ public class Hitbox : MonoBehaviour
 
         if (state == State.Colliding)
         {
-            if (other != GetComponent<Collider>())
-            {
-                //Debug.Log((other != collider) + " " + maxhits + " " + (other.GetComponentInParent<Hurtbox>() || other.GetComponent<Hurtbox>()) + " " + CanDamage(other) + " " + other.GetComponentInParent<Pawn>());
-            }
             bool siblingcolliders = false;
             try
             {
                 siblingcolliders = hittargets.Contains(other.transform.root.gameObject);
             }
             catch { }
-            if (other != GetComponent<Collider>() && MaxHits > 0 && (other.GetComponentInParent<Hurtbox>() || other.GetComponent<Hurtbox>()) && other.GetComponent<BodyPart>() && CanDamage(other) && other.GetComponentInParent<Pawn>() && !siblingcolliders)
+            if (other != GetComponent<Collider>() && MaxHits > 0 && (other.GetComponentInParent<Hurtbox>() || other.GetComponent<Hurtbox>()) && CanDamage(other) && (other.GetComponentInParent<Pawn>() || other.GetComponent<Pawn>()) && !siblingcolliders)
             {
                 float finaldamage = Damage;
                 Pawn p = other.GetComponentInParent<Pawn>();
@@ -178,23 +165,24 @@ public class Hitbox : MonoBehaviour
                     emit.GetComponent<DamageNumber>().SetColor(new Color(.25f, .25f, .25f));
                 }
 
-
                 hittargets.Add(other.transform.root.gameObject);
 
                 --MaxHits;
             }
-            else if (Intangible == false && other != GetComponent<Collider>() && !(other.GetComponentInParent<Hurtbox>() || other.GetComponent<Hurtbox>()) && !siblingcolliders)
+            else if (Intangible == false && other != GetComponent<Collider>() && !(other.GetComponentInParent<Hurtbox>() || other.GetComponent<Hurtbox>()) && !siblingcolliders && !other.isTrigger)
             {
                 state = State.Deactive;
+                return true;
             }
 
             if (MaxHits <= 0)
             {
                 state = State.Deactive;
+                return true;
             }
 
         }
-
+        return false;
     }
 
     /**

@@ -12,7 +12,7 @@ public class CreateWindow : MonoBehaviour
 
     void Start()
     {
-        GameObject tempObj = GameObject.Find("CanvasUI");
+        GameObject tempObj = GameObject.FindWithTag("CanvasUI");
         canvas = tempObj.GetComponent<Canvas>();
     }
     void Update()
