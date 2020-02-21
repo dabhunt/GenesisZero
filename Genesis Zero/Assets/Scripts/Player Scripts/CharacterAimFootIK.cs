@@ -11,7 +11,7 @@ public class CharacterAimFootIK : MonoBehaviour
     private Transform Target;
     public Vector3 ChestOffset;
     public LayerMask LayerMask;
-    
+    public Quaternion OriginalChestRotation;
    
     [Range(0,1)]
     public float DistanceToGround;
@@ -23,7 +23,7 @@ public class CharacterAimFootIK : MonoBehaviour
     {
         Target = new GameObject().transform;
         Chest = Anim.GetBoneTransform(HumanBodyBones.Chest);
-       
+        OriginalChestRotation = Chest.rotation;
 
      
         
@@ -37,13 +37,21 @@ public class CharacterAimFootIK : MonoBehaviour
 
 
     private void LateUpdate()
-    {   
-        
-       
-        
-        Chest.LookAt(Target);
-        Chest.rotation = Chest.rotation * Quaternion.Euler(ChestOffset);
-       
+    {
+
+
+        if (Anim.GetBool("isRolling") == true)
+        {
+            Chest.rotation = OriginalChestRotation;
+            Anim.SetLayerWeight(1, 0);
+        }
+        if (Anim.GetBool("isRolling") == false)
+        {
+            Anim.SetLayerWeight(1, 1);
+            Chest.LookAt(Target);
+            Chest.rotation = Chest.rotation * Quaternion.Euler(ChestOffset);
+
+        }
 
     }
 
