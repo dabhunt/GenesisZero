@@ -7,6 +7,7 @@ using UnityEngine.SceneManagement;
 public class SpawnOnDestroy : MonoBehaviour
 {
     public string vfxName;
+    public float vfxScaleMultiplier;
     public string[] sounds = new string[0];
     public bool quitting;
     private Restart restartScript;
@@ -28,6 +29,9 @@ public class SpawnOnDestroy : MonoBehaviour
         GameObject temp = GameObject.FindWithTag("EventSystem");
         restartScript = temp.GetComponent<Restart>();
         aManager = FindObjectOfType<AudioManager>();
+        if (vfxScaleMultiplier <= 0){
+            vfxScaleMultiplier = 1;
+        }
     }
 
 
@@ -51,7 +55,7 @@ public class SpawnOnDestroy : MonoBehaviour
             if (vfxName != "")
             {
                 //Calls VFX manager to play desired VFX effect based on string
-                GameObject emit = VFXManager.instance.PlayEffect(vfxName, new Vector3(transform.position.x, transform.position.y, transform.position.z));
+                GameObject emit = VFXManager.instance.PlayEffect(vfxName, new Vector3(transform.position.x, transform.position.y, transform.position.z), 0f, vfxScaleMultiplier);
                 
             }
              // if essence drop chance exceeds the random value from 0 to 1.0f, it drops

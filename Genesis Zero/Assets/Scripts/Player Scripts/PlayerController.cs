@@ -451,7 +451,8 @@ public class PlayerController : MonoBehaviour
         */
         if (fireInput > 0)
         {
-            if (Time.time > timeToFire && !overheat.IsOverheated())
+            if (Time.time > timeToFire)
+            //if (Time.time > timeToFire && !overheat.IsOverheated())
             {
                 timeToFire = Time.time + 1 / player.GetAttackSpeed().GetValue();
                 gun.Shoot();

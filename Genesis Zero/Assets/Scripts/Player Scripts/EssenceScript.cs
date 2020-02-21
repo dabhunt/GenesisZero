@@ -4,7 +4,7 @@ using UnityEngine;
 
 public class EssenceScript : MonoBehaviour
 {
-    public int Amount = 0;
+    public int Amount = 1;
     private GameObject target;
     private bool added;
     // Start is called before the first frame update
@@ -14,15 +14,6 @@ public class EssenceScript : MonoBehaviour
     }
 
     // Update is called once per frame
-    void Update()
-    {
-        
-    }
-
-    private void FixedUpdate()
-    {
-    }
-
     private void OnTriggerEnter(Collider other)
     {
         if (other.GetComponentInParent<Player>() || other.GetComponent<Player>())
@@ -34,15 +25,14 @@ public class EssenceScript : MonoBehaviour
             }
             if (p != null && added == false)
             {
+                print("essence being added to player...");
                 p.AddEssence(Amount);
                 added = true;
             }
-
             if (added == true)
             {
                 Destroy(gameObject);
             }
-
         }
     }
 
