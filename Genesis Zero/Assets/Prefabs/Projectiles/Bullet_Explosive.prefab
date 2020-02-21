@@ -16,8 +16,9 @@ GameObject:
   - component: {fileID: 7323713832238595723}
   - component: {fileID: 7237362000396769751}
   - component: {fileID: 4204024712769973434}
+  - component: {fileID: 7973718459036040978}
   m_Layer: 0
-  m_Name: DemoBullet
+  m_Name: Bullet_Explosive
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -31,8 +32,8 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 7446024088350224124}
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 1.09, y: 4.94, z: 0}
-  m_LocalScale: {x: 0.16, y: 0.16, z: 0.16}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 0.3, y: 0.3, z: 0.3}
   m_Children:
   - {fileID: 3500592279723788074}
   m_Father: {fileID: 0}
@@ -113,8 +114,9 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 78599237b72dc114eafaaeb56fcaf281, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  speed: 40
+  speed: 30
   gravity: 0
+  lifeTime: 0.4
   direction: {x: 0, y: 0, z: 0}
 --- !u!114 &7323713832238595723
 MonoBehaviour:
@@ -149,7 +151,7 @@ SphereCollider:
   m_IsTrigger: 1
   m_Enabled: 1
   serializedVersion: 2
-  m_Radius: 0.1
+  m_Radius: 0.25
   m_Center: {x: 0, y: 0, z: 0}
 --- !u!114 &4204024712769973434
 MonoBehaviour:
@@ -163,16 +165,34 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 5a527f77c5341134ab6e8df3d643691d, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  vfxName: VFX_BulletSparks
-  sounds: []
+  vfxName: 
+  vfxScaleMultiplier: 0
+  sounds:
+  - SFX_Explosion
   quitting: 0
-  EssencePrefab: {fileID: 8279152082304805221, guid: 660e34010b46daa42a9973d5912b8545,
-    type: 3}
   EssenceDropChance: 0
-  ModifierPrefab: {fileID: 2493648811206171248, guid: ac8b05e93bf88fa488c9b7e45be8fac0,
-    type: 3}
-  ModTypes: []
   ModifierDropChance: 0
+  EssencePrefab: {fileID: 0}
+  ModifierPrefab: {fileID: 0}
+  ModTypes: []
+--- !u!114 &7973718459036040978
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 7446024088350224124}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 33317b1ec5f8ae5498489fda0e950afb, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  quitting: 0
+  baseblastRadius: 5
+  lerpMultiplier: 2.3
+  vfxName: VFX_Explosion
+  explosionPrefab: {fileID: 7446024088350224124, guid: c0846e1c799e06c40a4689e31eef28b5,
+    type: 3}
 --- !u!1 &7504852634243103965
 GameObject:
   m_ObjectHideFlags: 0

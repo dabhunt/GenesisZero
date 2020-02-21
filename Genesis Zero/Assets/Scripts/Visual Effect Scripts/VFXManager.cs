@@ -49,6 +49,31 @@ public class VFXManager : MonoBehaviour
 
         return effect;
     }
+    //Can now be used to change scale size of effect from script
+    public GameObject PlayEffect(string name, Vector3 position, float delay, float scaleMultiplier)
+    {
+        GameObject effect = Instantiate(Resources.Load<GameObject>("Effects/" + name), position, Quaternion.identity);
+        //for each child object in the VFX effect, scale it down
+        Transform tEffect = effect.transform;
+        RecursiveChildScale(tEffect, scaleMultiplier);
+        VFXScript vfx = effect.GetComponent<VFXScript>();
+        if (vfx != null && delay > 0)
+        {
+            vfx.delay = delay;
+        }
+
+        return effect;
+    }
+    // I am very proud of this, I came up with it myself
+    private void RecursiveChildScale(Transform t, float scaleMultiplier){
+        foreach (Transform child in t)
+        {
+            child.localScale = new Vector3(child.localScale.x * scaleMultiplier, child.localScale.y * scaleMultiplier, child.localScale.z * scaleMultiplier);
+            if (child.childCount > 0){
+                RecursiveChildScale(child, scaleMultiplier);
+            }
+        }
+    }
 
     public GameObject PlayEffect(string name, Vector3 position, float delay)
     {

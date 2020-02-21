@@ -64,7 +64,7 @@ public class Player : Pawn
 
     public void SetEssence(float amount)
     {
-        float num = amount + Essence.GetValue();
+        float num = amount;
         Mathf.Clamp(num, 0, 500);
         GetEssence().SetValue(num);
     }

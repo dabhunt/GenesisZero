@@ -7,16 +7,18 @@ public class EssenceFill : MonoBehaviour
 	public Image[] capsule;
     public float TestEssence;
     public int EssencePerCapsule;
-    public int TotalCapsules;
+    private int TotalCapsules;
     private Player player;
 
     void Start()
     {
        GameObject temp = GameObject.FindWithTag("Player");
-       player = temp.GetComponent<Player>();
-       TestEssence = player.GetEssenceAmount();
+       if (player != null){
+       		player = temp.GetComponent<Player>();
+   		}
        //update UI every .3 seconds, starting in .3 seconds;
        //InvokeRepeating("test", .3f,.3f);
+       TotalCapsules = capsule.Length;
        InvokeRepeating("CalculateEssenceUI", .5f, .5f);
        
     }
@@ -29,7 +31,9 @@ public class EssenceFill : MonoBehaviour
     }
     void CalculateEssenceUI()
     {
-    	float essenceQuantity = player.GetEssenceAmount();
+    	if (player != null){
+    		float essenceQuantity = player.GetEssenceAmount();
+    	print("getEssence Quantity:" + essenceQuantity);
     	int capsuleCount = 0;
     	//check if the player has more essence than can be stored
     	if (essenceQuantity <= EssencePerCapsule*TotalCapsules){
@@ -62,6 +66,6 @@ public class EssenceFill : MonoBehaviour
 	    {
 	    	print("error: too much essence for my delicate UI to handle");
 	    }
-
+    	}
     }
 }
