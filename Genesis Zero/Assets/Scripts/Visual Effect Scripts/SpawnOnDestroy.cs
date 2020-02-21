@@ -12,8 +12,11 @@ public class SpawnOnDestroy : MonoBehaviour
     public bool quitting;
     private Restart restartScript;
     //.3f is 30% drop chance
-    public float EssenceDropChance;
+    public int minEssenceDrop;
+    public int maxEssenceDrop;
     public float ModifierDropChance;
+    public float minDropVelocity;
+    public float maxDropVelocity;
     public GameObject EssencePrefab;
     public GameObject ModifierPrefab;
 
@@ -59,9 +62,15 @@ public class SpawnOnDestroy : MonoBehaviour
                 
             }
              // if essence drop chance exceeds the random value from 0 to 1.0f, it drops
-            if (EssenceDropChance >= Random.value)
-            {
-                Instantiate(EssencePrefab, new Vector3(transform.position.x, transform.position.y, 0), Quaternion.identity);
+            int amount = Random.Range(minEssenceDrop, maxEssenceDrop);
+            print("dropping "+amount+" essence");
+            for (int i = 0; i < amount; i++){
+                print("dropping some essence...");
+                GameObject essence = Instantiate(EssencePrefab, new Vector3(transform.position.x, transform.position.y, 0), Quaternion.identity);
+                float force = Random.Range(minDropVelocity, maxDropVelocity);
+                Rigidbody rb = essence.GetComponent<Rigidbody>();
+                rb.GetComponent<Rigidbody>().velocity = Random.onUnitSphere * force;
+                //Destroy(rb);
             }
             // if modifier drop chance exceeds the random value from 0 to 1.0f, it drops
             if (ModifierDropChance > Random.value)

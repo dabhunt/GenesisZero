@@ -32,7 +32,7 @@ public class Gun : MonoBehaviour
         expShot = instance.GetComponent<ExplosiveShot>();
         if (expShot != null){
         	ModifyProjectile();
-        } else{print("it's null for some reason");}
+        }
         instance.transform.Rotate(Vector3.forward,Random.Range(-spreadAngle, spreadAngle),Space.World);
         instance.GetComponent<Hitbox>().InitializeHitbox(player.GetDamage().GetValue(), player);
     }

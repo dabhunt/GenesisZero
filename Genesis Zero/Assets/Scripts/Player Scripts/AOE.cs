@@ -15,7 +15,7 @@ public class AOE : MonoBehaviour
     	endScale = blastRadius;
     	lerpMultiplier = lerpMulti;
     	collider = GetComponent<SphereCollider>();
-    	print("blastRadius: " + endScale);
+    	//print("blastRadius: " + endScale);
     }
     void FixedUpdate(){
     		//print("fixed update on AOE running");

@@ -37,7 +37,7 @@ public class ExplosiveShot : MonoBehaviour
  			runtimeExplosion = Instantiate(explosionPrefab,spawnPoint, Quaternion.identity);
  			AOE AOEscript = runtimeExplosion.GetComponent<AOE>();
  			AOEscript.setScaleTarget(startScale, blastRadius, lerpMultiplier);
- 			print("blastRadius = " + blastRadius + "during the on destroy call last section");
+ 			//print("blastRadius = " + blastRadius + "during the on destroy call last section");
  			GameObject emit = VFXManager.instance.PlayEffect(vfxName, new Vector3(transform.position.x, transform.position.y, transform.position.z), 0f, blastRadius/baseblastRadius);
         }
        
@@ -46,7 +46,7 @@ public class ExplosiveShot : MonoBehaviour
     {
     	blastRadius = baseblastRadius;
     	blastRadius += adjustment;
-    	print("blastRadius in explosiveshot = " + blastRadius);
+    	//print("blastRadius in explosiveshot = " + blastRadius);
     }
     //prevent spawning things upon game window being exited
     void OnApplicationQuit()
