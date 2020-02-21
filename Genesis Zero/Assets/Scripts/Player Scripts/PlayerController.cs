@@ -6,6 +6,7 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.InputSystem;
+using UnityEngine.UI;
 using Cinemachine;
 
 [RequireComponent(typeof(CapsuleCollider))]
@@ -23,7 +24,6 @@ public class PlayerController : MonoBehaviour
     public float vertCastPadding = 0.1f; // offset used for the feet/head casts
     public float rollDistance = 5f;
     public float rollSpeedMult = 1.5f;
-    public float fallJumpDelay = 0.2f;
     public float jumpBufferTime = 0.2f;
     public LayerMask immoveables; //LayerMask for bound checks
     public bool debug;
@@ -41,9 +41,11 @@ public class PlayerController : MonoBehaviour
 
     [Header("Gun")]
     public GameObject gunObject;
-    public GameObject crosshair;
+    public RectTransform crosshair;
+    public Canvas canvasRef;
     public float gamePadSens = 15f;
     private float timeToFire = 0;
+
     [Header("Animations")]
     public float triggerResetTime = 0.25f;
     //Component parts used in this Script
@@ -57,8 +59,7 @@ public class PlayerController : MonoBehaviour
     private float maxSpeed;
     private float vertVel;
     private float currentSpeed = 0;
-    private bool canDoubleJump;
-    private bool canJump;
+    private float jumpCount = 2;
     private float jumpPressedTime;
     private float distanceRolled = 0;
     private int rollDirection;
@@ -69,8 +70,7 @@ public class PlayerController : MonoBehaviour
     private Vector2 aimInputMouse;
     private Vector2 aimInputController;
     private float fireInput;
-
-     private Gun gun;
+    private Gun gun;
 
     //This chunk of variables is related to Animation/state
     private Animator animator;
@@ -92,7 +92,7 @@ public class PlayerController : MonoBehaviour
         inputActions.PlayerControls.AimMouse.performed += ctx => aimInputMouse = ctx.ReadValue<Vector2>();
         inputActions.PlayerControls.AimController.performed += ctx => aimInputController = ctx.ReadValue<Vector2>();
         inputActions.PlayerControls.Fire.performed += ctx => fireInput = ctx.ReadValue<float>();
-        sound =FindObjectOfType<AudioManager>().GetComponent<PlayerSounds>();
+        sound = FindObjectOfType<AudioManager>().GetComponent<PlayerSounds>();
         animator = GetComponent<Animator>();
         gun = GetComponent<Gun>();
         overheat = GetComponent<OverHeat>();
@@ -147,6 +147,25 @@ public class PlayerController : MonoBehaviour
         CalculateForwardDirection();
         if (isRolling) return;
 
+        if (isGrounded)
+        {
+            if(currentSpeed > 0 && !walkSoundPlaying)
+            {
+                walkSoundPlaying = true;
+                sound.Walk();
+            }
+            else if (currentSpeed <= 0)
+            {
+                walkSoundPlaying = false;
+                sound.StopWalk();
+            }
+        }
+        else
+        {
+            walkSoundPlaying = false;
+            sound.StopWalk();
+        }
+
         if (input != 0)
         {
             if (input > 0 && IsBlocked(Vector3.right))
@@ -160,13 +179,13 @@ public class PlayerController : MonoBehaviour
                 return;
             }
 
-            currentSpeed += input * multiplier * acceleration * Time.fixedDeltaTime;
+            currentSpeed += multiplier * acceleration * Time.fixedDeltaTime;
 
             //This is to calculate air control speeds
             if (isGrounded)
-                currentSpeed = Mathf.Clamp(currentSpeed, -maxSpeed, maxSpeed);
+                currentSpeed = Mathf.Clamp(currentSpeed, maxSpeed, maxSpeed);
             else
-                currentSpeed = Mathf.Clamp(currentSpeed, -maxSpeed * airSpeedMult, maxSpeed * airSpeedMult);
+                currentSpeed = Mathf.Clamp(currentSpeed, maxSpeed * airSpeedMult, maxSpeed * airSpeedMult);
             //Rotation depending on input
             if (input > 0 && transform.eulerAngles.y != 90)
             {
@@ -178,6 +197,7 @@ public class PlayerController : MonoBehaviour
                 transform.rotation = Quaternion.Euler(0, -90, 0);
                 isLookingRight = false;
             }
+            transform.position += moveVec * (startVel * Time.fixedDeltaTime + (0.5f * acceleration * Mathf.Pow(Time.fixedDeltaTime, 2)));
         }
         else
         {
@@ -186,13 +206,7 @@ public class PlayerController : MonoBehaviour
                 currentSpeed -= acceleration * Time.fixedDeltaTime;
                 currentSpeed = Mathf.Max(currentSpeed, 0);
             }
-            if (currentSpeed < 0)
-            {
-                currentSpeed += acceleration * Time.fixedDeltaTime;
-                currentSpeed = Mathf.Min(currentSpeed, 0);
-            }
         }
-        transform.position += moveVec * (startVel * Time.fixedDeltaTime + (0.5f * acceleration * Mathf.Abs(input)) * Mathf.Pow(Time.fixedDeltaTime, 2));
     }
 
     /* This function is called in Move()
@@ -200,20 +214,12 @@ public class PlayerController : MonoBehaviour
      */
     private void CalculateForwardDirection()
     {
-        var xSpeed = currentSpeed != 0 ? currentSpeed / maxSpeed : 0;
         if (!isGrounded)
         {
             moveVec = transform.forward;
-            walkSoundPlaying = false;
-            sound.StopWalk();
             return;
         //if they are on the ground, and their speed is greater than .1, and walk sound is not playing, start playing it
-        } else if (Math.Abs(xSpeed) > 0.05f && !walkSoundPlaying)
-        {
-            walkSoundPlaying = true;
-            sound.Walk();
         }
-
         moveVec = Vector3.Cross(groundHitInfo.normal, -transform.right);
     }
 
@@ -225,27 +231,27 @@ public class PlayerController : MonoBehaviour
         if (ctx.performed)
         {
             if (isRolling) return;
-            // canJump allow player to jump after an amount of time when falling off edge
             jumpPressedTime = jumpBufferTime;
-            if (isGrounded || canJump)
+            if (!isJumping && jumpCount > 0)
             {
+                jumpCount--;
                 animator.SetTrigger("startJump");
                 sound.Jump();
                 StartCoroutine(ResetTrigger("startJump", triggerResetTime));
                 isJumping = true;
                 vertVel = jumpStrength;
             }
-            else if (!isGrounded && canDoubleJump)
+            else if (isJumping && jumpCount > 0)
             {
+                jumpCount--;
                 animator.SetTrigger("startDoubleJump");
                 StartCoroutine(ResetTrigger("startDoubleJump", triggerResetTime));
                 isJumping = true;
-                canDoubleJump = false;
                 vertVel = doubleJumpStrength;
-                if (currentSpeed > 0 && movementInput.x <= 0)
+                if (isLookingRight && movementInput.x <= 0)
                     currentSpeed = 0;
-                if (currentSpeed < 0 && movementInput.x >= 0)
-                    currentSpeed = 0; 
+                if (!isLookingRight && movementInput.x >= 0)
+                    currentSpeed = 0;
             }
         }
     }
@@ -258,16 +264,6 @@ public class PlayerController : MonoBehaviour
             jumpPressedTime -= Time.fixedDeltaTime;
         else
             jumpPressedTime = 0;
-
-        if (isGrounded)
-        {
-            canJump = true;
-            canDoubleJump = true;
-        }
-        else
-        {
-            StartCoroutine(DelayToggleCanJump(fallJumpDelay));
-        }
 
         if (!isJumping)
         {
@@ -311,7 +307,10 @@ public class PlayerController : MonoBehaviour
                     transform.position = Vector3.Lerp(transform.position, transform.position + Vector3.up * characterHeight * 0.5f, 5 * Time.fixedDeltaTime);
 
             if (!isJumping)
+            {
                 vertVel = 0;
+                jumpCount = 2;
+            }
         }
         else
         {
@@ -419,36 +418,28 @@ public class PlayerController : MonoBehaviour
      */
     private void Aim()
     {   
+        Vector2 pos;
+        Vector3 worldPos;
+        float aimAngle;
+        RectTransformUtility.ScreenPointToLocalPointInRectangle(canvasRef.transform as RectTransform, Input.mousePosition, canvasRef.worldCamera, out pos);
         if (aimInputMouse != Vector2.zero)
         {
-            Vector3 pos = new Vector3(Input.mousePosition.x, Input.mousePosition.y, Mathf.Abs(mainCam.transform.position.z - transform.position.z));
-            Vector3 mousePosition = mainCam.ScreenToWorldPoint(pos);
-            mousePosition.z = 0;
-            crosshair.transform.position = mousePosition;
+            crosshair.anchoredPosition = pos;
         }
+        RectTransformUtility.ScreenPointToWorldPointInRectangle(canvasRef.transform as RectTransform, crosshair.position, canvasRef.worldCamera, out worldPos);
 
         if (aimInputController != Vector2.zero)
         {
-            crosshair.transform.position += ((Vector3)aimInputController) * gamePadSens * Time.fixedDeltaTime;
+            crosshair.anchoredPosition += aimInputController * gamePadSens * Time.fixedDeltaTime;
         }
 
-        /*
-        float xDist = crosshair.transform.position.x - transform.position.x;
-        float yDist = crosshair.transform.position.y - transform.position.y;
-        float aimAngle = Mathf.Atan2(yDist, xDist) * Mathf.Rad2Deg;
-        */
-        gunObject.transform.LookAt(crosshair.transform);
+        //gunObject.transform.rotation.x = aimAngle;
+        print(gunObject.transform.rotation);
+
         if (transform.position.x < crosshair.transform.position.x)
             isAimingRight = true;
         else
             isAimingRight = false;
-        /*
-        gunObject.transform.localRotation = Quaternion.Euler(-aimAngle, 0, 0);
-        if (Mathf.Abs(aimAngle) < 81)
-            isAimingRight = true;
-        else
-            isAimingRight = false;
-        */
         if (fireInput > 0)
         {
             if (Time.time > timeToFire)
@@ -537,12 +528,6 @@ public class PlayerController : MonoBehaviour
     {
         if (!debug) return;
         Debug.DrawLine(transform.position, transform.position + moveVec * 2, Color.red);
-    }
-
-    private IEnumerator DelayToggleCanJump(float time)
-    {
-        yield return new WaitForSeconds(time);
-        canJump = false;
     }
 
     private IEnumerator ResetTrigger(string trigger, float time)
