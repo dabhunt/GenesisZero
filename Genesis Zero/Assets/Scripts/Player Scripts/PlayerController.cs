@@ -320,6 +320,7 @@ public class PlayerController : MonoBehaviour
         else
         {
             isGrounded = false;
+            //An extra cast for ground to deal with deeper slopes
             if (Physics.Raycast(transform.position, Vector3.down, out hit, characterHeight * 0.5f * slopeRayDistMult, immoveables))
                 if (hit.normal == Vector3.up)
                     return;
@@ -434,7 +435,7 @@ public class PlayerController : MonoBehaviour
         Vector3 worldXhairScreenPos;
 
         //These two ifs changes fake crosshair position in world space
-        if (aimInputMouse != Vector2.zero) 
+        if (aimInputController == Vector2.zero) 
         { 
             //Stops the crosshair from going off screen
             worldXhairPos = mouseWorldPos;
@@ -443,7 +444,7 @@ public class PlayerController : MonoBehaviour
             worldXhair.transform.position = worldXhairPos;
         }
 
-        if (aimInputController != Vector2.zero) 
+        if (aimInputMouse == Vector2.zero) 
         { 
             //Stops the crosshair from going off screen
             worldXhairPos = (Vector3)aimInputController * gamePadSens * Time.fixedDeltaTime;
@@ -451,7 +452,7 @@ public class PlayerController : MonoBehaviour
             worldXhairPos.y = Mathf.Clamp(worldXhairPos.y, minBounds.y, maxBounds.y);
             worldXhair.transform.position += worldXhairPos;
         }
-        
+
         //This convert the world crosshair position into local UI canvas position
         // and set it to the real crosshair, z = 0 here because there's no distance between canvas and the worldXhair
         worldXhairScreenPos = canvasRef.worldCamera.WorldToScreenPoint(new Vector3(worldXhair.transform.position.x, worldXhair.transform.position.y, 0));
