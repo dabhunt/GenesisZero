@@ -21,15 +21,17 @@ public class BUGE : MonoBehaviour
      public float Speed;
      public float acceleration;
      public float deAccelerationMultiplier = .6f;
+
+    [Header("Sin floating effect")]
     public float sinAmplitude = 0.1f;
     public float AmplitudeWhileRunning = .3f;
     public float sinFrequency = 1.2f;
     public float followXoffset = .6f;
-    [Header("will be private later")]
-     public Transform Player;
-     public float speedvar;
-     public float distance;
-     public float prevSpeed;
+
+     private Transform Player;
+     private float speedvar;
+     private float distance;
+     private float prevSpeed;
 
     void Start()
     {

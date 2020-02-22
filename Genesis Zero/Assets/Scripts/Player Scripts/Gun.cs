@@ -7,11 +7,15 @@ public class Gun : MonoBehaviour
     [Header("Base Gun Settings")]
     public Transform firePoint;
     public GameObject basicProjectile;
-    [Header("Explosive Shot")]
+    [Header("Bullet Modifiers")]
+    [Header("1. Explosive Shot")]
 	public GameObject explosiveProjectile;
 	public float explosiveCoolDelay = 1.5f;
-	//subsequent meaning each additional duplicate of this mod gives you .7f bigger blast radius
 	public float SubsequentBlastRadiusBonus = .7f;
+	[Header("2. Knockback")]
+	public float knockBackPerStack = 5f;
+	//subsequent meaning each additional duplicate of this mod gives you .7f bigger blast radius
+
 	//[Header("Explosive Shot")]
     private float spreadAngle;
     private OverHeat overheat;
@@ -31,8 +35,12 @@ public class Gun : MonoBehaviour
         GameObject instance = (GameObject) Instantiate(GetProjectile(), spawnpoint, firePoint.transform.rotation);
         expShot = instance.GetComponent<ExplosiveShot>();
         if (expShot != null){
-        	ModifyProjectile();
+        	int amount = player.GetSkillManager().GetSkillStack("Explosive Shot");
+	    	//changeblastradius, the more of the skill you have the bigger it is.
+	    	expShot.ModifyBlastRadius(amount*SubsequentBlastRadiusBonus);
         }
+        //apply generic modifications
+        instance = ModifyProjectile(instance);
         instance.transform.Rotate(Vector3.forward,Random.Range(-spreadAngle, spreadAngle),Space.World);
         instance.GetComponent<Hitbox>().InitializeHitbox(player.GetDamage().GetValue(), player);
     }
@@ -56,10 +64,13 @@ public class Gun : MonoBehaviour
     	// if script makes it to here, you have no skills to change your projectile
     	return basicProjectile;
     }
-    public void ModifyProjectile()
-    {
-    	int amount = player.GetSkillManager().GetSkillStack("Explosive Shot");
-    	//changeblastradius, the more of the skill you have the bigger it is.
-    	expShot.ModifyBlastRadius(amount*SubsequentBlastRadiusBonus);
+    //any effects that should apply to all bullets after they have been instantiated go here, such as knockback increasers for all bullets
+    // effects put here will also apply to special bullets
+    public GameObject ModifyProjectile(GameObject bullet)
+    {	
+    	Hitbox hit = bullet.GetComponent<Hitbox>();
+    	//adds knockbackforce to the bullet equal to the amount of stacks the player has
+    	hit.Knockbackforce += knockBackPerStack * player.GetSkillManager().GetSkillStack("Knockback");
+    	return bullet;
     }
 }
