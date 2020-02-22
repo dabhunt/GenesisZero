@@ -3,7 +3,6 @@ using System.Collections.Generic;
 using UnityEngine;
 
 [RequireComponent(typeof(AIController))]
-[RequireComponent(typeof(Animator))]
 /**
  * Justin Couch
  * The AIAnimationStateController class connects AI states to animator states
@@ -16,18 +15,25 @@ public class AIAnimationStateController : MonoBehaviour
     private void Awake()
     {
         ai = GetComponent<AIController>();
-        anim = GetComponent<Animator>();
+        anim = GetComponentInChildren<Animator>();
 
-        if (ai != null)
+        /*if (ai != null)
         {
             ai.StateChangeEvent.AddListener(ChangeState);
-        }
+        }*/
     }
 
-    /*private void Update()
+    private void Update()
     {
         if (ai == null || anim == null) { return; }
-    }*/
+
+        anim.SetBool("IsIdling", ai.GetState() == AIController.AIState.Idle);
+        anim.SetBool("IsPatrolling", ai.GetState() == AIController.AIState.Patrol);
+        anim.SetBool("IsFollowing", ai.GetState() == AIController.AIState.Follow);
+        anim.SetBool("IsCharging", ai.GetState() == AIController.AIState.Charge);
+        anim.SetBool("IsAttacking", ai.GetState() == AIController.AIState.Attack);
+        anim.SetBool("IsCoolingDown", ai.GetState() == AIController.AIState.Cooldown);
+    }
 
     /*
      * Updates the animator state based on the AI state

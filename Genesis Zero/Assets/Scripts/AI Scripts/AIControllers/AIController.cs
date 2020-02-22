@@ -90,7 +90,7 @@ public class AIController : Pawn
             else if (!alertTracking)
             {
                 tracker.StartTracking();
-                if (tracker.HasReachedEnd() || tracker.GiveUpCondition())
+                if ((tracker.HasReachedEnd() || tracker.GiveUpCondition()) && state != AIState.Charge && state != AIState.Attack && state != AIState.Cooldown)
                 {
                     ChangeState(AIState.Patrol);
                 }
