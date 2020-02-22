@@ -36,13 +36,15 @@ public class PlayerController : MonoBehaviour
     public float airSpeedMult = 0.85f;
     public float slopeRayDistMult = 1.25f;
 
-    [Header("Camera")]
-    public Camera mainCam;
+    [Header("Canvas")]
+    public Canvas canvasRef;
 
     [Header("Gun")]
     public GameObject gunObject;
-    public RectTransform crosshair;
-    public Canvas canvasRef;
+    [Tooltip("GameObject Crosshair (invisible)")]
+    public GameObject worldXhair;
+    [Tooltip("Canvas Crosshair (visible)")]
+    public RectTransform screenXhair;
     public float gamePadSens = 15f;
     private float timeToFire = 0;
 
@@ -77,7 +79,7 @@ public class PlayerController : MonoBehaviour
     private bool isGrounded;
     private bool isJumping;
     private bool isRolling;
-    private bool isLookingRight = true;
+    private bool isFacingRight = true;
     private bool isAimingRight;
 
     //sound variables
@@ -108,7 +110,6 @@ public class PlayerController : MonoBehaviour
     private void Update()
     {
         AnimStateUpdate();
-        //LogDebug();
     }
 
     private void FixedUpdate()
@@ -149,11 +150,13 @@ public class PlayerController : MonoBehaviour
 
         if (isGrounded)
         {
+            //Play running sound if player's moving on the ground
             if(currentSpeed > 0 && !walkSoundPlaying)
             {
                 walkSoundPlaying = true;
                 sound.Walk();
             }
+            //Stop running sound if player not moving
             else if (currentSpeed <= 0)
             {
                 walkSoundPlaying = false;
@@ -162,6 +165,7 @@ public class PlayerController : MonoBehaviour
         }
         else
         {
+            //Stop running sound if player's in the air
             walkSoundPlaying = false;
             sound.StopWalk();
         }
@@ -186,21 +190,23 @@ public class PlayerController : MonoBehaviour
                 currentSpeed = Mathf.Clamp(currentSpeed, maxSpeed, maxSpeed);
             else
                 currentSpeed = Mathf.Clamp(currentSpeed, maxSpeed * airSpeedMult, maxSpeed * airSpeedMult);
+
             //Rotation depending on input
             if (input > 0 && transform.eulerAngles.y != 90)
             {
                 transform.rotation = Quaternion.Euler(0, 90, 0);
-                isLookingRight = true;
+                isFacingRight = true;
             }
             if (input < 0 && transform.eulerAngles.y != -90)
             {
                 transform.rotation = Quaternion.Euler(0, -90, 0);
-                isLookingRight = false;
+                isFacingRight = false;
             }
             transform.position += moveVec * (startVel * Time.fixedDeltaTime + (0.5f * acceleration * Mathf.Pow(Time.fixedDeltaTime, 2)));
         }
         else
         {
+            //Decelerate
             if (currentSpeed > 0)
             {
                 currentSpeed -= acceleration * Time.fixedDeltaTime;
@@ -218,7 +224,6 @@ public class PlayerController : MonoBehaviour
         {
             moveVec = transform.forward;
             return;
-        //if they are on the ground, and their speed is greater than .1, and walk sound is not playing, start playing it
         }
         moveVec = Vector3.Cross(groundHitInfo.normal, -transform.right);
     }
@@ -248,9 +253,9 @@ public class PlayerController : MonoBehaviour
                 StartCoroutine(ResetTrigger("startDoubleJump", triggerResetTime));
                 isJumping = true;
                 vertVel = doubleJumpStrength;
-                if (isLookingRight && movementInput.x <= 0)
+                if (isFacingRight && movementInput.x <= 0)
                     currentSpeed = 0;
-                if (!isLookingRight && movementInput.x >= 0)
+                if (!isFacingRight && movementInput.x >= 0)
                     currentSpeed = 0;
             }
         }
@@ -355,20 +360,22 @@ public class PlayerController : MonoBehaviour
             isRolling = true;
             distanceRolled = 0;
             lastRollingPosition = transform.position;
+            //Select roll direction based on crosshair position and input
             if (movementInput.x != 0)
                 rollDirection = movementInput.x > 0 ? 1 : -1;
             else
                 rollDirection =  isAimingRight ? 1 : -1;
 
-            if (rollDirection < 0 && isLookingRight)
+            //Rotate the character depending on roll direction
+            if (rollDirection < 0 && isFacingRight)
             {
                 transform.rotation = Quaternion.Euler(0, -90, 0);
-                isLookingRight = false;
+                isFacingRight = false;
             }
-            if (rollDirection > 0 && !isLookingRight)
+            if (rollDirection > 0 && !isFacingRight)
             {
                 transform.rotation = Quaternion.Euler(0, 90, 0);
-                isLookingRight = true;
+                isFacingRight = true;
             }
 
         }
@@ -418,28 +425,48 @@ public class PlayerController : MonoBehaviour
      */
     private void Aim()
     {   
-        Vector2 pos;
-        Vector3 worldPos;
-        float aimAngle;
-        RectTransformUtility.ScreenPointToLocalPointInRectangle(canvasRef.transform as RectTransform, Input.mousePosition, canvasRef.worldCamera, out pos);
-        if (aimInputMouse != Vector2.zero)
-        {
-            crosshair.anchoredPosition = pos;
+        float camZ = Mathf.Abs(canvasRef.worldCamera.transform.position.z - transform.position.z);
+        Vector3 mouseWorldPos = canvasRef.worldCamera.ScreenToWorldPoint(new Vector3(Input.mousePosition.x, Input.mousePosition.y, camZ));
+        Vector3 maxBounds = canvasRef.worldCamera.ViewportToWorldPoint(new Vector3(1, 1, camZ));
+        Vector3 minBounds = canvasRef.worldCamera.ViewportToWorldPoint(new Vector3(0, 0, camZ));
+        Vector3 worldXhairPos;
+        Vector2 screenXhairPos;
+        Vector3 worldXhairScreenPos;
+
+        //These two ifs changes fake crosshair position in world space
+        if (aimInputMouse != Vector2.zero) 
+        { 
+            //Stops the crosshair from going off screen
+            worldXhairPos = mouseWorldPos;
+            worldXhairPos.x = Mathf.Clamp(worldXhairPos.x, minBounds.x, maxBounds.x);
+            worldXhairPos.y = Mathf.Clamp(worldXhairPos.y, minBounds.y, maxBounds.y);
+            worldXhair.transform.position = worldXhairPos;
         }
-        RectTransformUtility.ScreenPointToWorldPointInRectangle(canvasRef.transform as RectTransform, crosshair.position, canvasRef.worldCamera, out worldPos);
 
-        if (aimInputController != Vector2.zero)
-        {
-            crosshair.anchoredPosition += aimInputController * gamePadSens * Time.fixedDeltaTime;
+        if (aimInputController != Vector2.zero) 
+        { 
+            //Stops the crosshair from going off screen
+            worldXhairPos = (Vector3)aimInputController * gamePadSens * Time.fixedDeltaTime;
+            worldXhairPos.x = Mathf.Clamp(worldXhairPos.x, minBounds.x, maxBounds.x);
+            worldXhairPos.y = Mathf.Clamp(worldXhairPos.y, minBounds.y, maxBounds.y);
+            worldXhair.transform.position += worldXhairPos;
         }
+        
+        //This convert the world crosshair position into local UI canvas position
+        // and set it to the real crosshair, z = 0 here because there's no distance between canvas and the worldXhair
+        worldXhairScreenPos = canvasRef.worldCamera.WorldToScreenPoint(new Vector3(worldXhair.transform.position.x, worldXhair.transform.position.y, 0));
+        RectTransformUtility.ScreenPointToLocalPointInRectangle(canvasRef.transform as RectTransform, worldXhairScreenPos, canvasRef.worldCamera, out screenXhairPos);
+        screenXhair.anchoredPosition = screenXhairPos;
+        //rotate the gun
+        gunObject.transform.LookAt(worldXhair.transform);
 
-        //gunObject.transform.rotation.x = aimAngle;
-        print(gunObject.transform.rotation);
-
-        if (transform.position.x < crosshair.transform.position.x)
+        // checking where the player's aiming
+        if (transform.position.x < screenXhair.transform.position.x)
             isAimingRight = true;
         else
             isAimingRight = false;
+
+        // Shoot()
         if (fireInput > 0)
         {
             if (Time.time > timeToFire)
@@ -505,18 +532,14 @@ public class PlayerController : MonoBehaviour
      */
     private void AnimStateUpdate()
     {
-        var xSpeed = GetCurrentSpeed();
-        var ySpeed = vertVel;
+        float xSpeed = GetCurrentSpeed();
+        float ySpeed = vertVel;
         animator.SetFloat("xSpeed", xSpeed);
         animator.SetFloat("ySpeed", ySpeed);
         animator.SetBool("isGrounded", isGrounded);
         animator.SetBool("isRolling", isRolling);
-        animator.SetBool("isLookingRight", isLookingRight);
+        animator.SetBool("isFacingRight", isFacingRight);
         animator.SetBool("isAimingRight", isAimingRight);
-        // if speed 
-        if (xSpeed == 0 && walkSoundPlaying){
-            sound.StopWalk();
-        }
     }
     public float GetCurrentSpeed()
     {

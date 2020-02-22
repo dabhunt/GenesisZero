@@ -51,7 +51,7 @@ public class BUGE : MonoBehaviour
     		}
          	//get the players speed, but this is saved for the next fixed update check
          	prevSpeed = playerController.GetCurrentSpeed();
-             transform.LookAt(playerController.crosshair.transform);
+             transform.LookAt(playerController.worldXhair.transform);
              distance = Vector3.Distance(transform.position, Player.position);
 
              Vector3 follow = new Vector3(Player.position.x - followXoffset, Player.position.y+MinDistance, Player.position.z);
