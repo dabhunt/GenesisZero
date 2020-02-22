@@ -6,9 +6,9 @@ public class OverHeat : MonoBehaviour
 {
 	
 	//adjustable in script
-    public float baseBloomMultiplier;
-    public float baseHeatAddedPerShot;
-    public float baseCoolRatePerSecond = 25f;
+    public float baseBloomMultiplier = 1f;
+    public float baseHeatAddedPerShot = 7f;
+    public float baseCoolRatePerSecond = 30f;
     public float baseDelayBeforeCooling = 1f;
     //not adjustable in script
     public float ticksPerSecond=20;
@@ -23,8 +23,6 @@ public class OverHeat : MonoBehaviour
 
     private bool isOverheated;
     private bool isCoolingDown;
-
-
     void Start()
     {
        InvokeRepeating("Timer", 1/ticksPerSecond , 1/ticksPerSecond); 
@@ -70,6 +68,7 @@ public class OverHeat : MonoBehaviour
     }
     //All adjustments should be multiplication of original stat
     // these functions should be called by Modifiers
+    // it is calculated this way so that the base rates remain in tact, so they may be removed easily
     public void ModifyHeatPerShot(float adjustment)
     {
     	heatAddedPerShot = baseHeatAddedPerShot;

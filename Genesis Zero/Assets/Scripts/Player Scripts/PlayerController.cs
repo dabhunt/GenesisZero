@@ -555,13 +555,16 @@ public class PlayerController : MonoBehaviour
         animator.SetFloat("ySpeed", ySpeed);
         animator.SetBool("isGrounded", isGrounded);
         animator.SetBool("isRolling", isRolling);
-        animator.SetBool("isFacingRight", isFacingRight);
+        //animator.SetBool("isFacingRight", isFacingRight);
         animator.SetBool("isAimingRight", isAimingRight);
     }
     public float GetCurrentSpeed()
     {
         var xSpeed = currentSpeed != 0 ? currentSpeed / maxSpeed : 0;
         return xSpeed;
+    }
+    public bool IsFacingRight(){
+        return isFacingRight;
     }
     
     private void DrawDebugLines()
