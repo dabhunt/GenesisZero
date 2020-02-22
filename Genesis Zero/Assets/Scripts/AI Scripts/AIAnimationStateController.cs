@@ -11,6 +11,8 @@ public class AIAnimationStateController : MonoBehaviour
 {
     private AIController ai;
     private Animator anim;
+    float fallLayerBlend = 0.0f;
+    public float FallLayerBlendRate = 1.0f;
 
     private void Awake()
     {
@@ -33,9 +35,20 @@ public class AIAnimationStateController : MonoBehaviour
         anim.SetBool("IsCharging", ai.GetState() == AIController.AIState.Charge);
         anim.SetBool("IsAttacking", ai.GetState() == AIController.AIState.Attack);
         anim.SetBool("IsCoolingDown", ai.GetState() == AIController.AIState.Cooldown);
+        anim.SetBool("IsFalling", !ai.IsGrounded());
+
+        if (!ai.IsGrounded() && ai.GetState() != AIController.AIState.Charge && ai.GetState() != AIController.AIState.Attack && ai.GetState() != AIController.AIState.Cooldown)
+        {
+            fallLayerBlend = Mathf.Clamp01(fallLayerBlend + FallLayerBlendRate * Time.deltaTime);
+        }
+        else
+        {
+            fallLayerBlend = Mathf.Clamp01(fallLayerBlend - FallLayerBlendRate * Time.deltaTime);
+        }
+        anim.SetLayerWeight(1, fallLayerBlend);
     }
 
-    /*
+    /**
      * Updates the animator state based on the AI state
      */
     private void ChangeState(AIController.AIState newState)

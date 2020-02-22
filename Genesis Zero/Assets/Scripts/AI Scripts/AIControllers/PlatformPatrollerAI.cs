@@ -22,6 +22,10 @@ public class PlatformPatrollerAI : AIController
     private int faceDir = 1; // Direction the enemy is facing: 1 = right, -1 = left
     public float MaxFollowHeight = 5.0f; // Maximum height above the enemy for which the target will be tracked after going out of sight
 
+    public float groundCheckDistance = 1.0f;
+    public float groundCheckRadius = 0.5f;
+    public LayerMask groundCheckMask;
+
     public ParticleSystem chargeParticles;
     public ParticleSystem attackParticles;
     public GameObject AttackHitbox;
@@ -127,6 +131,15 @@ public class PlatformPatrollerAI : AIController
     }
 
     /**
+     * Checks if the enemy is on the ground
+     */
+    protected override void GroundCheck()
+    {
+        Ray groundRay = new Ray(transform.position, Vector3.down);
+        isGrounded = Physics.SphereCast(groundRay, groundCheckRadius, groundCheckDistance, groundCheckMask, QueryTriggerInteraction.Ignore);
+    }
+
+    /**
      * This initiates the lunge toward the target while attacking
      */
     public void JumpTowardTarget(AIState state)
@@ -161,5 +174,12 @@ public class PlatformPatrollerAI : AIController
         {
             Destroy(spawnedHitboxObj.gameObject);
         }
+    }
+
+    protected override void OnDrawGizmos()
+    {
+        base.OnDrawGizmos();
+        Gizmos.color = Color.yellow;
+        Gizmos.DrawWireSphere(transform.position + Vector3.down * groundCheckDistance, groundCheckRadius);
     }
 }

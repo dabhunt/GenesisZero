@@ -13,6 +13,7 @@ public class AIController : Pawn
 
     public enum AIState { Idle, Patrol, Follow, Charge, Attack, Cooldown }
     protected AIState state = AIState.Patrol; // Current behavior state
+    protected bool isGrounded = false;
 
     public Transform Target; // Target or player object to follow and attack
     protected Vector3 targetPosition = Vector3.zero; // Position to move to
@@ -60,6 +61,7 @@ public class AIController : Pawn
     new protected void FixedUpdate()
     {
         base.FixedUpdate();
+        GroundCheck();
 
         if (Target != null)
         {
@@ -213,6 +215,22 @@ public class AIController : Pawn
     }
 
     /**
+     * Returns whether the enemy is on the ground
+     */
+    public bool IsGrounded()
+    {
+        return isGrounded;
+    }
+
+    /*
+     * Inheriting enemies can override this to implement their own ground check methods.
+     */
+    protected virtual void GroundCheck()
+    {
+        isGrounded = false;
+    }
+
+    /**
      * Returns the distance to the target/player
      */
     public float GetDistanceToTarget()
@@ -297,7 +315,7 @@ public class AIController : Pawn
     /**
      * Draw visual representations of properties
      */
-    protected void OnDrawGizmos()
+    protected virtual void OnDrawGizmos()
     {
         if (targetVisible)
         {
