@@ -8,10 +8,12 @@ public class Projectile : MonoBehaviour
     [Header("Settings")]
     public float speed = 30f;
     public float gravity = 0f;
-    public Vector3 direction;
+    public float lifeTime = 1f;
 
+    public Vector3 direction;
     private Rigidbody rb;
-    private float lifeTime = 1f;
+
+    private bool coll;
     private void Start()
     {
         rb = GetComponent<Rigidbody>();
@@ -29,9 +31,9 @@ public class Projectile : MonoBehaviour
     }
 
     private void Move()
-    {
+    {       
         bool collided = CheckCollisions();
-        if (collided == false)
+        if (coll == false)
         {
             direction = speed * transform.forward * Time.fixedDeltaTime;
             transform.position += direction;
@@ -64,8 +66,19 @@ public class Projectile : MonoBehaviour
             {
                 Vector3 dir = speed * transform.forward * Time.fixedDeltaTime;
                 dir = dir.normalized * (hit.distance + col.radius * 2);
-                
-                transform.position += dir;
+                //Debug.Log(hit.collider.gameObject.name);
+                transform.position = hit.point;
+                if (GetComponent<Hitbox>())
+                {
+                    if (GetComponent<Hitbox>().CheckCollisions(hit.collider))
+                    {
+                        coll = true;
+                    }
+                    else
+                    {
+                        coll = false;
+                    }
+                }
                 return true;
             }
         }

@@ -31,7 +31,7 @@ public class CharacterAimFootIK : MonoBehaviour
     private void Update()
     {
         Vector2 mouseposition = Input.mousePosition;
-        Target.position = Camera.main.ScreenToWorldPoint(new Vector3(mouseposition.x,mouseposition.y,35));  //this is currently a hardcoded distance away from the camera but if we calculate the distance for z we could do animated movements in the z for the camera
+        Target.position = Camera.main.ScreenToWorldPoint(new Vector3(mouseposition.x,mouseposition.y, Mathf.Abs(Camera.main.transform.position.z)));  //this is currently a hardcoded distance away from the camera but if we calculate the distance for z we could do animated movements in the z for the camera
        
     }
 
