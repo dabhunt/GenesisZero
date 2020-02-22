@@ -248,7 +248,7 @@ public class PlayerController : MonoBehaviour
                 isJumping = true;
                 vertVel = jumpStrength;
             }
-            else if (isJumping && jumpCount > 0)
+            else if (!isGrounded && jumpCount > 0)
             {
                 jumpCount--;
                 animator.SetTrigger("startDoubleJump");
