@@ -12,7 +12,7 @@ GameObject:
   - component: {fileID: 751653432839557207}
   - component: {fileID: 751653432839557204}
   - component: {fileID: 751653432839557205}
-  m_Layer: 0
+  m_Layer: 9
   m_Name: Face
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -104,7 +104,7 @@ GameObject:
   - component: {fileID: 751653433110049382}
   - component: {fileID: 751653433110049400}
   - component: {fileID: 751653433110049401}
-  m_Layer: 0
+  m_Layer: 9
   m_Name: AttackParticles
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -4877,9 +4877,9 @@ GameObject:
   - component: {fileID: 3739019229038373442}
   - component: {fileID: 6999983156308857340}
   - component: {fileID: -4531674250205412582}
-  m_Layer: 0
+  m_Layer: 9
   m_Name: PlatformPatroller
-  m_TagString: Untagged
+  m_TagString: Enemy
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -5151,9 +5151,13 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   vfxName: 
-  soundName: 
-  amount: 1
+  sounds: []
   quitting: 0
+  EssenceDropChance: 0
+  ModifierDropChance: 0
+  EssencePrefab: {fileID: 0}
+  ModifierPrefab: {fileID: 0}
+  ModTypes: []
 --- !u!1 &751653434026467023
 GameObject:
   m_ObjectHideFlags: 0
@@ -5165,7 +5169,7 @@ GameObject:
   - component: {fileID: 751653434026467022}
   - component: {fileID: 751653434026467008}
   - component: {fileID: 751653434026467009}
-  m_Layer: 0
+  m_Layer: 9
   m_Name: ChargeParticles
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -10004,7 +10008,7 @@ GameObject:
   - component: {fileID: 5856446359195698356}
   - component: {fileID: 5092266582784090640}
   - component: {fileID: 4855559690266172915}
-  m_Layer: 0
+  m_Layer: 9
   m_Name: Spot Light
   m_TagString: Untagged
   m_Icon: {fileID: 0}

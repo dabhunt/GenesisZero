@@ -6,6 +6,7 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.InputSystem;
+using UnityEngine.UI;
 using Cinemachine;
 
 [RequireComponent(typeof(CapsuleCollider))]
@@ -23,7 +24,6 @@ public class PlayerController : MonoBehaviour
     public float vertCastPadding = 0.1f; // offset used for the feet/head casts
     public float rollDistance = 5f;
     public float rollSpeedMult = 1.5f;
-    public float fallJumpDelay = 0.2f;
     public float jumpBufferTime = 0.2f;
     public LayerMask immoveables; //LayerMask for bound checks
     public bool debug;
@@ -36,19 +36,24 @@ public class PlayerController : MonoBehaviour
     public float airSpeedMult = 0.85f;
     public float slopeRayDistMult = 1.25f;
 
-    [Header("Camera")]
-    public Camera mainCam;
+    [Header("Canvas")]
+    public Canvas canvasRef;
 
     [Header("Gun")]
     public GameObject gunObject;
-    public GameObject crosshair;
+    [Tooltip("GameObject Crosshair (invisible)")]
+    public GameObject worldXhair;
+    [Tooltip("Canvas Crosshair (visible)")]
+    public RectTransform screenXhair;
     public float gamePadSens = 15f;
     private float timeToFire = 0;
+
     [Header("Animations")]
     public float triggerResetTime = 0.25f;
     //Component parts used in this Script
     private PlayerInputActions inputActions;
     private Player player;
+    private OverHeat overheat;
     //This chunk relates to movements
     private Vector2 movementInput;
     private RaycastHit groundHitInfo;
@@ -56,8 +61,7 @@ public class PlayerController : MonoBehaviour
     private float maxSpeed;
     private float vertVel;
     private float currentSpeed = 0;
-    private bool canDoubleJump;
-    private bool canJump;
+    private float jumpCount = 2;
     private float jumpPressedTime;
     private float distanceRolled = 0;
     private int rollDirection;
@@ -68,15 +72,14 @@ public class PlayerController : MonoBehaviour
     private Vector2 aimInputMouse;
     private Vector2 aimInputController;
     private float fireInput;
-
-     private Gun gun;
+    private Gun gun;
 
     //This chunk of variables is related to Animation/state
     private Animator animator;
     private bool isGrounded;
     private bool isJumping;
     private bool isRolling;
-    private bool isLookingRight = true;
+    private bool isFacingRight = true;
     private bool isAimingRight;
 
     //sound variables
@@ -91,9 +94,10 @@ public class PlayerController : MonoBehaviour
         inputActions.PlayerControls.AimMouse.performed += ctx => aimInputMouse = ctx.ReadValue<Vector2>();
         inputActions.PlayerControls.AimController.performed += ctx => aimInputController = ctx.ReadValue<Vector2>();
         inputActions.PlayerControls.Fire.performed += ctx => fireInput = ctx.ReadValue<float>();
-        sound =FindObjectOfType<AudioManager>().GetComponent<PlayerSounds>();
+        sound = FindObjectOfType<AudioManager>().GetComponent<PlayerSounds>();
         animator = GetComponent<Animator>();
         gun = GetComponent<Gun>();
+        overheat = GetComponent<OverHeat>();
     }
 
     private void Start()
@@ -106,7 +110,6 @@ public class PlayerController : MonoBehaviour
     private void Update()
     {
         AnimStateUpdate();
-        //LogDebug();
     }
 
     private void FixedUpdate()
@@ -145,6 +148,28 @@ public class PlayerController : MonoBehaviour
         CalculateForwardDirection();
         if (isRolling) return;
 
+        if (isGrounded)
+        {
+            //Play running sound if player's moving on the ground
+            if(currentSpeed > 0 && !walkSoundPlaying)
+            {
+                walkSoundPlaying = true;
+                sound.Walk();
+            }
+            //Stop running sound if player not moving
+            else if (currentSpeed <= 0)
+            {
+                walkSoundPlaying = false;
+                sound.StopWalk();
+            }
+        }
+        else
+        {
+            //Stop running sound if player's in the air
+            walkSoundPlaying = false;
+            sound.StopWalk();
+        }
+
         if (input != 0)
         {
             if (input > 0 && IsBlocked(Vector3.right))
@@ -158,39 +183,36 @@ public class PlayerController : MonoBehaviour
                 return;
             }
 
-            currentSpeed += input * multiplier * acceleration * Time.fixedDeltaTime;
+            currentSpeed += multiplier * acceleration * Time.fixedDeltaTime;
 
             //This is to calculate air control speeds
             if (isGrounded)
-                currentSpeed = Mathf.Clamp(currentSpeed, -maxSpeed, maxSpeed);
+                currentSpeed = Mathf.Clamp(currentSpeed, maxSpeed, maxSpeed);
             else
-                currentSpeed = Mathf.Clamp(currentSpeed, -maxSpeed * airSpeedMult, maxSpeed * airSpeedMult);
+                currentSpeed = Mathf.Clamp(currentSpeed, maxSpeed * airSpeedMult, maxSpeed * airSpeedMult);
+
             //Rotation depending on input
             if (input > 0 && transform.eulerAngles.y != 90)
             {
                 transform.rotation = Quaternion.Euler(0, 90, 0);
-                isLookingRight = true;
+                isFacingRight = true;
             }
             if (input < 0 && transform.eulerAngles.y != -90)
             {
                 transform.rotation = Quaternion.Euler(0, -90, 0);
-                isLookingRight = false;
+                isFacingRight = false;
             }
+            transform.position += moveVec * (startVel * Time.fixedDeltaTime + (0.5f * acceleration * Mathf.Pow(Time.fixedDeltaTime, 2)));
         }
         else
         {
+            //Decelerate
             if (currentSpeed > 0)
             {
                 currentSpeed -= acceleration * Time.fixedDeltaTime;
                 currentSpeed = Mathf.Max(currentSpeed, 0);
             }
-            if (currentSpeed < 0)
-            {
-                currentSpeed += acceleration * Time.fixedDeltaTime;
-                currentSpeed = Mathf.Min(currentSpeed, 0);
-            }
         }
-        transform.position += moveVec * (startVel * Time.fixedDeltaTime + (0.5f * acceleration * Mathf.Abs(input)) * Mathf.Pow(Time.fixedDeltaTime, 2));
     }
 
     /* This function is called in Move()
@@ -198,20 +220,11 @@ public class PlayerController : MonoBehaviour
      */
     private void CalculateForwardDirection()
     {
-        var xSpeed = currentSpeed != 0 ? currentSpeed / maxSpeed : 0;
         if (!isGrounded)
         {
             moveVec = transform.forward;
-            walkSoundPlaying = false;
-            sound.StopWalk();
             return;
-        //if they are on the ground, and their speed is greater than .1, and walk sound is not playing, start playing it
-        } else if (Math.Abs(xSpeed) > 0.05f && !walkSoundPlaying)
-        {
-            walkSoundPlaying = true;
-            sound.Walk();
         }
-
         moveVec = Vector3.Cross(groundHitInfo.normal, -transform.right);
     }
 
@@ -223,27 +236,27 @@ public class PlayerController : MonoBehaviour
         if (ctx.performed)
         {
             if (isRolling) return;
-            // canJump allow player to jump after an amount of time when falling off edge
             jumpPressedTime = jumpBufferTime;
-            if (isGrounded || canJump)
+            if (!isJumping && jumpCount > 0)
             {
+                jumpCount--;
                 animator.SetTrigger("startJump");
                 sound.Jump();
                 StartCoroutine(ResetTrigger("startJump", triggerResetTime));
                 isJumping = true;
                 vertVel = jumpStrength;
             }
-            else if (!isGrounded && canDoubleJump)
+            else if (isJumping && jumpCount > 0)
             {
+                jumpCount--;
                 animator.SetTrigger("startDoubleJump");
                 StartCoroutine(ResetTrigger("startDoubleJump", triggerResetTime));
                 isJumping = true;
-                canDoubleJump = false;
                 vertVel = doubleJumpStrength;
-                if (currentSpeed > 0 && movementInput.x <= 0)
+                if (isFacingRight && movementInput.x <= 0)
                     currentSpeed = 0;
-                if (currentSpeed < 0 && movementInput.x >= 0)
-                    currentSpeed = 0; 
+                if (!isFacingRight && movementInput.x >= 0)
+                    currentSpeed = 0;
             }
         }
     }
@@ -256,16 +269,6 @@ public class PlayerController : MonoBehaviour
             jumpPressedTime -= Time.fixedDeltaTime;
         else
             jumpPressedTime = 0;
-
-        if (isGrounded)
-        {
-            canJump = true;
-            canDoubleJump = true;
-        }
-        else
-        {
-            StartCoroutine(DelayToggleCanJump(fallJumpDelay));
-        }
 
         if (!isJumping)
         {
@@ -309,7 +312,10 @@ public class PlayerController : MonoBehaviour
                     transform.position = Vector3.Lerp(transform.position, transform.position + Vector3.up * characterHeight * 0.5f, 5 * Time.fixedDeltaTime);
 
             if (!isJumping)
+            {
                 vertVel = 0;
+                jumpCount = 2;
+            }
         }
         else
         {
@@ -354,20 +360,22 @@ public class PlayerController : MonoBehaviour
             isRolling = true;
             distanceRolled = 0;
             lastRollingPosition = transform.position;
+            //Select roll direction based on crosshair position and input
             if (movementInput.x != 0)
                 rollDirection = movementInput.x > 0 ? 1 : -1;
             else
                 rollDirection =  isAimingRight ? 1 : -1;
 
-            if (rollDirection < 0 && isLookingRight)
+            //Rotate the character depending on roll direction
+            if (rollDirection < 0 && isFacingRight)
             {
                 transform.rotation = Quaternion.Euler(0, -90, 0);
-                isLookingRight = false;
+                isFacingRight = false;
             }
-            if (rollDirection > 0 && !isLookingRight)
+            if (rollDirection > 0 && !isFacingRight)
             {
                 transform.rotation = Quaternion.Euler(0, 90, 0);
-                isLookingRight = true;
+                isFacingRight = true;
             }
 
         }
@@ -417,39 +425,52 @@ public class PlayerController : MonoBehaviour
      */
     private void Aim()
     {   
-        if (aimInputMouse != Vector2.zero)
-        {
-            Vector3 pos = new Vector3(Input.mousePosition.x, Input.mousePosition.y, Mathf.Abs(mainCam.transform.position.z - transform.position.z));
-            Vector3 mousePosition = mainCam.ScreenToWorldPoint(pos);
-            mousePosition.z = 0;
-            crosshair.transform.position = mousePosition;
+        float camZ = Mathf.Abs(canvasRef.worldCamera.transform.position.z - transform.position.z);
+        Vector3 mouseWorldPos = canvasRef.worldCamera.ScreenToWorldPoint(new Vector3(Input.mousePosition.x, Input.mousePosition.y, camZ));
+        Vector3 maxBounds = canvasRef.worldCamera.ViewportToWorldPoint(new Vector3(1, 1, camZ));
+        Vector3 minBounds = canvasRef.worldCamera.ViewportToWorldPoint(new Vector3(0, 0, camZ));
+        Vector3 worldXhairPos;
+        Vector2 screenXhairPos;
+        Vector3 worldXhairScreenPos;
+
+        //These two ifs changes fake crosshair position in world space
+        if (aimInputMouse != Vector2.zero) 
+        { 
+            //Stops the crosshair from going off screen
+            worldXhairPos = mouseWorldPos;
+            worldXhairPos.x = Mathf.Clamp(worldXhairPos.x, minBounds.x, maxBounds.x);
+            worldXhairPos.y = Mathf.Clamp(worldXhairPos.y, minBounds.y, maxBounds.y);
+            worldXhair.transform.position = worldXhairPos;
         }
 
-        if (aimInputController != Vector2.zero)
-        {
-            crosshair.transform.position += ((Vector3)aimInputController) * gamePadSens * Time.fixedDeltaTime;
+        if (aimInputController != Vector2.zero) 
+        { 
+            //Stops the crosshair from going off screen
+            worldXhairPos = (Vector3)aimInputController * gamePadSens * Time.fixedDeltaTime;
+            worldXhairPos.x = Mathf.Clamp(worldXhairPos.x, minBounds.x, maxBounds.x);
+            worldXhairPos.y = Mathf.Clamp(worldXhairPos.y, minBounds.y, maxBounds.y);
+            worldXhair.transform.position += worldXhairPos;
         }
+        
+        //This convert the world crosshair position into local UI canvas position
+        // and set it to the real crosshair, z = 0 here because there's no distance between canvas and the worldXhair
+        worldXhairScreenPos = canvasRef.worldCamera.WorldToScreenPoint(new Vector3(worldXhair.transform.position.x, worldXhair.transform.position.y, 0));
+        RectTransformUtility.ScreenPointToLocalPointInRectangle(canvasRef.transform as RectTransform, worldXhairScreenPos, canvasRef.worldCamera, out screenXhairPos);
+        screenXhair.anchoredPosition = screenXhairPos;
+        //rotate the gun
+        gunObject.transform.LookAt(worldXhair.transform);
 
-        /*
-        float xDist = crosshair.transform.position.x - transform.position.x;
-        float yDist = crosshair.transform.position.y - transform.position.y;
-        float aimAngle = Mathf.Atan2(yDist, xDist) * Mathf.Rad2Deg;
-        */
-        gunObject.transform.LookAt(crosshair.transform);
-        if (transform.position.x < crosshair.transform.position.x)
+        // checking where the player's aiming
+        if (transform.position.x < screenXhair.transform.position.x)
             isAimingRight = true;
         else
             isAimingRight = false;
-        /*
-        gunObject.transform.localRotation = Quaternion.Euler(-aimAngle, 0, 0);
-        if (Mathf.Abs(aimAngle) < 81)
-            isAimingRight = true;
-        else
-            isAimingRight = false;
-        */
+
+        // Shoot()
         if (fireInput > 0)
         {
             if (Time.time > timeToFire)
+            //if (Time.time > timeToFire && !overheat.IsOverheated())
             {
                 timeToFire = Time.time + 1 / player.GetAttackSpeed().GetValue();
                 gun.Shoot();
@@ -511,18 +532,14 @@ public class PlayerController : MonoBehaviour
      */
     private void AnimStateUpdate()
     {
-        var xSpeed = GetCurrentSpeed();
-        var ySpeed = vertVel;
+        float xSpeed = GetCurrentSpeed();
+        float ySpeed = vertVel;
         animator.SetFloat("xSpeed", xSpeed);
         animator.SetFloat("ySpeed", ySpeed);
         animator.SetBool("isGrounded", isGrounded);
         animator.SetBool("isRolling", isRolling);
-        animator.SetBool("isLookingRight", isLookingRight);
+        animator.SetBool("isFacingRight", isFacingRight);
         animator.SetBool("isAimingRight", isAimingRight);
-        // if speed 
-        if (xSpeed == 0 && walkSoundPlaying){
-            sound.StopWalk();
-        }
     }
     public float GetCurrentSpeed()
     {
@@ -534,12 +551,6 @@ public class PlayerController : MonoBehaviour
     {
         if (!debug) return;
         Debug.DrawLine(transform.position, transform.position + moveVec * 2, Color.red);
-    }
-
-    private IEnumerator DelayToggleCanJump(float time)
-    {
-        yield return new WaitForSeconds(time);
-        canJump = false;
     }
 
     private IEnumerator ResetTrigger(string trigger, float time)

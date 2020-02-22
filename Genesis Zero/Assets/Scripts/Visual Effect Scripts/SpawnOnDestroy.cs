@@ -7,12 +7,16 @@ using UnityEngine.SceneManagement;
 public class SpawnOnDestroy : MonoBehaviour
 {
     public string vfxName;
+    public float vfxScaleMultiplier;
     public string[] sounds = new string[0];
     public bool quitting;
     private Restart restartScript;
     //.3f is 30% drop chance
-    public float EssenceDropChance;
+    public int minEssenceDrop;
+    public int maxEssenceDrop;
     public float ModifierDropChance;
+    public float minDropVelocity;
+    public float maxDropVelocity;
     public GameObject EssencePrefab;
     public GameObject ModifierPrefab;
 
@@ -28,6 +32,9 @@ public class SpawnOnDestroy : MonoBehaviour
         GameObject temp = GameObject.FindWithTag("EventSystem");
         restartScript = temp.GetComponent<Restart>();
         aManager = FindObjectOfType<AudioManager>();
+        if (vfxScaleMultiplier <= 0){
+            vfxScaleMultiplier = 1;
+        }
     }
 
 
@@ -51,13 +58,19 @@ public class SpawnOnDestroy : MonoBehaviour
             if (vfxName != "")
             {
                 //Calls VFX manager to play desired VFX effect based on string
-                GameObject emit = VFXManager.instance.PlayEffect(vfxName, new Vector3(transform.position.x, transform.position.y, transform.position.z));
+                GameObject emit = VFXManager.instance.PlayEffect(vfxName, new Vector3(transform.position.x, transform.position.y, transform.position.z), 0f, vfxScaleMultiplier);
                 
             }
              // if essence drop chance exceeds the random value from 0 to 1.0f, it drops
-            if (EssenceDropChance >= Random.value)
-            {
-                Instantiate(EssencePrefab, new Vector3(transform.position.x, transform.position.y, 0), Quaternion.identity);
+            int amount = Random.Range(minEssenceDrop, maxEssenceDrop);
+            print("dropping "+amount+" essence");
+            for (int i = 0; i < amount; i++){
+                print("dropping some essence...");
+                GameObject essence = Instantiate(EssencePrefab, new Vector3(transform.position.x, transform.position.y, 0), Quaternion.identity);
+                float force = Random.Range(minDropVelocity, maxDropVelocity);
+                Rigidbody rb = essence.GetComponent<Rigidbody>();
+                rb.GetComponent<Rigidbody>().velocity = Random.onUnitSphere * force;
+                //Destroy(rb);
             }
             // if modifier drop chance exceeds the random value from 0 to 1.0f, it drops
             if (ModifierDropChance > Random.value)
