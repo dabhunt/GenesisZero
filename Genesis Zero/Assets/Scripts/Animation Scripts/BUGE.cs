@@ -31,7 +31,8 @@ public class BUGE : MonoBehaviour
      private Transform Player;
      private float speedvar;
      private float distance;
-     private float prevSpeed;
+     private bool prevFacingRight;
+     private float curSpeed;
 
     void Start()
     {
@@ -39,21 +40,22 @@ public class BUGE : MonoBehaviour
 		playerController = temp.GetComponent<PlayerController>();
 		Player = temp.GetComponent<Transform>();
 		speedvar = Speed;
-		prevSpeed = playerController.GetCurrentSpeed();
+		prevFacingRight = playerController.IsFacingRight();
 
 	}
      void FixedUpdate()
      {
         if ((this.gameObject != null) && (Player != null)){
-         	var curSpeed = playerController.GetCurrentSpeed();
+         	bool currentlyFacingRight = playerController.IsFacingRight();
          	// get current player speed
-         	// if the player was going left and switches to right, or right switching to left
-         	if ((prevSpeed >= 0 && curSpeed < 0 )||(prevSpeed < 0 && curSpeed >= 0)){
+         	// if the player was going left and switches to right, or right switching to left this will change x offset
+         	if (currentlyFacingRight != prevFacingRight){
          		followXoffset *= -1;
     		}
          	//get the players speed, but this is saved for the next fixed update check
-         	prevSpeed = playerController.GetCurrentSpeed();
-            transform.LookAt(playerController.crosshair.transform);
+         	prevFacingRight = playerController.IsFacingRight();
+            curSpeed = playerController.GetCurrentSpeed();
+            transform.LookAt(playerController.worldXhair.transform);
             //enable this line and delete the above line once Toan changes to UI cursor
             //transform.LookAt(playerController.worldXhair.transform);
              distance = Vector3.Distance(transform.position, Player.position);
@@ -80,7 +82,7 @@ public class BUGE : MonoBehaviour
              }
             //exaggerate the sin wave while the player runs vs the sin while floating idle next to player
          	var sin = sinAmplitude;
-         	if (Math.Abs(curSpeed) > 0.5f)
+         	if (curSpeed > 0.5f)
          	  {sin = AmplitudeWhileRunning;}
             Vector3 sinPos = this.transform.position;
             sinPos.y += Mathf.Sin (Time.fixedTime * Mathf.PI * sinFrequency) * sin;
