@@ -50,11 +50,13 @@ public class PlayerController : MonoBehaviour
 
     [Header("Animations")]
     public float triggerResetTime = 0.25f;
-    //Component parts used in this Script
+
+    //Component Parts
     private PlayerInputActions inputActions;
     private Player player;
     private OverHeat overheat;
-    //This chunk relates to movements
+
+    //Movement Variables
     private Vector2 movementInput;
     private RaycastHit groundHitInfo;
     private Vector3 moveVec = Vector3.right;
@@ -67,14 +69,13 @@ public class PlayerController : MonoBehaviour
     private int rollDirection;
     private Vector3 lastRollingPosition;
 
-
-    //This chunk relate to aim
+    //Aim Variables
     private Vector2 aimInputMouse;
     private Vector2 aimInputController;
     private float fireInput;
     private Gun gun;
 
-    //This chunk of variables is related to Animation/state
+    //Animation/States Variables
     private Animator animator;
     private bool isGrounded;
     private bool isJumping;
@@ -236,6 +237,7 @@ public class PlayerController : MonoBehaviour
         if (ctx.performed)
         {
             if (isRolling) return;
+            if (isGrounded && jumpCount < 2) return;
             jumpPressedTime = jumpBufferTime;
             if (!isJumping && jumpCount > 0)
             {
@@ -311,11 +313,10 @@ public class PlayerController : MonoBehaviour
                 if (hit.distance < 0.5f * characterHeight + vertCastPadding)
                     transform.position = Vector3.Lerp(transform.position, transform.position + Vector3.up * characterHeight * 0.5f, 5 * Time.fixedDeltaTime);
 
-            if (!isJumping)
-            {
+            if (vertVel < 0)
                 vertVel = 0;
+            if (!isJumping)
                 jumpCount = 2;
-            }
         }
         else
         {
