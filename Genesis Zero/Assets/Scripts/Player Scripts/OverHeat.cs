@@ -6,9 +6,9 @@ public class OverHeat : MonoBehaviour
 {
 	
 	//adjustable in script
-    public float baseBloomMultiplier;
-    public float baseHeatAddedPerShot;
-    public float baseCoolRatePerSecond = 25f;
+    public float baseBloomMultiplier = 1f;
+    public float baseHeatAddedPerShot = 7f;
+    public float baseCoolRatePerSecond = 30f;
     public float baseDelayBeforeCooling = 1f;
     //not adjustable in script
     public float ticksPerSecond=20;
