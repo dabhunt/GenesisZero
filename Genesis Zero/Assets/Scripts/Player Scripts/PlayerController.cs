@@ -443,9 +443,8 @@ public class PlayerController : MonoBehaviour
         Vector3 worldXhairPos;
         Vector2 screenXhairPos;
         Vector3 worldXhairScreenPos;
-        Vector3 dist = worldXhair.transform.position - transform.position;
         //These two ifs changes fake crosshair position in world space
-        if (aimInputMouse != Vector2.zero) 
+        if (aimInputMouse != Vector2.zero)
         { 
             //Stops the crosshair from going off screen
             worldXhairPos = mouseWorldPos;
@@ -456,14 +455,17 @@ public class PlayerController : MonoBehaviour
         else if (aimInputController != Vector2.zero)
         { 
             //Stops the crosshair from going off screen
-            worldXhairPos = (Vector3)aimInputController * gamePadSens * Time.fixedDeltaTime;
+            
+            worldXhair.transform.position += (Vector3)aimInputController * gamePadSens * Time.fixedDeltaTime;;
+            worldXhairPos = worldXhair.transform.position;
             worldXhairPos.x = Mathf.Clamp(worldXhairPos.x, minBounds.x, maxBounds.x);
             worldXhairPos.y = Mathf.Clamp(worldXhairPos.y, minBounds.y, maxBounds.y);
-            worldXhair.transform.position += worldXhairPos;
+            worldXhair.transform.position = worldXhairPos;
         }
         else
         {
-            worldXhair.transform.position = transform.position + dist;
+            //make crosshair move along with player
+            
         }
 
         //This convert worldXhair position to ScreenPoint then to UI local Point
