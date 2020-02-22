@@ -20,7 +20,7 @@ public class PlayerController : MonoBehaviour
     public float acceleration = 35f;
     public float jumpStrength = 12f;
     public float doubleJumpStrength = 10f;
-    public float horCastPadding = 0.1f; // offset used for the sides casts
+    public float horCastPadding = 0.35f; // offset used for the sides casts
     public float vertCastPadding = 0.1f; // offset used for the feet/head casts
     public float rollDistance = 5f;
     public float rollSpeedMult = 1.5f;
@@ -368,6 +368,8 @@ public class PlayerController : MonoBehaviour
             else
                 rollDirection =  isAimingRight ? 1 : -1;
 
+            if (rollDirection > 0 && IsBlocked(Vector3.right) || rollDirection < 0 && IsBlocked(Vector2.left)) return;
+
             //Rotate the character depending on roll direction
             if (rollDirection < 0 && isFacingRight)
             {
@@ -397,6 +399,7 @@ public class PlayerController : MonoBehaviour
                 isRolling = false;
                 animator.SetTrigger("endRoll");
                 StartCoroutine(ResetTrigger("endRoll", triggerResetTime));
+                return;
             }
 
             transform.position += moveVec * rollSpeed * Time.fixedDeltaTime;
@@ -436,7 +439,7 @@ public class PlayerController : MonoBehaviour
         Vector3 worldXhairScreenPos;
 
         //These two ifs changes fake crosshair position in world space
-        if (aimInputController == Vector2.zero || aimInputMouse != Vector2.zero) 
+        if (aimInputController == Vector2.zero) 
         { 
             //Stops the crosshair from going off screen
             worldXhairPos = mouseWorldPos;
@@ -445,7 +448,7 @@ public class PlayerController : MonoBehaviour
             worldXhair.transform.position = worldXhairPos;
         }
 
-        if (aimInputMouse == Vector2.zero || aimInputController != Vector2.zero)
+        if (aimInputMouse == Vector2.zero)
         { 
             //Stops the crosshair from going off screen
             worldXhairPos = (Vector3)aimInputController * gamePadSens * Time.fixedDeltaTime;
@@ -512,14 +515,14 @@ public class PlayerController : MonoBehaviour
         }
         else if (dir == Vector3.right)
         {
-            isBlock = Physics.BoxCast(boxCenter, halfExtends, Vector3.right, out hit, Quaternion.identity, 0.5f * characterWidth + vertCastPadding, immoveables, QueryTriggerInteraction.UseGlobal);
+            isBlock = Physics.BoxCast(boxCenter, halfExtends, moveVec, out hit, Quaternion.identity, 0.5f * characterWidth + vertCastPadding, immoveables, QueryTriggerInteraction.UseGlobal);
             if (isBlock && (hit.collider.isTrigger))
                 isBlock = false;
             Debug.Log("RightBlock: " + isBlock);
         }
         else if (dir == Vector3.left)
         {
-            isBlock = Physics.BoxCast(boxCenter, halfExtends, Vector3.left, out hit, Quaternion.identity, 0.5f * characterWidth + vertCastPadding, immoveables, QueryTriggerInteraction.UseGlobal);
+            isBlock = Physics.BoxCast(boxCenter, halfExtends, moveVec, out hit, Quaternion.identity, 0.5f * characterWidth + vertCastPadding, immoveables, QueryTriggerInteraction.UseGlobal);
             if (isBlock && (hit.collider.isTrigger))
                 isBlock = false;
             Debug.Log("LeftBlock: " + isBlock);
