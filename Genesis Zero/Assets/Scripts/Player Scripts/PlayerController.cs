@@ -436,7 +436,7 @@ public class PlayerController : MonoBehaviour
         Vector3 worldXhairScreenPos;
 
         //These two ifs changes fake crosshair position in world space
-        if (aimInputController == Vector2.zero) 
+        if (aimInputController == Vector2.zero || aimInputMouse != Vector2.zero) 
         { 
             //Stops the crosshair from going off screen
             worldXhairPos = mouseWorldPos;
@@ -445,7 +445,7 @@ public class PlayerController : MonoBehaviour
             worldXhair.transform.position = worldXhairPos;
         }
 
-        if (aimInputMouse == Vector2.zero) 
+        if (aimInputMouse == Vector2.zero || aimInputController != Vector2.zero)
         { 
             //Stops the crosshair from going off screen
             worldXhairPos = (Vector3)aimInputController * gamePadSens * Time.fixedDeltaTime;
@@ -463,7 +463,7 @@ public class PlayerController : MonoBehaviour
         gunObject.transform.LookAt(worldXhair.transform);
 
         // checking where the player's aiming
-        if (transform.position.x < screenXhair.transform.position.x)
+        if (transform.position.x < worldXhair.transform.position.x)
             isAimingRight = true;
         else
             isAimingRight = false;
