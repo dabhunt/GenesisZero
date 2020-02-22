@@ -463,7 +463,7 @@ public class PlayerController : MonoBehaviour
         }
         else
         {
-            worldXhair.transform.position = dist;
+            worldXhair.transform.position = transform.position + dist;
         }
 
         //This convert worldXhair position to ScreenPoint then to UI local Point
