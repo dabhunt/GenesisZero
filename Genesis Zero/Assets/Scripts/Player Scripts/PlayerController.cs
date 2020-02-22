@@ -513,14 +513,16 @@ public class PlayerController : MonoBehaviour
         else if (dir == Vector3.right)
         {
             isBlock = Physics.BoxCast(boxCenter, halfExtends, Vector3.right, out hit, Quaternion.identity, 0.5f * characterWidth + vertCastPadding, immoveables, QueryTriggerInteraction.UseGlobal);
-            if (isBlock && hit.collider.isTrigger || hit.normal != Vector3.left)
+            if (isBlock && (hit.collider.isTrigger))
                 isBlock = false;
+            Debug.Log("RightBlock: " + isBlock);
         }
         else if (dir == Vector3.left)
         {
             isBlock = Physics.BoxCast(boxCenter, halfExtends, Vector3.left, out hit, Quaternion.identity, 0.5f * characterWidth + vertCastPadding, immoveables, QueryTriggerInteraction.UseGlobal);
-            if (isBlock && hit.collider.isTrigger || hit.normal != Vector3.right)
+            if (isBlock && (hit.collider.isTrigger))
                 isBlock = false;
+            Debug.Log("LeftBlock: " + isBlock);
         }
         else
         {
