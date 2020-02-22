@@ -443,7 +443,7 @@ public class PlayerController : MonoBehaviour
         Vector3 worldXhairPos;
         Vector2 screenXhairPos;
         Vector3 worldXhairScreenPos;
-
+        Vector3 dist = worldXhair.transform.position - transform.position;
         //These two ifs changes fake crosshair position in world space
         if (aimInputMouse != Vector2.zero) 
         { 
@@ -463,10 +463,7 @@ public class PlayerController : MonoBehaviour
         }
         else
         {
-            float distX = worldXhair.transform.position.x - transform.position.x;
-            float distY = worldXhair.transform.position.y - transform.position.y;
-            Vector3 dist = new Vector3(distX, distY, 0);
-            worldXhair.transform.position = transform.position + dist;
+            worldXhair.transform.position = dist;
         }
 
         //This convert worldXhair position to ScreenPoint then to UI local Point
