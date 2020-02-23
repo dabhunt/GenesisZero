@@ -12,7 +12,7 @@ public class CharacterAimFootIK : MonoBehaviour
     public Vector3 ChestOffset;
     public LayerMask LayerMask;
     public Quaternion OriginalChestRotation;
-   
+    private PlayerController pc;
     [Range(0,1)]
     public float DistanceToGround;
    
@@ -24,14 +24,14 @@ public class CharacterAimFootIK : MonoBehaviour
         Target = new GameObject().transform;
         Chest = Anim.GetBoneTransform(HumanBodyBones.Chest);
         OriginalChestRotation = Chest.rotation;
-
+        pc = GetComponent<PlayerController>();
      
         
     }
     private void Update()
     {
         Vector2 mouseposition = Input.mousePosition;
-        Target.position = Camera.main.ScreenToWorldPoint(new Vector3(mouseposition.x,mouseposition.y, Mathf.Abs(Camera.main.transform.position.z)));  //this is currently a hardcoded distance away from the camera but if we calculate the distance for z we could do animated movements in the z for the camera
+        Target.position = pc.worldXhair.transform.position;//Camera.main.ScreenToWorldPoint(new Vector3(mouseposition.x,mouseposition.y, Mathf.Abs(Camera.main.transform.position.z)));  //this is currently a hardcoded distance away from the camera but if we calculate the distance for z we could do animated movements in the z for the camera
        
     }
 
