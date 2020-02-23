@@ -19,6 +19,7 @@ public class PlatformPatrollerAI : AIController
 
     public float PatrolSpeed = 5.0f; // Movement speed while patrolling
     public float PatrolSwitchRate = 1.0f; // Rate at which the enemy switches directions while patrolling
+    private float patrolCycleOffset = 0.0f; // Randomly set offset for the patrol cycle
     private int faceDir = 1; // Direction the enemy is facing: 1 = right, -1 = left
     private int faceDirPrev = 1; // Previous face direction
     private float faceDirChangeTime = 0.0f; // Time since the enemy last changed direction
@@ -44,6 +45,7 @@ public class PlatformPatrollerAI : AIController
     {
         base.Start();
         faceDir = Mathf.RoundToInt(Mathf.Sign(Random.value - 0.5f));
+        patrolCycleOffset = Random.value * Mathf.PI;
     }
 
     new protected void Update()
@@ -87,7 +89,7 @@ public class PlatformPatrollerAI : AIController
         else if (state == AIState.Patrol)
         {
             targetSpeed = PatrolSpeed;
-            faceDir = Mathf.RoundToInt(Mathf.Sign(Mathf.Sin(Time.time * PatrolSwitchRate)));
+            faceDir = Mathf.RoundToInt(Mathf.Sign(Mathf.Sin(Time.time * PatrolSwitchRate + patrolCycleOffset)));
         }
         else if (state == AIState.Idle)
         {

@@ -12,7 +12,10 @@ public class AIController : Pawn
     public AIPropertyObject BehaviorProperties;
 
     public enum AIState { Idle, Patrol, Follow, Charge, Attack, Cooldown }
-    protected AIState state = AIState.Patrol; // Current behavior state
+    protected AIState state = AIState.Idle; // Current behavior state
+    public float IdlePatrolIntervalMin = 1.0f; // Minimum time interval for switching between idling and patrolling
+    public float IdlePatrolIntervalMax = 2.0f; // Maximum time interval for switching between idling and patrolling
+    private float idlePatrolIntervalCurrent = 1.0f; // Randomly chosen interval in range
     protected bool isGrounded = false;
 
     public Transform Target; // Target or player object to follow and attack
@@ -136,14 +139,28 @@ public class AIController : Pawn
     {
         if (state == AIState.Idle)
         {
-            ChangeState(AIState.Patrol);
-        }
-
-        if (state == AIState.Patrol) // State when moving around while not following player
-        {
             if ((GetDistanceToTarget() <= BehaviorProperties.DetectRadius && targetVisible) || alertTracking)
             {
                 ChangeState(AIState.Follow);
+            }
+
+            if (stateTime > idlePatrolIntervalCurrent)
+            {
+                idlePatrolIntervalCurrent = Random.Range(IdlePatrolIntervalMin, IdlePatrolIntervalMax);
+                ChangeState(AIState.Patrol);
+            }
+        }
+        else if (state == AIState.Patrol) // State when moving around while not following player
+        {
+            if ((GetDistanceToTarget() <= BehaviorProperties.DetectRadius && targetVisible) || alertTracking)
+            {
+                idlePatrolIntervalCurrent = Random.Range(IdlePatrolIntervalMin, IdlePatrolIntervalMax);
+                ChangeState(AIState.Follow);
+            }
+
+            if (stateTime > idlePatrolIntervalCurrent)
+            {
+                ChangeState(AIState.Idle);
             }
         }
         else if (state == AIState.Follow) // State when following player to attack
