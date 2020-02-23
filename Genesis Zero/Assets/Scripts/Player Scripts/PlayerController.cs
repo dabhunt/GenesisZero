@@ -50,11 +50,13 @@ public class PlayerController : MonoBehaviour
 
     [Header("Animations")]
     public float triggerResetTime = 0.25f;
-    //Component parts used in this Script
+
+    //Component Parts
     private PlayerInputActions inputActions;
     private Player player;
     private OverHeat overheat;
-    //This chunk relates to movements
+
+    //Movement Variables
     private Vector2 movementInput;
     private RaycastHit groundHitInfo;
     private Vector3 moveVec = Vector3.right;
@@ -67,14 +69,13 @@ public class PlayerController : MonoBehaviour
     private int rollDirection;
     private Vector3 lastRollingPosition;
 
-
-    //This chunk relate to aim
+    //Aim Variables
     private Vector2 aimInputMouse;
     private Vector2 aimInputController;
     private float fireInput;
     private Gun gun;
 
-    //This chunk of variables is related to Animation/state
+    //Animation/States Variables
     private Animator animator;
     private bool isGrounded;
     private bool isJumping;
@@ -102,7 +103,7 @@ public class PlayerController : MonoBehaviour
 
     private void Start()
     {
-        Cursor.visible = true;
+        Cursor.visible = false;
         Cursor.lockState = CursorLockMode.Confined;
         player = GetComponent<Player>();
     }
@@ -117,9 +118,9 @@ public class PlayerController : MonoBehaviour
         CheckGround();
         ApplyGravity();
         Aim();
-        UpdateDodgeRoll();
         Move();
         UpdateJump();
+        UpdateDodgeRoll();
         DrawDebugLines();
     }
 
@@ -236,6 +237,7 @@ public class PlayerController : MonoBehaviour
         if (ctx.performed)
         {
             if (isRolling) return;
+            if (isGrounded && jumpCount < 2) return;
             jumpPressedTime = jumpBufferTime;
             if (!isJumping && jumpCount > 0)
             {
@@ -246,7 +248,7 @@ public class PlayerController : MonoBehaviour
                 isJumping = true;
                 vertVel = jumpStrength;
             }
-            else if (isJumping && jumpCount > 0)
+            else if (!isGrounded && jumpCount > 0)
             {
                 jumpCount--;
                 animator.SetTrigger("startDoubleJump");
@@ -311,15 +313,15 @@ public class PlayerController : MonoBehaviour
                 if (hit.distance < 0.5f * characterHeight + vertCastPadding)
                     transform.position = Vector3.Lerp(transform.position, transform.position + Vector3.up * characterHeight * 0.5f, 5 * Time.fixedDeltaTime);
 
-            if (!isJumping)
-            {
+            if (vertVel < 0)
                 vertVel = 0;
+            if (!isJumping)
                 jumpCount = 2;
-            }
         }
         else
         {
             isGrounded = false;
+            //An extra cast for ground to deal with deeper slopes
             if (Physics.Raycast(transform.position, Vector3.down, out hit, characterHeight * 0.5f * slopeRayDistMult, immoveables))
                 if (hit.normal == Vector3.up)
                     return;
@@ -357,14 +359,14 @@ public class PlayerController : MonoBehaviour
         {
             animator.SetTrigger("startRoll");
             StartCoroutine(ResetTrigger("startRoll", triggerResetTime));
-            isRolling = true;
-            distanceRolled = 0;
-            lastRollingPosition = transform.position;
             //Select roll direction based on crosshair position and input
             if (movementInput.x != 0)
                 rollDirection = movementInput.x > 0 ? 1 : -1;
             else
                 rollDirection =  isAimingRight ? 1 : -1;
+            isRolling = true;
+            distanceRolled = 0;
+            lastRollingPosition = transform.position;
 
             //Rotate the character depending on roll direction
             if (rollDirection < 0 && isFacingRight)
@@ -377,7 +379,6 @@ public class PlayerController : MonoBehaviour
                 transform.rotation = Quaternion.Euler(0, 90, 0);
                 isFacingRight = true;
             }
-
         }
     }
 
@@ -392,22 +393,32 @@ public class PlayerController : MonoBehaviour
             //interupts roll if it's blocked
             if ((rollDirection > 0 && IsBlocked(Vector3.right)) || (rollDirection < 0 && IsBlocked(Vector3.left)))
             {   
-                isRolling = false;
-                animator.SetTrigger("endRoll");
-                StartCoroutine(ResetTrigger("endRoll", triggerResetTime));
+                if (IsBlocked(Vector3.up))
+                {
+                    rollDirection = -rollDirection;
+                    distanceRolled = rollDistance - 0.5f;
+                }
+                else
+                {
+                    isRolling = false;
+                    animator.SetTrigger("endRoll");
+                    StartCoroutine(ResetTrigger("endRoll", triggerResetTime));
+                    return;
+                }
             }
-
-            transform.position += moveVec * rollSpeed * Time.fixedDeltaTime;
             //continue rolling if rollDistance is not reached
             if (distanceRolled < rollDistance)
             {
+                transform.position += moveVec * rollSpeed * Time.fixedDeltaTime;
                 distanceRolled += Vector3.Distance(transform.position, lastRollingPosition);
             }
             else
             {
                 //make sure player doesn't get stuck under blocks
                 if (IsBlocked(Vector3.up))
+                {
                     distanceRolled = rollDistance - 0.5f;
+                }
                 else
                 {
                     isRolling = false;
@@ -432,9 +443,8 @@ public class PlayerController : MonoBehaviour
         Vector3 worldXhairPos;
         Vector2 screenXhairPos;
         Vector3 worldXhairScreenPos;
-
         //These two ifs changes fake crosshair position in world space
-        if (aimInputMouse != Vector2.zero) 
+        if (aimInputMouse != Vector2.zero)
         { 
             //Stops the crosshair from going off screen
             worldXhairPos = mouseWorldPos;
@@ -442,18 +452,24 @@ public class PlayerController : MonoBehaviour
             worldXhairPos.y = Mathf.Clamp(worldXhairPos.y, minBounds.y, maxBounds.y);
             worldXhair.transform.position = worldXhairPos;
         }
-
-        if (aimInputController != Vector2.zero) 
+        else if (aimInputController != Vector2.zero)
         { 
             //Stops the crosshair from going off screen
-            worldXhairPos = (Vector3)aimInputController * gamePadSens * Time.fixedDeltaTime;
+            
+            worldXhair.transform.position += (Vector3)aimInputController * gamePadSens * Time.fixedDeltaTime;;
+            worldXhairPos = worldXhair.transform.position;
             worldXhairPos.x = Mathf.Clamp(worldXhairPos.x, minBounds.x, maxBounds.x);
             worldXhairPos.y = Mathf.Clamp(worldXhairPos.y, minBounds.y, maxBounds.y);
-            worldXhair.transform.position += worldXhairPos;
+            worldXhair.transform.position = worldXhairPos;
         }
-        
-        //This convert the world crosshair position into local UI canvas position
-        // and set it to the real crosshair, z = 0 here because there's no distance between canvas and the worldXhair
+        else
+        {
+            //make crosshair move along with player
+            
+        }
+
+        //This convert worldXhair position to ScreenPoint then to UI local Point
+        // then set it to realXhair, z = 0 here.
         worldXhairScreenPos = canvasRef.worldCamera.WorldToScreenPoint(new Vector3(worldXhair.transform.position.x, worldXhair.transform.position.y, 0));
         RectTransformUtility.ScreenPointToLocalPointInRectangle(canvasRef.transform as RectTransform, worldXhairScreenPos, canvasRef.worldCamera, out screenXhairPos);
         screenXhair.anchoredPosition = screenXhairPos;
@@ -461,7 +477,7 @@ public class PlayerController : MonoBehaviour
         gunObject.transform.LookAt(worldXhair.transform);
 
         // checking where the player's aiming
-        if (transform.position.x < screenXhair.transform.position.x)
+        if (transform.position.x < worldXhair.transform.position.x)
             isAimingRight = true;
         else
             isAimingRight = false;
@@ -489,12 +505,13 @@ public class PlayerController : MonoBehaviour
         bool isBlock = false;
         RaycastHit hit;
         
-        float radius = 0.5f * characterWidth - vertCastPadding;
-        float maxDist = 0.5f * characterHeight - radius + vertCastPadding;
-        Vector3 halfY = new Vector3 (0, characterHeight * 0.5f, 0);
+        float radius = (0.5f * characterWidth) - vertCastPadding;
+        float maxDist = (0.5f * characterHeight) - radius + vertCastPadding;
+        Vector3 halfY = new Vector3 (0, characterHeight * 0.25f, 0);
         Vector3 boxCenter = isRolling ? transform.position - halfY : transform.position;
-        float boxHalf = isRolling ? 0.25f * characterHeight - horCastPadding : 0.5f * characterHeight - horCastPadding;
+        float boxHalf = isRolling ? (0.25f * characterHeight) - (0.5f * horCastPadding) : (0.5f * characterHeight) - horCastPadding;
         Vector3 halfExtends = new Vector3(0, boxHalf, 0);
+        Vector3 horDirection;
 
         if (dir == Vector3.up)
         {
@@ -510,14 +527,16 @@ public class PlayerController : MonoBehaviour
         }
         else if (dir == Vector3.right)
         {
-            isBlock = Physics.BoxCast(boxCenter, halfExtends, Vector3.right, out hit, Quaternion.identity, 0.5f * characterWidth + vertCastPadding, immoveables, QueryTriggerInteraction.UseGlobal);
-            if (isBlock && hit.collider.isTrigger || hit.normal != Vector3.left)
+            horDirection = isFacingRight ? moveVec : -moveVec;
+            isBlock = Physics.BoxCast(boxCenter, halfExtends, horDirection, out hit, Quaternion.identity, 0.5f * characterWidth + vertCastPadding, immoveables, QueryTriggerInteraction.UseGlobal);
+            if (isBlock && (hit.collider.isTrigger))
                 isBlock = false;
         }
         else if (dir == Vector3.left)
         {
-            isBlock = Physics.BoxCast(boxCenter, halfExtends, Vector3.left, out hit, Quaternion.identity, 0.5f * characterWidth + vertCastPadding, immoveables, QueryTriggerInteraction.UseGlobal);
-            if (isBlock && hit.collider.isTrigger || hit.normal != Vector3.right)
+            horDirection = !isFacingRight ? moveVec : -moveVec;
+            isBlock = Physics.BoxCast(boxCenter, halfExtends, horDirection, out hit, Quaternion.identity, 0.5f * characterWidth + vertCastPadding, immoveables, QueryTriggerInteraction.UseGlobal);
+            if (isBlock && (hit.collider.isTrigger))
                 isBlock = false;
         }
         else
@@ -538,13 +557,16 @@ public class PlayerController : MonoBehaviour
         animator.SetFloat("ySpeed", ySpeed);
         animator.SetBool("isGrounded", isGrounded);
         animator.SetBool("isRolling", isRolling);
-        animator.SetBool("isFacingRight", isFacingRight);
+        //animator.SetBool("isFacingRight", isFacingRight);
         animator.SetBool("isAimingRight", isAimingRight);
     }
     public float GetCurrentSpeed()
     {
         var xSpeed = currentSpeed != 0 ? currentSpeed / maxSpeed : 0;
         return xSpeed;
+    }
+    public bool IsFacingRight(){
+        return isFacingRight;
     }
     
     private void DrawDebugLines()
