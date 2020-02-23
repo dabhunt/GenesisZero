@@ -12,7 +12,6 @@ public class ExplosiveShot : MonoBehaviour
     //how fast the sphere grows in size
     public string vfxName;
     public GameObject explosionPrefab;
-    private float lerpScale=0;
    	private GameObject runtimeExplosion;
    	private Restart restartScript;
    	private float startScale = .1f;
