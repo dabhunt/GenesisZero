@@ -73,6 +73,7 @@ public class PlayerController : MonoBehaviour
     private Vector2 aimInputMouse;
     private Vector2 aimInputController;
     private float fireInput;
+    private float gamepadAimTime;
     private Gun gun;
 
     //Animation/States Variables
@@ -103,7 +104,7 @@ public class PlayerController : MonoBehaviour
 
     private void Start()
     {
-        Cursor.visible = true;
+        Cursor.visible = false;
         Cursor.lockState = CursorLockMode.Confined;
         player = GetComponent<Player>();
     }
@@ -142,8 +143,8 @@ public class PlayerController : MonoBehaviour
     {
         float multiplier = isGrounded ? 1 : airControlMult;
         float startVel = Mathf.Abs(currentSpeed);
-        // this is to deal with left stick returning floats
-        var input = movementInput.x < 0 ? Mathf.Floor(movementInput.x) : Mathf.Ceil(movementInput.x);
+        Vector3 distXhair = worldXhair.transform.position - transform.position;
+
         maxSpeed = GetComponent<Player>().GetSpeed().GetValue();
         
         CalculateForwardDirection();
@@ -171,14 +172,14 @@ public class PlayerController : MonoBehaviour
             sound.StopWalk();
         }
 
-        if (input != 0)
+        if (movementInput.x != 0)
         {
-            if (input > 0 && IsBlocked(Vector3.right))
+            if (movementInput.x > 0 && IsBlocked(Vector3.right))
             {
                 currentSpeed = 0;
                 return;
             }
-            if (input < 0 && IsBlocked(Vector3.left))
+            if (movementInput.x < 0 && IsBlocked(Vector3.left))
             {
                 currentSpeed = 0;
                 return;
@@ -193,17 +194,19 @@ public class PlayerController : MonoBehaviour
                 currentSpeed = Mathf.Clamp(currentSpeed, maxSpeed * airSpeedMult, maxSpeed * airSpeedMult);
 
             //Rotation depending on input
-            if (input > 0 && transform.eulerAngles.y != 90)
+            if (movementInput.x > 0 && transform.eulerAngles.y != 90)
             {
                 transform.rotation = Quaternion.Euler(0, 90, 0);
                 isFacingRight = true;
             }
-            if (input < 0 && transform.eulerAngles.y != -90)
+            if (movementInput.x < 0 && transform.eulerAngles.y != -90)
             {
                 transform.rotation = Quaternion.Euler(0, -90, 0);
                 isFacingRight = false;
             }
             transform.position += moveVec * (startVel * Time.fixedDeltaTime + (0.5f * acceleration * Mathf.Pow(Time.fixedDeltaTime, 2)));
+            if (gamepadAimTime > 0)
+                worldXhair.transform.position = transform.position + distXhair;
         }
         else
         {
@@ -440,30 +443,35 @@ public class PlayerController : MonoBehaviour
         Vector3 mouseWorldPos = canvasRef.worldCamera.ScreenToWorldPoint(new Vector3(Input.mousePosition.x, Input.mousePosition.y, camZ));
         Vector3 maxBounds = canvasRef.worldCamera.ViewportToWorldPoint(new Vector3(1, 1, camZ));
         Vector3 minBounds = canvasRef.worldCamera.ViewportToWorldPoint(new Vector3(0, 0, camZ));
-        Vector3 worldXhairPos;
+        Vector3 worldXhairPos = worldXhair.transform.position;
         Vector2 screenXhairPos;
         Vector3 worldXhairScreenPos;
 
-        //These two ifs changes fake crosshair position in world space
-        if (aimInputController == Vector2.zero) 
+        //Clamp the mouse position to bind worldXhair inside screen when using mouse
+        mouseWorldPos.x = Mathf.Clamp(mouseWorldPos.x, minBounds.x, maxBounds.x);
+        mouseWorldPos.y = Mathf.Clamp(mouseWorldPos.y, minBounds.y, maxBounds.y);
+
+        gamepadAimTime -= Time.fixedDeltaTime;
+        gamepadAimTime = Mathf.Max(gamepadAimTime, 0);
+        if (aimInputController != Vector2.zero)
         { 
-            //Stops the crosshair from going off screen
-            worldXhairPos = mouseWorldPos;
+            //Stops the crosshair from going off screen when using controller
+            gamepadAimTime = 30;
+            worldXhairPos += (Vector3)aimInputController * gamePadSens * Time.fixedDeltaTime;;
             worldXhairPos.x = Mathf.Clamp(worldXhairPos.x, minBounds.x, maxBounds.x);
             worldXhairPos.y = Mathf.Clamp(worldXhairPos.y, minBounds.y, maxBounds.y);
             worldXhair.transform.position = worldXhairPos;
         }
         else
-        { 
-            //Stops the crosshair from going off screen
-            worldXhairPos = (Vector3)aimInputController * gamePadSens * Time.fixedDeltaTime;
-            worldXhairPos.x = Mathf.Clamp(worldXhairPos.x, minBounds.x, maxBounds.x);
-            worldXhairPos.y = Mathf.Clamp(worldXhairPos.y, minBounds.y, maxBounds.y);
-            worldXhair.transform.position += worldXhairPos;
+        {
+            if (aimInputMouse != Vector2.zero && gamepadAimTime > 0)
+                gamepadAimTime = 0;
+            if (gamepadAimTime == 0)
+                worldXhair.transform.position = mouseWorldPos;
         }
 
-        //This convert the world crosshair position into local UI canvas position
-        // and set it to the real crosshair, z = 0 here because there's no distance between canvas and the worldXhair
+        //This convert worldXhair position to ScreenPoint then to UI local Point
+        // then set it to realXhair, z = 0 here.
         worldXhairScreenPos = canvasRef.worldCamera.WorldToScreenPoint(new Vector3(worldXhair.transform.position.x, worldXhair.transform.position.y, 0));
         RectTransformUtility.ScreenPointToLocalPointInRectangle(canvasRef.transform as RectTransform, worldXhairScreenPos, canvasRef.worldCamera, out screenXhairPos);
         screenXhair.anchoredPosition = screenXhairPos;

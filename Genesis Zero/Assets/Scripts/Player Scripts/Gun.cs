@@ -29,7 +29,7 @@ public class Gun : MonoBehaviour
     }
     public void Shoot()
     {   
-        spreadAngle = overheat.CalculateBloom();
+        spreadAngle = overheat.ShootBloom();
         //print("spreadAngle: "+spreadAngle);
         Vector3 spawnpoint = new Vector3(firePoint.transform.position.x, firePoint.transform.position.y, 0);
         GameObject instance = (GameObject) Instantiate(GetProjectile(), spawnpoint, firePoint.transform.rotation);

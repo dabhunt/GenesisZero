@@ -20,7 +20,8 @@ public class SpawnOnDestroy : MonoBehaviour
     public GameObject EssencePrefab;
     public GameObject ModifierPrefab;
 
-    public SkillObject[] ModTypes;
+    private SkillObject ModDrop;
+    private Player player;
    
     private AudioManager aManager;
     //bool applicationIsQuitting;
@@ -30,7 +31,10 @@ public class SpawnOnDestroy : MonoBehaviour
     {
         quitting = false;
         GameObject temp = GameObject.FindWithTag("EventSystem");
-        restartScript = temp.GetComponent<Restart>();
+         restartScript = temp.GetComponent<Restart>();
+        temp = GameObject.FindWithTag("Player");
+        player = temp.GetComponent<Player>();
+        //populate the list of potential modifier drops
         aManager = FindObjectOfType<AudioManager>();
         if (vfxScaleMultiplier <= 0){
             vfxScaleMultiplier = 1;
@@ -77,7 +81,8 @@ public class SpawnOnDestroy : MonoBehaviour
             {
                 GameObject randMod = Instantiate(ModifierPrefab, new Vector3(transform.position.x, transform.position.y, 0), Quaternion.identity);
                 SkillPickup pickup = randMod.GetComponent<SkillPickup>();
-                pickup.skill = ModTypes[Random.Range(0,ModTypes.Length-1)];
+                //gets random skill from skillmanagers resource folder
+                pickup.skill = player.GetSkillManager().GetRandomSkill();
             }
         }
 
