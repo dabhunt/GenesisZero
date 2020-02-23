@@ -10,6 +10,7 @@ using UnityEngine.UI;
 public class SkillUIElement : MonoBehaviour
 {
     public Image Icon;
+    public SkillObject Skill;
     public int StackNumber;
     // Start is called before the first frame update
     void Start()
@@ -19,8 +20,7 @@ public class SkillUIElement : MonoBehaviour
             GetComponent<Image>().sprite = Icon.sprite;
         }
     }
-
-    public void UpdateSkillUIElement(Sprite icon, int stacknumber)
+    public void UpdateSkillUIElement(Sprite icon, int stacknumber, SkillObject skill)
     {
         Icon.sprite = icon;
         GetComponent<Image>().sprite = icon;
@@ -33,20 +33,25 @@ public class SkillUIElement : MonoBehaviour
         {
             GetComponentInChildren<Text>().text = "";
         }
+        Skill = skill;
+        
     }
-
     public void SetStack(int num)
     {
-        UpdateSkillUIElement(Icon.sprite, num);
+        UpdateSkillUIElement(Icon.sprite, num, Skill);
     }
 
     public void AddStack(int num)
     {
-        UpdateSkillUIElement(Icon.sprite, StackNumber + num);
+        UpdateSkillUIElement(Icon.sprite, StackNumber + num, Skill);
     }
 
     public void SetIcon(Sprite icon)
     {
-        UpdateSkillUIElement(icon, StackNumber);
+        UpdateSkillUIElement(icon, StackNumber, Skill);
+    }
+    public void SetSkill(SkillObject skill)
+    {
+        UpdateSkillUIElement(Icon.sprite, StackNumber, Skill);
     }
 }

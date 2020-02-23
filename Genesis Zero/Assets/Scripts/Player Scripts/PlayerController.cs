@@ -103,7 +103,7 @@ public class PlayerController : MonoBehaviour
 
     private void Start()
     {
-        Cursor.visible = true;
+        Cursor.visible = false;
         Cursor.lockState = CursorLockMode.Confined;
         player = GetComponent<Player>();
     }
@@ -443,9 +443,8 @@ public class PlayerController : MonoBehaviour
         Vector3 worldXhairPos;
         Vector2 screenXhairPos;
         Vector3 worldXhairScreenPos;
-
         //These two ifs changes fake crosshair position in world space
-        if (aimInputController == Vector2.zero) 
+        if (aimInputMouse != Vector2.zero)
         { 
             //Stops the crosshair from going off screen
             worldXhairPos = mouseWorldPos;
@@ -453,17 +452,24 @@ public class PlayerController : MonoBehaviour
             worldXhairPos.y = Mathf.Clamp(worldXhairPos.y, minBounds.y, maxBounds.y);
             worldXhair.transform.position = worldXhairPos;
         }
-        else
+        else if (aimInputController != Vector2.zero)
         { 
             //Stops the crosshair from going off screen
-            worldXhairPos = (Vector3)aimInputController * gamePadSens * Time.fixedDeltaTime;
+            
+            worldXhair.transform.position += (Vector3)aimInputController * gamePadSens * Time.fixedDeltaTime;;
+            worldXhairPos = worldXhair.transform.position;
             worldXhairPos.x = Mathf.Clamp(worldXhairPos.x, minBounds.x, maxBounds.x);
             worldXhairPos.y = Mathf.Clamp(worldXhairPos.y, minBounds.y, maxBounds.y);
-            worldXhair.transform.position += worldXhairPos;
+            worldXhair.transform.position = worldXhairPos;
+        }
+        else
+        {
+            //make crosshair move along with player
+            
         }
 
-        //This convert the world crosshair position into local UI canvas position
-        // and set it to the real crosshair, z = 0 here because there's no distance between canvas and the worldXhair
+        //This convert worldXhair position to ScreenPoint then to UI local Point
+        // then set it to realXhair, z = 0 here.
         worldXhairScreenPos = canvasRef.worldCamera.WorldToScreenPoint(new Vector3(worldXhair.transform.position.x, worldXhair.transform.position.y, 0));
         RectTransformUtility.ScreenPointToLocalPointInRectangle(canvasRef.transform as RectTransform, worldXhairScreenPos, canvasRef.worldCamera, out screenXhairPos);
         screenXhair.anchoredPosition = screenXhairPos;

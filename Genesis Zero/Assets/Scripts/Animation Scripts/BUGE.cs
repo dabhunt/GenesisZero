@@ -74,7 +74,6 @@ public class BUGE : MonoBehaviour
                  
                  //print("player.position " + Player.position);
                  //setting always the same Y position
-            	
                  //remenber to use the new 'follow' position, not the Player.transform.position or else it'll move directly to the player
                  speedvar += acceleration;
                  //speedvar += distMulti;
