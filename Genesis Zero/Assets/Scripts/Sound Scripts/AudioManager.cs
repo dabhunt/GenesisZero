@@ -11,6 +11,11 @@ public class AudioManager : MonoBehaviour
     List<Sound> Playlist = new List<Sound>();
     List<Sound> Soundlist = new List<Sound>();
 
+    private float setVolumeMaster;
+    private float setVolumeMusic;
+    private float setVolumeSound;
+    private double startTime;
+
     // Use this for initialization
     void Awake()
     {
@@ -22,6 +27,12 @@ public class AudioManager : MonoBehaviour
             return;
         }
         DontDestroyOnLoad(gameObject);
+
+        setVolumeMaster = AudioListener.volume;
+        setVolumeMusic = 1.0f;
+        setVolumeSound = 1.0f;
+        startTime = AudioSettings.dspTime;
+
     }
 
     void Start()
@@ -34,28 +45,136 @@ public class AudioManager : MonoBehaviour
     {
 
     }
+    //=========================
+    // Global Audio Functions
+    //=========================
+
+    public void TogglePauseAll()
+    {
+        AudioListener.pause = !AudioListener.pause;
+    }
+
+    public void MuteAll()
+    {
+        AudioListener.volume = 0;
+        /*
+        if (AudioListener.volume != 0)
+        {
+            setVolume = AudioListener.volume;
+            AudioListener.volume = 0;
+            Debug.LogWarning("Muted, previous volume saved");
+        }
+        else
+        {
+            AudioListener.volume = setVolume;
+            Debug.LogWarning("Unmuted");
+        }*/
+    }
+
+    public void AdjustVolumeAll(float vol)
+    {
+        AudioListener.volume += vol;
+    }
+
+    public void SetVolumeAll(float vol)
+    {
+        AudioListener.volume = vol;
+    }
 
     //=======================
     // Soundtrack functions
     //=======================
 
-    public void PlayTrack (string name)
+    public void AdjustVolumeMusic(float vol)
     {
         List<Sound>.Enumerator em = Playlist.GetEnumerator();
-        bool found = false;
-        
-        while (em.MoveNext() && !found)
+
+        setVolumeMusic += vol;
+        while (em.MoveNext())
         {
-            if (em.Current.name == name)
-            {
-                found = true;
-                em.Current.source.Play();
-            }
+            em.Current.source.volume += vol;
         }
-        if (!found)
+    }
+
+    public void SetVolumeMusic(float vol)
+    {
+        List<Sound>.Enumerator em = Playlist.GetEnumerator();
+
+        setVolumeMusic = vol;
+        while (em.MoveNext())
         {
-            Debug.LogWarning("Audio: '" + name + "' not found!");
-            return;
+            em.Current.source.volume = vol;
+        }
+    }
+
+    public void ClearAllMusic()
+    {
+        List<Sound>.Enumerator em = Playlist.GetEnumerator();
+
+        while (em.MoveNext())
+        {
+            Destroy(em.Current.source);
+        }
+        Playlist.Clear();
+    }
+
+    public void PauseAllMusic()
+    {
+        List<Sound>.Enumerator em = Playlist.GetEnumerator();
+
+        while (em.MoveNext())
+        {
+            em.Current.source.Pause();
+        }
+    }
+
+    public void UnPauseAllMusic()
+    {
+        List<Sound>.Enumerator em = Playlist.GetEnumerator();
+
+        while (em.MoveNext())
+        {
+            em.Current.source.UnPause();
+        }
+    }
+
+    public void PlayTrack (string name)
+    {
+       // bool active = false;
+        AudioClip loadedSound = (AudioClip)Resources.Load("Sounds/" + name, typeof(AudioClip));
+        Sound s = new Sound();
+
+        s.name = name;
+        s.source = gameObject.AddComponent<AudioSource>();
+        s.source.name = name;
+        s.source.clip = loadedSound;
+        s.source.volume = 1;
+        s.source.pitch = 1;
+        s.source.loop = false;
+        s.playOnAwake = true;
+
+        double duration = (double)s.source.clip.samples / s.source.clip.frequency;
+
+        // Add to playlist
+        if (Playlist.Count > 0)
+        {
+            Playlist.Add(s);
+
+            s.source.PlayScheduled(startTime);
+            startTime += duration;
+            Debug.LogWarning("Duration: " + startTime);
+            Debug.LogWarning("End of playlist, adding: " + name);
+        }
+        else
+        {
+            Playlist.Add(s);
+            if (s.playOnAwake)
+            {
+                s.source.Play();
+                startTime += duration;
+            }
+            Debug.LogWarning("Duration: " + startTime);
+            Debug.LogWarning("Playlist empty, adding: " + name);
         }
     }
 
@@ -70,6 +189,8 @@ public class AudioManager : MonoBehaviour
             {
                 found = true;
                 em.Current.source.Stop();
+                Destroy(em.Current.source);
+                Playlist.Remove(em.Current);
             }
         }
         if (!found)
@@ -89,7 +210,7 @@ public class AudioManager : MonoBehaviour
             if (em.Current.name == name)
             {
                 found = true;
-                em.Current.source.  Pause();
+                em.Current.source.Pause();
             }
         }
         if (!found)
@@ -216,6 +337,59 @@ public class AudioManager : MonoBehaviour
     //=================
     // Sound functions
     //=================
+
+    public void AdjustVolumeSound(float vol)
+    {
+        List<Sound>.Enumerator em = Soundlist.GetEnumerator();
+
+        setVolumeSound += vol;
+        while (em.MoveNext())
+        {
+            em.Current.source.volume += vol;
+        }
+    }
+
+    public void SetVolumeSound(float vol)
+    {
+        List<Sound>.Enumerator em = Soundlist.GetEnumerator();
+
+        setVolumeSound = vol;
+        while (em.MoveNext())
+        {
+            em.Current.source.volume = vol;
+        }
+    }
+
+    public void ClearAllSound()
+    {
+        List<Sound>.Enumerator em = Soundlist.GetEnumerator();
+
+        while (em.MoveNext())
+        {
+            Destroy(em.Current.source);
+        }
+        Soundlist.Clear();
+    }
+
+    public void PauseAllSound()
+    {
+        List<Sound>.Enumerator em = Soundlist.GetEnumerator();
+
+        while (em.MoveNext())
+        {
+            em.Current.source.Pause();
+        }
+    }
+
+    public void UnPauseAllSound()
+    {
+        List<Sound>.Enumerator em = Soundlist.GetEnumerator();
+
+        while (em.MoveNext())
+        {
+            em.Current.source.UnPause();
+        }
+    }
 
     public void PlaySound(string name)
     {
