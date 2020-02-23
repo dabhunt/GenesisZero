@@ -11,9 +11,9 @@ public class LightSwitch : MonoBehaviour
 
     private float lerp = 0f;
     private float startScale = 0f;
-    private float endScale = 200f;
+    private float endScale = 0.5f;
     private float lerpScale = 0f;
-    private float lerpMultiplier = 0.005f;
+    private float lerpMultiplier = 0.05f;
 
 
     void OnTriggerEnter(Collider other)
