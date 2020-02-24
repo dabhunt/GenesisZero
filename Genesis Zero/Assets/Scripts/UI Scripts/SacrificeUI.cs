@@ -1,6 +1,7 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.InputSystem;
 
 public class SacrificeUI : MonoBehaviour
 {
@@ -10,7 +11,7 @@ public class SacrificeUI : MonoBehaviour
 
     private Player player;
     private PlayerController playerController;
-    private PlayerInputActions inputActions;
+    private GameInputActions inputActions;
     private Vector2 moveInput;
     private float selectInput;
     private SkillObject skill;
@@ -20,9 +21,17 @@ public class SacrificeUI : MonoBehaviour
     private void Wake()
     {
         //inputActions.PlayerControls.Move.performed += ctx => movementInput = ctx.ReadValue<Vector2>();
-        inputActions = new PlayerInputActions();
+        inputActions = GameObject.FindGameObjectWithTag("GameManagers").transform.Find("InputManager").GetComponent<GameInputActions>();
         inputActions.MenuControls.Move.performed += ctx => moveInput = ctx.ReadValue<Vector2>();
         inputActions.MenuControls.Move.performed += ctx => selectInput = ctx.ReadValue<float>();
+    }
+    private void OnDisable()
+    {
+        inputActions.Disable();
+    }
+    private void OnEnable() 
+    {
+        inputActions.Enable();    
     }
     private void Start()
     {
@@ -33,9 +42,12 @@ public class SacrificeUI : MonoBehaviour
         
     }
     
-    private void Pause()
+    private void Pause(InputAction.CallbackContext cxt)
     {
-
+        if (cxt.performed)
+        {
+            
+        }
     }
     private void changeSelection()
     {

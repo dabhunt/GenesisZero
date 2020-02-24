@@ -1,4 +1,4 @@
-// GENERATED AUTOMATICALLY FROM 'Assets/Scripts/Player Scripts/PlayerInputActions.inputactions'
+// GENERATED AUTOMATICALLY FROM 'Assets/Scripts/Player Scripts/GameInputActions.inputactions'
 
 using System;
 using System.Collections;
@@ -6,13 +6,13 @@ using System.Collections.Generic;
 using UnityEngine.InputSystem;
 using UnityEngine.InputSystem.Utilities;
 
-public class @PlayerInputActions : IInputActionCollection, IDisposable
+public class @GameInputActions : IInputActionCollection, IDisposable
 {
     private InputActionAsset asset;
-    public @PlayerInputActions()
+    public @GameInputActions()
     {
         asset = InputActionAsset.FromJson(@"{
-    ""name"": ""PlayerInputActions"",
+    ""name"": ""GameInputActions"",
     ""maps"": [
         {
             ""name"": ""PlayerControls"",
@@ -70,6 +70,14 @@ public class @PlayerInputActions : IInputActionCollection, IDisposable
                     ""name"": ""Interact"",
                     ""type"": ""Button"",
                     ""id"": ""37cdc43c-1b80-4a86-9c7c-e7179db50e60"",
+                    ""expectedControlType"": """",
+                    ""processors"": """",
+                    ""interactions"": """"
+                },
+                {
+                    ""name"": ""Pause"",
+                    ""type"": ""Button"",
+                    ""id"": ""408b2ce0-da77-4b59-82f1-6e338d6d24b1"",
                     ""expectedControlType"": """",
                     ""processors"": """",
                     ""interactions"": """"
@@ -262,6 +270,28 @@ public class @PlayerInputActions : IInputActionCollection, IDisposable
                     ""action"": ""AimController"",
                     ""isComposite"": false,
                     ""isPartOfComposite"": false
+                },
+                {
+                    ""name"": """",
+                    ""id"": ""5ac82d81-a413-49b6-be0b-c09c6a8aeb95"",
+                    ""path"": ""<Gamepad>/start"",
+                    ""interactions"": ""Press"",
+                    ""processors"": """",
+                    ""groups"": ""Gamepads"",
+                    ""action"": ""Pause"",
+                    ""isComposite"": false,
+                    ""isPartOfComposite"": false
+                },
+                {
+                    ""name"": """",
+                    ""id"": ""e2778baf-efa7-4cb5-a238-7fae0673f4a8"",
+                    ""path"": ""<Keyboard>/escape"",
+                    ""interactions"": ""Press"",
+                    ""processors"": """",
+                    ""groups"": ""Keyboard&Mouse"",
+                    ""action"": ""Pause"",
+                    ""isComposite"": false,
+                    ""isPartOfComposite"": false
                 }
             ]
         },
@@ -278,7 +308,7 @@ public class @PlayerInputActions : IInputActionCollection, IDisposable
                     ""interactions"": """"
                 },
                 {
-                    ""name"": ""Pause"",
+                    ""name"": ""Unpause"",
                     ""type"": ""Button"",
                     ""id"": ""5750c837-e1e9-4e63-afcc-5da20ffc6761"",
                     ""expectedControlType"": """",
@@ -324,7 +354,7 @@ public class @PlayerInputActions : IInputActionCollection, IDisposable
                     ""interactions"": ""Press"",
                     ""processors"": """",
                     ""groups"": ""Gamepads"",
-                    ""action"": ""Pause"",
+                    ""action"": ""Unpause"",
                     ""isComposite"": false,
                     ""isPartOfComposite"": false
                 },
@@ -335,7 +365,7 @@ public class @PlayerInputActions : IInputActionCollection, IDisposable
                     ""interactions"": ""Press"",
                     ""processors"": """",
                     ""groups"": ""Keyboard&Mouse"",
-                    ""action"": ""Pause"",
+                    ""action"": ""Unpause"",
                     ""isComposite"": false,
                     ""isPartOfComposite"": false
                 },
@@ -392,10 +422,11 @@ public class @PlayerInputActions : IInputActionCollection, IDisposable
         m_PlayerControls_Fire = m_PlayerControls.FindAction("Fire", throwIfNotFound: true);
         m_PlayerControls_Roll = m_PlayerControls.FindAction("Roll", throwIfNotFound: true);
         m_PlayerControls_Interact = m_PlayerControls.FindAction("Interact", throwIfNotFound: true);
+        m_PlayerControls_Pause = m_PlayerControls.FindAction("Pause", throwIfNotFound: true);
         // MenuControls
         m_MenuControls = asset.FindActionMap("MenuControls", throwIfNotFound: true);
         m_MenuControls_Select = m_MenuControls.FindAction("Select", throwIfNotFound: true);
-        m_MenuControls_Pause = m_MenuControls.FindAction("Pause", throwIfNotFound: true);
+        m_MenuControls_Unpause = m_MenuControls.FindAction("Unpause", throwIfNotFound: true);
         m_MenuControls_Move = m_MenuControls.FindAction("Move", throwIfNotFound: true);
     }
 
@@ -453,10 +484,11 @@ public class @PlayerInputActions : IInputActionCollection, IDisposable
     private readonly InputAction m_PlayerControls_Fire;
     private readonly InputAction m_PlayerControls_Roll;
     private readonly InputAction m_PlayerControls_Interact;
+    private readonly InputAction m_PlayerControls_Pause;
     public struct PlayerControlsActions
     {
-        private @PlayerInputActions m_Wrapper;
-        public PlayerControlsActions(@PlayerInputActions wrapper) { m_Wrapper = wrapper; }
+        private @GameInputActions m_Wrapper;
+        public PlayerControlsActions(@GameInputActions wrapper) { m_Wrapper = wrapper; }
         public InputAction @Move => m_Wrapper.m_PlayerControls_Move;
         public InputAction @AimMouse => m_Wrapper.m_PlayerControls_AimMouse;
         public InputAction @AimController => m_Wrapper.m_PlayerControls_AimController;
@@ -464,6 +496,7 @@ public class @PlayerInputActions : IInputActionCollection, IDisposable
         public InputAction @Fire => m_Wrapper.m_PlayerControls_Fire;
         public InputAction @Roll => m_Wrapper.m_PlayerControls_Roll;
         public InputAction @Interact => m_Wrapper.m_PlayerControls_Interact;
+        public InputAction @Pause => m_Wrapper.m_PlayerControls_Pause;
         public InputActionMap Get() { return m_Wrapper.m_PlayerControls; }
         public void Enable() { Get().Enable(); }
         public void Disable() { Get().Disable(); }
@@ -494,6 +527,9 @@ public class @PlayerInputActions : IInputActionCollection, IDisposable
                 @Interact.started -= m_Wrapper.m_PlayerControlsActionsCallbackInterface.OnInteract;
                 @Interact.performed -= m_Wrapper.m_PlayerControlsActionsCallbackInterface.OnInteract;
                 @Interact.canceled -= m_Wrapper.m_PlayerControlsActionsCallbackInterface.OnInteract;
+                @Pause.started -= m_Wrapper.m_PlayerControlsActionsCallbackInterface.OnPause;
+                @Pause.performed -= m_Wrapper.m_PlayerControlsActionsCallbackInterface.OnPause;
+                @Pause.canceled -= m_Wrapper.m_PlayerControlsActionsCallbackInterface.OnPause;
             }
             m_Wrapper.m_PlayerControlsActionsCallbackInterface = instance;
             if (instance != null)
@@ -519,6 +555,9 @@ public class @PlayerInputActions : IInputActionCollection, IDisposable
                 @Interact.started += instance.OnInteract;
                 @Interact.performed += instance.OnInteract;
                 @Interact.canceled += instance.OnInteract;
+                @Pause.started += instance.OnPause;
+                @Pause.performed += instance.OnPause;
+                @Pause.canceled += instance.OnPause;
             }
         }
     }
@@ -528,14 +567,14 @@ public class @PlayerInputActions : IInputActionCollection, IDisposable
     private readonly InputActionMap m_MenuControls;
     private IMenuControlsActions m_MenuControlsActionsCallbackInterface;
     private readonly InputAction m_MenuControls_Select;
-    private readonly InputAction m_MenuControls_Pause;
+    private readonly InputAction m_MenuControls_Unpause;
     private readonly InputAction m_MenuControls_Move;
     public struct MenuControlsActions
     {
-        private @PlayerInputActions m_Wrapper;
-        public MenuControlsActions(@PlayerInputActions wrapper) { m_Wrapper = wrapper; }
+        private @GameInputActions m_Wrapper;
+        public MenuControlsActions(@GameInputActions wrapper) { m_Wrapper = wrapper; }
         public InputAction @Select => m_Wrapper.m_MenuControls_Select;
-        public InputAction @Pause => m_Wrapper.m_MenuControls_Pause;
+        public InputAction @Unpause => m_Wrapper.m_MenuControls_Unpause;
         public InputAction @Move => m_Wrapper.m_MenuControls_Move;
         public InputActionMap Get() { return m_Wrapper.m_MenuControls; }
         public void Enable() { Get().Enable(); }
@@ -549,9 +588,9 @@ public class @PlayerInputActions : IInputActionCollection, IDisposable
                 @Select.started -= m_Wrapper.m_MenuControlsActionsCallbackInterface.OnSelect;
                 @Select.performed -= m_Wrapper.m_MenuControlsActionsCallbackInterface.OnSelect;
                 @Select.canceled -= m_Wrapper.m_MenuControlsActionsCallbackInterface.OnSelect;
-                @Pause.started -= m_Wrapper.m_MenuControlsActionsCallbackInterface.OnPause;
-                @Pause.performed -= m_Wrapper.m_MenuControlsActionsCallbackInterface.OnPause;
-                @Pause.canceled -= m_Wrapper.m_MenuControlsActionsCallbackInterface.OnPause;
+                @Unpause.started -= m_Wrapper.m_MenuControlsActionsCallbackInterface.OnUnpause;
+                @Unpause.performed -= m_Wrapper.m_MenuControlsActionsCallbackInterface.OnUnpause;
+                @Unpause.canceled -= m_Wrapper.m_MenuControlsActionsCallbackInterface.OnUnpause;
                 @Move.started -= m_Wrapper.m_MenuControlsActionsCallbackInterface.OnMove;
                 @Move.performed -= m_Wrapper.m_MenuControlsActionsCallbackInterface.OnMove;
                 @Move.canceled -= m_Wrapper.m_MenuControlsActionsCallbackInterface.OnMove;
@@ -562,9 +601,9 @@ public class @PlayerInputActions : IInputActionCollection, IDisposable
                 @Select.started += instance.OnSelect;
                 @Select.performed += instance.OnSelect;
                 @Select.canceled += instance.OnSelect;
-                @Pause.started += instance.OnPause;
-                @Pause.performed += instance.OnPause;
-                @Pause.canceled += instance.OnPause;
+                @Unpause.started += instance.OnUnpause;
+                @Unpause.performed += instance.OnUnpause;
+                @Unpause.canceled += instance.OnUnpause;
                 @Move.started += instance.OnMove;
                 @Move.performed += instance.OnMove;
                 @Move.canceled += instance.OnMove;
@@ -599,11 +638,12 @@ public class @PlayerInputActions : IInputActionCollection, IDisposable
         void OnFire(InputAction.CallbackContext context);
         void OnRoll(InputAction.CallbackContext context);
         void OnInteract(InputAction.CallbackContext context);
+        void OnPause(InputAction.CallbackContext context);
     }
     public interface IMenuControlsActions
     {
         void OnSelect(InputAction.CallbackContext context);
-        void OnPause(InputAction.CallbackContext context);
+        void OnUnpause(InputAction.CallbackContext context);
         void OnMove(InputAction.CallbackContext context);
     }
 }

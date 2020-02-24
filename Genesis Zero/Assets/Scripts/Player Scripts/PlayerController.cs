@@ -52,7 +52,6 @@ public class PlayerController : MonoBehaviour
     public float triggerResetTime = 0.25f;
 
     //Component Parts
-    private PlayerInputActions inputActions;
     private Player player;
     private OverHeat overheat;
 
@@ -91,7 +90,7 @@ public class PlayerController : MonoBehaviour
 
     private void Awake()
     {
-        inputActions = new PlayerInputActions();
+        inputActions = GameObject.FindGameObjectWithTag("GameManagers").transform.Find("InputManager").GetComponent<GameInputManager>().inputActions;
         inputActions.PlayerControls.Move.performed += ctx => movementInput = ctx.ReadValue<Vector2>();
         inputActions.PlayerControls.AimMouse.performed += ctx => aimInputMouse = ctx.ReadValue<Vector2>();
         inputActions.PlayerControls.AimController.performed += ctx => aimInputController = ctx.ReadValue<Vector2>();
@@ -123,16 +122,6 @@ public class PlayerController : MonoBehaviour
         UpdateJump();
         UpdateDodgeRoll();
         DrawDebugLines();
-    }
-
-    private void OnEnable()
-    {
-        inputActions.Enable();
-    }
-
-    private void OnDisable()
-    {
-        inputActions.Disable();
     }
 
     /* This controls the character general movements
