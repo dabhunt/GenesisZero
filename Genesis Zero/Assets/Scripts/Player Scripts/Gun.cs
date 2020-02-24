@@ -100,20 +100,15 @@ public class Gun : MonoBehaviour
     private void UpdateCrosshairBloom()
     {
         Vector3[] vecs = {Vector3.up, Vector3.down, Vector3.left, Vector3.right};
-        float diff = ((maxXGap - minXGap) * overheat.GetHeat()) / 100;
+        //float diff = ((maxXGap - minXGap) * overheat.GetHeat()) / 100;
+        float target = maxXGap *(overheat.GetHeat()/100);
         if (overheat.GetHeat() == 0)
-            return;
-        if (GetComponent<PlayerController>().GetFireInput() > 0)
-        {
-            spread = Mathf.Lerp(spread, maxXGap, spreadSpeed * Time.fixedDeltaTime);
-        }
-        else
-        {
-            var tmpMin = minXGap + diff;
-            spread = Mathf.Lerp(spread, tmpMin, spreadSpeed * Time.fixedDeltaTime);
-        }
+        	return;
+        spread = Mathf.Lerp(spread, target, spreadSpeed * Time.fixedDeltaTime);
         spread = Mathf.Clamp(spread, minXGap, maxXGap);
         for (int i = 0; i < crossArr.Length; i++)
             crossArr[i].transform.localPosition = vecs[i] * spread;
     }
 }
+
+//the cursors should lerp towards the maximum size not based on input, but based on heat value

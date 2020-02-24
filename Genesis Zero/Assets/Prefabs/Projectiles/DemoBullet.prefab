@@ -4768,8 +4768,8 @@ GameObject:
   - component: {fileID: 7446024088350224126}
   - component: {fileID: -1694434105571815367}
   - component: {fileID: 7323713832238595723}
-  - component: {fileID: 7237362000396769751}
   - component: {fileID: 4204024712769973434}
+  - component: {fileID: 5084563566924316110}
   m_Layer: 0
   m_Name: DemoBullet
   m_TagString: Untagged
@@ -4868,9 +4868,9 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 78599237b72dc114eafaaeb56fcaf281, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  speed: 60
+  speed: 7
   gravity: 0
-  lifeTime: 0.45
+  lifeTime: 0.55
   direction: {x: 0, y: 0, z: 0}
 --- !u!114 &7323713832238595723
 MonoBehaviour:
@@ -4892,21 +4892,8 @@ MonoBehaviour:
   MaxHits: 1
   Knockbackforce: 5
   DirectionalKnockback: 1
-  Collider: {fileID: 7237362000396769751}
+  Collider: {fileID: 5084563566924316110}
   Source: {fileID: 0}
---- !u!135 &7237362000396769751
-SphereCollider:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 7446024088350224124}
-  m_Material: {fileID: 0}
-  m_IsTrigger: 1
-  m_Enabled: 1
-  serializedVersion: 2
-  m_Radius: 0.1
-  m_Center: {x: 0, y: 0, z: 0}
 --- !u!114 &4204024712769973434
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -4932,6 +4919,20 @@ MonoBehaviour:
     type: 3}
   ModifierPrefab: {fileID: 2493648811206171248, guid: ac8b05e93bf88fa488c9b7e45be8fac0,
     type: 3}
+--- !u!136 &5084563566924316110
+CapsuleCollider:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 7446024088350224124}
+  m_Material: {fileID: 0}
+  m_IsTrigger: 1
+  m_Enabled: 1
+  m_Radius: 0.5
+  m_Height: 2.921327
+  m_Direction: 0
+  m_Center: {x: -0.93, y: 0.01, z: 0}
 --- !u!1 &7504852634243103965
 GameObject:
   m_ObjectHideFlags: 0
