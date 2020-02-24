@@ -1,6 +1,7 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.Events;
 
 /**
  * Justin Couch
@@ -11,6 +12,7 @@ public class ProjectileTest : MonoBehaviour
     public float Speed = 1.0f;
     public float LifeDuration = 1.0f;
     private float lifeTime = 0.0f;
+    public UnityEvent DestroyEvent;
 
     private void FixedUpdate()
     {
@@ -20,5 +22,10 @@ public class ProjectileTest : MonoBehaviour
         {
             Destroy(gameObject);
         }
+    }
+
+    private void OnDestroy()
+    {
+        DestroyEvent.Invoke();
     }
 }

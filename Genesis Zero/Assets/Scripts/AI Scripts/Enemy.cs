@@ -11,13 +11,13 @@ public class Enemy : Pawn
     public float targetdistance = 2f;
     public float checkerdistance = .1f;
     
-    public void Start()
+    new public void Start()
     {
         target = GameObject.FindGameObjectWithTag("Player").transform;
         base.Start();
     }
 
-    public void Update()
+    new public void Update()
     {
         base.Update();
     }

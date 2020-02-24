@@ -10,12 +10,18 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: ee25e470c10c91745b9dc88f28c3a4d8, type: 3}
-  m_Name: PlatformPatrollerAIProperties
+  m_Name: PlatformShooterAIProperties
   m_EditorClassIdentifier: 
   DetectRadius: 10
-  AvoidRadius: 0
+  AvoidRadius: 6
   AttackChargeTime: 1
   AttackDuration: 1
   AttackCooldownTime: 1
-  AttackRadius: 6
+  AttackRadius: 8
   StopFollowingWhenOutOfRange: 0
+  UseLineOfSight: 1
+  SightMask:
+    serializedVersion: 2
+    m_Bits: 1
+  MaxSightCastHits: 4
+  MaxAlertTrackTime: 5

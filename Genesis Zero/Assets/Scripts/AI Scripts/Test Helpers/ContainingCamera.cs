@@ -1,6 +1,7 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using System.Linq;
 
 [RequireComponent(typeof(Camera))]
 /**
@@ -19,6 +20,18 @@ public class ContainingCamera : MonoBehaviour
     protected void Awake()
     {
         cam = GetComponent<Camera>();
+
+        // Stop tracking objects that are deactivated
+        List<Transform> viewTransforms = ViewObjects.ToList();
+        for (int i = 0; i < viewTransforms.Count; i++)
+        {
+            if(!viewTransforms[i].gameObject.activeInHierarchy)
+            {
+                viewTransforms.RemoveAt(i);
+                i--;
+            }
+        }
+        ViewObjects = viewTransforms.ToArray();
     }
 
     protected void FixedUpdate()
@@ -29,6 +42,8 @@ public class ContainingCamera : MonoBehaviour
         float outsideAmount = 0.0f;
         for (int i = 0; i < ViewObjects.Length; i++)
         {
+            if (ViewObjects[i] == null) { continue; }
+
             if (i > 0)
             {
                 avgPos += ViewObjects[i].position; // Get average position of objects

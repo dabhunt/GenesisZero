@@ -12,7 +12,11 @@ public class AIController : Pawn
     public AIPropertyObject BehaviorProperties;
 
     public enum AIState { Idle, Patrol, Follow, Charge, Attack, Cooldown }
-    protected AIState state = AIState.Patrol; // Current behavior state
+    protected AIState state = AIState.Idle; // Current behavior state
+    public float IdlePatrolIntervalMin = 1.0f; // Minimum time interval for switching between idling and patrolling
+    public float IdlePatrolIntervalMax = 2.0f; // Maximum time interval for switching between idling and patrolling
+    private float idlePatrolIntervalCurrent = 1.0f; // Randomly chosen interval in range
+    protected bool isGrounded = false;
 
     public Transform Target; // Target or player object to follow and attack
     protected Vector3 targetPosition = Vector3.zero; // Position to move to
@@ -60,6 +64,7 @@ public class AIController : Pawn
     new protected void FixedUpdate()
     {
         base.FixedUpdate();
+        GroundCheck();
 
         if (Target != null)
         {
@@ -69,7 +74,7 @@ public class AIController : Pawn
 
         if (IsStunned())
         {
-            ChangeState(AIState.Patrol);
+            ChangeState(AIState.Idle);
         }
         else if (Target != null)
         {
@@ -90,7 +95,7 @@ public class AIController : Pawn
             else if (!alertTracking)
             {
                 tracker.StartTracking();
-                if (tracker.HasReachedEnd() || tracker.GiveUpCondition())
+                if ((tracker.HasReachedEnd() || tracker.GiveUpCondition()) && state != AIState.Charge && state != AIState.Attack && state != AIState.Cooldown)
                 {
                     ChangeState(AIState.Patrol);
                 }
@@ -132,11 +137,30 @@ public class AIController : Pawn
      */
     private void StateUpdate()
     {
-        if (state == AIState.Patrol) // State when moving around while not following player
+        if (state == AIState.Idle)
         {
             if ((GetDistanceToTarget() <= BehaviorProperties.DetectRadius && targetVisible) || alertTracking)
             {
                 ChangeState(AIState.Follow);
+            }
+
+            if (stateTime > idlePatrolIntervalCurrent)
+            {
+                idlePatrolIntervalCurrent = Random.Range(IdlePatrolIntervalMin, IdlePatrolIntervalMax);
+                ChangeState(AIState.Patrol);
+            }
+        }
+        else if (state == AIState.Patrol) // State when moving around while not following player
+        {
+            if ((GetDistanceToTarget() <= BehaviorProperties.DetectRadius && targetVisible) || alertTracking)
+            {
+                idlePatrolIntervalCurrent = Random.Range(IdlePatrolIntervalMin, IdlePatrolIntervalMax);
+                ChangeState(AIState.Follow);
+            }
+
+            if (stateTime > idlePatrolIntervalCurrent)
+            {
+                ChangeState(AIState.Idle);
             }
         }
         else if (state == AIState.Follow) // State when following player to attack
@@ -180,9 +204,13 @@ public class AIController : Pawn
      */
     public void ChangeState(AIState newState)
     {
+        bool stateDifferent = state != newState;
         state = newState;
-        stateTime = 0.0f;
-        StateChangeEvent.Invoke(state);
+        if (stateDifferent)
+        {
+            stateTime = 0.0f;
+            StateChangeEvent.Invoke(state);
+        }
 
         if (tracker != null)
         {
@@ -201,6 +229,22 @@ public class AIController : Pawn
         {
             alertTracking = false;
         }
+    }
+
+    /**
+     * Returns whether the enemy is on the ground
+     */
+    public bool IsGrounded()
+    {
+        return isGrounded;
+    }
+
+    /*
+     * Inheriting enemies can override this to implement their own ground check methods.
+     */
+    protected virtual void GroundCheck()
+    {
+        isGrounded = false;
     }
 
     /**
@@ -288,7 +332,7 @@ public class AIController : Pawn
     /**
      * Draw visual representations of properties
      */
-    protected void OnDrawGizmos()
+    protected virtual void OnDrawGizmos()
     {
         if (targetVisible)
         {
@@ -315,7 +359,7 @@ public class AIController : Pawn
 
     public override float TakeDamage(float amount, Pawn source)
     {
-        Debug.Log("Enemy Damaged");
+        //Debug.Log("Enemy Damaged");
         if (source && (state == AIState.Patrol || state == AIState.Idle || alertTracking))
         {
             alertPoint = source.transform.position;
