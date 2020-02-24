@@ -16,7 +16,7 @@ public class SkillPickup : MonoBehaviour
         {
             // Add default skill
         }
-        if (GetComponent<SimpleTooltip>())
+        if (GetComponent<SimpleTooltip>()!=null)
         {
             GetComponent<SimpleTooltip>().infoLeft = skill.Description;
         }
