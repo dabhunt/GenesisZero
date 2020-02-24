@@ -55,6 +55,7 @@ public class Hurtbox : MonoBehaviour
                 }
 
             }
+
         }
         catch { }
     }
@@ -71,10 +72,12 @@ public class Hurtbox : MonoBehaviour
         Vector2 hitdir = collision.GetContact(0).point - transform.position;
         float angle = Vector2.Angle(hitdir, vel);
         //Debug.Log("Colliding");
-        if (GetComponent<Pawn>() && GetComponent<Pawn>().GetKnockBackForce() > 3 && vel.magnitude > 4 && collision.collider.isTrigger == false)
+        if (GetComponent<Pawn>() && GetComponent<Pawn>().GetKnockBackForce() > 3 && ((vel.magnitude > 4 && collision.collider.isTrigger == false) || GetComponent<Pawn>().IsForcedKnockBack()))
         {
             if (Mathf.Abs(angle) < 75)  // if the object hits the other object directly, then they take the damage
             {
+                if (GetComponent<Pawn>().IsForcedKnockBack()) { GetComponent<Pawn>().SetForcedKnockBack(false); return; }
+
                 float damage = (int)(vel.magnitude * 4) / 2;
                 GetComponent<Pawn>().TakeDamage(damage, null);
                 GameObject dn = VFXManager.instance.PlayEffect("DamageNumber", new Vector3(transform.position.x, transform.position.y + 1, transform.position.z - .5f));

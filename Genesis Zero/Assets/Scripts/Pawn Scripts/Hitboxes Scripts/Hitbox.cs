@@ -19,11 +19,17 @@ public class Hitbox : MonoBehaviour
     public bool HurtsAllies;    // Determines if this hitbox can harm the allies layer
     public bool HurtsEnemies;   // Determines if this hotbox can harm the enemies layer
     [Space]
+    [Tooltip("If true, the hitbox ignores walls")]
     public bool Intangible;     // If True, then the hitbox can pass through walls
+
+    [Tooltip("Number of times the hitbox can hit pawns. Cannot hit same target multiple times")]
     public int MaxHits = 1;     // Number of times the hitbox can hit something
 
     public float Knockbackforce;        // Force of knockback 
     public bool DirectionalKnockback;   // If true, the knockback direction is equal to the direction the hitbox is moving
+
+    [Tooltip("(X: Burntime, Y: Damage per second)")]
+    public Vector2 Burn = new Vector2(0,0);
 
     public Collider Collider;
     public Pawn Source;         // Source is a reference to the pawn that spawned this hitbox. Optional, used if things like critchance is calculated
@@ -60,6 +66,23 @@ public class Hitbox : MonoBehaviour
         //AddCollliders(transform, colliders);
         lastposition = GetComponent<Collider>().transform.position;
         hittargets = new List<GameObject>();
+
+        Collider[] collisions = null;
+        if (GetComponent<SphereCollider>())
+        {
+            collisions = Physics.OverlapSphere(transform.position, GetComponent<SphereCollider>().radius);
+        }
+        else if (GetComponent<BoxCollider>())
+        {
+            collisions = Physics.OverlapBox(transform.position, GetComponent<BoxCollider>().size, Quaternion.identity);
+        }
+        if (collisions != null)
+        {
+            foreach (Collider col in collisions)
+            {
+                CheckCollisions(col);
+            }
+        }
     }
 
     public void AddCollliders(Transform currentparent, List<Collider> colliders)
@@ -150,6 +173,11 @@ public class Hitbox : MonoBehaviour
                         p.KnockBack(p.transform.position - transform.position, Knockbackforce);
                     }
 
+                }
+
+                if (Burn.x > 0 && Burn.y > 0)
+                {
+                    p.Burn(Burn.x, Burn.y);
                 }
 
                 float damagetaken = p.TakeDamage(finaldamage, Source);
