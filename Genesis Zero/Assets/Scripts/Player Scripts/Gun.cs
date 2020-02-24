@@ -105,7 +105,8 @@ public class Gun : MonoBehaviour
             return;
         if (GetComponent<PlayerController>().GetFireInput() > 0)
         {
-            spread = Mathf.Lerp(spread, maxXGap, spreadSpeed * Time.fixedDeltaTime);
+            var tmpMax = minXGap + diff;
+            spread = Mathf.Lerp(spread, tmpMax, spreadSpeed * Time.fixedDeltaTime);
         }
         else
         {
