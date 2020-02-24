@@ -9740,6 +9740,8 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   Stats: {fileID: 11400000, guid: f84b0ee302422bc49b619f02c62b6a60, type: 2}
   BehaviorProperties: {fileID: 11400000, guid: 1bfe1813bb8f01c4a9ea5a6afdeda99c, type: 2}
+  IdlePatrolIntervalMin: 0.5
+  IdlePatrolIntervalMax: 2
   Target: {fileID: 0}
   StateChangeEvent:
     m_PersistentCalls:
@@ -9862,6 +9864,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 01ce23c1053aff742846bd80b9391bb1, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  FallLayerBlendRate: 1
 --- !u!114 &-196170401612726166
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -9889,9 +9892,16 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   vfxName: VFX_Explosion
-  soundName: 
-  amount: 1
+  vfxScaleMultiplier: 0
+  sounds: []
   quitting: 0
+  minEssenceDrop: 0
+  maxEssenceDrop: 0
+  ModifierDropChance: 0
+  minDropVelocity: 0
+  maxDropVelocity: 0
+  EssencePrefab: {fileID: 0}
+  ModifierPrefab: {fileID: 0}
 --- !u!1 &4173086586034620113
 GameObject:
   m_ObjectHideFlags: 0

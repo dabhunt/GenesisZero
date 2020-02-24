@@ -63,6 +63,7 @@ public class DroneAI : AIController
         else if (state == AIState.Idle)
         {
             targetSpeed = 0.0f;
+            patrolDir = Mathf.RoundToInt(Mathf.Sign(Random.value - 0.5f));
         }
 
         targetSpeed *= GetSpeed().GetValue();
