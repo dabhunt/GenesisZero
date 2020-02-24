@@ -4,9 +4,10 @@ using UnityEngine;
 
 public class SacrificeUI : MonoBehaviour
 {
+    public RectTransform selectionObj;
+
     private Player player;
     private PlayerController playerController;
-    public RectTransform selectionObj;
     private PlayerInputActions inputActions;
     private Vector2 moveInput;
     private float selectInput;
@@ -20,8 +21,6 @@ public class SacrificeUI : MonoBehaviour
         inputActions.MenuControls.MoveSelect.performed += ctx => moveInput = ctx.ReadValue<Vector2>();
         inputActions.MenuControls.Select.performed += ctx => selectInput = ctx.ReadValue<float>();
         inputActions = new PlayerInputActions();
-        
-    
     }
     void Start()
     {
@@ -49,15 +48,12 @@ public class SacrificeUI : MonoBehaviour
     }
     void openSacrificeWindow()
     {
-       ModUI = GameObject.FindGameObjectsWithTag("ModUI");
+        ModUI = GameObject.FindGameObjectsWithTag("ModUI");
         selectedMod = ModUI[1];
         SkillObject skill = selectedMod.GetComponent<SkillUIElement>().GetComponent<SkillObject>();
-        
     }
     void ScrapMod()
     {
         player.GetSkillManager().RemoveSkill(skill);
     }
-    //remove skill function
-    //if we get a click from the player
 }

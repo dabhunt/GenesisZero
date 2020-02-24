@@ -594,4 +594,8 @@ public class PlayerController : MonoBehaviour
         //Debug.Log(canDoubleJump);
         //Debug.Log("distanceRolled: " + distanceRolled);
     }
+    public float GetFireInput()
+    {
+        return fireInput;
+    }
 }
