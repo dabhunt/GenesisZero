@@ -59,6 +59,14 @@ public class @PlayerInputActions : IInputActionCollection, IDisposable
                     ""interactions"": """"
                 },
                 {
+                    ""name"": ""Pause"",
+                    ""type"": ""Button"",
+                    ""id"": ""3dc8c984-4a1a-4303-9b44-a59d2dea0415"",
+                    ""expectedControlType"": """",
+                    ""processors"": """",
+                    ""interactions"": """"
+                },
+                {
                     ""name"": ""Roll"",
                     ""type"": ""Button"",
                     ""id"": ""d34c41c0-3e49-4d96-8e5e-2de4da6a116c"",
@@ -210,6 +218,28 @@ public class @PlayerInputActions : IInputActionCollection, IDisposable
                 },
                 {
                     ""name"": """",
+                    ""id"": ""412d06c3-c4aa-4a58-98ad-9b44e62eb71e"",
+                    ""path"": ""<Gamepad>/start"",
+                    ""interactions"": ""Press"",
+                    ""processors"": """",
+                    ""groups"": ""Gamepads"",
+                    ""action"": ""Pause"",
+                    ""isComposite"": false,
+                    ""isPartOfComposite"": false
+                },
+                {
+                    ""name"": """",
+                    ""id"": ""baa296ee-9260-4a79-a300-993cbbd791fd"",
+                    ""path"": ""<Keyboard>/escape"",
+                    ""interactions"": ""Press"",
+                    ""processors"": """",
+                    ""groups"": ""Keyboard&Mouse"",
+                    ""action"": ""Pause"",
+                    ""isComposite"": false,
+                    ""isPartOfComposite"": false
+                },
+                {
+                    ""name"": """",
                     ""id"": ""54a9844b-62ee-4e59-a494-1c1b31377443"",
                     ""path"": ""<Keyboard>/leftShift"",
                     ""interactions"": """",
@@ -278,7 +308,7 @@ public class @PlayerInputActions : IInputActionCollection, IDisposable
                     ""interactions"": """"
                 },
                 {
-                    ""name"": ""Pause"",
+                    ""name"": ""Unpause"",
                     ""type"": ""Button"",
                     ""id"": ""5750c837-e1e9-4e63-afcc-5da20ffc6761"",
                     ""expectedControlType"": """",
@@ -286,10 +316,18 @@ public class @PlayerInputActions : IInputActionCollection, IDisposable
                     ""interactions"": """"
                 },
                 {
-                    ""name"": ""Move"",
+                    ""name"": ""MoveSelect"",
                     ""type"": ""PassThrough"",
                     ""id"": ""b24e1496-76e7-4b67-a25b-64ac8937ff02"",
                     ""expectedControlType"": ""Vector2"",
+                    ""processors"": """",
+                    ""interactions"": """"
+                },
+                {
+                    ""name"": ""CursorPosition"",
+                    ""type"": ""PassThrough"",
+                    ""id"": ""4d62d319-b168-4bd5-9a6e-2cf8d19ebdcc"",
+                    ""expectedControlType"": """",
                     ""processors"": """",
                     ""interactions"": """"
                 }
@@ -319,7 +357,7 @@ public class @PlayerInputActions : IInputActionCollection, IDisposable
                 },
                 {
                     ""name"": """",
-                    ""id"": ""fcfb9940-cd03-4a23-860c-7cc00c71c822"",
+                    ""id"": ""a7f2a47c-fee4-4c98-88f0-7f6f82d65d9f"",
                     ""path"": ""<Gamepad>/start"",
                     ""interactions"": ""Press"",
                     ""processors"": """",
@@ -330,12 +368,34 @@ public class @PlayerInputActions : IInputActionCollection, IDisposable
                 },
                 {
                     ""name"": """",
+                    ""id"": ""83490429-b69a-422d-8c54-739b01050b84"",
+                    ""path"": ""<Gamepad>/start"",
+                    ""interactions"": ""Press"",
+                    ""processors"": """",
+                    ""groups"": ""Gamepads"",
+                    ""action"": ""Pause"",
+                    ""isComposite"": false,
+                    ""isPartOfComposite"": false
+                },
+                {
+                    ""name"": """",
+                    ""id"": ""fcfb9940-cd03-4a23-860c-7cc00c71c822"",
+                    ""path"": ""<Gamepad>/start"",
+                    ""interactions"": ""Press"",
+                    ""processors"": """",
+                    ""groups"": ""Gamepads"",
+                    ""action"": ""Unpause"",
+                    ""isComposite"": false,
+                    ""isPartOfComposite"": false
+                },
+                {
+                    ""name"": """",
                     ""id"": ""95185444-479b-4974-9b4a-8c4f490cdef4"",
                     ""path"": ""<Keyboard>/escape"",
                     ""interactions"": ""Press"",
                     ""processors"": """",
                     ""groups"": ""Keyboard&Mouse"",
-                    ""action"": ""Pause"",
+                    ""action"": ""Unpause"",
                     ""isComposite"": false,
                     ""isPartOfComposite"": false
                 },
@@ -346,7 +406,73 @@ public class @PlayerInputActions : IInputActionCollection, IDisposable
                     ""interactions"": """",
                     ""processors"": """",
                     ""groups"": ""Gamepads"",
-                    ""action"": ""Move"",
+                    ""action"": ""MoveSelect"",
+                    ""isComposite"": false,
+                    ""isPartOfComposite"": false
+                },
+                {
+                    ""name"": ""2D Vector"",
+                    ""id"": ""78d421a2-6fec-49a1-a833-9a86a3e74d35"",
+                    ""path"": ""2DVector"",
+                    ""interactions"": """",
+                    ""processors"": """",
+                    ""groups"": """",
+                    ""action"": ""MoveSelect"",
+                    ""isComposite"": true,
+                    ""isPartOfComposite"": false
+                },
+                {
+                    ""name"": ""up"",
+                    ""id"": ""92347831-d04d-48d1-8567-5c65dabddb8b"",
+                    ""path"": ""<Keyboard>/w"",
+                    ""interactions"": """",
+                    ""processors"": """",
+                    ""groups"": ""Keyboard&Mouse"",
+                    ""action"": ""MoveSelect"",
+                    ""isComposite"": false,
+                    ""isPartOfComposite"": true
+                },
+                {
+                    ""name"": ""down"",
+                    ""id"": ""892e24fb-e067-41c3-860e-ca36934416e6"",
+                    ""path"": ""<Keyboard>/s"",
+                    ""interactions"": """",
+                    ""processors"": """",
+                    ""groups"": """",
+                    ""action"": ""MoveSelect"",
+                    ""isComposite"": false,
+                    ""isPartOfComposite"": true
+                },
+                {
+                    ""name"": ""left"",
+                    ""id"": ""222e6fd9-cef9-4d6b-8aa4-10480fe18be7"",
+                    ""path"": ""<Keyboard>/a"",
+                    ""interactions"": """",
+                    ""processors"": """",
+                    ""groups"": """",
+                    ""action"": ""MoveSelect"",
+                    ""isComposite"": false,
+                    ""isPartOfComposite"": true
+                },
+                {
+                    ""name"": ""right"",
+                    ""id"": ""295b5432-b518-40eb-adc5-e487e86a0b97"",
+                    ""path"": ""<Keyboard>/d"",
+                    ""interactions"": """",
+                    ""processors"": """",
+                    ""groups"": """",
+                    ""action"": ""MoveSelect"",
+                    ""isComposite"": false,
+                    ""isPartOfComposite"": true
+                },
+                {
+                    ""name"": """",
+                    ""id"": ""99792ee7-6da0-442d-a751-20074b4a8688"",
+                    ""path"": ""<Mouse>/position"",
+                    ""interactions"": """",
+                    ""processors"": """",
+                    ""groups"": ""Keyboard&Mouse"",
+                    ""action"": ""CursorPosition"",
                     ""isComposite"": false,
                     ""isPartOfComposite"": false
                 }
@@ -390,13 +516,15 @@ public class @PlayerInputActions : IInputActionCollection, IDisposable
         m_PlayerControls_AimController = m_PlayerControls.FindAction("AimController", throwIfNotFound: true);
         m_PlayerControls_Jump = m_PlayerControls.FindAction("Jump", throwIfNotFound: true);
         m_PlayerControls_Fire = m_PlayerControls.FindAction("Fire", throwIfNotFound: true);
+        m_PlayerControls_Pause = m_PlayerControls.FindAction("Pause", throwIfNotFound: true);
         m_PlayerControls_Roll = m_PlayerControls.FindAction("Roll", throwIfNotFound: true);
         m_PlayerControls_Interact = m_PlayerControls.FindAction("Interact", throwIfNotFound: true);
         // MenuControls
         m_MenuControls = asset.FindActionMap("MenuControls", throwIfNotFound: true);
         m_MenuControls_Select = m_MenuControls.FindAction("Select", throwIfNotFound: true);
-        m_MenuControls_Pause = m_MenuControls.FindAction("Pause", throwIfNotFound: true);
-        m_MenuControls_Move = m_MenuControls.FindAction("Move", throwIfNotFound: true);
+        m_MenuControls_Unpause = m_MenuControls.FindAction("Unpause", throwIfNotFound: true);
+        m_MenuControls_MoveSelect = m_MenuControls.FindAction("MoveSelect", throwIfNotFound: true);
+        m_MenuControls_CursorPosition = m_MenuControls.FindAction("CursorPosition", throwIfNotFound: true);
     }
 
     public void Dispose()
@@ -451,6 +579,7 @@ public class @PlayerInputActions : IInputActionCollection, IDisposable
     private readonly InputAction m_PlayerControls_AimController;
     private readonly InputAction m_PlayerControls_Jump;
     private readonly InputAction m_PlayerControls_Fire;
+    private readonly InputAction m_PlayerControls_Pause;
     private readonly InputAction m_PlayerControls_Roll;
     private readonly InputAction m_PlayerControls_Interact;
     public struct PlayerControlsActions
@@ -462,6 +591,7 @@ public class @PlayerInputActions : IInputActionCollection, IDisposable
         public InputAction @AimController => m_Wrapper.m_PlayerControls_AimController;
         public InputAction @Jump => m_Wrapper.m_PlayerControls_Jump;
         public InputAction @Fire => m_Wrapper.m_PlayerControls_Fire;
+        public InputAction @Pause => m_Wrapper.m_PlayerControls_Pause;
         public InputAction @Roll => m_Wrapper.m_PlayerControls_Roll;
         public InputAction @Interact => m_Wrapper.m_PlayerControls_Interact;
         public InputActionMap Get() { return m_Wrapper.m_PlayerControls; }
@@ -488,6 +618,9 @@ public class @PlayerInputActions : IInputActionCollection, IDisposable
                 @Fire.started -= m_Wrapper.m_PlayerControlsActionsCallbackInterface.OnFire;
                 @Fire.performed -= m_Wrapper.m_PlayerControlsActionsCallbackInterface.OnFire;
                 @Fire.canceled -= m_Wrapper.m_PlayerControlsActionsCallbackInterface.OnFire;
+                @Pause.started -= m_Wrapper.m_PlayerControlsActionsCallbackInterface.OnPause;
+                @Pause.performed -= m_Wrapper.m_PlayerControlsActionsCallbackInterface.OnPause;
+                @Pause.canceled -= m_Wrapper.m_PlayerControlsActionsCallbackInterface.OnPause;
                 @Roll.started -= m_Wrapper.m_PlayerControlsActionsCallbackInterface.OnRoll;
                 @Roll.performed -= m_Wrapper.m_PlayerControlsActionsCallbackInterface.OnRoll;
                 @Roll.canceled -= m_Wrapper.m_PlayerControlsActionsCallbackInterface.OnRoll;
@@ -513,6 +646,9 @@ public class @PlayerInputActions : IInputActionCollection, IDisposable
                 @Fire.started += instance.OnFire;
                 @Fire.performed += instance.OnFire;
                 @Fire.canceled += instance.OnFire;
+                @Pause.started += instance.OnPause;
+                @Pause.performed += instance.OnPause;
+                @Pause.canceled += instance.OnPause;
                 @Roll.started += instance.OnRoll;
                 @Roll.performed += instance.OnRoll;
                 @Roll.canceled += instance.OnRoll;
@@ -528,15 +664,17 @@ public class @PlayerInputActions : IInputActionCollection, IDisposable
     private readonly InputActionMap m_MenuControls;
     private IMenuControlsActions m_MenuControlsActionsCallbackInterface;
     private readonly InputAction m_MenuControls_Select;
-    private readonly InputAction m_MenuControls_Pause;
-    private readonly InputAction m_MenuControls_Move;
+    private readonly InputAction m_MenuControls_Unpause;
+    private readonly InputAction m_MenuControls_MoveSelect;
+    private readonly InputAction m_MenuControls_CursorPosition;
     public struct MenuControlsActions
     {
         private @PlayerInputActions m_Wrapper;
         public MenuControlsActions(@PlayerInputActions wrapper) { m_Wrapper = wrapper; }
         public InputAction @Select => m_Wrapper.m_MenuControls_Select;
-        public InputAction @Pause => m_Wrapper.m_MenuControls_Pause;
-        public InputAction @Move => m_Wrapper.m_MenuControls_Move;
+        public InputAction @Unpause => m_Wrapper.m_MenuControls_Unpause;
+        public InputAction @MoveSelect => m_Wrapper.m_MenuControls_MoveSelect;
+        public InputAction @CursorPosition => m_Wrapper.m_MenuControls_CursorPosition;
         public InputActionMap Get() { return m_Wrapper.m_MenuControls; }
         public void Enable() { Get().Enable(); }
         public void Disable() { Get().Disable(); }
@@ -549,12 +687,15 @@ public class @PlayerInputActions : IInputActionCollection, IDisposable
                 @Select.started -= m_Wrapper.m_MenuControlsActionsCallbackInterface.OnSelect;
                 @Select.performed -= m_Wrapper.m_MenuControlsActionsCallbackInterface.OnSelect;
                 @Select.canceled -= m_Wrapper.m_MenuControlsActionsCallbackInterface.OnSelect;
-                @Pause.started -= m_Wrapper.m_MenuControlsActionsCallbackInterface.OnPause;
-                @Pause.performed -= m_Wrapper.m_MenuControlsActionsCallbackInterface.OnPause;
-                @Pause.canceled -= m_Wrapper.m_MenuControlsActionsCallbackInterface.OnPause;
-                @Move.started -= m_Wrapper.m_MenuControlsActionsCallbackInterface.OnMove;
-                @Move.performed -= m_Wrapper.m_MenuControlsActionsCallbackInterface.OnMove;
-                @Move.canceled -= m_Wrapper.m_MenuControlsActionsCallbackInterface.OnMove;
+                @Unpause.started -= m_Wrapper.m_MenuControlsActionsCallbackInterface.OnUnpause;
+                @Unpause.performed -= m_Wrapper.m_MenuControlsActionsCallbackInterface.OnUnpause;
+                @Unpause.canceled -= m_Wrapper.m_MenuControlsActionsCallbackInterface.OnUnpause;
+                @MoveSelect.started -= m_Wrapper.m_MenuControlsActionsCallbackInterface.OnMoveSelect;
+                @MoveSelect.performed -= m_Wrapper.m_MenuControlsActionsCallbackInterface.OnMoveSelect;
+                @MoveSelect.canceled -= m_Wrapper.m_MenuControlsActionsCallbackInterface.OnMoveSelect;
+                @CursorPosition.started -= m_Wrapper.m_MenuControlsActionsCallbackInterface.OnCursorPosition;
+                @CursorPosition.performed -= m_Wrapper.m_MenuControlsActionsCallbackInterface.OnCursorPosition;
+                @CursorPosition.canceled -= m_Wrapper.m_MenuControlsActionsCallbackInterface.OnCursorPosition;
             }
             m_Wrapper.m_MenuControlsActionsCallbackInterface = instance;
             if (instance != null)
@@ -562,12 +703,15 @@ public class @PlayerInputActions : IInputActionCollection, IDisposable
                 @Select.started += instance.OnSelect;
                 @Select.performed += instance.OnSelect;
                 @Select.canceled += instance.OnSelect;
-                @Pause.started += instance.OnPause;
-                @Pause.performed += instance.OnPause;
-                @Pause.canceled += instance.OnPause;
-                @Move.started += instance.OnMove;
-                @Move.performed += instance.OnMove;
-                @Move.canceled += instance.OnMove;
+                @Unpause.started += instance.OnUnpause;
+                @Unpause.performed += instance.OnUnpause;
+                @Unpause.canceled += instance.OnUnpause;
+                @MoveSelect.started += instance.OnMoveSelect;
+                @MoveSelect.performed += instance.OnMoveSelect;
+                @MoveSelect.canceled += instance.OnMoveSelect;
+                @CursorPosition.started += instance.OnCursorPosition;
+                @CursorPosition.performed += instance.OnCursorPosition;
+                @CursorPosition.canceled += instance.OnCursorPosition;
             }
         }
     }
@@ -597,13 +741,15 @@ public class @PlayerInputActions : IInputActionCollection, IDisposable
         void OnAimController(InputAction.CallbackContext context);
         void OnJump(InputAction.CallbackContext context);
         void OnFire(InputAction.CallbackContext context);
+        void OnPause(InputAction.CallbackContext context);
         void OnRoll(InputAction.CallbackContext context);
         void OnInteract(InputAction.CallbackContext context);
     }
     public interface IMenuControlsActions
     {
         void OnSelect(InputAction.CallbackContext context);
-        void OnPause(InputAction.CallbackContext context);
-        void OnMove(InputAction.CallbackContext context);
+        void OnUnpause(InputAction.CallbackContext context);
+        void OnMoveSelect(InputAction.CallbackContext context);
+        void OnCursorPosition(InputAction.CallbackContext context);
     }
 }
