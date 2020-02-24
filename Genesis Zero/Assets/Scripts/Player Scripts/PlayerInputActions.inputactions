@@ -46,14 +46,6 @@
                     "interactions": ""
                 },
                 {
-                    "name": "Pause",
-                    "type": "Button",
-                    "id": "3dc8c984-4a1a-4303-9b44-a59d2dea0415",
-                    "expectedControlType": "",
-                    "processors": "",
-                    "interactions": ""
-                },
-                {
                     "name": "Roll",
                     "type": "Button",
                     "id": "d34c41c0-3e49-4d96-8e5e-2de4da6a116c",
@@ -205,28 +197,6 @@
                 },
                 {
                     "name": "",
-                    "id": "412d06c3-c4aa-4a58-98ad-9b44e62eb71e",
-                    "path": "<Gamepad>/start",
-                    "interactions": "Press",
-                    "processors": "",
-                    "groups": "Gamepads",
-                    "action": "Pause",
-                    "isComposite": false,
-                    "isPartOfComposite": false
-                },
-                {
-                    "name": "",
-                    "id": "baa296ee-9260-4a79-a300-993cbbd791fd",
-                    "path": "<Keyboard>/escape",
-                    "interactions": "Press",
-                    "processors": "",
-                    "groups": "Keyboard&Mouse",
-                    "action": "Pause",
-                    "isComposite": false,
-                    "isPartOfComposite": false
-                },
-                {
-                    "name": "",
                     "id": "54a9844b-62ee-4e59-a494-1c1b31377443",
                     "path": "<Keyboard>/leftShift",
                     "interactions": "",
@@ -295,7 +265,7 @@
                     "interactions": ""
                 },
                 {
-                    "name": "Unpause",
+                    "name": "Pause",
                     "type": "Button",
                     "id": "5750c837-e1e9-4e63-afcc-5da20ffc6761",
                     "expectedControlType": "",
@@ -303,18 +273,10 @@
                     "interactions": ""
                 },
                 {
-                    "name": "MoveSelect",
+                    "name": "Move",
                     "type": "PassThrough",
                     "id": "b24e1496-76e7-4b67-a25b-64ac8937ff02",
                     "expectedControlType": "Vector2",
-                    "processors": "",
-                    "interactions": ""
-                },
-                {
-                    "name": "CursorPosition",
-                    "type": "PassThrough",
-                    "id": "4d62d319-b168-4bd5-9a6e-2cf8d19ebdcc",
-                    "expectedControlType": "",
                     "processors": "",
                     "interactions": ""
                 }
@@ -344,34 +306,12 @@
                 },
                 {
                     "name": "",
-                    "id": "a7f2a47c-fee4-4c98-88f0-7f6f82d65d9f",
-                    "path": "<Gamepad>/start",
-                    "interactions": "Press",
-                    "processors": "",
-                    "groups": "Gamepads",
-                    "action": "Pause",
-                    "isComposite": false,
-                    "isPartOfComposite": false
-                },
-                {
-                    "name": "",
-                    "id": "83490429-b69a-422d-8c54-739b01050b84",
-                    "path": "<Gamepad>/start",
-                    "interactions": "Press",
-                    "processors": "",
-                    "groups": "Gamepads",
-                    "action": "Pause",
-                    "isComposite": false,
-                    "isPartOfComposite": false
-                },
-                {
-                    "name": "",
                     "id": "fcfb9940-cd03-4a23-860c-7cc00c71c822",
                     "path": "<Gamepad>/start",
                     "interactions": "Press",
                     "processors": "",
                     "groups": "Gamepads",
-                    "action": "Unpause",
+                    "action": "Pause",
                     "isComposite": false,
                     "isPartOfComposite": false
                 },
@@ -382,7 +322,7 @@
                     "interactions": "Press",
                     "processors": "",
                     "groups": "Keyboard&Mouse",
-                    "action": "Unpause",
+                    "action": "Pause",
                     "isComposite": false,
                     "isPartOfComposite": false
                 },
@@ -393,73 +333,7 @@
                     "interactions": "",
                     "processors": "",
                     "groups": "Gamepads",
-                    "action": "MoveSelect",
-                    "isComposite": false,
-                    "isPartOfComposite": false
-                },
-                {
-                    "name": "2D Vector",
-                    "id": "78d421a2-6fec-49a1-a833-9a86a3e74d35",
-                    "path": "2DVector",
-                    "interactions": "",
-                    "processors": "",
-                    "groups": "",
-                    "action": "MoveSelect",
-                    "isComposite": true,
-                    "isPartOfComposite": false
-                },
-                {
-                    "name": "up",
-                    "id": "92347831-d04d-48d1-8567-5c65dabddb8b",
-                    "path": "<Keyboard>/w",
-                    "interactions": "",
-                    "processors": "",
-                    "groups": "Keyboard&Mouse",
-                    "action": "MoveSelect",
-                    "isComposite": false,
-                    "isPartOfComposite": true
-                },
-                {
-                    "name": "down",
-                    "id": "892e24fb-e067-41c3-860e-ca36934416e6",
-                    "path": "<Keyboard>/s",
-                    "interactions": "",
-                    "processors": "",
-                    "groups": "",
-                    "action": "MoveSelect",
-                    "isComposite": false,
-                    "isPartOfComposite": true
-                },
-                {
-                    "name": "left",
-                    "id": "222e6fd9-cef9-4d6b-8aa4-10480fe18be7",
-                    "path": "<Keyboard>/a",
-                    "interactions": "",
-                    "processors": "",
-                    "groups": "",
-                    "action": "MoveSelect",
-                    "isComposite": false,
-                    "isPartOfComposite": true
-                },
-                {
-                    "name": "right",
-                    "id": "295b5432-b518-40eb-adc5-e487e86a0b97",
-                    "path": "<Keyboard>/d",
-                    "interactions": "",
-                    "processors": "",
-                    "groups": "",
-                    "action": "MoveSelect",
-                    "isComposite": false,
-                    "isPartOfComposite": true
-                },
-                {
-                    "name": "",
-                    "id": "99792ee7-6da0-442d-a751-20074b4a8688",
-                    "path": "<Mouse>/position",
-                    "interactions": "",
-                    "processors": "",
-                    "groups": "Keyboard&Mouse",
-                    "action": "CursorPosition",
+                    "action": "Move",
                     "isComposite": false,
                     "isPartOfComposite": false
                 }
