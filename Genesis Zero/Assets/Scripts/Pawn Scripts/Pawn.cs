@@ -17,9 +17,10 @@ public class Pawn : MonoBehaviour
     private Status invunerable, stunned, burning, slowed;
     private List<Status> statuses;
 
-    private float burntime, burndamage; //burndamage is damage per second
+    private float burntime, burndamage, burntick; //burndamage is damage per second
     private float slowtime, knockbackforce;
     private Vector3 knockbackvector;
+    private bool ForcedKnockBack;
 
     protected void Start()
     {
@@ -104,8 +105,17 @@ public class Pawn : MonoBehaviour
 
         if (IsBurning())
         {
-            GetHealth().AddValue(-burndamage * Time.deltaTime);
+            if (burntick >= .5f)
+            {
+                float damage = -burndamage * .5f;
+                GetHealth().AddValue(damage);
+                GameObject emit = VFXManager.instance.PlayEffect("DamageNumber", new Vector3(transform.position.x, transform.position.y + 1, transform.position.z - .5f));
+                emit.GetComponent<DamageNumber>().SetNumber(-damage);
+                emit.GetComponent<DamageNumber>().SetColor(new Color(1, .35f, 0));
+                burntick -= .5f;
+            }
             burntime -= Time.deltaTime;
+            burntick += Time.deltaTime;
         }
         if (IsSlowed())
         {
@@ -124,11 +134,17 @@ public class Pawn : MonoBehaviour
         if (knockbackforce > 0)
         {
             GetStunnedStatus().AddTime(Time.fixedDeltaTime);
-            knockbackforce *= Mathf.Clamp(9f / GetWeight().GetValue(), 0, .99f);
+            knockbackforce *= Mathf.Clamp(9.5f / GetWeight().GetValue(), 0, .99f);
+            if (ForcedKnockBack)
+            {
+                transform.position += knockbackvector * knockbackforce * Time.fixedDeltaTime;
+            }
             if (knockbackforce < 1)
             {
+                ForcedKnockBack = false;
                 knockbackforce = 0;
             }
+
         }
     }
 
@@ -226,6 +242,7 @@ public class Pawn : MonoBehaviour
     public void Burn(float time, float damage)
     {
         burntime = time;
+        burntick = Time.deltaTime;
         burndamage = damage;
         burning.SetTime(time);
     }
@@ -240,7 +257,14 @@ public class Pawn : MonoBehaviour
         if (GetComponent<Rigidbody>())
         {
             GetComponent<Rigidbody>().AddForce(knockbackvector.normalized * knockback, ForceMode.Impulse);
+            ForcedKnockBack = false;
         }
+    }
+
+    public void KnockBackForced(Vector3 direction, float force)
+    {
+        KnockBack(direction, force);
+        ForcedKnockBack = true;
     }
 
     public void SetKnockBackForce(float force)
@@ -256,6 +280,16 @@ public class Pawn : MonoBehaviour
     public float GetKnockBackForce()
     {
         return knockbackforce;
+    }
+
+    public void SetForcedKnockBack(bool boolean)
+    {
+        ForcedKnockBack = boolean;
+    }
+
+    public bool IsForcedKnockBack()
+    {
+        return ForcedKnockBack;
     }
 
     public bool IsSlowed()

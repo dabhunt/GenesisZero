@@ -22,6 +22,10 @@ public class Player : Pawn
     // Update is called once per frame
     new void Update()
     {
+        if (Input.GetKeyDown(KeyCode.B))
+        {
+            Burn(3, 20);
+        }
         //Debug.Log("Player" + GetHealth().GetValue() +" : "+ GetHealth().GetMaxValue());
         base.Update();
     }
