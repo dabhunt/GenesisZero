@@ -4,6 +4,8 @@ using UnityEngine;
 
 public class SacrificeUI : MonoBehaviour
 {
+    [Header("SacrificeUI")]
+    
     public RectTransform selectionObj;
 
     private Player player;
@@ -12,8 +14,8 @@ public class SacrificeUI : MonoBehaviour
     private Vector2 moveInput;
     private float selectInput;
     private SkillObject skill;
-    GameObject[] ModUI;
-    GameObject selectedMod;
+    private GameObject[] ModUI;
+    private GameObject selectedMod;
 
     private void Wake()
     {
@@ -21,6 +23,8 @@ public class SacrificeUI : MonoBehaviour
         inputActions.MenuControls.MoveSelect.performed += ctx => moveInput = ctx.ReadValue<Vector2>();
         inputActions.MenuControls.Select.performed += ctx => selectInput = ctx.ReadValue<float>();
         inputActions = new PlayerInputActions();
+        inputActions.MenuControls.Move.performed += ctx => moveInput = ctx.ReadValue<Vector2>();
+        inputActions.MenuControls.Move.performed += ctx => selectInput = ctx.ReadValue<float>();
     }
     void Start()
     {
@@ -29,9 +33,16 @@ public class SacrificeUI : MonoBehaviour
         playerController = player.GetComponent<PlayerController>();
         SetPosition(5f);
     }
-    //
-    //if player presses on a hardware mod in the bar above, it highlights
-    void changeSelection()
+    private void Update()
+    {
+        
+    }
+    
+    private void Pause()
+    {
+
+    }
+    private void changeSelection()
     {
         if (moveInput.x > 0)
         {
