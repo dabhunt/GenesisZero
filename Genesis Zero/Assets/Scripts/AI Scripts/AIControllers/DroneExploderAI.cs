@@ -17,6 +17,8 @@ public class DroneExploderAI : AIController
     private float targetSpeed = 0.0f;
     public float Acceleration = 5.0f; // Rate of acceleration
     public float SideDecel = 1.0f; // Rate of deceleration for sideways velocity to create tighter movement
+    public float AvoidAmount = 1.0f; // How much to accelerate away from the target
+    public float AvoidAccelLimit = 1.0f; // Limit on avoidance acceleration
 
     public float PatrolSpeed = 5.0f; // Movement speed while patrolling
     public float PatrolRotateRate = 1.0f; // Rotation rate while patrolling
@@ -47,6 +49,7 @@ public class DroneExploderAI : AIController
             // Rotation assumes that local up direction is forward
             lookDir = Vector3.Slerp(lookDir, targetPosition - transform.position, RotationRate * Time.fixedDeltaTime); // Rotate to face target
             targetSpeed = MoveSpeed;
+            frb.Accelerate((transform.position - targetPosition).normalized * Mathf.Min(GetAvoidCloseness(), AvoidAccelLimit) * Acceleration * AvoidAmount);
         }
         else if (state == AIState.Patrol)
         {
