@@ -52,11 +52,13 @@ public class SpawnOnDestroy : MonoBehaviour
         else{
             if (sounds.Length > 0)
             {
-            //if string is not empty, calls audio manager to play sound based on string
-            // note this only works if audio manager has been told to load the sound at the beginnning of the game
+                //if string is not empty, calls audio manager to play sound based on string
+                // note this only works if audio manager has been told to load the sound at the beginnning of the game
                 int rng = Random.Range(1, sounds.Length);
                 rng --;
-              aManager.PlaySoundOneShot(sounds[rng]);
+                if (aManager != null){
+                    aManager.PlaySoundOneShot(sounds[rng]);
+                }
             }
             //if vfx string is not empty
             if (vfxName != "")
@@ -70,7 +72,7 @@ public class SpawnOnDestroy : MonoBehaviour
             //print("dropping "+amount+" essence");
             for (int i = 0; i < amount; i++){
                 //print("dropping some essence...");
-                GameObject essence = Instantiate(EssencePrefab, new Vector3(transform.position.x, transform.position.y, 0), Quaternion.identity);
+                GameObject essence = Instantiate(EssencePrefab, new Vector3(transform.position.x, transform.position.y, 3), Quaternion.identity);
                 float force = Random.Range(minDropVelocity, maxDropVelocity);
                 Rigidbody rb = essence.GetComponent<Rigidbody>();
                 rb.GetComponent<Rigidbody>().velocity = Random.onUnitSphere * force;

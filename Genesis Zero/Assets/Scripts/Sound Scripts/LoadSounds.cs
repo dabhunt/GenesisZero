@@ -32,7 +32,7 @@ public class LoadSounds : MonoBehaviour
             // (name of actual file, name to be called by, volume, pitch, bool looping, bool awake);
             aManager.AddTrack("Ambient/"+ambient[i].name,ambient[i].name, MasterAmbientVolume, 1f, true, false);
         }
-        
+        aManager.PlayTrack("Ambient/Ambient-1");
         // FindObjectOfType<AudioManager>() searches for an AudioManager object
         // FindObjectOfType<AudioManager>().AddTrack("PLACEHOLDER - Pillar Men theme", "Pillar Men"); // Adds track to a Playlist
 

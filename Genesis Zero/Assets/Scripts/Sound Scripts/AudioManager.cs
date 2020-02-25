@@ -37,8 +37,7 @@ public class AudioManager : MonoBehaviour
 
     void Start()
     {
-        PlayTrack("Ambient-1");
-        
+
     }
 
     // Update is called once per frame
