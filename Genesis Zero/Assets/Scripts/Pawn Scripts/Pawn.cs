@@ -131,14 +131,18 @@ public class Pawn : MonoBehaviour
 
     protected void FixedUpdate()
     {
-        if (knockbackforce > 0)
+        if (knockbackforce > 0)      
         {
             GetStunnedStatus().AddTime(Time.fixedDeltaTime);
             knockbackforce *= Mathf.Clamp(9.5f / GetWeight().GetValue(), 0, .99f);
-            if (ForcedKnockBack)
+            if (ForcedKnockBack && GetComponent<PlayerController>() && GetComponent<PlayerController>().BlockedAll() == false)
             {
-                transform.position += knockbackvector * knockbackforce * Time.fixedDeltaTime;
+                transform.position += knockbackvector * knockbackforce * Time.fixedDeltaTime;               
             }
+            else if (ForcedKnockBack && GetComponent<PlayerController>() && GetComponent<PlayerController>().BlockedAll() == true){
+                knockbackforce = 0;
+            }
+
             if (knockbackforce < 1)
             {
                 ForcedKnockBack = false;
@@ -258,6 +262,9 @@ public class Pawn : MonoBehaviour
         {
             GetComponent<Rigidbody>().AddForce(knockbackvector.normalized * knockback, ForceMode.Impulse);
             ForcedKnockBack = false;
+        }
+        if(GetComponent<Player>() != null ){
+            ForcedKnockBack = true; 
         }
     }
 

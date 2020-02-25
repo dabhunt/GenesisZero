@@ -747,8 +747,8 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1634304802929649329}
   m_LocalRotation: {x: -0, y: -0.7062908, z: -0, w: -0.70792186}
-  m_LocalPosition: {x: 6, y: 6.24, z: 1.56}
-  m_LocalScale: {x: 0.7808763, y: 0.3211534, z: 7.9510183}
+  m_LocalPosition: {x: 6.0518, y: 6.24, z: 1.5601}
+  m_LocalScale: {x: 0.7808763, y: 0.3211534, z: 8.054381}
   m_Children: []
   m_Father: {fileID: 5269822276670909724}
   m_RootOrder: 44
@@ -811,8 +811,8 @@ BoxCollider:
   m_IsTrigger: 0
   m_Enabled: 0
   serializedVersion: 2
-  m_Size: {x: 1, y: 1, z: 1}
-  m_Center: {x: 0, y: 0, z: 0}
+  m_Size: {x: 0.9999998, y: 1, z: 1.0091629}
+  m_Center: {x: -0.0000000027773268, y: 0, z: 0.0045814286}
 --- !u!1 &2124749915044500760
 GameObject:
   m_ObjectHideFlags: 0
@@ -2776,7 +2776,7 @@ GameObject:
   - component: {fileID: 7888045270428115637}
   - component: {fileID: 1978289389716752730}
   - component: {fileID: 2514104649826447096}
-  - component: {fileID: 7818510767646920141}
+  - component: {fileID: 1167193510522785818}
   m_Layer: 0
   m_Name: CatWalkBase (9)
   m_TagString: Untagged
@@ -2845,8 +2845,8 @@ MeshRenderer:
   m_SortingLayerID: 0
   m_SortingLayer: 0
   m_SortingOrder: 0
---- !u!64 &7818510767646920141
-MeshCollider:
+--- !u!65 &1167193510522785818
+BoxCollider:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
@@ -2855,10 +2855,9 @@ MeshCollider:
   m_Material: {fileID: 0}
   m_IsTrigger: 0
   m_Enabled: 1
-  serializedVersion: 3
-  m_Convex: 0
-  m_CookingOptions: 30
-  m_Mesh: {fileID: 4300006, guid: cf1d360fe5433904caf8ea54131c67b0, type: 3}
+  serializedVersion: 2
+  m_Size: {x: 2, y: 2.0000002, z: 0.03999995}
+  m_Center: {x: 0.00068959594, y: -0.0005661547, z: 0.0156578}
 --- !u!1 &7158910158648913703
 GameObject:
   m_ObjectHideFlags: 0
@@ -2981,7 +2980,7 @@ GameObject:
   - component: {fileID: 3992985331202308978}
   - component: {fileID: 1541605506167110249}
   - component: {fileID: 4182028597944173506}
-  - component: {fileID: 1025135051228582521}
+  - component: {fileID: 8002977710360784168}
   m_Layer: 0
   m_Name: CatWalkBase (3)
   m_TagString: Untagged
@@ -2997,7 +2996,7 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 8486026164943153430}
   m_LocalRotation: {x: -0.7071068, y: -0.000001155713, z: -0.000001155713, w: 0.7071068}
-  m_LocalPosition: {x: -8.536, y: 9.269714, z: 0.4201}
+  m_LocalPosition: {x: -8.536, y: 9.07, z: 0.4201}
   m_LocalScale: {x: 1.5483499, y: 0.13410288, z: 4.1344414}
   m_Children: []
   m_Father: {fileID: 3456465867675667110}
@@ -3050,8 +3049,8 @@ MeshRenderer:
   m_SortingLayerID: 0
   m_SortingLayer: 0
   m_SortingOrder: 0
---- !u!64 &1025135051228582521
-MeshCollider:
+--- !u!65 &8002977710360784168
+BoxCollider:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
@@ -3060,10 +3059,9 @@ MeshCollider:
   m_Material: {fileID: 0}
   m_IsTrigger: 0
   m_Enabled: 1
-  serializedVersion: 3
-  m_Convex: 1
-  m_CookingOptions: 30
-  m_Mesh: {fileID: 4300006, guid: cf1d360fe5433904caf8ea54131c67b0, type: 3}
+  serializedVersion: 2
+  m_Size: {x: 2.000001, y: 2.0000017, z: 0.07844349}
+  m_Center: {x: 0.0006870166, y: -0.0005670429, z: -0.0035639764}
 --- !u!1 &8715575042938068263
 GameObject:
   m_ObjectHideFlags: 0
@@ -4073,6 +4071,16 @@ PrefabInstance:
         type: 3}
       propertyPath: m_LocalScale.x
       value: 1.2872422
+      objectReference: {fileID: 0}
+    - target: {fileID: 6756871311223218818, guid: ddee15028a350d34faca083cc41a3015,
+        type: 3}
+      propertyPath: m_LocalPosition.x
+      value: -0.0223
+      objectReference: {fileID: 0}
+    - target: {fileID: 6756871311223218818, guid: ddee15028a350d34faca083cc41a3015,
+        type: 3}
+      propertyPath: m_LocalScale.x
+      value: 1.0223
       objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: ddee15028a350d34faca083cc41a3015, type: 3}

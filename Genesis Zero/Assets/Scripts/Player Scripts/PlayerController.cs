@@ -548,6 +548,14 @@ public class PlayerController : MonoBehaviour
         return isBlock;
     }
 
+    public bool BlockedAll(){
+
+    	if(IsBlocked(Vector3.left)) return true;
+    	if(IsBlocked(Vector3.right)) return true;
+    	if(IsBlocked(Vector3.up)) return true;
+    	return false;
+    }
+
     /* This function updates information
      * about the player's state for animations
      */
