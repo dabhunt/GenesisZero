@@ -2,10 +2,11 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-[RequireComponent(typeof(Player))]
+[RequireComponent(typeof(Player), typeof(PlayerController))]
 public class AbilityCasting : MonoBehaviour
 {
     Player player;
+    PlayerController PC;
     SkillManager skillmanager;
 
     private float AbitityCasttime1;
@@ -17,18 +18,38 @@ public class AbilityCasting : MonoBehaviour
     private float AbilityCooldown2;
     private float TotalAbitityCasttime2;
     private float TotalAbilityCooldown2;
+
+    private Vector2 aimDir;
     // Start is called before the first frame update
     void Start()
     {
         player = GetComponent<Player>();
         skillmanager = player.GetSkillManager();
+        PC = GetComponent<PlayerController>();
+        aimDir = new Vector2(0, 0);
     }
 
 
     // Update is called once per frame
     void Update()
     {
+        if (Input.GetKeyDown(KeyCode.Q))
+        {
+            CastAbility1();
+        }
+        if (Input.GetKeyDown(KeyCode.E))
+        {
+            CastAbility2();
+        }
+        
+        Vector3 pos = new Vector3(Input.mousePosition.x, Input.mousePosition.y, Mathf.Abs(Camera.main.transform.position.z - transform.position.z));
+        Vector3 mousePosition = Camera.main.ScreenToWorldPoint(pos);
+        aimDir = mousePosition - transform.position;
 
+        Mathf.Clamp(AbilityCooldown1 -= Time.deltaTime, 0, TotalAbilityCooldown1);
+        Mathf.Clamp(AbilityCooldown2 -= Time.deltaTime, 0, TotalAbilityCooldown2);
+        Mathf.Clamp(AbitityCasttime1 -= Time.deltaTime, 0, TotalAbitityCasttime1);
+        Mathf.Clamp(AbitityCasttime2 -= Time.deltaTime, 0, TotalAbitityCasttime2);
     }
 
     public void CastAbility1()
@@ -51,12 +72,13 @@ public class AbilityCasting : MonoBehaviour
     {
         switch (name)
         {
-            case "Ability1":
-                InitializeAbility(10, 1, num);
-                //Implement functionality
+            case "Pulse Burst":
+                InitializeAbility(3, 0, num);
+                CastPulseBurst();
                 break;
-            case "Ability2":
-                //Implement functionality
+            case "Burst Charge":
+                InitializeAbility(3, 0, num);
+                CastBurstCharge();
                 break;
             case "Ability3":
                 //Implement functionality
@@ -124,4 +146,13 @@ public class AbilityCasting : MonoBehaviour
         return AbilityCooldown2 / TotalAbilityCooldown2;
     }
 
+    private void CastPulseBurst()
+    {
+        player.KnockBackForced(-aimDir, 5);
+    }
+
+    private void CastBurstCharge()
+    {
+        player.KnockBack(aimDir, 5);
+    }
 }

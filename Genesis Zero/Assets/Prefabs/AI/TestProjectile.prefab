@@ -296,6 +296,9 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   Speed: 20
   LifeDuration: 1
+  DestroyEvent:
+    m_PersistentCalls:
+      m_Calls: []
 --- !u!114 &-7445150402578483573
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -314,8 +317,9 @@ MonoBehaviour:
   HurtsEnemies: 0
   Intangible: 0
   MaxHits: 1
-  Knockbackforce: 40
+  Knockbackforce: 2
   DirectionalKnockback: 1
+  Burn: {x: 0, y: 0}
   Collider: {fileID: 6715079778417504245}
   Source: {fileID: 0}
 --- !u!135 &6715079778417504245

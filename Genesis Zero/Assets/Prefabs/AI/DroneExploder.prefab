@@ -9752,11 +9752,15 @@ MonoBehaviour:
   SideDecel: 2
   AvoidAmount: 6
   AvoidAccelLimit: 1.5
+  vfxName: VFX_Explosion
+  blastRadius: 5
+  lerpMultiplier: 2.3
+  startScale: 0.01
   PatrolSpeed: 1
   PatrolRotateRate: 30
   chargeParticles: {fileID: 2000804233892562995}
   attackParticles: {fileID: 2000804235089814667}
-  Explosion: {fileID: 6641631083453567850, guid: e7f154a9fc29bcb429ca9d7203da43ec,
+  explosionPrefab: {fileID: 6641631083453567850, guid: e7f154a9fc29bcb429ca9d7203da43ec,
     type: 3}
 --- !u!114 &2037691598
 MonoBehaviour:
@@ -9893,7 +9897,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 5a527f77c5341134ab6e8df3d643691d, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  vfxName: VFX_Explosion
+  vfxName: 
   vfxScaleMultiplier: 0
   sounds: []
   quitting: 0

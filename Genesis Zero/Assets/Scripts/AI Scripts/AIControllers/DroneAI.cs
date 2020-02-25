@@ -102,7 +102,6 @@ public class DroneAI : AIController
             }
         }
 
-        // Projectile shooting logic
         if (state == AIState.Attack)
         {
             if (attackLaunchTime <= 0)

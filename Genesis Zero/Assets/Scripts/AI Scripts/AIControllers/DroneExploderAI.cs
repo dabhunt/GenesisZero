@@ -20,13 +20,18 @@ public class DroneExploderAI : AIController
     public float AvoidAmount = 1.0f; // How much to accelerate away from the target
     public float AvoidAccelLimit = 1.0f; // Limit on avoidance acceleration
 
+    public string vfxName = "VFX_Explosion";
+    public float blastRadius = 5f;
+    public float lerpMultiplier = 2.3f;
+    public float startScale=.01f;
+
     public float PatrolSpeed = 5.0f; // Movement speed while patrolling
     public float PatrolRotateRate = 1.0f; // Rotation rate while patrolling
     private int patrolDir = 1;
 
     public ParticleSystem chargeParticles;
     public ParticleSystem attackParticles;
-    public GameObject Explosion;
+    public GameObject explosionPrefab;
 
     protected void Awake()
     {
@@ -105,12 +110,21 @@ public class DroneExploderAI : AIController
      */
     public void Explode()
     {
-        if (Explosion != null)
+        if (explosionPrefab != null)
         {
-            GameObject spawnedExplosion = Instantiate(Explosion, transform.position, Quaternion.identity);
+        	
+            GameObject spawnedExplosion = Instantiate(explosionPrefab, transform.position, Quaternion.identity);
             Hitbox spawnedHitbox = spawnedExplosion.GetComponent<Hitbox>();
             spawnedHitbox.InitializeHitbox(GetDamage().GetValue(), this);
-            spawnedExplosion.GetComponent<ProjectileTest>().DestroyEvent.AddListener(DestroySelf);
+            //spawnedExplosion.GetComponent<ProjectileTest>().DestroyEvent.AddListener(DestroySelf);
+            GameObject emit = VFXManager.instance.PlayEffect(vfxName, new Vector3(transform.position.x, transform.position.y, transform.position.z), 0f, blastRadius);
+            // Vector3 spawnPoint = new Vector3(transform.position.x, transform.position.y,0);
+            // //this is for collision, not VFX
+            // GameObject spawnedExplosion = Instantiate(explosionPrefab,spawnPoint, Quaternion.identity);
+            // AOE AOEscript = spawnedExplosion.GetComponent<AOE>();
+            // AOEscript.setScaleTarget(startScale, blastRadius, lerpMultiplier);
+            // //print("blastRadius = " + blastRadius + "during the on destroy call last section");
+            // 
         }
         gameObject.SetActive(false);
     }
