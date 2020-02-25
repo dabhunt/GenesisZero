@@ -31,6 +31,22 @@ public class LevelStateManager : MonoBehaviour
     }
 
     /*
+     * Connects level load function to scene manager load scene event
+     */
+    private void OnEnable()
+    {
+        SceneManager.sceneLoaded += OnLevelLoad;
+    }
+
+    /*
+     * Disconnects level load function from scene manager load scene event
+     */
+    private void OnDisable()
+    {
+        SceneManager.sceneLoaded -= OnLevelLoad;
+    }
+
+    /*
      * Invokes the level exit event when a level is left
      */
     public static void GoToLevel(string nextLevel)
@@ -45,7 +61,7 @@ public class LevelStateManager : MonoBehaviour
     /*
      * Invokes the level enter event when a level is loaded
      */
-    public void OnLevelWasLoaded(int level)
+    public void OnLevelLoad(Scene scene, LoadSceneMode mode)
     {
         if (instance != null)
         {
