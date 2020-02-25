@@ -30,8 +30,10 @@ public class SpawnOnDestroy : MonoBehaviour
     void Start()
     {
         quitting = false;
-        restartScript = GameObject.FindGameObjectWithTag("GameManagers").transform.Find("StateManager").GetComponent<Restart>();
-        player = GameObject.FindGameObjectWithTag("Player").GetComponent<Player>();
+        GameObject temp = GameObject.FindWithTag("EventSystem");
+         restartScript = temp.GetComponent<Restart>();
+        temp = GameObject.FindWithTag("Player");
+        player = temp.GetComponent<Player>();
         //populate the list of potential modifier drops
         aManager = FindObjectOfType<AudioManager>();
         if (vfxScaleMultiplier <= 0){

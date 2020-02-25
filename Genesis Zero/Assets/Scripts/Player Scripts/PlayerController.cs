@@ -52,18 +52,12 @@ public class PlayerController : MonoBehaviour
     public float triggerResetTime = 0.25f;
 
     //Component Parts
+    private PlayerInputActions inputActions;
     private Player player;
     private OverHeat overheat;
-    
-    //Input variables
-    GameInputActions inputActions;
-    private Vector2 movementInput;
-    private Vector2 aimInputMouse;
-    private Vector2 aimInputController;
-    private float fireInput;
-    private float interactInput;
 
     //Movement Variables
+    private Vector2 movementInput;
     private RaycastHit groundHitInfo;
     private Vector3 moveVec = Vector3.right;
     private float maxSpeed;
@@ -76,6 +70,9 @@ public class PlayerController : MonoBehaviour
     private Vector3 lastRollingPosition;
 
     //Aim Variables
+    private Vector2 aimInputMouse;
+    private Vector2 aimInputController;
+    private float fireInput;
     private float gamepadAimTime;
     private Gun gun;
 
@@ -94,20 +91,21 @@ public class PlayerController : MonoBehaviour
 
     private void Awake()
     {
-        inputActions = GameInputManager.instance.GetInputActions();
+        inputActions = new PlayerInputActions();
         inputActions.PlayerControls.Move.performed += ctx => movementInput = ctx.ReadValue<Vector2>();
         inputActions.PlayerControls.AimMouse.performed += ctx => aimInputMouse = ctx.ReadValue<Vector2>();
         inputActions.PlayerControls.AimController.performed += ctx => aimInputController = ctx.ReadValue<Vector2>();
         inputActions.PlayerControls.Fire.performed += ctx => fireInput = ctx.ReadValue<float>();
-        inputActions.PlayerControls.Interact.performed += ctx => interactInput = ctx.ReadValue<float>();
-    }
-
-    private void Start()
-    {
         sound = FindObjectOfType<AudioManager>().GetComponent<PlayerSounds>();
         animator = GetComponent<Animator>();
         gun = GetComponent<Gun>();
         overheat = GetComponent<OverHeat>();
+    }
+
+    private void Start()
+    {
+        Cursor.visible = false;
+        Cursor.lockState = CursorLockMode.Confined;
         player = GetComponent<Player>();
     }
 
@@ -125,6 +123,16 @@ public class PlayerController : MonoBehaviour
         UpdateJump();
         UpdateDodgeRoll();
         DrawDebugLines();
+    }
+
+    private void OnEnable()
+    {
+        inputActions.Enable();
+    }
+
+    private void OnDisable()
+    {
+        inputActions.Disable();
     }
 
     /* This controls the character general movements
