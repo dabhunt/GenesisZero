@@ -54,9 +54,16 @@ public class PlayerController : MonoBehaviour
     //Component Parts
     private Player player;
     private OverHeat overheat;
+    
+    //Input variables
+    GameInputActions inputActions;
+    private Vector2 movementInput;
+    private Vector2 aimInputMouse;
+    private Vector2 aimInputController;
+    private float fireInput;
+    private float interactInput;
 
     //Movement Variables
-    private Vector2 movementInput;
     private RaycastHit groundHitInfo;
     private Vector3 moveVec = Vector3.right;
     private float maxSpeed;
@@ -69,9 +76,6 @@ public class PlayerController : MonoBehaviour
     private Vector3 lastRollingPosition;
 
     //Aim Variables
-    private Vector2 aimInputMouse;
-    private Vector2 aimInputController;
-    private float fireInput;
     private float gamepadAimTime;
     private Gun gun;
 
@@ -90,21 +94,20 @@ public class PlayerController : MonoBehaviour
 
     private void Awake()
     {
-        inputActions = GameObject.FindGameObjectWithTag("GameManagers").transform.Find("InputManager").GetComponent<GameInputManager>().inputActions;
+        inputActions = GameInputManager.instance.GetInputActions();
         inputActions.PlayerControls.Move.performed += ctx => movementInput = ctx.ReadValue<Vector2>();
         inputActions.PlayerControls.AimMouse.performed += ctx => aimInputMouse = ctx.ReadValue<Vector2>();
         inputActions.PlayerControls.AimController.performed += ctx => aimInputController = ctx.ReadValue<Vector2>();
         inputActions.PlayerControls.Fire.performed += ctx => fireInput = ctx.ReadValue<float>();
-        sound = FindObjectOfType<AudioManager>().GetComponent<PlayerSounds>();
-        animator = GetComponent<Animator>();
-        gun = GetComponent<Gun>();
-        overheat = GetComponent<OverHeat>();
+        inputActions.PlayerControls.Interact.performed += ctx => interactInput = ctx.ReadValue<float>();
     }
 
     private void Start()
     {
-        Cursor.visible = false;
-        Cursor.lockState = CursorLockMode.Confined;
+        sound = FindObjectOfType<AudioManager>().GetComponent<PlayerSounds>();
+        animator = GetComponent<Animator>();
+        gun = GetComponent<Gun>();
+        overheat = GetComponent<OverHeat>();
         player = GetComponent<Player>();
     }
 

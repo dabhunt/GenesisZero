@@ -6,61 +6,46 @@ using UnityEngine.InputSystem;
 public class SacrificeUI : MonoBehaviour
 {
     [Header("SacrificeUI")]
-    
-    public RectTransform selectionObj;
-
-    private Player player;
-    private PlayerController playerController;
     private GameInputActions inputActions;
     private Vector2 moveInput;
     private float selectInput;
-    private SkillObject skill;
-    private GameObject[] ModUI;
-    private GameObject selectedMod;
+    private GameObject sacUI;
 
-    private void Wake()
+    private void Awake()
     {
-        //inputActions.PlayerControls.Move.performed += ctx => movementInput = ctx.ReadValue<Vector2>();
-        inputActions = GameObject.FindGameObjectWithTag("GameManagers").transform.Find("InputManager").GetComponent<GameInputActions>();
+        inputActions = GameInputManager.instance.GetInputActions();
         inputActions.MenuControls.Move.performed += ctx => moveInput = ctx.ReadValue<Vector2>();
-        inputActions.MenuControls.Move.performed += ctx => selectInput = ctx.ReadValue<float>();
-    }
-    private void OnDisable()
-    {
-        inputActions.Disable();
-    }
-    private void OnEnable() 
-    {
-        inputActions.Enable();    
-    }
-    private void Start()
-    {
-        
     }
     private void Update()
     {
-        
+        //UI behavior goes here. I.e: Selectting stuff, 
     }
-    
-    private void Pause(InputAction.CallbackContext cxt)
+
+    private void CloseUI()
     {
-        if (cxt.performed)
-        {
-            
-        }
+        //This line will just call OnDisable() to switch back to regular game state
+        this.enabled = false;
     }
-    private void changeSelection()
+
+    private void OnEnable() 
     {
-        
+        //Pauses game, switch control map
+        StateManager.instance.PauseGame();
+        GameInputManager.instance.SwitchControlMap("MenuControls");
+
+        //Bring up the UI
+        sacUI = GameObject.FindGameObjectWithTag("CanvasUI").transform.Find("SacrificeUI").gameObject;
+        //To do:
+        // Populate the actual SacUI, and move it to where the GodHead is
+        sacUI.SetActive(true);
     }
-    private void SetPosition(float xValue)
+
+    private void OnDisable() 
     {
-        selectionObj.transform.position = new Vector3(xValue,1,1);
-    }
-    private void openSacrificeWindow()
-    {
-        ModUI = GameObject.FindGameObjectsWithTag("ModUI");
-        selectedMod = ModUI[1];
-        SkillObject skill = selectedMod.GetComponent<SkillUIElement>().GetComponent<SkillObject>();
+        //Put UI away
+        sacUI.SetActive(false);
+        //Switch control map, unpause game
+        GameInputManager.instance.SwitchControlMap("PlayerControls");
+        StateManager.instance.UnpauseGame();
     }
 }

@@ -6,10 +6,10 @@ using System.Collections.Generic;
 using UnityEngine.InputSystem;
 using UnityEngine.InputSystem.Utilities;
 
-public class @GameInputActions : IInputActionCollection, IDisposable
+public class @GameInputActionsGenerate : IInputActionCollection, IDisposable
 {
     private InputActionAsset asset;
-    public @GameInputActions()
+    public @GameInputActionsGenerate()
     {
         asset = InputActionAsset.FromJson(@"{
     ""name"": ""GameInputActions"",
@@ -487,8 +487,8 @@ public class @GameInputActions : IInputActionCollection, IDisposable
     private readonly InputAction m_PlayerControls_Pause;
     public struct PlayerControlsActions
     {
-        private @GameInputActions m_Wrapper;
-        public PlayerControlsActions(@GameInputActions wrapper) { m_Wrapper = wrapper; }
+        private @GameInputActionsGenerate m_Wrapper;
+        public PlayerControlsActions(@GameInputActionsGenerate wrapper) { m_Wrapper = wrapper; }
         public InputAction @Move => m_Wrapper.m_PlayerControls_Move;
         public InputAction @AimMouse => m_Wrapper.m_PlayerControls_AimMouse;
         public InputAction @AimController => m_Wrapper.m_PlayerControls_AimController;
@@ -571,8 +571,8 @@ public class @GameInputActions : IInputActionCollection, IDisposable
     private readonly InputAction m_MenuControls_Move;
     public struct MenuControlsActions
     {
-        private @GameInputActions m_Wrapper;
-        public MenuControlsActions(@GameInputActions wrapper) { m_Wrapper = wrapper; }
+        private @GameInputActionsGenerate m_Wrapper;
+        public MenuControlsActions(@GameInputActionsGenerate wrapper) { m_Wrapper = wrapper; }
         public InputAction @Select => m_Wrapper.m_MenuControls_Select;
         public InputAction @Unpause => m_Wrapper.m_MenuControls_Unpause;
         public InputAction @Move => m_Wrapper.m_MenuControls_Move;
@@ -645,13 +645,5 @@ public class @GameInputActions : IInputActionCollection, IDisposable
         void OnSelect(InputAction.CallbackContext context);
         void OnUnpause(InputAction.CallbackContext context);
         void OnMove(InputAction.CallbackContext context);
-    }
-
-
-    // Everything Above this point should be copied over from
-    // GameInputActionsGenerate.cs
-    public InputActionAsset GetInputActionAsset()
-    {
-        return asset;
     }
 }
