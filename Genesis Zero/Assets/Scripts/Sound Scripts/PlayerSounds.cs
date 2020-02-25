@@ -43,7 +43,7 @@ public class PlayerSounds : MonoBehaviour
 	}
 	public void Walk()
 	{
-		print("walk is being called");
+		//print("walk is being called");
         aManager.PlaySound(walk);
 	}
 	public void StopWalk(){
