@@ -10262,12 +10262,11 @@ GameObject:
   - component: {fileID: 2000804235349801761}
   - component: {fileID: 2000804235349801760}
   - component: {fileID: 2000804235349801763}
+  - component: {fileID: 421613816991493221}
   - component: {fileID: 2000804235349801766}
   - component: {fileID: 2037691598}
   - component: {fileID: 1692614117}
   - component: {fileID: 1692614116}
-  - component: {fileID: 3881880104393357785}
-  - component: {fileID: -7166767128269251895}
   - component: {fileID: 6283972142564161067}
   - component: {fileID: 5625797433993196297}
   m_Layer: 9
@@ -10345,6 +10344,20 @@ MeshRenderer:
   m_SortingLayerID: 0
   m_SortingLayer: 0
   m_SortingOrder: 0
+--- !u!136 &421613816991493221
+CapsuleCollider:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2000804235349801773}
+  m_Material: {fileID: 13400000, guid: d8637a3e797a152468ab94066c728e5e, type: 2}
+  m_IsTrigger: 0
+  m_Enabled: 1
+  m_Radius: 0.29
+  m_Height: 1.3
+  m_Direction: 1
+  m_Center: {x: 0, y: 0.12, z: 0}
 --- !u!114 &2000804235349801766
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -10359,7 +10372,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   Stats: {fileID: 11400000, guid: 33a802356d0ebd048a67175383c1ee23, type: 2}
   BehaviorProperties: {fileID: 11400000, guid: 6c0e2066622d1b4478ba26f70f2d57d9, type: 2}
-  IdlePatrolIntervalMin: 1
+  IdlePatrolIntervalMin: 0.5
   IdlePatrolIntervalMax: 2
   Target: {fileID: 0}
   StateChangeEvent:
@@ -10425,38 +10438,6 @@ MonoBehaviour:
   GravityFactor: 0
   friction: 1
   drag: 0.1
---- !u!95 &3881880104393357785
-Animator:
-  serializedVersion: 3
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 2000804235349801773}
-  m_Enabled: 1
-  m_Avatar: {fileID: 0}
-  m_Controller: {fileID: 22100000, guid: 16bfca665e762b54ab0f86df05b9b2f4, type: 2}
-  m_CullingMode: 0
-  m_UpdateMode: 0
-  m_ApplyRootMotion: 0
-  m_LinearVelocityBlending: 0
-  m_WarningMessage: 
-  m_HasTransformHierarchy: 1
-  m_AllowConstantClipSamplingOptimization: 1
-  m_KeepAnimatorControllerStateOnDisable: 0
---- !u!114 &-7166767128269251895
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 2000804235349801773}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 01ce23c1053aff742846bd80b9391bb1, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  FallLayerBlendRate: 1
 --- !u!114 &6283972142564161067
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -10495,7 +10476,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 76b163fb265bd124cbfb7b5dab93af12, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  colliders: []
+  colliders:
+  - {fileID: 6077818489045644752}
 --- !u!1 &2632772789354947772
 GameObject:
   m_ObjectHideFlags: 0
@@ -11967,7 +11949,7 @@ Light:
   m_BounceIntensity: 1
   m_ColorTemperature: 6570
   m_UseColorTemperature: 0
-  m_BoundingSphereOverride: {x: 0, y: 3e-45, z: 5.411e-41, w: 1.01e-43}
+  m_BoundingSphereOverride: {x: 0, y: 0, z: 0, w: 2}
   m_UseBoundingSphereOverride: 0
   m_ShadowRadius: 0
   m_ShadowAngle: 0
