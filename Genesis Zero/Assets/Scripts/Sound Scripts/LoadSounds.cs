@@ -5,30 +5,34 @@ using UnityEngine;
 public class LoadSounds : MonoBehaviour
 {
     // Start is called before the first frame update
-    public AudioClip[] allSounds;
-    public AudioClip[] ambient;
-    private AudioManager aManager;
+
     public float MasterAmbientVolume;
     public float MasterSoundVolume;
-    void Awake()
+
+    private Object[] allSounds;
+    private Object[] ambient;
+    private AudioManager aManager;
+    void Start()
     {
         if (MasterAmbientVolume == 0 || MasterSoundVolume == 0){
             MasterAmbientVolume = 1f;
             MasterSoundVolume = .15f;
         }
         aManager = FindObjectOfType<AudioManager>();
+        allSounds = Resources.LoadAll("Sounds/SFX");
+        ambient = Resources.LoadAll("Sounds/Ambient");
         for (int i = 0; i < allSounds.Length; i++)
         {
             // (name of actual file, name to be called by, volume, pitch, bool looping, bool awake);
-            aManager.AddSound(allSounds[i].name, allSounds[i].name, MasterSoundVolume, 1f, true, false);
+            print("allSounds.name"+allSounds[i].name);
+            aManager.AddSound("SFX/"+allSounds[i].name,allSounds[i].name, MasterSoundVolume, 1f, true, false);
         }
         for (int i = 0; i < ambient.Length; i++)
         {
             // (name of actual file, name to be called by, volume, pitch, bool looping, bool awake);
-            aManager.AddTrack(ambient[i].name, ambient[i].name, MasterAmbientVolume, 1f, true, false);
+            aManager.AddTrack("Ambient/"+ambient[i].name,ambient[i].name, MasterAmbientVolume, 1f, true, false);
         }
-        aManager.PlayTrack(ambient[0].name);
-        
+        aManager.PlayTrack("Ambient/Ambient-1");
         // FindObjectOfType<AudioManager>() searches for an AudioManager object
         // FindObjectOfType<AudioManager>().AddTrack("PLACEHOLDER - Pillar Men theme", "Pillar Men"); // Adds track to a Playlist
 
