@@ -393,6 +393,7 @@ public class PlayerController : MonoBehaviour
         float rollSpeed = maxSpeed * rollSpeedMult;
         if (isRolling)
         {
+        	GetComponent<Hurtbox>().enabled = false;
             //interupts roll if it's blocked
             if ((rollDirection > 0 && IsBlocked(Vector3.right)) || (rollDirection < 0 && IsBlocked(Vector3.left)))
             {   
@@ -430,6 +431,9 @@ public class PlayerController : MonoBehaviour
                 }
             }
             lastRollingPosition = transform.position;
+        }
+        else{
+        	GetComponent<Hurtbox>().enabled = true;
         }
     }
 
@@ -552,6 +556,7 @@ public class PlayerController : MonoBehaviour
 
     	if(IsBlocked(Vector3.left)) return true;
     	if(IsBlocked(Vector3.right)) return true;
+    	if(IsBlocked(Vector3.down)) return true;
     	if(IsBlocked(Vector3.up)) return true;
     	return false;
     }
