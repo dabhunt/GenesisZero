@@ -11,7 +11,7 @@ GameObject:
   - component: {fileID: 2000804233892563005}
   - component: {fileID: 2000804233892562995}
   - component: {fileID: 2000804233892562994}
-  m_Layer: 0
+  m_Layer: 9
   m_Name: ChargeParticles
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -4775,7 +4775,7 @@ GameObject:
   - component: {fileID: 2000804234819323556}
   - component: {fileID: 2000804234819323559}
   - component: {fileID: 2000804234819323558}
-  m_Layer: 0
+  m_Layer: 9
   m_Name: Face
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -4867,7 +4867,7 @@ GameObject:
   - component: {fileID: 2000804235089814677}
   - component: {fileID: 2000804235089814667}
   - component: {fileID: 2000804235089814666}
-  m_Layer: 0
+  m_Layer: 9
   m_Name: AttackParticles
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -9640,9 +9640,9 @@ GameObject:
   - component: {fileID: -7166767128269251895}
   - component: {fileID: -196170401612726166}
   - component: {fileID: 6283972142564161067}
-  m_Layer: 0
+  m_Layer: 9
   m_Name: DroneExploder
-  m_TagString: Untagged
+  m_TagString: Enemy
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -9750,7 +9750,7 @@ MonoBehaviour:
   MoveSpeed: 8
   Acceleration: 5
   SideDecel: 2
-  vfxName: VFX_Explosion
+  vfxName: VFX_ExplosionEnemy
   blastRadius: 5
   lerpMultiplier: 2.3
   startScale: 0.01
@@ -9897,15 +9897,18 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   vfxName: 
   vfxScaleMultiplier: 0
-  sounds: []
+  sounds:
+  - SFX_Explosion
   quitting: 0
   minEssenceDrop: 0
-  maxEssenceDrop: 0
-  ModifierDropChance: 0
-  minDropVelocity: 0
-  maxDropVelocity: 0
-  EssencePrefab: {fileID: 0}
-  ModifierPrefab: {fileID: 0}
+  maxEssenceDrop: 5
+  ModifierDropChance: 0.25
+  minDropVelocity: 0.75
+  maxDropVelocity: 1.5
+  EssencePrefab: {fileID: 3175629662073271086, guid: ddc3274a97a8ffc41bb3097e97f19942,
+    type: 3}
+  ModifierPrefab: {fileID: 2493648811206171248, guid: ac8b05e93bf88fa488c9b7e45be8fac0,
+    type: 3}
 --- !u!1 &4173086586034620113
 GameObject:
   m_ObjectHideFlags: 0
@@ -9917,7 +9920,7 @@ GameObject:
   - component: {fileID: 5420805064465176855}
   - component: {fileID: 4596672078483758528}
   - component: {fileID: 3302769733093192286}
-  m_Layer: 0
+  m_Layer: 9
   m_Name: Area Light
   m_TagString: Untagged
   m_Icon: {fileID: 0}

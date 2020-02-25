@@ -12,7 +12,7 @@ GameObject:
   - component: {fileID: 751653432839557207}
   - component: {fileID: 751653432839557204}
   - component: {fileID: 751653432839557205}
-  m_Layer: 0
+  m_Layer: 9
   m_Name: Face
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -104,7 +104,7 @@ GameObject:
   - component: {fileID: 751653433110049382}
   - component: {fileID: 751653433110049400}
   - component: {fileID: 751653433110049401}
-  m_Layer: 0
+  m_Layer: 9
   m_Name: AttackParticles
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -4877,9 +4877,9 @@ GameObject:
   - component: {fileID: 3739019229038373442}
   - component: {fileID: 6999983156308857340}
   - component: {fileID: -4531674250205412582}
-  m_Layer: 0
+  m_Layer: 9
   m_Name: PlatformShooter
-  m_TagString: Untagged
+  m_TagString: Enemy
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -4978,6 +4978,8 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   Stats: {fileID: 11400000, guid: b7310c6d3d456524fbb193497ae42183, type: 2}
   BehaviorProperties: {fileID: 11400000, guid: c41cedfcc9ef2af409526a3f27032ced, type: 2}
+  IdlePatrolIntervalMin: 1
+  IdlePatrolIntervalMax: 2
   Target: {fileID: 0}
   StateChangeEvent:
     m_PersistentCalls:
@@ -5113,6 +5115,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 01ce23c1053aff742846bd80b9391bb1, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  FallLayerBlendRate: 1
 --- !u!114 &6999983156308857340
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -5140,10 +5143,20 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 5a527f77c5341134ab6e8df3d643691d, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  vfxName: 
-  soundName: 
-  amount: 1
+  vfxName: VFX_ExplosionEnemy
+  vfxScaleMultiplier: 1
+  sounds:
+  - SFX_Explosion
   quitting: 0
+  minEssenceDrop: 0
+  maxEssenceDrop: 5
+  ModifierDropChance: 0.25
+  minDropVelocity: 0.75
+  maxDropVelocity: 1.5
+  EssencePrefab: {fileID: 3175629662073271086, guid: ddc3274a97a8ffc41bb3097e97f19942,
+    type: 3}
+  ModifierPrefab: {fileID: 2493648811206171248, guid: ac8b05e93bf88fa488c9b7e45be8fac0,
+    type: 3}
 --- !u!1 &751653434026467023
 GameObject:
   m_ObjectHideFlags: 0
@@ -5155,7 +5168,7 @@ GameObject:
   - component: {fileID: 751653434026467022}
   - component: {fileID: 751653434026467008}
   - component: {fileID: 751653434026467009}
-  m_Layer: 0
+  m_Layer: 9
   m_Name: ChargeParticles
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -9994,7 +10007,7 @@ GameObject:
   - component: {fileID: 5856446359195698356}
   - component: {fileID: 5092266582784090640}
   - component: {fileID: 4855559690266172915}
-  m_Layer: 0
+  m_Layer: 9
   m_Name: Spot Light
   m_TagString: Untagged
   m_Icon: {fileID: 0}

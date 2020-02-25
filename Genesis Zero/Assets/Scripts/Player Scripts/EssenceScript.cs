@@ -8,6 +8,7 @@ public class EssenceScript : MonoBehaviour
     private GameObject target;
     private bool added;
     public float speedvar=1.1f;
+    public float attractionDistance=5f;
     // Start is called before the first frame update
     void Start()
     {
@@ -21,9 +22,7 @@ public class EssenceScript : MonoBehaviour
             transTarget.y ++;
             float distance = Vector2.Distance(transform.position, transTarget);
 
-            if (distance < 4){
-                print("close enough to run");
-
+            if (distance < attractionDistance){
                 transform.LookAt(target.transform.position);
                 speedvar = speedvar*1.1f;
                 this.transform.position = Vector3.MoveTowards(this.transform.position, transTarget, speedvar * Time.deltaTime);

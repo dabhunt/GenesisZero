@@ -138,6 +138,7 @@ MonoBehaviour:
   MaxHits: 1
   Knockbackforce: 5
   DirectionalKnockback: 1
+  Burn: {x: 0, y: 0}
   Collider: {fileID: 7237362000396769751}
   Source: {fileID: 0}
 --- !u!135 &7237362000396769751
@@ -168,13 +169,15 @@ MonoBehaviour:
   vfxName: 
   vfxScaleMultiplier: 0
   sounds:
-  - SFX_Explosion
+  - SFX_AOE
   quitting: 0
-  EssenceDropChance: 0
+  minEssenceDrop: 0
+  maxEssenceDrop: 0
   ModifierDropChance: 0
+  minDropVelocity: 0
+  maxDropVelocity: 0
   EssencePrefab: {fileID: 0}
   ModifierPrefab: {fileID: 0}
-  ModTypes: []
 --- !u!114 &7973718459036040978
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -190,7 +193,7 @@ MonoBehaviour:
   quitting: 0
   baseblastRadius: 5
   lerpMultiplier: 2.3
-  vfxName: VFX_Explosion
+  vfxName: VFX_ExplosionAOE
   explosionPrefab: {fileID: 7446024088350224124, guid: c0846e1c799e06c40a4689e31eef28b5,
     type: 3}
 --- !u!1 &7504852634243103965
