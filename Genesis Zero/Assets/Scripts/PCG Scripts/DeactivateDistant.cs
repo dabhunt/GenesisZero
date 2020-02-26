@@ -6,7 +6,7 @@ public class DeactivateDistant : MonoBehaviour
 {
     //at what minimum distance will enemies start to deactivate
     //enemies closer than this will be reactivated
-    public float deactivateDist = 5f;
+    public float deactivateDist = 32f;
     public float updatesPerSecond=1f;
     //which game tags to check and deactivate if out of range
     public string[] tags = new string[] {"Enemy"};
@@ -19,7 +19,7 @@ public class DeactivateDistant : MonoBehaviour
        	player = temp.GetComponent<Player>();
     	InvokeRepeating("Check", 1/updatesPerSecond, 1/updatesPerSecond);
     }
-    // Update is called once per frame
+    // Check is currently called once a second, but can also be called manually when the player is teleported to prevent visual latency
   	void Check()
   	{
     	//check all the tags provided
@@ -27,9 +27,9 @@ public class DeactivateDistant : MonoBehaviour
     		//find the array of gameobjects associated with that tag
     		// if its the first check of the game, use a find by tag
     		//all other checks will use the already existing array of enemies to do this check
-    		//Finding by tag does not work if they are deactive
     		if (firstCheck){
     			firstCheck = false;
+    			//NOTE Finding by tag does not work if they are deactive
     			objects = GameObject.FindGameObjectsWithTag(tags[t]);
     		}
    			for (int i = 0; i < objects.Length; i++){
@@ -48,19 +48,4 @@ public class DeactivateDistant : MonoBehaviour
     	}
     	//UpdateArray();
     }
-    void OnApplicationQuit()
-    {
-    	//Spawn on destroy seems not to properly do what it's supposed to, so we activate 
-    	//print("does this run before the errors");
-        for (int t = 0; t < tags.Length; t ++)
-    	{
-   			for (int i = 0; i < objects.Length; i++){
-   				if (objects[i] != null){
-   					objects[i].SetActive(true);
-   					//Destroy(objects[i].GetComponent<SpawnOnDestroy>());
-   				}
-    		}
-    	}
-	}
-	
 }

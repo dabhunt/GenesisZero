@@ -15,7 +15,8 @@ public class Restart : MonoBehaviour
     	exitingScene = false;
         //player = temp.GetComponent<Player>();
     }
-    void Update(){
+    void Update()
+    {
     	//if player is dead, restart the scene
     	if (temp == null){
     		exitingScene = true;
@@ -32,7 +33,12 @@ public class Restart : MonoBehaviour
 		//Load it
 		SceneManager.LoadScene(scene, LoadSceneMode.Single);
     }
-    public bool ExitingScene(){
+    void OnApplicationQuit()
+    {
+        exitingScene = true;
+    }
+    public bool ExitingScene()
+    {
     	return exitingScene;
     }
 }

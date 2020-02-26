@@ -19,14 +19,14 @@ public class AOE : MonoBehaviour
     }
     void FixedUpdate(){
     		//print("fixed update on AOE running");
-
-    		if (collider.radius >= endScale){
-    			//print("destroying");
-
-    			Destroy(this.gameObject);
-    		} else{
-    			collider.radius = Mathf.Lerp(startScale, endScale,lerpScale);
-				lerpScale += Time.deltaTime*lerpMultiplier;
-    		}
+            if (collider!= null){
+                if (collider.radius >= endScale){
+                //print("destroying");
+                Destroy(this.gameObject);
+            } else{
+                collider.radius = Mathf.Lerp(startScale, endScale,lerpScale);
+                lerpScale += Time.deltaTime*lerpMultiplier;
+            }
+        }
     }
 }

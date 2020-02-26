@@ -72,27 +72,35 @@ public class SpawnOnDestroy : MonoBehaviour
             //print("dropping "+amount+" essence");
             for (int i = 0; i < amount; i++){
                 //print("dropping some essence...");
-                GameObject essence = Instantiate(EssencePrefab, new Vector3(transform.position.x, transform.position.y, 3), Quaternion.identity);
-                float force = Random.Range(minDropVelocity, maxDropVelocity);
-                Rigidbody rb = essence.GetComponent<Rigidbody>();
-                rb.GetComponent<Rigidbody>().velocity = Random.onUnitSphere * force;
+                GameObject essence = Instantiate(EssencePrefab, new Vector3(transform.position.x, transform.position.y, -4), Quaternion.identity);
+                essence = Drop(essence);
                 //Destroy(rb);
             }
             // if modifier drop chance exceeds the random value from 0 to 1.0f, it drops
             if (ModifierDropChance > Random.value)
             {
                 GameObject randMod = Instantiate(ModifierPrefab, new Vector3(transform.position.x, transform.position.y, 0), Quaternion.identity);
+                randMod = Drop(randMod);
                 SkillPickup pickup = randMod.GetComponent<SkillPickup>();
-                //gets random skill from skillmanagers resource folder
                 pickup.skill = player.GetSkillManager().GetRandomSkill();
+                //gets random skill from skillmanagers resource folder 
             }
         }
 
     }
-
+    public GameObject Drop(GameObject obj)
+    {
+        Rigidbody rb = obj.GetComponent<Rigidbody>();
+        float force = Random.Range(minDropVelocity, maxDropVelocity);
+        //random rotation and force applied
+        obj.transform.rotation = Random.rotation;
+        rb.GetComponent<Rigidbody>().velocity = Random.onUnitSphere * force;
+        return obj;       
+    }
     void OnApplicationQuit()
     {
         quitting = true;
+        Destroy(this.GetComponent<SpawnOnDestroy>());
     }
     public void isQuitting(){
         quitting = true;
