@@ -23,8 +23,7 @@ public class LoadSounds : MonoBehaviour
         ambient = Resources.LoadAll("Sounds/Ambient");
         for (int i = 0; i < allSounds.Length; i++)
         {
-            // (name of actual file, name to be called by, volume, pitch, bool looping, bool awake);
-            print("allSounds.name"+allSounds[i].name);
+            // (name of actual file, name to be called by, volume, pitch, bool looping, bool awake)
             aManager.AddSound("SFX/"+allSounds[i].name,allSounds[i].name, MasterSoundVolume, 1f, true, false);
         }
         for (int i = 0; i < ambient.Length; i++)

@@ -19,6 +19,7 @@ public class DroneAI : AIController
     public float SideDecel = 1.0f; // Rate of deceleration for sideways velocity to create tighter movement
     public float AvoidAmount = 1.0f; // How much to accelerate away from the target
     public float AvoidAccelLimit = 1.0f; // Limit on avoidance acceleration
+    public GameObject spawnProjectileSpot;
 
     public float PatrolSpeed = 5.0f; // Movement speed while patrolling
     public float PatrolRotateRate = 1.0f; // Rotation rate while patrolling
@@ -109,7 +110,7 @@ public class DroneAI : AIController
                 attackLaunchTime = AttackLaunchInterval;
                 if (AttackProjectile != null)
                 {
-                    GameObject spawnedProjectile = Instantiate(AttackProjectile, transform.position, transform.rotation);
+                    GameObject spawnedProjectile = Instantiate(AttackProjectile, spawnProjectileSpot.transform.position, transform.rotation);
                     Hitbox spawnedHitbox = spawnedProjectile.GetComponent<Hitbox>();
                     if (spawnedHitbox != null)
                     {
