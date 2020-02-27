@@ -51,7 +51,7 @@ ParticleSystemRenderer:
   m_RenderingLayerMask: 1
   m_RendererPriority: 0
   m_Materials:
-  - {fileID: 2100000, guid: 5f3e45a65f826dd449803f4ae37b7189, type: 2}
+  - {fileID: 10301, guid: 0000000000000000f000000000000000, type: 0}
   - {fileID: 0}
   m_StaticBatchInfo:
     firstSubMesh: 0
@@ -2686,7 +2686,7 @@ ParticleSystem:
         m_PostInfinity: 2
         m_RotationOrder: 4
   NoiseModule:
-    enabled: 1
+    enabled: 0
     strength:
       serializedVersion: 2
       minMaxState: 0
@@ -3941,8 +3941,8 @@ ParticleSystem:
         m_RotationOrder: 4
     maxLights: 20
   TrailModule:
-    enabled: 0
-    mode: 0
+    enabled: 1
+    mode: 1
     ratio: 1
     lifetime:
       serializedVersion: 2
@@ -3999,12 +3999,12 @@ ParticleSystem:
         m_RotationOrder: 4
     minVertexDistance: 0.2
     textureMode: 0
-    ribbonCount: 1
+    ribbonCount: 5
     shadowBias: 0.5
     worldSpace: 0
     dieWithParticles: 1
     sizeAffectsWidth: 1
-    sizeAffectsLifetime: 0
+    sizeAffectsLifetime: 1
     inheritParticleColor: 1
     generateLightingData: 0
     splitSubEmitterRibbons: 0
@@ -4800,7 +4800,7 @@ MeshFilter:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 7446024088350224124}
-  m_Mesh: {fileID: 10207, guid: 0000000000000000e000000000000000, type: 0}
+  m_Mesh: {fileID: 10202, guid: 0000000000000000e000000000000000, type: 0}
 --- !u!23 &7446024088350224065
 MeshRenderer:
   m_ObjectHideFlags: 0
@@ -4870,7 +4870,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   speed: 30
   gravity: 0
-  lifeTime: 0.55
+  lifeTime: 2.55
   direction: {x: 0, y: 0, z: 0}
 --- !u!114 &7323713832238595723
 MonoBehaviour:
@@ -4916,7 +4916,7 @@ MonoBehaviour:
   ModifierDropChance: 0
   minDropVelocity: 0
   maxDropVelocity: 0
-  EssencePrefab: {fileID: 8279152082304805221, guid: 660e34010b46daa42a9973d5912b8545,
+  EssencePrefab: {fileID: 3175629662073271086, guid: ddc3274a97a8ffc41bb3097e97f19942,
     type: 3}
   ModifierPrefab: {fileID: 2493648811206171248, guid: ac8b05e93bf88fa488c9b7e45be8fac0,
     type: 3}
@@ -4942,7 +4942,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 3500592279723788074}
-  - component: {fileID: 8407928777640946929}
+  - component: {fileID: 8024644416779992307}
   m_Layer: 0
   m_Name: Trail
   m_TagString: Untagged
@@ -4964,7 +4964,7 @@ Transform:
   m_Father: {fileID: 7446024088350224067}
   m_RootOrder: 0
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!96 &8407928777640946929
+--- !u!96 &8024644416779992307
 TrailRenderer:
   serializedVersion: 2
   m_ObjectHideFlags: 0
@@ -4973,7 +4973,7 @@ TrailRenderer:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 7504852634243103965}
   m_Enabled: 1
-  m_CastShadows: 0
+  m_CastShadows: 1
   m_ReceiveShadows: 1
   m_DynamicOccludee: 1
   m_MotionVectors: 1
@@ -4983,7 +4983,7 @@ TrailRenderer:
   m_RenderingLayerMask: 1
   m_RendererPriority: 0
   m_Materials:
-  - {fileID: 2100000, guid: 5f3e45a65f826dd449803f4ae37b7189, type: 2}
+  - {fileID: -6922793697723135513, guid: 7b2deec03e65c4847abad52b1c14d963, type: 3}
   m_StaticBatchInfo:
     firstSubMesh: 0
     subMeshCount: 0
@@ -5004,16 +5004,16 @@ TrailRenderer:
   m_SortingLayerID: 0
   m_SortingLayer: 0
   m_SortingOrder: 0
-  m_Time: 0.165
+  m_Time: 0.4
   m_Parameters:
     serializedVersion: 3
-    widthMultiplier: 0.1
+    widthMultiplier: 1
     widthCurve:
       serializedVersion: 2
       m_Curve:
       - serializedVersion: 3
         time: 0
-        value: 1
+        value: 0.31372643
         inSlope: 0
         outSlope: 0
         tangentMode: 0
@@ -5051,7 +5051,7 @@ TrailRenderer:
       ctime6: 0
       ctime7: 0
       atime0: 0
-      atime1: 23708
+      atime1: 33153
       atime2: 65150
       atime3: 0
       atime4: 0
@@ -5067,6 +5067,6 @@ TrailRenderer:
     textureMode: 0
     shadowBias: 0.5
     generateLightingData: 0
-  m_MinVertexDistance: 0.13
+  m_MinVertexDistance: 0.1
   m_Autodestruct: 0
   m_Emitting: 1

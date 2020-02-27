@@ -7,13 +7,13 @@ Material:
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
-  m_Name: ThiccFog
+  m_Name: ScreenDepth Dark
   m_Shader: {fileID: 4800000, guid: fb2f2f4bb7753e7428c94c31415abd91, type: 3}
-  m_ShaderKeywords: _BLENDMODE_ALPHA _DISABLE_SSR _SURFACE_TYPE_TRANSPARENT
+  m_ShaderKeywords: _BLENDMODE_PRE_MULTIPLY _DISABLE_SSR _SURFACE_TYPE_TRANSPARENT
   m_LightmapFlags: 4
   m_EnableInstancingVariants: 1
   m_DoubleSidedGI: 0
-  m_CustomRenderQueue: 3000
+  m_CustomRenderQueue: 2999
   stringTagMap:
     MotionVector: User
     RenderType: Transparent
@@ -109,7 +109,7 @@ Material:
         m_Offset: {x: 0, y: 0}
     - _clouds:
         m_Texture: {fileID: 2800000, guid: 02592f4ce6181fe42b5374d4bf92071a, type: 3}
-        m_Scale: {x: 10, y: 10}
+        m_Scale: {x: 1, y: 1}
         m_Offset: {x: 0, y: 0}
     - _texcoord:
         m_Texture: {fileID: 0}
@@ -129,16 +129,16 @@ Material:
     - _AlphaDstBlend: 10
     - _AlphaSrcBlend: 1
     - _Anisotropy: 0
-    - _BlendMode: 0
+    - _BlendMode: 4
     - _C: 0
-    - _CloudMax: 1.7
-    - _CloudMin: 0.14
+    - _CloudMax: 0.7
+    - _CloudMin: 0.1
     - _CoatMask: 0
     - _CullMode: 2
     - _CullModeForward: 2
     - _Cutoff: 0.5
     - _DepthOffsetEnable: 0
-    - _DepthStrength: 36.89
+    - _DepthStrength: -71.53
     - _DetailAlbedoScale: 1
     - _DetailNormalScale: 1
     - _DetailSmoothnessScale: 1
@@ -172,8 +172,8 @@ Material:
     - _EnableFogOnTransparent: 1
     - _EnableGeometricSpecularAA: 0
     - _EnergyConservingSpecularColor: 1
-    - _FogOffset: -36.26
-    - _FogScale: 40.14
+    - _FogOffset: 284.3
+    - _FogScale: -423.41
     - _FogStrength: 0.41
     - _FogStrength1: 0.44214484
     - _HdrpVersion: 2
@@ -205,7 +205,7 @@ Material:
     - _RenderQueueType: 5
     - _RequireSplitLighting: 0
     - _SSRefractionProjectionModel: 0
-    - _ShadowMatteFilter: 1.7399e-41
+    - _ShadowMatteFilter: 1.8e-43
     - _Smoothness: 0.5
     - _SmoothnessRemapMax: 1
     - _SmoothnessRemapMin: 0
@@ -234,7 +234,7 @@ Material:
     - _TransparentCullMode: 2
     - _TransparentDepthPostpassEnable: 0
     - _TransparentDepthPrepassEnable: 0
-    - _TransparentSortPriority: 0
+    - _TransparentSortPriority: -1
     - _TransparentWritingMotionVec: 0
     - _UVBase: 0
     - _UVDetail: 0
@@ -251,7 +251,7 @@ Material:
     - _BaseColorMap_MipInfo: {r: 0, g: 0, b: 0, a: 0}
     - _Color: {r: 0.6981132, g: 0.6981132, b: 0.6981132, a: 0}
     - _Color1: {r: 0.8113207, g: 0.20283017, b: 0.20283017, a: 0}
-    - _DeepColor: {r: 0.19215682, g: 0.85882354, b: 0.32364213, a: 0}
+    - _DeepColor: {r: 0.01886791, g: 0, b: 0, a: 1}
     - _DiffusionProfileAsset: {r: 0, g: 0, b: 0, a: 0}
     - _DoubleSidedConstants: {r: 1, g: 1, b: -1, a: 0}
     - _EmissionColor: {r: 1, g: 1, b: 1, a: 1}
@@ -260,7 +260,7 @@ Material:
     - _InvPrimScale: {r: 1, g: 1, b: 0, a: 0}
     - _IridescenceThicknessRemap: {r: 0, g: 1, b: 0, a: 0}
     - _LightColor: {r: 0.6981132, g: 0.6981132, b: 0.6981132, a: 0}
-    - _ShallowColor: {r: 0.37903553, g: 0.6886792, b: 0.3475881, a: 0}
+    - _ShallowColor: {r: 0, g: 0, b: 0, a: 0.8509804}
     - _SpecularColor: {r: 1, g: 1, b: 1, a: 1}
     - _ThicknessRemap: {r: 0, g: 1, b: 0, a: 0}
     - _TransmittanceColor: {r: 1, g: 1, b: 1, a: 1}
