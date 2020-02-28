@@ -66,17 +66,32 @@ public class Hurtbox : MonoBehaviour
     }
 
 
-    private void OnCollisionEnter(Collision collision)
+    private void OnCollisionStay(Collision collision)
     {
         Vector2 vel = GetComponent<Rigidbody>().velocity;
-        Vector2 hitdir = collision.GetContact(0).point - transform.position;
+        Vector3 avg = Vector3.zero;
+        int num = collision.contactCount > 0 ? 0 : 1;
+        for (int i = 0; i < collision.contactCount; i++)
+        {
+            avg += collision.GetContact(i).point;
+            ++num;
+        }
+        avg = new Vector3(avg.x / num, avg.y / num, avg.z / num);
+        //collision.GetContact(0).point;
+        Vector2 hitdir = avg - transform.position;
         float angle = Vector2.Angle(hitdir, vel);
+
+        //if(GetComponent<Player>()) Debug.Log(angle);
         //Debug.Log("Colliding");
         if (GetComponent<Pawn>() && GetComponent<Pawn>().GetKnockBackForce() > 3 && ((vel.magnitude > 4 && collision.collider.isTrigger == false) || GetComponent<Pawn>().IsForcedKnockBack()))
         {
-            if (Mathf.Abs(angle) < 75)  // if the object hits the other object directly, then they take the damage
+            if (GetComponent<Pawn>().IsForcedKnockBack() && Mathf.Abs(angle) < 180)
             {
-                if (GetComponent<Pawn>().IsForcedKnockBack()) { GetComponent<Pawn>().SetForcedKnockBack(false); return; }
+                GetComponent<Pawn>().KnockBackForced(-GetComponent<Pawn>().GetKnockBackVector(), GetComponent<Pawn>().GetKnockBackForce() / 2);
+                return;
+            }
+            else if (Mathf.Abs(angle) < 75)  // if the object hits the other object directly, then they take the damage
+            {
 
                 float damage = (int)(vel.magnitude * 4) / 2;
                 GetComponent<Pawn>().TakeDamage(damage, null);
@@ -96,7 +111,7 @@ public class Hurtbox : MonoBehaviour
 
                 GetComponent<Pawn>().SetKnockBackForce(0);
             }
-            
+
             /**
             Vector2 kdir = GetComponent<Pawn>().GetKnockBackVector();
             float kangle = Mathf.Atan2(kdir.y, kdir.x);

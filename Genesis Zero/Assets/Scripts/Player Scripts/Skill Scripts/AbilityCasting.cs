@@ -41,7 +41,7 @@ public class AbilityCasting : MonoBehaviour
         {
             CastAbility2();
         }
-        
+
         Vector3 pos = new Vector3(Input.mousePosition.x, Input.mousePosition.y, Mathf.Abs(Camera.main.transform.position.z - transform.position.z));
         Vector3 mousePosition = Camera.main.ScreenToWorldPoint(pos);
         aimDir = mousePosition - transform.position;
@@ -91,12 +91,12 @@ public class AbilityCasting : MonoBehaviour
 
     private bool CanCastAbility1()
     {
-        return (AbitityCasttime1 <= 0 && AbilityCooldown1 <= 0);
+        return (AbitityCasttime1 <= 0 && AbilityCooldown1 <= 0 && skillmanager.GetAbility1() != null);
     }
 
     private bool CanCastAbility2()
     {
-        return (AbitityCasttime2 <= 0 && AbilityCooldown2 <= 0);
+        return (AbitityCasttime2 <= 0 && AbilityCooldown2 <= 0 && skillmanager.GetAbility2() != null);
     }
 
     private void InitializeAbility(float cooldown, float casttime, int num)
@@ -148,11 +148,11 @@ public class AbilityCasting : MonoBehaviour
 
     private void CastPulseBurst()
     {
-        player.KnockBackForced(-aimDir, 5);
+        player.KnockBackForced(-aimDir + Vector2.up, 25);
     }
 
     private void CastBurstCharge()
     {
-        player.KnockBack(aimDir, 5);
+        player.KnockBackForced(aimDir + Vector2.up, 25);
     }
 }

@@ -131,16 +131,33 @@ public class Pawn : MonoBehaviour
 
     protected void FixedUpdate()
     {
-        if (knockbackforce > 0)      
+        if (knockbackforce > 0)
         {
             GetStunnedStatus().AddTime(Time.fixedDeltaTime);
             knockbackforce *= Mathf.Clamp(9.5f / GetWeight().GetValue(), 0, .99f);
-            if (ForcedKnockBack && GetComponent<PlayerController>() && GetComponent<PlayerController>().BlockedAll() == false)
+            if (ForcedKnockBack)
             {
-                transform.position += knockbackvector * knockbackforce * Time.fixedDeltaTime;               
-            }
-            else if (ForcedKnockBack && GetComponent<PlayerController>() && GetComponent<PlayerController>().BlockedAll() == true){
-                knockbackforce = 0;
+                Vector3 translation = knockbackvector.normalized * knockbackforce * Time.fixedDeltaTime;
+                bool colliding = false;
+                if (GetComponent<CapsuleCollider>() && GetComponent<Hurtbox>())
+                {
+                    RaycastHit hit;
+                    CapsuleCollider cc = GetComponent<CapsuleCollider>();
+                    Vector3 p1 = cc.center + Vector3.up * -cc.height / 2;
+                    Vector3 p2 = p1 + Vector3.up * cc.height;
+                    colliding = Physics.CapsuleCast(p1, p2, cc.radius, knockbackvector, out hit, translation.magnitude);
+                    if (colliding) colliding = !hit.collider.isTrigger;
+                    translation = colliding ? -translation : translation;
+                }
+                if (GetComponent<PlayerController>() && colliding == false)
+                {
+                    transform.position += translation;
+                }
+                else if (GetComponent<PlayerController>() && colliding == true)
+                {
+                    transform.position += translation;
+                    knockbackforce = 0;
+                }
             }
 
             if (knockbackforce < 1)
@@ -261,17 +278,16 @@ public class Pawn : MonoBehaviour
         if (GetComponent<Rigidbody>())
         {
             GetComponent<Rigidbody>().AddForce(knockbackvector.normalized * knockback, ForceMode.Impulse);
-            ForcedKnockBack = false;
         }
-        if(GetComponent<Player>() != null ){
-            ForcedKnockBack = true; 
+        if (GetComponent<Player>())
+        {
+            ForcedKnockBack = true;
         }
     }
 
     public void KnockBackForced(Vector3 direction, float force)
     {
         KnockBack(direction, force);
-        ForcedKnockBack = true;
     }
 
     public void SetKnockBackForce(float force)
