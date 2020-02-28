@@ -181,7 +181,7 @@ public class Hitbox : MonoBehaviour
                 float damagetaken = p.TakeDamage(finaldamage, Source);
 
                 GameObject emit = VFXManager.instance.PlayEffect("DamageNumber", new Vector3(transform.position.x, transform.position.y + 1, transform.position.z - .5f));
-                emit.GetComponent<DamageNumber>().SetNumber(damagetaken);
+                emit.GetComponent<DamageNumber>().SetNumber(damagetaken, Critical);
 
                 if (Critical)
                 {
