@@ -20,7 +20,7 @@ public class PlayerController : MonoBehaviour
     public float acceleration = 35f;
     public float jumpStrength = 12f;
     public float doubleJumpStrength = 10f;
-    public float horCastPadding = 0.1f; // offset used for the sides casts
+    public float horCastPadding = 0.2f; // offset used for the sides casts
     public float vertCastPadding = 0.1f; // offset used for the feet/head casts
     public float rollDuration = 3f;
     public float rollSpeedMult = 1.5f;
@@ -333,13 +333,13 @@ public class PlayerController : MonoBehaviour
 
         if (IsBlocked(Vector3.left))
         {
-            if (Physics.Raycast(transform.position, Vector3.left, out hit, characterWidth * 0.5f, immoveables))
+            if (Physics.Raycast(transform.position, Vector3.left, out hit, (characterWidth * 0.5f) + vertCastPadding, immoveables))
                 if (hit.distance < 0.5f  * characterWidth + horCastPadding)
                     transform.position = Vector3.Lerp(transform.position, transform.position + Vector3.right * characterWidth * 0.5f, 5 * Time.fixedDeltaTime);
         }
         if (IsBlocked(Vector3.right))
         {
-            if (Physics.Raycast(transform.position, Vector3.right, out hit, characterWidth * 0.5f, immoveables))
+            if (Physics.Raycast(transform.position, Vector3.right, out hit, (characterWidth * 0.5f) + vertCastPadding, immoveables))
                 if (hit.distance < 0.5f  * characterWidth + horCastPadding)
                     transform.position = Vector3.Lerp(transform.position, transform.position + Vector3.left * characterWidth * 0.5f, 5 * Time.fixedDeltaTime);
         }
