@@ -30,7 +30,7 @@ public class SpawnOnDestroy : MonoBehaviour
     void Start()
     {
         quitting = false;
-        GameObject temp = GameObject.FindWithTag("EventSystem");
+        GameObject temp = GameObject.FindWithTag("StateManager");
          restartScript = temp.GetComponent<Restart>();
         temp = GameObject.FindWithTag("Player");
         player = temp.GetComponent<Player>();

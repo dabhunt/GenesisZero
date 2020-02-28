@@ -128,10 +128,10 @@ public class Hitbox : MonoBehaviour
             state = State.Colliding;
         }
  
-        if (state == State.Colliding)
+        if (state == State.Colliding )
         {
             bool siblingcolliders = false;
-            if(hittargets != null && other.transform.root.gameObject != null){
+            if(hittargets != null && other.transform.root.gameObject != null ){
                 siblingcolliders = hittargets.Contains(other.transform.root.gameObject);
             }
 
