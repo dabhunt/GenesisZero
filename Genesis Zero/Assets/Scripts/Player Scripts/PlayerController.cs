@@ -22,8 +22,9 @@ public class PlayerController : MonoBehaviour
     public float doubleJumpStrength = 10f;
     public float horCastPadding = 0.1f; // offset used for the sides casts
     public float vertCastPadding = 0.1f; // offset used for the feet/head casts
-    public float rollDistance = 5f;
+    public float rollDuration = 3f;
     public float rollSpeedMult = 1.5f;
+    public float rollCooldownDuration = 3.0f;
     public float jumpBufferTime = 0.2f;
     public LayerMask immoveables; //LayerMask for bound checks
     public bool debug;
@@ -52,12 +53,18 @@ public class PlayerController : MonoBehaviour
     public float triggerResetTime = 0.25f;
 
     //Component Parts
-    private PlayerInputActions inputActions;
     private Player player;
     private OverHeat overheat;
+    
+    //Input variables
+    GameInputActions inputActions;
+    private Vector2 movementInput;
+    private Vector2 aimInputMouse;
+    private Vector2 aimInputController;
+    private float fireInput;
+    private float interactInput;
 
     //Movement Variables
-    private Vector2 movementInput;
     private RaycastHit groundHitInfo;
     private Vector3 moveVec = Vector3.right;
     private float maxSpeed;
@@ -65,14 +72,12 @@ public class PlayerController : MonoBehaviour
     private float currentSpeed = 0;
     private float jumpCount = 2;
     private float jumpPressedTime;
-    private float distanceRolled = 0;
+    private float timeRolled = 0;
+    private float rollCooldown = 0;
     private int rollDirection;
     private Vector3 lastRollingPosition;
 
     //Aim Variables
-    private Vector2 aimInputMouse;
-    private Vector2 aimInputController;
-    private float fireInput;
     private float gamepadAimTime;
     private Gun gun;
 
@@ -91,21 +96,22 @@ public class PlayerController : MonoBehaviour
 
     private void Awake()
     {
-        inputActions = new PlayerInputActions();
-        inputActions.PlayerControls.Move.performed += ctx => movementInput = ctx.ReadValue<Vector2>();
-        inputActions.PlayerControls.AimMouse.performed += ctx => aimInputMouse = ctx.ReadValue<Vector2>();
-        inputActions.PlayerControls.AimController.performed += ctx => aimInputController = ctx.ReadValue<Vector2>();
-        inputActions.PlayerControls.Fire.performed += ctx => fireInput = ctx.ReadValue<float>();
-        sound = FindObjectOfType<AudioManager>().GetComponent<PlayerSounds>();
-        animator = GetComponent<Animator>();
-        gun = GetComponent<Gun>();
-        overheat = GetComponent<OverHeat>();
+        
     }
 
     private void Start()
     {
-        Cursor.visible = false;
-        Cursor.lockState = CursorLockMode.Confined;
+        inputActions = GameInputManager.instance.GetInputActions();
+        inputActions.PlayerControls.Move.performed += ctx => movementInput = ctx.ReadValue<Vector2>();
+        inputActions.PlayerControls.AimMouse.performed += ctx => aimInputMouse = ctx.ReadValue<Vector2>();
+        inputActions.PlayerControls.AimController.performed += ctx => aimInputController = ctx.ReadValue<Vector2>();
+        inputActions.PlayerControls.Fire.performed += ctx => fireInput = ctx.ReadValue<float>();
+        inputActions.PlayerControls.Interact.performed += ctx => interactInput = ctx.ReadValue<float>();
+
+        sound = FindObjectOfType<AudioManager>().GetComponent<PlayerSounds>();
+        animator = GetComponent<Animator>();
+        gun = GetComponent<Gun>();
+        overheat = GetComponent<OverHeat>();
         player = GetComponent<Player>();
     }
 
@@ -123,16 +129,6 @@ public class PlayerController : MonoBehaviour
         UpdateJump();
         UpdateDodgeRoll();
         DrawDebugLines();
-    }
-
-    private void OnEnable()
-    {
-        inputActions.Enable();
-    }
-
-    private void OnDisable()
-    {
-        inputActions.Disable();
     }
 
     /* This controls the character general movements
@@ -324,12 +320,27 @@ public class PlayerController : MonoBehaviour
         else
         {
             isGrounded = false;
-            //An extra cast for ground to deal with deeper slopes
-            if (Physics.Raycast(transform.position, Vector3.down, out hit, characterHeight * 0.5f * slopeRayDistMult, immoveables))
-                if (hit.normal == Vector3.up)
-                    return;
-                else
-                    groundHitInfo = hit;
+        }
+    }
+
+    /* This function just push the character back out
+     * if it was lodged into a wall.
+     */
+    private void CheckWall()
+    {
+        RaycastHit hit;
+
+        if (IsBlocked(Vector3.left))
+        {
+            if (Physics.Raycast(transform.position, Vector3.left, out hit, characterWidth * 0.5f, immoveables))
+                if (hit.distance < 0.5f  * characterWidth + horCastPadding)
+                    transform.position = Vector3.Lerp(transform.position, transform.position + Vector3.right * characterWidth * 0.5f, 5 * Time.fixedDeltaTime);
+        }
+        if (IsBlocked(Vector3.right))
+        {
+            if (Physics.Raycast(transform.position, Vector3.right, out hit, characterWidth * 0.5f, immoveables))
+                if (hit.distance < 0.5f  * characterWidth + horCastPadding)
+                    transform.position = Vector3.Lerp(transform.position, transform.position + Vector3.left * characterWidth * 0.5f, 5 * Time.fixedDeltaTime);
         }
     }
 
@@ -360,27 +371,31 @@ public class PlayerController : MonoBehaviour
         // this condition is to make sure it only activate once
         if (ctx.performed)
         {
-            animator.SetTrigger("startRoll");
-            StartCoroutine(ResetTrigger("startRoll", triggerResetTime));
-            //Select roll direction based on crosshair position and input
-            if (movementInput.x != 0)
-                rollDirection = movementInput.x > 0 ? 1 : -1;
-            else
-                rollDirection =  isAimingRight ? 1 : -1;
-            isRolling = true;
-            distanceRolled = 0;
-            lastRollingPosition = transform.position;
+            if (!isRolling && rollCooldown == 0)
+            {
+                animator.SetTrigger("startRoll");
+                StartCoroutine(ResetTrigger("startRoll", triggerResetTime));
+                //Select roll direction based on crosshair position and input
+                if (movementInput.x != 0)
+                    rollDirection = movementInput.x > 0 ? 1 : -1;
+                else
+                    rollDirection =  isAimingRight ? 1 : -1;
+                isRolling = true;
+                GetComponent<Player>().SetInvunerable(rollDuration);
+                timeRolled = 0;
+                //lastRollingPosition = transform.position;
 
-            //Rotate the character depending on roll direction
-            if (rollDirection < 0 && isFacingRight)
-            {
-                transform.rotation = Quaternion.Euler(0, -90, 0);
-                isFacingRight = false;
-            }
-            if (rollDirection > 0 && !isFacingRight)
-            {
-                transform.rotation = Quaternion.Euler(0, 90, 0);
-                isFacingRight = true;
+                //Rotate the character depending on roll direction
+                if (rollDirection < 0 && isFacingRight)
+                {
+                    transform.rotation = Quaternion.Euler(0, -90, 0);
+                    isFacingRight = false;
+                }
+                if (rollDirection > 0 && !isFacingRight)
+                {
+                    transform.rotation = Quaternion.Euler(0, 90, 0);
+                    isFacingRight = true;
+                }
             }
         }
     }
@@ -393,47 +408,49 @@ public class PlayerController : MonoBehaviour
         float rollSpeed = maxSpeed * rollSpeedMult;
         if (isRolling)
         {
-        	GetComponent<Hurtbox>().enabled = false;
             //interupts roll if it's blocked
             if ((rollDirection > 0 && IsBlocked(Vector3.right)) || (rollDirection < 0 && IsBlocked(Vector3.left)))
             {   
                 if (IsBlocked(Vector3.up))
                 {
                     rollDirection = -rollDirection;
-                    distanceRolled = rollDistance - 0.5f;
+                    timeRolled = rollDuration - 0.5f;
+                    GetComponent<Player>().SetInvunerable(0.5f);
                 }
                 else
                 {
                     isRolling = false;
                     animator.SetTrigger("endRoll");
                     StartCoroutine(ResetTrigger("endRoll", triggerResetTime));
+                    rollCooldown = rollCooldownDuration;
+                    StartCoroutine(ResetCooldown(rollCooldownDuration));
                     return;
                 }
             }
-            //continue rolling if rollDistance is not reached
-            if (distanceRolled < rollDistance)
+            //continue rolling if rollDuration is not reached
+            if (timeRolled < rollDuration)
             {
                 transform.position += moveVec * rollSpeed * Time.fixedDeltaTime;
-                distanceRolled += Vector3.Distance(transform.position, lastRollingPosition);
+                timeRolled += Time.fixedDeltaTime;
             }
             else
             {
                 //make sure player doesn't get stuck under blocks
                 if (IsBlocked(Vector3.up))
                 {
-                    distanceRolled = rollDistance - 0.5f;
+                    timeRolled = rollDuration - 0.5f;
+                    GetComponent<Player>().SetInvunerable(0.5f);
                 }
                 else
                 {
                     isRolling = false;
                     animator.SetTrigger("endRoll");
                     StartCoroutine(ResetTrigger("endRoll", triggerResetTime));
+                    rollCooldown = rollCooldownDuration;
+                    StartCoroutine(ResetCooldown(rollCooldownDuration));
                 }
             }
-            lastRollingPosition = transform.position;
-        }
-        else{
-        	GetComponent<Hurtbox>().enabled = true;
+            //lastRollingPosition = transform.position;
         }
     }
 
@@ -552,11 +569,10 @@ public class PlayerController : MonoBehaviour
         return isBlock;
     }
 
-    public bool BlockedAll(){
-
+    public bool BlockedAll()
+    {
     	if(IsBlocked(Vector3.left)) return true;
     	if(IsBlocked(Vector3.right)) return true;
-    	if(IsBlocked(Vector3.down)) return true;
     	if(IsBlocked(Vector3.up)) return true;
     	return false;
     }
@@ -594,6 +610,12 @@ public class PlayerController : MonoBehaviour
     {
         yield return new WaitForSeconds(time);
         animator.ResetTrigger(trigger);
+    }
+
+    private IEnumerator ResetCooldown(float time)
+    {
+        yield return new WaitForSeconds(time);
+        rollCooldown = 0;
     }
 
     private void LogDebug()

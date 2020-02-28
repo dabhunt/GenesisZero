@@ -1,0 +1,1 @@
+This folder is for scripts that doesn't really fit anywhere else
