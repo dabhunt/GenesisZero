@@ -123,6 +123,7 @@ public class PlayerController : MonoBehaviour
     private void FixedUpdate()
     {
         CheckGround();
+        CheckWall();
         ApplyGravity();
         Aim();
         Move();
@@ -411,21 +412,12 @@ public class PlayerController : MonoBehaviour
             //interupts roll if it's blocked
             if ((rollDirection > 0 && IsBlocked(Vector3.right)) || (rollDirection < 0 && IsBlocked(Vector3.left)))
             {   
-                if (IsBlocked(Vector3.up))
-                {
-                    rollDirection = -rollDirection;
-                    timeRolled = rollDuration - 0.5f;
-                    GetComponent<Player>().SetInvunerable(0.5f);
-                }
-                else
-                {
-                    isRolling = false;
-                    animator.SetTrigger("endRoll");
-                    StartCoroutine(ResetTrigger("endRoll", triggerResetTime));
-                    rollCooldown = rollCooldownDuration;
-                    StartCoroutine(ResetCooldown(rollCooldownDuration));
-                    return;
-                }
+                isRolling = false;
+                animator.SetTrigger("endRoll");
+                StartCoroutine(ResetTrigger("endRoll", triggerResetTime));
+                rollCooldown = rollCooldownDuration;
+                StartCoroutine(ResetCooldown(rollCooldownDuration));
+                return;
             }
             //continue rolling if rollDuration is not reached
             if (timeRolled < rollDuration)
@@ -435,20 +427,11 @@ public class PlayerController : MonoBehaviour
             }
             else
             {
-                //make sure player doesn't get stuck under blocks
-                if (IsBlocked(Vector3.up))
-                {
-                    timeRolled = rollDuration - 0.5f;
-                    GetComponent<Player>().SetInvunerable(0.5f);
-                }
-                else
-                {
-                    isRolling = false;
-                    animator.SetTrigger("endRoll");
-                    StartCoroutine(ResetTrigger("endRoll", triggerResetTime));
-                    rollCooldown = rollCooldownDuration;
-                    StartCoroutine(ResetCooldown(rollCooldownDuration));
-                }
+                isRolling = false;
+                animator.SetTrigger("endRoll");
+                StartCoroutine(ResetTrigger("endRoll", triggerResetTime));
+                rollCooldown = rollCooldownDuration;
+                StartCoroutine(ResetCooldown(rollCooldownDuration));
             }
             //lastRollingPosition = transform.position;
         }
@@ -496,14 +479,15 @@ public class PlayerController : MonoBehaviour
         worldXhairScreenPos = canvasRef.worldCamera.WorldToScreenPoint(new Vector3(worldXhair.transform.position.x, worldXhair.transform.position.y, 0));
         RectTransformUtility.ScreenPointToLocalPointInRectangle(canvasRef.transform as RectTransform, worldXhairScreenPos, canvasRef.worldCamera, out screenXhairPos);
         screenXhair.anchoredPosition = screenXhairPos;
-        //rotate the gun
-        gunObject.transform.LookAt(worldXhair.transform);
 
         // checking where the player's aiming
         if (transform.position.x < worldXhair.transform.position.x)
             isAimingRight = true;
         else
             isAimingRight = false;
+        if (isRolling) return;
+        //rotate the gun
+        gunObject.transform.LookAt(worldXhair.transform);
 
         // Shoot()
         if (fireInput > 0)
@@ -584,11 +568,12 @@ public class PlayerController : MonoBehaviour
     {
         float xSpeed = GetCurrentSpeed();
         float ySpeed = vertVel;
+
         animator.SetFloat("xSpeed", xSpeed);
         animator.SetFloat("ySpeed", ySpeed);
         animator.SetBool("isGrounded", isGrounded);
         animator.SetBool("isRolling", isRolling);
-        //animator.SetBool("isFacingRight", isFacingRight);
+        animator.SetBool("isFacingRight", isFacingRight);
         animator.SetBool("isAimingRight", isAimingRight);
     }
     public float GetCurrentSpeed()
