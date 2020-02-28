@@ -266,6 +266,9 @@ public class Pawn : MonoBehaviour
         burntick = Time.deltaTime;
         burndamage = damage;
         burning.SetTime(time);
+        GameObject burnemit = VFXManager.instance.PlayEffectForDuration("VFX_BurningTest", transform.position, burntime);
+        burnemit.transform.parent = transform;
+
     }
 
     public void KnockBack(Vector3 direction, float force)

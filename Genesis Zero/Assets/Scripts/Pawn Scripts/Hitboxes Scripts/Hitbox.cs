@@ -182,7 +182,12 @@ public class Hitbox : MonoBehaviour
 
                 GameObject emit = VFXManager.instance.PlayEffect("DamageNumber", new Vector3(transform.position.x, transform.position.y + 1, transform.position.z - .5f));
                 emit.GetComponent<DamageNumber>().SetNumber(damagetaken);
-                if (special && bp.damagemultipler > 1)
+
+                if (Critical)
+                {
+                    emit.GetComponent<DamageNumber>().SetColor(new Color(1,1,0));
+                }
+                else if (special && bp.damagemultipler > 1)
                 {
                     emit.GetComponent<DamageNumber>().SetColor(Color.red);
                 }
