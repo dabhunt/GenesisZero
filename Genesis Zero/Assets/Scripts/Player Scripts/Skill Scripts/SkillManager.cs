@@ -114,7 +114,11 @@ public class SkillManager
     {
         Object[] skills = Resources.LoadAll("Skills");
         SkillObject skill = (SkillObject)skills[Random.Range(0, skills.Length)];
-        //Debug.Log(skill.name);
+        //this fixes the problem of this function also returning abilities
+        while (skill.IsAbility)
+        {
+            skill = (SkillObject)skills[Random.Range(0, skills.Length)];
+        }
         return skill;
     }
 
