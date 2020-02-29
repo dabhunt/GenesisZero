@@ -236,6 +236,7 @@ public class PlayerController : MonoBehaviour
     {   
         if (ctx.performed)
         {
+            if (!inputActions.PlayerControls.enabled) return;
             if (isRolling) return;
             if (isGrounded && jumpCount < 2) return;
             jumpPressedTime = jumpBufferTime;
@@ -372,6 +373,7 @@ public class PlayerController : MonoBehaviour
         // this condition is to make sure it only activate once
         if (ctx.performed)
         {
+            if (!inputActions.PlayerControls.enabled) return;
             if (!isRolling && rollCooldown == 0)
             {
                 animator.SetTrigger("startRoll");
