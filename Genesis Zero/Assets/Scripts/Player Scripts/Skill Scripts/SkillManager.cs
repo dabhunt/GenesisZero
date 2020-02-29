@@ -11,6 +11,7 @@ public class SkillManager
     private Player player;
     private int skillamount;
     private int abilityamount;
+    private int modamount;
     private string ability1 = "";
     private string ability2 = "";
 
@@ -49,6 +50,10 @@ public class SkillManager
                     SetAbility2(skill.name);
                 }
             }
+            else
+            {
+                modamount++;
+            }
         }
         AddedSkill = skill;
         AddSkillStats(skill, true);
@@ -69,6 +74,10 @@ public class SkillManager
                 if (skill.IsAbility)
                 {
                     abilityamount--;
+                }
+                else
+                {
+                    modamount--;
                 }
             }
             AddedSkill = null;
@@ -114,7 +123,11 @@ public class SkillManager
     {
         Object[] skills = Resources.LoadAll("Skills");
         SkillObject skill = (SkillObject)skills[Random.Range(0, skills.Length)];
-        //Debug.Log(skill.name);
+        //this fixes the problem of this function also returning abilities
+        while (skill.IsAbility)
+        {
+            skill = (SkillObject)skills[Random.Range(0, skills.Length)];
+        }
         return skill;
     }
 
@@ -148,6 +161,11 @@ public class SkillManager
     public int GetAmount()
     {
         return skillamount;
+    }
+
+    public int GetModAmount()
+    {
+        return modamount;
     }
 
     public int GetAbilityAmount()

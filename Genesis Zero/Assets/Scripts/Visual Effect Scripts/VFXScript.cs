@@ -14,6 +14,9 @@ public class VFXScript : MonoBehaviour
     public float delay;
     public GameObject emitter;
 
+    [HideInInspector]
+    public float duration = 0;
+
     // Use this for initialization
     void Start()
     {
@@ -21,6 +24,11 @@ public class VFXScript : MonoBehaviour
         if (ps == null)
         {
             ps = gameObject.GetComponentInChildren<ParticleSystem>();
+        }
+        if (duration != 0)
+        {
+            var main = ps.main;
+            main.duration = duration;
         }
         played = false;
     }
