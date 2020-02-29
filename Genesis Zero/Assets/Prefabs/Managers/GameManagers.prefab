@@ -276,10 +276,10 @@ GameObject:
   m_Component:
   - component: {fileID: 8825409176775595400}
   - component: {fileID: 8825409176775595398}
-  - component: {fileID: 8825409176775595399}
+  - component: {fileID: 1276976417}
   m_Layer: 0
   m_Name: StateManager
-  m_TagString: Untagged
+  m_TagString: StateManager
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -310,18 +310,19 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 38a31fdf57a72aa46bd09909f1fdf515, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
---- !u!114 &8825409176775595399
+--- !u!114 &1276976417
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 8825409176775595401}
-  m_Enabled: 0
+  m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 60dfacc0935830f448815b81c7f01e20, type: 3}
+  m_Script: {fileID: 11500000, guid: 3524625eb9072704f88d35bb7df5a6ab, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  exitingScene: 0
 --- !u!1 &8825409177366176566
 GameObject:
   m_ObjectHideFlags: 0
@@ -492,6 +493,36 @@ MonoBehaviour:
       m_Calls: []
     m_ActionId: b24e1496-76e7-4b67-a25b-64ac8937ff02
     m_ActionName: MenuControls/Move
+  - m_PersistentCalls:
+      m_Calls:
+      - m_Target: {fileID: 0}
+        m_MethodName: CastAbility1
+        m_Mode: 1
+        m_Arguments:
+          m_ObjectArgument: {fileID: 0}
+          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
+          m_IntArgument: 0
+          m_FloatArgument: 0
+          m_StringArgument: 
+          m_BoolArgument: 0
+        m_CallState: 2
+    m_ActionId: 505a75dc-e693-4f74-b8ff-ae8e56606379
+    m_ActionName: PlayerControls/Ability_1[/Keyboard/1]
+  - m_PersistentCalls:
+      m_Calls:
+      - m_Target: {fileID: 0}
+        m_MethodName: CastAbility2
+        m_Mode: 1
+        m_Arguments:
+          m_ObjectArgument: {fileID: 0}
+          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
+          m_IntArgument: 0
+          m_FloatArgument: 0
+          m_StringArgument: 
+          m_BoolArgument: 0
+        m_CallState: 2
+    m_ActionId: 3e098525-da3b-46aa-a1aa-01166e1e0314
+    m_ActionName: PlayerControls/Ability_2[/Keyboard/2]
   m_NeverAutoSwitchControlSchemes: 0
   m_DefaultControlScheme: 
   m_DefaultActionMap: PlayerControls
