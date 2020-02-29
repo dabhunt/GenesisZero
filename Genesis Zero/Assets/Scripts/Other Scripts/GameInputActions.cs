@@ -81,6 +81,22 @@ public class @GameInputActions : IInputActionCollection, IDisposable
                     ""expectedControlType"": ""Button"",
                     ""processors"": """",
                     ""interactions"": ""Press(pressPoint=0.1)""
+                },
+                {
+                    ""name"": ""Ability_1"",
+                    ""type"": ""PassThrough"",
+                    ""id"": ""505a75dc-e693-4f74-b8ff-ae8e56606379"",
+                    ""expectedControlType"": ""Button"",
+                    ""processors"": """",
+                    ""interactions"": ""Press(pressPoint=0.1)""
+                },
+                {
+                    ""name"": ""Ability_2"",
+                    ""type"": ""PassThrough"",
+                    ""id"": ""3e098525-da3b-46aa-a1aa-01166e1e0314"",
+                    ""expectedControlType"": ""Button"",
+                    ""processors"": """",
+                    ""interactions"": ""Press(pressPoint=0.1)""
                 }
             ],
             ""bindings"": [
@@ -292,6 +308,50 @@ public class @GameInputActions : IInputActionCollection, IDisposable
                     ""action"": ""Pause"",
                     ""isComposite"": false,
                     ""isPartOfComposite"": false
+                },
+                {
+                    ""name"": """",
+                    ""id"": ""448bddf9-d0be-4464-a158-c1afb48bc31d"",
+                    ""path"": ""<Keyboard>/1"",
+                    ""interactions"": """",
+                    ""processors"": """",
+                    ""groups"": ""Keyboard&Mouse"",
+                    ""action"": ""Ability_1"",
+                    ""isComposite"": false,
+                    ""isPartOfComposite"": false
+                },
+                {
+                    ""name"": """",
+                    ""id"": ""f439d375-3560-45fc-b63b-8b9a5af94caf"",
+                    ""path"": """",
+                    ""interactions"": """",
+                    ""processors"": """",
+                    ""groups"": ""Gamepads"",
+                    ""action"": ""Ability_1"",
+                    ""isComposite"": false,
+                    ""isPartOfComposite"": false
+                },
+                {
+                    ""name"": """",
+                    ""id"": ""78d30b40-61bf-43fc-b0a7-15c9894a9cec"",
+                    ""path"": ""<Keyboard>/2"",
+                    ""interactions"": """",
+                    ""processors"": """",
+                    ""groups"": ""Keyboard&Mouse"",
+                    ""action"": ""Ability_2"",
+                    ""isComposite"": false,
+                    ""isPartOfComposite"": false
+                },
+                {
+                    ""name"": """",
+                    ""id"": ""7799b530-2c93-41d1-be90-67b41d50edca"",
+                    ""path"": """",
+                    ""interactions"": """",
+                    ""processors"": """",
+                    ""groups"": ""Gamepads"",
+                    ""action"": ""Ability_2"",
+                    ""isComposite"": false,
+                    ""isPartOfComposite"": false
                 }
             ]
         },
@@ -423,6 +483,8 @@ public class @GameInputActions : IInputActionCollection, IDisposable
         m_PlayerControls_Roll = m_PlayerControls.FindAction("Roll", throwIfNotFound: true);
         m_PlayerControls_Interact = m_PlayerControls.FindAction("Interact", throwIfNotFound: true);
         m_PlayerControls_Pause = m_PlayerControls.FindAction("Pause", throwIfNotFound: true);
+        m_PlayerControls_Ability_1 = m_PlayerControls.FindAction("Ability_1", throwIfNotFound: true);
+        m_PlayerControls_Ability_2 = m_PlayerControls.FindAction("Ability_2", throwIfNotFound: true);
         // MenuControls
         m_MenuControls = asset.FindActionMap("MenuControls", throwIfNotFound: true);
         m_MenuControls_Select = m_MenuControls.FindAction("Select", throwIfNotFound: true);
@@ -485,6 +547,8 @@ public class @GameInputActions : IInputActionCollection, IDisposable
     private readonly InputAction m_PlayerControls_Roll;
     private readonly InputAction m_PlayerControls_Interact;
     private readonly InputAction m_PlayerControls_Pause;
+    private readonly InputAction m_PlayerControls_Ability_1;
+    private readonly InputAction m_PlayerControls_Ability_2;
     public struct PlayerControlsActions
     {
         private @GameInputActions m_Wrapper;
@@ -497,6 +561,8 @@ public class @GameInputActions : IInputActionCollection, IDisposable
         public InputAction @Roll => m_Wrapper.m_PlayerControls_Roll;
         public InputAction @Interact => m_Wrapper.m_PlayerControls_Interact;
         public InputAction @Pause => m_Wrapper.m_PlayerControls_Pause;
+        public InputAction @Ability_1 => m_Wrapper.m_PlayerControls_Ability_1;
+        public InputAction @Ability_2 => m_Wrapper.m_PlayerControls_Ability_2;
         public InputActionMap Get() { return m_Wrapper.m_PlayerControls; }
         public void Enable() { Get().Enable(); }
         public void Disable() { Get().Disable(); }
@@ -530,6 +596,12 @@ public class @GameInputActions : IInputActionCollection, IDisposable
                 @Pause.started -= m_Wrapper.m_PlayerControlsActionsCallbackInterface.OnPause;
                 @Pause.performed -= m_Wrapper.m_PlayerControlsActionsCallbackInterface.OnPause;
                 @Pause.canceled -= m_Wrapper.m_PlayerControlsActionsCallbackInterface.OnPause;
+                @Ability_1.started -= m_Wrapper.m_PlayerControlsActionsCallbackInterface.OnAbility_1;
+                @Ability_1.performed -= m_Wrapper.m_PlayerControlsActionsCallbackInterface.OnAbility_1;
+                @Ability_1.canceled -= m_Wrapper.m_PlayerControlsActionsCallbackInterface.OnAbility_1;
+                @Ability_2.started -= m_Wrapper.m_PlayerControlsActionsCallbackInterface.OnAbility_2;
+                @Ability_2.performed -= m_Wrapper.m_PlayerControlsActionsCallbackInterface.OnAbility_2;
+                @Ability_2.canceled -= m_Wrapper.m_PlayerControlsActionsCallbackInterface.OnAbility_2;
             }
             m_Wrapper.m_PlayerControlsActionsCallbackInterface = instance;
             if (instance != null)
@@ -558,6 +630,12 @@ public class @GameInputActions : IInputActionCollection, IDisposable
                 @Pause.started += instance.OnPause;
                 @Pause.performed += instance.OnPause;
                 @Pause.canceled += instance.OnPause;
+                @Ability_1.started += instance.OnAbility_1;
+                @Ability_1.performed += instance.OnAbility_1;
+                @Ability_1.canceled += instance.OnAbility_1;
+                @Ability_2.started += instance.OnAbility_2;
+                @Ability_2.performed += instance.OnAbility_2;
+                @Ability_2.canceled += instance.OnAbility_2;
             }
         }
     }
@@ -639,6 +717,8 @@ public class @GameInputActions : IInputActionCollection, IDisposable
         void OnRoll(InputAction.CallbackContext context);
         void OnInteract(InputAction.CallbackContext context);
         void OnPause(InputAction.CallbackContext context);
+        void OnAbility_1(InputAction.CallbackContext context);
+        void OnAbility_2(InputAction.CallbackContext context);
     }
     public interface IMenuControlsActions
     {
@@ -647,9 +727,6 @@ public class @GameInputActions : IInputActionCollection, IDisposable
         void OnMove(InputAction.CallbackContext context);
     }
 
-
-    // Everything Above this point should be copied over from
-    // GameInputActionsGenerate.cs
     public InputActionAsset GetInputActionAsset()
     {
         return asset;
