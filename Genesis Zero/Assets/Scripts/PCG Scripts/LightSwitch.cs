@@ -4,7 +4,6 @@ using UnityEngine;
 
 public class LightSwitch : MonoBehaviour
 {
-    public GameObject[] lightObjects;
     public Material[] lightOnMaterial;
 
     private bool lightsTriggered = false;
@@ -23,15 +22,15 @@ public class LightSwitch : MonoBehaviour
     		lightsTriggered = true;
     	}
     }
-
+    //now gets all children of the gameobject you put the script on automatically, no inspector required
     void FixedUpdate()
     {
     	if (lightsTriggered)
     	{
-    		foreach (GameObject light in lightObjects)
+    		foreach (Transform child in this.transform)
     		{
     			lerp = Mathf.Lerp(startScale, endScale, lerpScale);
-    			light.GetComponent<Renderer>().material.SetFloat("EmissionStrength", lerp);
+    			child.gameObject.GetComponent<Renderer>().material.SetFloat("EmissionStrength", lerp);
     			lerpScale += Time.deltaTime*lerpMultiplier;
     		}
     	}

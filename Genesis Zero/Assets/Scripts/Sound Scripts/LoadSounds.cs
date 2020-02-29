@@ -28,10 +28,10 @@ public class LoadSounds : MonoBehaviour
         }
         for (int i = 0; i < ambient.Length; i++)
         {
-            // (name of actual file, name to be called by, volume, pitch, bool looping, bool awake);
-            aManager.AddTrack("Ambient/"+ambient[i].name,ambient[i].name, MasterAmbientVolume, 1f, true, false);
+            // (name of actual file, name to be called by, volume, pitch, bool looping, bool playonwake);
+            aManager.AddTrack("Ambient/"+ambient[i].name,ambient[i].name, MasterAmbientVolume, 1f, true, true);
         }
-        aManager.PlayTrack("Ambient/Ambient-1");
+        //aManager.PlayTrack("Ambient/Ambient-1","Ambient-1", true, true);
         // FindObjectOfType<AudioManager>() searches for an AudioManager object
         // FindObjectOfType<AudioManager>().AddTrack("PLACEHOLDER - Pillar Men theme", "Pillar Men"); // Adds track to a Playlist
 
