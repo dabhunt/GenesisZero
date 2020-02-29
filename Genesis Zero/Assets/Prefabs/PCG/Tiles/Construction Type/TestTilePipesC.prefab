@@ -470,10 +470,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 38cfece2fd802f849a8386c98a6ebec8, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  lightObjects:
-  - {fileID: 3441228831239025071}
-  - {fileID: 331435791550517249}
-  - {fileID: 1518951335305267096}
   lightOnMaterial:
   - {fileID: 2100000, guid: cec9e6545cfb04f4e8334a830b842bc8, type: 2}
 --- !u!65 &5845327185213593024
@@ -1917,8 +1913,8 @@ BoxCollider:
   m_IsTrigger: 0
   m_Enabled: 1
   serializedVersion: 2
-  m_Size: {x: 0.60000056, y: 3.0729294, z: 0.61925346}
-  m_Center: {x: -0.000012146239, y: -0.11106331, z: -0.009627717}
+  m_Size: {x: 0.60000056, y: 2.4943497, z: 0.5845958}
+  m_Center: {x: 0.000008987905, y: -0.11685284, z: 0.0077005103}
 --- !u!54 &5130341689009820432
 Rigidbody:
   m_ObjectHideFlags: 0
@@ -2904,8 +2900,8 @@ GameObject:
   - component: {fileID: 229960696003634793}
   - component: {fileID: 5022393834443139774}
   - component: {fileID: 3227958371054437015}
-  - component: {fileID: 40069610354888253}
   - component: {fileID: 3880830391032843214}
+  - component: {fileID: 4821546089130996409}
   m_Layer: 0
   m_Name: Bend (4)
   m_TagString: Untagged
@@ -2974,19 +2970,6 @@ MeshRenderer:
   m_SortingLayerID: 0
   m_SortingLayer: 0
   m_SortingOrder: 0
---- !u!65 &40069610354888253
-BoxCollider:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 5857264884024237193}
-  m_Material: {fileID: 0}
-  m_IsTrigger: 0
-  m_Enabled: 1
-  serializedVersion: 2
-  m_Size: {x: 5.1663656, y: 6.869359, z: 8.284876}
-  m_Center: {x: -0.0012261434, y: 1.1063966, z: 1.0243847}
 --- !u!54 &3880830391032843214
 Rigidbody:
   m_ObjectHideFlags: 0
@@ -3003,6 +2986,20 @@ Rigidbody:
   m_Interpolate: 0
   m_Constraints: 0
   m_CollisionDetection: 0
+--- !u!64 &4821546089130996409
+MeshCollider:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 5857264884024237193}
+  m_Material: {fileID: 0}
+  m_IsTrigger: 0
+  m_Enabled: 1
+  serializedVersion: 3
+  m_Convex: 1
+  m_CookingOptions: 30
+  m_Mesh: {fileID: 4300004, guid: 95b8d7fadd7c26d42b50b69efecd7ac1, type: 3}
 --- !u!1 &6192702006020400635
 GameObject:
   m_ObjectHideFlags: 0
