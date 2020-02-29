@@ -33,14 +33,6 @@ public class AbilityCasting : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-        if (Input.GetKeyDown(KeyCode.Q))
-        {
-            CastAbility1();
-        }
-        if (Input.GetKeyDown(KeyCode.E))
-        {
-            CastAbility2();
-        }
 
         Vector3 pos = new Vector3(Input.mousePosition.x, Input.mousePosition.y, Mathf.Abs(Camera.main.transform.position.z - transform.position.z));
         Vector3 mousePosition = Camera.main.ScreenToWorldPoint(pos);
