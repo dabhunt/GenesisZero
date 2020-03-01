@@ -119,10 +119,10 @@ public class Gun : MonoBehaviour
     public GameObject ModifyProjectile(GameObject bullet)
     {	
     	Hitbox hit = bullet.GetComponent<Hitbox>();
-    	//adds knockbackforce to the bullet equal to the amount of stacks the player has
+    	//adds knockbackforce, burndamage, & piercing equal to the bullet equal to the amount of stacks the player has
     	hit.Knockbackforce += knockBackPerStack * player.GetSkillStack("Knockback");
         hit.MaxHits += piercesPerStack * player.GetSkillStack("Piercing Bullets");
-        float bDmg = burnDamagePerStack * player.GetSkillStack("Burn");
+        float bDmg = burnDamagePerStack * player.GetSkillStack("Ignition Bullets");
         hit.Burn = new Vector2(burnTime, bDmg);
     	return bullet;
     }

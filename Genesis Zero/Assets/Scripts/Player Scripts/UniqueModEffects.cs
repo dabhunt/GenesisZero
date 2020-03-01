@@ -13,6 +13,9 @@ public class UniqueModEffects : MonoBehaviour
     public float coolRatePerStack = 1.1f;
     [Header("Cooling Cell")]
     public float heatReductionPerStack = .9f;
+    [Header("Peripheral Bullet")]
+    //this is a multiplier, so 20%
+    public float extraBloomPerStack = 1.2f;
 
     private Player player;
     private OverHeat overheat;
@@ -23,9 +26,11 @@ public class UniqueModEffects : MonoBehaviour
         InvokeRepeating("CheckUniques", 1/checksPerSecond, 1/checksPerSecond);
     }
     public void CheckUniques(){
-        var multiplier = Mathf.Pow(heatReductionPerStack, player.GetSkillManager().GetSkillStack("Better Coolant"));
+        float multiplier = Mathf.Pow(heatReductionPerStack, player.GetSkillStack("Better Coolant"));
         overheat.ModifyHeatPerShot(multiplier);
-        multiplier = Mathf.Pow(coolRatePerStack, player.GetSkillManager().GetSkillStack("Cooling Cell"));
+        multiplier = Mathf.Pow(coolRatePerStack, player.GetSkillStack("Cooling Cell"));
         overheat.ModifyCoolRate(multiplier);
+        multiplier = Mathf.Pow(extraBloomPerStack, player.GetSkillStack("Peripheral Bullet"));
+        overheat.ModifyBloomMultiplier(multiplier);
     }
 }
