@@ -18,6 +18,7 @@ public class Status
     {
         factor = 1;
         this.time = time;
+        this.threshhold = 0;
         if (time > 0)
         {
             isActive = true;
@@ -28,6 +29,7 @@ public class Status
     {
         factor = 1;
         this.time = time;
+        this.threshhold = threshhold;
         if (time > threshhold)
         {
             isActive = true;
@@ -38,6 +40,7 @@ public class Status
     {
         this.factor = factor;
         this.time = time;
+        this.threshhold = threshhold;
         if (time > threshhold)
         {
             isActive = true;
@@ -54,7 +57,7 @@ public class Status
             time -= Time.deltaTime;
             isActive = true;
         }
-        else if (time <= threshhold)
+        else if (time <= threshhold && threshhold > 0)
         {
             time -= Time.deltaTime;
             isActive = false;
@@ -62,6 +65,7 @@ public class Status
         else
         {
             time = 0;
+            isActive = false;
         }
     }
 
@@ -93,12 +97,12 @@ public class Status
 
     public void AddTime(float time)
     {
-        this.time += time;
+        SetTime(this.time + time);
     }
 
     public void AddValue(float value)
     {
-        this.time += value;
+        SetTime(this.time + value);
     }
 
     public float GetTime()

@@ -605,6 +605,11 @@ public class PlayerController : MonoBehaviour
         rollCooldown = 0;
     }
 
+    public void SetVertVel(float vel)
+    {
+        vertVel = vel;
+    }
+
     private void LogDebug()
     {
         //Debug.Log(movementInput);

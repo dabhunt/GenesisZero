@@ -37,11 +37,8 @@ public class AbilityCasting : MonoBehaviour
         Vector3 pos = new Vector3(Input.mousePosition.x, Input.mousePosition.y, Mathf.Abs(Camera.main.transform.position.z - transform.position.z));
         Vector3 mousePosition = Camera.main.ScreenToWorldPoint(pos);
         aimDir = mousePosition - transform.position;
+        UpdateAbilities();
 
-        Mathf.Clamp(AbilityCooldown1 -= Time.deltaTime, 0, TotalAbilityCooldown1);
-        Mathf.Clamp(AbilityCooldown2 -= Time.deltaTime, 0, TotalAbilityCooldown2);
-        Mathf.Clamp(AbitityCasttime1 -= Time.deltaTime, 0, TotalAbitityCasttime1);
-        Mathf.Clamp(AbitityCasttime2 -= Time.deltaTime, 0, TotalAbitityCasttime2);
     }
 
     public void CastAbility1()
@@ -121,30 +118,51 @@ public class AbilityCasting : MonoBehaviour
 
     private void UpdateAbilities()
     {
-        AbitityCasttime1 -= Time.deltaTime;
-        AbilityCooldown1 -= Time.deltaTime;
-
-        AbitityCasttime2 -= Time.deltaTime;
-        AbilityCooldown2 -= Time.deltaTime;
+        Mathf.Clamp(AbilityCooldown1 -= Time.deltaTime, 0, TotalAbilityCooldown1);
+        Mathf.Clamp(AbilityCooldown2 -= Time.deltaTime, 0, TotalAbilityCooldown2);
+        Mathf.Clamp(AbitityCasttime1 -= Time.deltaTime, 0, TotalAbitityCasttime1);
+        Mathf.Clamp(AbitityCasttime2 -= Time.deltaTime, 0, TotalAbitityCasttime2);
     }
 
-    public float GetCooldownRatio1()
+    public float GetAbilityCooldownRatio1()
     {
         return AbilityCooldown1 / TotalAbilityCooldown1;
     }
 
-    public float GetCooldownRatio2()
+    public float GetAbilityCooldownRatio2()
     {
         return AbilityCooldown2 / TotalAbilityCooldown2;
     }
 
     private void CastPulseBurst()
     {
+        player.GetComponent<PlayerController>().SetVertVel(0);
         player.KnockBackForced(-aimDir + Vector2.up, 25);
+        GameObject hitbox = SpawnGameObject("PulseBurstHitbox", CastAtAngle(transform.position, aimDir, 1));
+        hitbox.GetComponent<Hitbox>().InitializeHitbox(GetComponent<Player>().GetDamage().GetValue()/4, GetComponent<Player>());
+        hitbox.GetComponent<Hitbox>().SetStunTime(1);
+        hitbox.GetComponent<Hitbox>().SetLifeTime(.1f);
     }
 
     private void CastBurstCharge()
     {
+        player.GetComponent<PlayerController>().SetVertVel(0);
         player.KnockBackForced(aimDir + Vector2.up, 25);
+        GameObject hitbox = SpawnGameObject("BurstChargeHitbox", transform.position);
+        hitbox.GetComponent<Hitbox>().InitializeHitbox(GetComponent<Player>().GetDamage().GetValue() / 4, GetComponent<Player>());
+        hitbox.transform.parent = transform;
+        hitbox.GetComponent<Hitbox>().SetLifeTime(.5f);
+    }
+
+    private GameObject SpawnGameObject(string name, Vector2 position)
+    {
+        GameObject effect = Instantiate(Resources.Load<GameObject>("Hitboxes/" + name), position, Quaternion.identity);
+        return effect;
+    }
+
+    private Vector2 CastAtAngle(Vector2 position, Vector2 direction, float distance)
+    {
+        Vector2 result = position + direction.normalized * distance;
+        return result;
     }
 }
