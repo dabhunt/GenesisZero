@@ -28,8 +28,14 @@ public class Hitbox : MonoBehaviour
     public float Knockbackforce;        // Force of knockback 
     public bool DirectionalKnockback;   // If true, the knockback direction is equal to the direction the hitbox is moving
 
+    [HideInInspector]
+    public float StunTime = 0;
+
+    [HideInInspector]
+    public float LifeTime = 99;
+
     [Tooltip("(X: Burntime, Y: Damage per second)")]
-    public Vector2 Burn = new Vector2(0,0);
+    public Vector2 Burn = new Vector2(0, 0);
 
     public Collider Collider;
     public Pawn Source;         // Source is a reference to the pawn that spawned this hitbox. Optional, used if things like critchance is calculated
@@ -37,6 +43,7 @@ public class Hitbox : MonoBehaviour
     private List<GameObject> hittargets = new List<GameObject>();
 
     private Vector3 lastposition;
+    private Vector3 spawnposition;
 
     private void Awake()
     {
@@ -47,7 +54,7 @@ public class Hitbox : MonoBehaviour
             rb.useGravity = false;
             rb.isKinematic = false;
             rb.collisionDetectionMode = CollisionDetectionMode.ContinuousDynamic;
-
+            spawnposition = transform.position;
         }
     }
 
@@ -112,6 +119,17 @@ public class Hitbox : MonoBehaviour
             }
             catch { }
         }
+        else
+        {
+            if (LifeTime <= 0)
+            {
+                state = State.Deactive;
+            }
+            else
+            {
+                LifeTime -= Time.fixedDeltaTime;
+            }
+        }
     }
 
 
@@ -127,11 +145,12 @@ public class Hitbox : MonoBehaviour
         {
             state = State.Colliding;
         }
- 
-        if (state == State.Colliding )
+
+        if (state == State.Colliding)
         {
             bool siblingcolliders = false;
-            if(hittargets != null && other.transform.root.gameObject != null ){
+            if (hittargets != null && other.transform.root.gameObject != null)
+            {
                 siblingcolliders = hittargets.Contains(other.transform.root.gameObject);
             }
 
@@ -163,7 +182,7 @@ public class Hitbox : MonoBehaviour
                 {
                     if (DirectionalKnockback && Source != null)
                     {
-                        p.KnockBack(transform.position - Source.transform.position, Knockbackforce);
+                        p.KnockBack(transform.position - spawnposition, Knockbackforce);
                     }
                     else
                     {
@@ -173,6 +192,11 @@ public class Hitbox : MonoBehaviour
 
                 }
 
+                if (StunTime > 0)
+                {
+                    p.GetStunnedStatus().AddTime(StunTime);
+                }
+
                 if (Burn.x > 0 && Burn.y > 0)
                 {
                     p.Burn(Burn.x, Burn.y);
@@ -180,12 +204,12 @@ public class Hitbox : MonoBehaviour
 
                 float damagetaken = p.TakeDamage(finaldamage, Source);
 
-                GameObject emit = VFXManager.instance.PlayEffect("DamageNumber", new Vector3(transform.position.x, transform.position.y + 1, transform.position.z - .5f));
+                GameObject emit = VFXManager.instance.PlayEffect("DamageNumber", new Vector3(p.transform.position.x, p.transform.position.y + 1, p.transform.position.z - .5f));
                 emit.GetComponent<DamageNumber>().SetNumber(damagetaken, Critical);
 
                 if (Critical)
                 {
-                    emit.GetComponent<DamageNumber>().SetColor(new Color(1,1,0));
+                    emit.GetComponent<DamageNumber>().SetColor(new Color(1, 1, 0));
                 }
                 else if (special && bp.damagemultipler > 1)
                 {
@@ -208,11 +232,12 @@ public class Hitbox : MonoBehaviour
 
 
         }
-            if (MaxHits <= 0 && state != State.Deactive)
-            {
-                state = State.Deactive;
-                return true;
-            }
+
+        if (MaxHits <= 0 && state != State.Deactive)
+        {
+            state = State.Deactive;
+            return true;
+        }
         return false;
     }
 
@@ -224,6 +249,7 @@ public class Hitbox : MonoBehaviour
     {
         this.Damage = damage;
         this.Source = source;
+        spawnposition = source.transform.position;
         if (Random.Range(0, 100) < Source.GetCritChance().GetValue() * 100)
         {
             Critical = true;
@@ -241,6 +267,16 @@ public class Hitbox : MonoBehaviour
             return true;
         }
         return false;
+    }
+
+    public void SetStunTime(float time)
+    {
+        StunTime = time;
+    }
+
+    public void SetLifeTime(float time)
+    {
+        LifeTime = time;
     }
 
     private void OnDrawGizmos()

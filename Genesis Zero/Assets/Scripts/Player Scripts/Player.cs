@@ -14,7 +14,6 @@ public class Player : Pawn
     // Start is called before the first frame update
     new void Start()
     {
-        //Time.fixedDeltaTime = .01f; // <- this is here as a placeholder, no other good place to have this.
         InitializePlayerStats();
         base.Start();
     }
@@ -22,11 +21,6 @@ public class Player : Pawn
     // Update is called once per frame
     new void Update()
     {
-        if (Input.GetKeyDown(KeyCode.B))
-        {
-            Burn(3, 20);
-        }
-        //Debug.Log("Player" + GetHealth().GetValue() +" : "+ GetHealth().GetMaxValue());
         base.Update();
     }
 
@@ -41,9 +35,20 @@ public class Player : Pawn
         return base.TakeDamage(amount, source);
     }
 
+    // This is called whenever the player kills a enemy
+    public void TriggerEffectOnKill()
+    {
+        //Heal(5);
+    }
+
     public bool HasSkill(string name)
     {
         return SkillManager.HasSkill(name);
+    }
+
+    public int GetSkillStack(string name)
+    {
+        return SkillManager.GetSkillStack(name);
     }
 
     public SkillManager GetSkillManager()
