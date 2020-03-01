@@ -46,6 +46,11 @@ public class Player : Pawn
         return SkillManager.HasSkill(name);
     }
 
+    public int GetSkillStack(string name)
+    {
+        return SkillManager.GetSkillStack(name);
+    }
+
     public SkillManager GetSkillManager()
     {
         return SkillManager;

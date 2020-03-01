@@ -134,6 +134,16 @@ public class AbilityCasting : MonoBehaviour
         return AbilityCooldown2 / TotalAbilityCooldown2;
     }
 
+    public void ResetAbilityCooldown1()
+    {
+        AbilityCooldown1 = 0;
+    }
+
+    public void ResetAbilityCooldown2()
+    {
+        AbilityCooldown2 = 0;
+    }
+
     private void CastPulseBurst()
     {
         player.GetComponent<PlayerController>().SetVertVel(0);
