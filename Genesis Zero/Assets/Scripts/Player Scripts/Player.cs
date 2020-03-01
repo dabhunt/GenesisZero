@@ -39,7 +39,9 @@ public class Player : Pawn
     // This is called whenever the player kills a enemy
     public void TriggerEffectOnKill()
     {
-        Heal(healthPerStack * GetSkillStack("Vampirism"));
+        float stacks = GetSkillStack("Vampirism");
+        //if(stacks>0)
+            Heal(healthPerStack * stacks);
     }
 
     public bool HasSkill(string name)

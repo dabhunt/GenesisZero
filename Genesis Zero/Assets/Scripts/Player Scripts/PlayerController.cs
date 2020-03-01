@@ -586,7 +586,10 @@ public class PlayerController : MonoBehaviour
     public bool IsFacingRight(){
         return isFacingRight;
     }
-    
+    public bool IsAimingRight()
+    {
+        return isAimingRight;
+    }
     private void DrawDebugLines()
     {
         if (!debug) return;

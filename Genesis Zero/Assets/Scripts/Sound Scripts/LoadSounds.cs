@@ -6,31 +6,43 @@ public class LoadSounds : MonoBehaviour
 {
     // Start is called before the first frame update
 
-    public float MasterAmbientVolume;
+    public float MasterMusicVolume = .2f;
     public float MasterSoundVolume;
 
     private Object[] allSounds;
     private Object[] ambient;
+    private Object[] music;
     private AudioManager aManager;
     void Start()
     {
-        if (MasterAmbientVolume == 0 || MasterSoundVolume == 0){
-            MasterAmbientVolume = 1f;
+        if (MasterMusicVolume == 0 || MasterSoundVolume == 0){
+            MasterMusicVolume = 1f;
             MasterSoundVolume = .15f;
         }
         aManager = FindObjectOfType<AudioManager>();
         allSounds = Resources.LoadAll("Sounds/SFX");
         ambient = Resources.LoadAll("Sounds/Ambient");
+        music = Resources.LoadAll("Sounds/Music");
         for (int i = 0; i < allSounds.Length; i++)
         {
             // (name of actual file, name to be called by, volume, pitch, bool looping, bool awake)
             aManager.AddSound("SFX/"+allSounds[i].name,allSounds[i].name, MasterSoundVolume, 1f, true, false);
         }
+           
+        //randomly choose what to play in the background, ambient, or one of our two music tracks   
+        int rng = Random.Range(0,music.Length);
+        aManager.AddTrack("Music/"+music[rng].name,music[rng].name, MasterMusicVolume, 1f, true, true);
+        // (name of actual file, name to be called by, volume, pitch, bool looping, bool playonwake);
+        //add all the tracks to playlist
         for (int i = 0; i < ambient.Length; i++)
         {
-            // (name of actual file, name to be called by, volume, pitch, bool looping, bool playonwake);
-            aManager.AddTrack("Ambient/"+ambient[i].name,ambient[i].name, MasterAmbientVolume, 1f, true, true);
+            aManager.AddTrack("Ambient/"+ambient[i].name,ambient[i].name, MasterMusicVolume, 1f, true, false);
         }
+        for (int i = 0; i < music.Length; i++)
+        {
+            aManager.AddTrack("Music/"+music[i].name,music[i].name, MasterMusicVolume, 1f, true, false);
+        }
+       
         //aManager.PlayTrack("Ambient/Ambient-1","Ambient-1", true, true);
         // FindObjectOfType<AudioManager>() searches for an AudioManager object
         // FindObjectOfType<AudioManager>().AddTrack("PLACEHOLDER - Pillar Men theme", "Pillar Men"); // Adds track to a Playlist

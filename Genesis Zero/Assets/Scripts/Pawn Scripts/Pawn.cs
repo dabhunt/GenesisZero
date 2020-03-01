@@ -87,10 +87,13 @@ public class Pawn : MonoBehaviour
     public void Heal(float amount)
     {
         //Heal effect
-        GameObject emit = VFXManager.instance.PlayEffect("DamageNumber", new Vector3(transform.position.x, transform.position.y + 1, transform.position.z - .5f));
-        emit.GetComponent<DamageNumber>().SetNumber(amount);
-        emit.GetComponent<DamageNumber>().SetColor(new Color(0, .9f, 0));
-        GetHealth().AddValue(amount);
+        if (amount >= 1)
+        {
+            GameObject emit = VFXManager.instance.PlayEffect("DamageNumber", new Vector3(transform.position.x, transform.position.y + 1, transform.position.z - .5f));
+            emit.GetComponent<DamageNumber>().SetNumber(amount);
+            emit.GetComponent<DamageNumber>().SetColor(new Color(0, .9f, 0));
+            GetHealth().AddValue(amount);
+        }
     }
 
     protected void Update()
