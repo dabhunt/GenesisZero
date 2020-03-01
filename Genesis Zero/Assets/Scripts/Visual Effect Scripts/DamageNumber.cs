@@ -30,8 +30,8 @@ public class DamageNumber : MonoBehaviour
     // Sets the display of the text given the number
     public void SetNumber(float num)
     {
-        number.text = num+"";
-        damage = num;
+        damage = (int)num;
+        number.text = damage+"";
         number.fontSize += Mathf.Clamp((int)(number.fontSize * damage / 100), 0, number.fontSize);
     }
 
