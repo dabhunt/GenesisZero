@@ -128,7 +128,7 @@ public class Pawn : MonoBehaviour
         {
             if (!GetComponent<Player>() && gameObject.tag == "Enemy")
             {
-                GameObject.FindGameObjectWithTag("Player").GetComponent<Player>().TriggerOnKillEffect();
+                GameObject.FindGameObjectWithTag("Player").GetComponent<Player>().TriggerEffectOnKill();
             }
             Destroy(this.gameObject);
         }
