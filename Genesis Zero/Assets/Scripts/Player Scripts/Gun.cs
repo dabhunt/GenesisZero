@@ -74,7 +74,7 @@ public class Gun : MonoBehaviour
         for (int i = 0; i < stacks; i++)
         {
             float angle = spreadAngle + minSpread + spreadMultiplier * i;
-            if (right) { angle *= -1;}
+            if (!right) { angle *= -1;}
             GameObject extraBullet = (GameObject)Instantiate(instance, spawnpoint, instance.transform.rotation);
             extraBullet.transform.Rotate(Vector3.forward, angle, Space.World);
             extraBullet.GetComponent<Hitbox>().InitializeHitbox(player.GetDamage().GetValue(), player);
