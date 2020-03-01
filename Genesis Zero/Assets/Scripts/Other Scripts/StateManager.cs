@@ -15,7 +15,6 @@ public class StateManager : MonoBehaviour
             Destroy(gameObject);
             return;
         }
-        DontDestroyOnLoad(gameObject);
     }
     
     //This pauses game

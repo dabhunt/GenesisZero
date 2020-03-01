@@ -6,6 +6,7 @@ public class Player : Pawn
 {
     SkillManager SkillManager;
     public Statistic Essence;
+    public float healthPerStack = 5;
 
     private void Awake()
     {
@@ -38,7 +39,7 @@ public class Player : Pawn
     // This is called whenever the player kills a enemy
     public void TriggerEffectOnKill()
     {
-        //Heal(5);
+        Heal(healthPerStack * GetSkillStack("Vampirism"));
     }
 
     public bool HasSkill(string name)

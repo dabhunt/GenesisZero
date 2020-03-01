@@ -17,7 +17,6 @@ public class GameInputManager : MonoBehaviour
             Destroy(gameObject);
             return;
         }
-        DontDestroyOnLoad(gameObject);
         inputActions = new GameInputActions();
         actionMaps = inputActions.GetInputActionAsset();
     }

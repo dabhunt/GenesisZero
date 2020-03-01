@@ -40,8 +40,6 @@ public class SpawnOnDestroy : MonoBehaviour
             vfxScaleMultiplier = 1;
         }
     }
-
-
     private void OnDestroy()
     {
         //if the scene is being restarted or the player quits
