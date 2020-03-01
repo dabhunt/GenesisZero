@@ -66,18 +66,22 @@ public class SkillDisplay : MonoBehaviour
             Destroy(sk.gameObject);
         }
         skilldisplay.Clear();
+        int modnum = 0;
         for (int i = 0; i < skills.Count; i++)
-        {
-            int col = i % MaxColumns;
-            int row = i / MaxColumns;
+        {          
+            int col = modnum % MaxColumns;
+            int row = modnum / MaxColumns;
 
-            GameObject instance = (GameObject)Instantiate(UIElement, (Vector3)transform.position + (Vector3)StartPoint + new Vector3(Seperation.x * col, Seperation.y * row), Quaternion.identity);
-            instance.transform.parent = transform;
-            instance.transform.localScale = new Vector3(1,1,1);
-            instance.GetComponent<SkillUIElement>().SetIcon(skills[i].Icon);
-            instance.GetComponent<SkillUIElement>().SetStack(SkillManager.GetSkillStack(skills[i].name));
-            instance.GetComponent<SimpleTooltip>().infoLeft = skills[i].Description;
-            skilldisplay.Add(instance);
+            if (skills[i].IsAbility == false)
+            {
+                GameObject instance = (GameObject)Instantiate(UIElement, (Vector3)transform.position + (Vector3)StartPoint + new Vector3(Seperation.x * col, Seperation.y * row), Quaternion.identity);
+                instance.transform.parent = transform;
+                instance.transform.localScale = new Vector3(1, 1, 1);
+                instance.GetComponent<SkillUIElement>().SetIcon(skills[i].Icon);
+                instance.GetComponent<SkillUIElement>().SetStack(SkillManager.GetSkillStack(skills[i].name));
+                instance.GetComponent<SimpleTooltip>().infoLeft = skills[i].Description;
+                skilldisplay.Add(instance);
+            }
 
             if (skills[i].IsAbility && skills[i].name == SkillManager.GetAbility1().name)
             {
@@ -96,6 +100,11 @@ public class SkillDisplay : MonoBehaviour
                 abil2.GetComponent<SkillUIElement>().SetIcon(skills[i].Icon);
                 abil2.GetComponent<SimpleTooltip>().infoLeft = skills[i].Description;
                 skilldisplay.Add(abil2);
+            }
+
+            if (!skills[i].IsAbility)
+            {
+                modnum++;
             }
         }
     }

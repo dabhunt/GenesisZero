@@ -7,6 +7,7 @@ public class GameInputManager : MonoBehaviour
 {
     public static GameInputManager instance;
     private GameInputActions inputActions;
+    private InputActionAsset actionMaps;
     private void Awake() 
     {
         if (instance == null)
@@ -18,6 +19,7 @@ public class GameInputManager : MonoBehaviour
         }
         DontDestroyOnLoad(gameObject);
         inputActions = new GameInputActions();
+        actionMaps = inputActions.GetInputActionAsset();
     }
 
     private void OnDisable() 
@@ -38,7 +40,7 @@ public class GameInputManager : MonoBehaviour
     //This switches the control map to the one with "name" as its name
     public void SwitchControlMap(string name)
     {
-        var actionMaps = inputActions.GetInputActionAsset();
+        Debug.Log("SwitchingControlMap");
         foreach (var actionMap in actionMaps)
         {
             if (actionMap.name == name)

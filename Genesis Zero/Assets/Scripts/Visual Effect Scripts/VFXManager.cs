@@ -31,7 +31,7 @@ public class VFXManager : MonoBehaviour
      * delay: how long until it plays
      * emitter: name of the other effect when it dies
      */
-    public GameObject PlayEffect(string name, Vector3 position, float delay, string emitter)
+    public GameObject PlayEffect(string name, Vector3 position, float delay, string emitter, float duration)
     {
         GameObject effect = Instantiate(Resources.Load<GameObject>("Effects/" + name), position, Quaternion.identity);
 
@@ -39,6 +39,10 @@ public class VFXManager : MonoBehaviour
         if (vfx != null && delay > 0)
         {
             vfx.delay = delay;
+        }
+        if (vfx != null && duration != 0)
+        {
+            vfx.duration = duration;
         }
 
         GameObject emit = Resources.Load<GameObject>("Effects/" + emitter);
@@ -65,11 +69,13 @@ public class VFXManager : MonoBehaviour
         return effect;
     }
     // I am very proud of this, I came up with it myself
-    private void RecursiveChildScale(Transform t, float scaleMultiplier){
+    private void RecursiveChildScale(Transform t, float scaleMultiplier)
+    {
         foreach (Transform child in t)
         {
             child.localScale = new Vector3(child.localScale.x * scaleMultiplier, child.localScale.y * scaleMultiplier, child.localScale.z * scaleMultiplier);
-            if (child.childCount > 0){
+            if (child.childCount > 0)
+            {
                 RecursiveChildScale(child, scaleMultiplier);
             }
         }
@@ -77,12 +83,12 @@ public class VFXManager : MonoBehaviour
 
     public GameObject PlayEffect(string name, Vector3 position, float delay)
     {
-        return PlayEffect(name, position, delay, "");
+        return PlayEffect(name, position, delay, "", 0);
     }
 
     public GameObject PlayEffect(string name, Vector3 position)
     {
-        return PlayEffect(name, position, 0, "");
+        return PlayEffect(name, position, 0, "", 0);
     }
 
     public void PlayGraphEffect(string name, Vector3 position)
@@ -92,6 +98,16 @@ public class VFXManager : MonoBehaviour
 
     public GameObject PlayEffectReturn(string name, Vector3 position, float delay, string emitter)
     {
-        return PlayEffect(name, position, delay, emitter);
+        return PlayEffect(name, position, delay, emitter, 0);
+    }
+
+    public GameObject PlayEffectForDuration(string name, Vector3 position, float delay, string emitter, float duration)
+    {
+        return PlayEffect(name, position, delay, emitter, duration);
+    }
+
+    public GameObject PlayEffectForDuration(string name, Vector3 position, float duration)
+    {
+        return PlayEffect(name, position, 0, "", duration);
     }
 }
