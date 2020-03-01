@@ -22,7 +22,7 @@ public class SpawnOnDestroy : MonoBehaviour
 
     private SkillObject ModDrop;
     private Player player;
-   
+    private bool canDrop = true;
     private AudioManager aManager;
     //bool applicationIsQuitting;
     // Start is called before the first frame update
@@ -49,7 +49,8 @@ public class SpawnOnDestroy : MonoBehaviour
             return;
         }
         // otherwise play the effect
-        else{
+        else
+        {
             if (sounds.Length > 0)
             {
                 //if string is not empty, calls audio manager to play sound based on string
@@ -67,24 +68,28 @@ public class SpawnOnDestroy : MonoBehaviour
                 GameObject emit = VFXManager.instance.PlayEffect(vfxName, new Vector3(transform.position.x, transform.position.y, transform.position.z), 0f, vfxScaleMultiplier);
                 
             }
-             // if essence drop chance exceeds the random value from 0 to 1.0f, it drops
-            int amount = Random.Range(minEssenceDrop, maxEssenceDrop);
-            //print("dropping "+amount+" essence");
-            for (int i = 0; i < amount; i++){
-                //print("dropping some essence...");
-                GameObject essence = Instantiate(EssencePrefab, new Vector3(transform.position.x, transform.position.y, -4), Quaternion.identity);
-                essence = Drop(essence);
-                //Destroy(rb);
-            }
-            // if modifier drop chance exceeds the random value from 0 to 1.0f, it drops
-            if (ModifierDropChance > Random.value)
+            if (canDrop)
             {
-                GameObject randMod = Instantiate(ModifierPrefab, new Vector3(transform.position.x, transform.position.y, 0), Quaternion.identity);
-                randMod = Drop(randMod);
-                SkillPickup pickup = randMod.GetComponent<SkillPickup>();
-                pickup.skill = player.GetSkillManager().GetRandomSkill();
-                //gets random skill from skillmanagers resource folder 
+                int amount = Random.Range(minEssenceDrop, maxEssenceDrop);
+                for (int i = 0; i < amount; i++)
+                {
+                    // if essence drop chance exceeds the random value from 0 to 1.0f, it drops
+                    GameObject essence = Instantiate(EssencePrefab, new Vector3(transform.position.x, transform.position.y, -4), Quaternion.identity);
+                    essence = Drop(essence);
+                    //Destroy(rb);
+                }
+                // if modifier drop chance exceeds the random value from 0 to 1.0f, it drops
+                if (ModifierDropChance > Random.value)
+                {
+                    GameObject randMod = Instantiate(ModifierPrefab, new Vector3(transform.position.x, transform.position.y, 0), Quaternion.identity);
+                    randMod = Drop(randMod);
+                    SkillPickup pickup = randMod.GetComponent<SkillPickup>();
+                    pickup.skill = player.GetSkillManager().GetRandomSkill();
+                    //gets random skill from skillmanagers resource folder 
+                }
+             
             }
+
         }
 
     }
@@ -94,7 +99,7 @@ public class SpawnOnDestroy : MonoBehaviour
         float force = Random.Range(minDropVelocity, maxDropVelocity);
         //random rotation and force applied
         obj.transform.rotation = Random.rotation;
-        rb.GetComponent<Rigidbody>().velocity = Random.onUnitSphere * force;
+        rb.GetComponent<Rigidbody>().velocity = Random.onUnitSphere * force/2;
         return obj;       
     }
     void OnApplicationQuit()
@@ -104,6 +109,9 @@ public class SpawnOnDestroy : MonoBehaviour
     }
     public void isQuitting(){
         quitting = true;
+    }
+    public void noDrops(){
+        canDrop = false;
     }
     void OnSceneLoaded(Scene scene, LoadSceneMode mode)
     {
