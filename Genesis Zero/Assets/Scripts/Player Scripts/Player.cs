@@ -22,6 +22,10 @@ public class Player : Pawn
     // Update is called once per frame
     new void Update()
     {
+        if (Input.GetKeyDown(KeyCode.S))
+        {
+            SkillManager.SwapCurrentAbilities();
+        }
         base.Update();
     }
 

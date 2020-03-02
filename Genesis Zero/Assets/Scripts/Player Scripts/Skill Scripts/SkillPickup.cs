@@ -77,8 +77,9 @@ public class SkillPickup : MonoBehaviour
                         {
                             SkillObject otherskill = p.GetSkillManager().GetAbility1();                          
                             p.GetSkillManager().RemoveSkill(otherskill);
-                            p.GetSkillManager().SpawnAbility(other.transform.position + Vector3.right, otherskill.name);
+                            p.GetSkillManager().SpawnAbility(other.transform.position, otherskill.name);
                             p.GetSkillManager().AddSkill(skill);
+                            //GameObject.FindObjectOfType<SkillDisplay>().CheckUpdate();
                             added = true;
                         }
                     }

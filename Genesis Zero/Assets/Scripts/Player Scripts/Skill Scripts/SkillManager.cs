@@ -71,9 +71,18 @@ public class SkillManager
             if (Skills[skill.name] <= 0)
             {
                 Skills.Remove(skill.name);
+                skillobjects.Remove(skill);
                 if (skill.IsAbility)
                 {
                     abilityamount--;
+                    if (skill.name == ability1)
+                    {
+                        SetAbility1("");
+                    }
+                    else
+                    {
+                        SetAbility2("");
+                    }
                 }
                 else
                 {
@@ -237,10 +246,10 @@ public class SkillManager
      */
     public void SwapCurrentAbilities()
     {
-        string temp = ability1;
-        ability2 = ability1;
-        ability1 = temp;
-        updated = true;
+        string temp = ability2;
+        SetAbility2(ability1);
+        SetAbility1(temp);
+        SetUpdated(true);
     }
 
     public void SetUpdated(bool boolean)
