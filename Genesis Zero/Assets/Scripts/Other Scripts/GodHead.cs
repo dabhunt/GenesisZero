@@ -36,9 +36,10 @@ public class GodHead : MonoBehaviour
     {
         if (ctx.performed)
         {
+            if (!inputActions.PlayerControls.enabled == true) return;
             if (Vector3.Distance(player.transform.position, transform.position) <= activeDistance)
             {
-                //StateManager.instance.PauseGame();
+                StateManager.instance.PauseGame();
                 GameInputManager.instance.SwitchControlMap("MenuControls");
                 InitializeUI();
                 isActive = true;
@@ -48,7 +49,8 @@ public class GodHead : MonoBehaviour
     private void UpdateUI()
     {
         if (!isActive) return;
-        //closes UI when either of the button is pressed
+
+        
     }
 
     private void InitializeUI()
@@ -90,7 +92,7 @@ public class GodHead : MonoBehaviour
         {
             //Maybe have a message saying that you got no skills right now
         }
-        headScreenPos = canvasRef.worldCamera.WorldToScreenPoint(new Vector3(transform.position.x, transform.position.y, 0));
+        headScreenPos = canvasRef.worldCamera.WorldToScreenPoint(new Vector3(player.transform.position.x, player.transform.position.y, 0));
         RectTransformUtility.ScreenPointToLocalPointInRectangle(canvasRef.transform as RectTransform, headScreenPos, canvasRef.worldCamera, out screenPos);
         sacUI.anchoredPosition = screenPos;
         sacUI.gameObject.SetActive(true);
@@ -98,6 +100,7 @@ public class GodHead : MonoBehaviour
 
     private void CloseUI()
     {
+        isActive = false;
         foreach (RectTransform child in sacMods.transform)
         {
             child.gameObject.SetActive(false);
