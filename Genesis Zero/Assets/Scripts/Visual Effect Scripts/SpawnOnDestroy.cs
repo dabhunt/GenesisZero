@@ -43,7 +43,7 @@ public class SpawnOnDestroy : MonoBehaviour
     private void OnDestroy()
     {
         //if the scene is being restarted or the player quits
-        if (restartScript.ExitingScene() || quitting){
+        if (restartScript == null || restartScript.ExitingScene() || quitting){
             return;
         }
         // otherwise play the effect
@@ -104,6 +104,7 @@ public class SpawnOnDestroy : MonoBehaviour
     {
         quitting = true;
         Destroy(this.GetComponent<SpawnOnDestroy>());
+        Destroy(gameObject);
     }
     public void isQuitting(){
         quitting = true;

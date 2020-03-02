@@ -14,7 +14,7 @@ public class Gun : MonoBehaviour
 	public float blastRadiusBonusPerStack = .7f;
     // each additional duplicate of this mod gives you .7f bigger blast radius
     [Header("2. Knockback")]
-    public float knockBackPerStack = 5f;
+    public float knockBackPerStack = 1.5f;
     [Header("3. Peripheral Bullet")]
     public float minSpread = 10f;
     public float spreadMultiplier = 10f;

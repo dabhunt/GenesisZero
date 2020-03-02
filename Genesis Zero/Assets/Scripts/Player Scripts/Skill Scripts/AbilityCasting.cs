@@ -1,4 +1,4 @@
-﻿using System.Collections;
+using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
@@ -163,7 +163,7 @@ public class AbilityCasting : MonoBehaviour
         hitbox.transform.parent = transform;
         hitbox.GetComponent<Hitbox>().SetLifeTime(.5f);
     }
-
+    
     private GameObject SpawnGameObject(string name, Vector2 position)
     {
         GameObject effect = Instantiate(Resources.Load<GameObject>("Hitboxes/" + name), position, Quaternion.identity);
