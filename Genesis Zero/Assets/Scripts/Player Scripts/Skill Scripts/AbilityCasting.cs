@@ -12,7 +12,6 @@ public class AbilityCasting : MonoBehaviour
     [Header("Time Dilation Ability")]
     public float timeScale = .5f;
     public float effectDuration = 3.2f;
-    [Header("Time Dilation Ability")]
 
     private float AbitityCasttime1;
     private float AbilityCooldown1;
@@ -23,7 +22,8 @@ public class AbilityCasting : MonoBehaviour
     private float AbilityCooldown2;
     private float TotalAbitityCasttime2;
     private float TotalAbilityCooldown2;
-
+    public GameObject abilityCooldownPanel;
+    private AbilityCD ui;
     private Vector2 aimDir;
     // Start is called before the first frame update
     void Start()
@@ -31,6 +31,7 @@ public class AbilityCasting : MonoBehaviour
         player = GetComponent<Player>();
         skillmanager = player.GetSkillManager();
         PC = GetComponent<PlayerController>();
+        ui = abilityCooldownPanel.GetComponent<AbilityCD>();
         aimDir = new Vector2(0, 0);
     }
     // Update is called once per frame
@@ -43,7 +44,6 @@ public class AbilityCasting : MonoBehaviour
         UpdateAbilities();
 
     }
-
     public void CastAbility1()
     {
         if (CanCastAbility1())
@@ -81,6 +81,7 @@ public class AbilityCasting : MonoBehaviour
                 CastSlowDown();
                 break;
         }
+        ui.Cast();
     }
 
     private bool CanCastAbility1()
@@ -182,7 +183,7 @@ public class AbilityCasting : MonoBehaviour
 
     private void CastSlowDown()
     {
-        StateManager.instance.ChangeTimeScale(timeScale, 3.2f);
+        StateManager.instance.ChangeTimeScale(timeScale, effectDuration);
     }
     private GameObject SpawnGameObject(string name, Vector2 position)
     {
