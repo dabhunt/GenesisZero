@@ -141,7 +141,10 @@ public class Pawn : MonoBehaviour
     {
         if (knockbackforce > 0)
         {
-            GetStunnedStatus().AddTime(Time.fixedDeltaTime);
+            if(knockbackforce > 6)
+            {
+                GetStunnedStatus().AddTime(Time.fixedDeltaTime);
+            }
             knockbackforce *= Mathf.Clamp(9.5f / GetWeight().GetValue(), 0, .99f);
             if (ForcedKnockBack)
             {

@@ -83,7 +83,7 @@ public class SkillDisplay : MonoBehaviour
                 skilldisplay.Add(instance);
             }
 
-            if (skills[i].IsAbility && skills[i].name == SkillManager.GetAbility1().name)
+            if (skills[i].IsAbility && SkillManager.GetAbility1() && skills[i].name == SkillManager.GetAbility1().name)
             {
                 GameObject abil1 = (GameObject)Instantiate(UIElement, (Vector3)transform.position + (Vector3)Ability1Position, Quaternion.identity);
                 abil1.transform.parent = transform;
@@ -92,7 +92,7 @@ public class SkillDisplay : MonoBehaviour
                 abil1.GetComponent<SimpleTooltip>().infoLeft = skills[i].Description;
                 skilldisplay.Add(abil1);
             }
-            else if (skills[i].IsAbility && skills[i].name == SkillManager.GetAbility2().name)
+            else if (skills[i].IsAbility && SkillManager.GetAbility2() && skills[i].name == SkillManager.GetAbility2().name)
             {
                 GameObject abil2 = (GameObject)Instantiate(UIElement, (Vector3)transform.position + (Vector3)Ability2Position, Quaternion.identity);
                 abil2.transform.parent = transform;
