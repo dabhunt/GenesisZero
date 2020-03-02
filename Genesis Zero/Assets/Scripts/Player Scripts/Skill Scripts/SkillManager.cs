@@ -71,9 +71,18 @@ public class SkillManager
             if (Skills[skill.name] <= 0)
             {
                 Skills.Remove(skill.name);
+                skillobjects.Remove(skill);
                 if (skill.IsAbility)
                 {
                     abilityamount--;
+                    if (skill.name == ability1)
+                    {
+                        SetAbility1("");
+                    }
+                    else
+                    {
+                        SetAbility2("");
+                    }
                 }
                 else
                 {
@@ -145,6 +154,23 @@ public class SkillManager
     public List<SkillObject> GetSkillObjects()
     {
         return skillobjects;
+    }
+
+    public GameObject SpawnAbility(Vector3 position, string name)
+    {
+        SkillObject so = (SkillObject)Resources.Load("Skills/Abilities/" + name);
+        GameObject emit = (GameObject)GameObject.Instantiate(Resources.Load("Pickups/AbilityPickup"), position, Quaternion.identity);
+        emit.GetComponent<SkillPickup>().skill = so;
+
+        return emit;
+    }
+
+    public GameObject SpawnMod(Vector3 position, string name)
+    {
+        SkillObject so = (SkillObject)Resources.Load("Skills/" + name);
+        GameObject emit = (GameObject)GameObject.Instantiate(Resources.Load("Pickups/ModPickup"), position, Quaternion.identity);
+        emit.GetComponent<SkillPickup>().skill = so;
+        return emit;
     }
 
     public int GetSkillStack(string name)
@@ -220,10 +246,10 @@ public class SkillManager
      */
     public void SwapCurrentAbilities()
     {
-        string temp = ability1;
-        ability2 = ability1;
-        ability1 = temp;
-        updated = true;
+        string temp = ability2;
+        SetAbility2(ability1);
+        SetAbility1(temp);
+        SetUpdated(true);
     }
 
     public void SetUpdated(bool boolean)

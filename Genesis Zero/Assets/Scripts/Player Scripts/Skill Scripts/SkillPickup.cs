@@ -50,7 +50,7 @@ public class SkillPickup : MonoBehaviour
         }
     }
 
-    private void OnTriggerEnter(Collider other)
+    private void OnTriggerStay(Collider other)
     {
         if (other.GetComponentInParent<Player>() || other.GetComponent<Player>())
         {
@@ -73,6 +73,15 @@ public class SkillPickup : MonoBehaviour
                     if (skill.IsAbility && !p.GetSkillManager().HasSkill(skill.name) && p.GetSkillManager().GetAbilityAmount() >= 2)
                     {
                         // Prompt choice to swap out with current abilities
+                        if (Input.GetKeyDown(KeyCode.F))
+                        {
+                            SkillObject otherskill = p.GetSkillManager().GetAbility1();                          
+                            p.GetSkillManager().RemoveSkill(otherskill);
+                            p.GetSkillManager().SpawnAbility(other.transform.position, otherskill.name);
+                            p.GetSkillManager().AddSkill(skill);
+                            //GameObject.FindObjectOfType<SkillDisplay>().CheckUpdate();
+                            added = true;
+                        }
                     }
                     else
                     {

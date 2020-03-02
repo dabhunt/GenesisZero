@@ -6,6 +6,11 @@ public class StateManager : MonoBehaviour
 {
     public static StateManager instance;
 
+    private float TimeScale;
+    private float Timer;
+
+    private bool IsPaused;
+
     private void Awake()
     {
         if (instance == null)
@@ -16,12 +21,26 @@ public class StateManager : MonoBehaviour
             return;
         }
     }
-    
+
+    private void Update()
+    {
+        if (Timer > 0)
+        {
+            Timer -= Time.unscaledDeltaTime;
+            if (Timer <= 0)
+            {
+                ChangeTimeScale(1, 0);
+                Timer = 0;
+            }
+        }
+    }
+
     //This pauses game
     public void PauseGame()
     {
         //Pauses Game
         Debug.Log("Pausing Game");
+        IsPaused = true;
         Time.timeScale = 0;
     }
 
@@ -30,6 +49,19 @@ public class StateManager : MonoBehaviour
     {
         //UnPauses Game
         Debug.Log("UnPausing Game");
-        Time.timeScale = 1;
+        IsPaused = false;
+        Time.timeScale = TimeScale;
+        Time.fixedDeltaTime = 0.02f * TimeScale;
+    }
+    
+    public void ChangeTimeScale(float timescale, float time)
+    {
+        TimeScale = timescale;
+        Timer = time;
+        if (!IsPaused)
+        {
+            Time.timeScale = timescale;
+            Time.fixedDeltaTime = 0.02f * TimeScale;
+        }
     }
 }
