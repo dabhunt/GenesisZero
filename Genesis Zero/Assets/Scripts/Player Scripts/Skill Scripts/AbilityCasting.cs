@@ -69,11 +69,13 @@ public class AbilityCasting : MonoBehaviour
                 InitializeAbility(3, 0, num);
                 CastBurstCharge();
                 break;
-            case "Ability3":
-                //Implement functionality
+            case "Overdrive":
+                InitializeAbility(20, 0, num);
+                CastOverdrive(num);
                 break;
-            case "Ability4":
-                //Implement functionality
+            case "Time Dilation":
+                InitializeAbility(10, 0, num);
+                CastSlowDown();
                 break;
         }
     }
@@ -162,6 +164,24 @@ public class AbilityCasting : MonoBehaviour
         hitbox.GetComponent<Hitbox>().InitializeHitbox(GetComponent<Player>().GetDamage().GetValue() / 4, GetComponent<Player>());
         hitbox.transform.parent = transform;
         hitbox.GetComponent<Hitbox>().SetLifeTime(.5f);
+    }
+
+    private void CastOverdrive(int num)
+    {
+        if (num == 1) // Reset Ability2
+        {
+            ResetAbilityCooldown2();
+        }
+        else // Reset Ability1
+        {
+            ResetAbilityCooldown1();
+        }
+        player.GetSpeed().AddBonus(player.GetSpeed().GetBaseValue()/2, 2); // 50% MS for 2 seconds
+    }
+
+    private void CastSlowDown()
+    {
+        StateManager.instance.ChangeTimeScale(.5f, 2);
     }
 
     private GameObject SpawnGameObject(string name, Vector2 position)

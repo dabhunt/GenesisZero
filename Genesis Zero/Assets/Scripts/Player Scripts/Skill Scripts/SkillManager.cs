@@ -147,6 +147,23 @@ public class SkillManager
         return skillobjects;
     }
 
+    public GameObject SpawnAbility(Vector3 position, string name)
+    {
+        SkillObject so = (SkillObject)Resources.Load("Skills/Abilities/" + name);
+        GameObject emit = (GameObject)GameObject.Instantiate(Resources.Load("Pickups/AbilityPickup"), position, Quaternion.identity);
+        emit.GetComponent<SkillPickup>().skill = so;
+
+        return emit;
+    }
+
+    public GameObject SpawnMod(Vector3 position, string name)
+    {
+        SkillObject so = (SkillObject)Resources.Load("Skills/" + name);
+        GameObject emit = (GameObject)GameObject.Instantiate(Resources.Load("Pickups/ModPickup"), position, Quaternion.identity);
+        emit.GetComponent<SkillPickup>().skill = so;
+        return emit;
+    }
+
     public int GetSkillStack(string name)
     {
         if (Skills.ContainsKey(name))
