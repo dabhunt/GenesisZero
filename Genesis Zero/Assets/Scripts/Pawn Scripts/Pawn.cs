@@ -87,7 +87,13 @@ public class Pawn : MonoBehaviour
     public void Heal(float amount)
     {
         //Heal effect
-        GetHealth().AddValue(amount);
+        if (amount >= 1)
+        {
+            GameObject emit = VFXManager.instance.PlayEffect("DamageNumber", new Vector3(transform.position.x, transform.position.y + 1, transform.position.z - .5f));
+            emit.GetComponent<DamageNumber>().SetNumber(amount);
+            emit.GetComponent<DamageNumber>().SetColor(new Color(0, .9f, 0));
+            GetHealth().AddValue(amount);
+        }
     }
 
     protected void Update()
@@ -100,8 +106,6 @@ public class Pawn : MonoBehaviour
         {
             status.UpdateStatus();
         }
-
-
 
         if (IsBurning())
         {
@@ -125,6 +129,10 @@ public class Pawn : MonoBehaviour
 
         if (GetHealth().GetValue() <= 0)
         {
+            if (!GetComponent<Player>() && gameObject.tag == "Enemy")
+            {
+                GameObject.FindGameObjectWithTag("Player").GetComponent<Player>().TriggerEffectOnKill();
+            }
             Destroy(this.gameObject);
         }
     }
@@ -266,6 +274,9 @@ public class Pawn : MonoBehaviour
         burntick = Time.deltaTime;
         burndamage = damage;
         burning.SetTime(time);
+        GameObject burnemit = VFXManager.instance.PlayEffectForDuration("VFX_BurningTest", transform.position, burntime);
+        burnemit.transform.parent = transform;
+
     }
 
     public void KnockBack(Vector3 direction, float force)

@@ -10,7 +10,7 @@ public class DeactivateDistant : MonoBehaviour
     public float updatesPerSecond=1f;
     //which game tags to check and deactivate if out of range
     public string[] tags = new string[] {"Enemy"};
-    private GameObject[] objects;
+    private List<GameObject> objects = new List<GameObject>();
     private Player player;
     private bool firstCheck = true;
     void Start()
@@ -22,17 +22,18 @@ public class DeactivateDistant : MonoBehaviour
     // Check is currently called once a second, but can also be called manually when the player is teleported to prevent visual latency
   	void Check()
   	{
-    	//check all the tags provided
-    	for (int t = 0; t < tags.Length; t ++){
+    	
     		//find the array of gameobjects associated with that tag
     		// if its the first check of the game, use a find by tag
     		//all other checks will use the already existing array of enemies to do this check
     		if (firstCheck){
+                //NOTE Finding by tag does not work if they are deactive
+                for (int t = 0; t < tags.Length; t ++){
+                    objects.AddRange(GameObject.FindGameObjectsWithTag(tags[t]));
+                }
     			firstCheck = false;
-    			//NOTE Finding by tag does not work if they are deactive
-    			objects = GameObject.FindGameObjectsWithTag(tags[t]);
     		}
-   			for (int i = 0; i < objects.Length; i++){
+   			for (int i = 0; i < objects.Count; i++){
    				if (objects[i] != null){
 	   				//check each objects distance relative to the player transform, if outside the designated distance, it's inactive otherwise it's active.
 	   				float dist =  Vector3.Distance(player.transform.position, objects[i].transform.position);
@@ -45,7 +46,7 @@ public class DeactivateDistant : MonoBehaviour
    				}
     		}
     
-    	}
+    	
     	//UpdateArray();
     }
 }

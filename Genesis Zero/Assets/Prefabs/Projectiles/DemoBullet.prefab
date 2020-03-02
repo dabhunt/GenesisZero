@@ -4870,7 +4870,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   speed: 30
   gravity: 0
-  lifeTime: 2.55
+  lifeTime: 0.6
   direction: {x: 0, y: 0, z: 0}
 --- !u!114 &7323713832238595723
 MonoBehaviour:
@@ -4890,11 +4890,15 @@ MonoBehaviour:
   HurtsEnemies: 1
   Intangible: 0
   MaxHits: 1
-  Knockbackforce: 5
+  Knockbackforce: 1.5
   DirectionalKnockback: 1
+  StunTime: 0
+  LifeTime: 99
   Burn: {x: 0, y: 0}
   Collider: {fileID: -5625754253452083393}
   Source: {fileID: 0}
+  hitEffectVFX: VFX_BulletSparks
+  VFX_ScaleReduction: 15
 --- !u!114 &4204024712769973434
 MonoBehaviour:
   m_ObjectHideFlags: 0

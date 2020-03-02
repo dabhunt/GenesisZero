@@ -34,12 +34,23 @@ public class ExplosiveShot : MonoBehaviour
         	Vector3 spawnPoint = new Vector3(transform.position.x, transform.position.y,0);
         	//this is for collision, not VFX
  			runtimeExplosion = Instantiate(explosionPrefab,spawnPoint, Quaternion.identity);
+            runtimeExplosion = InheritOnHitEffects(runtimeExplosion);
  			AOE AOEscript = runtimeExplosion.GetComponent<AOE>();
  			AOEscript.setScaleTarget(startScale, blastRadius, lerpMultiplier);
  			//print("blastRadius = " + blastRadius + "during the on destroy call last section");
  			GameObject emit = VFXManager.instance.PlayEffect(vfxName, new Vector3(transform.position.x, transform.position.y, transform.position.z), 0f, blastRadius/baseblastRadius);
         }
        
+    }
+    //sets damage, source, burn, and stuntime to inherit from the source of bullet (player)
+    public GameObject InheritOnHitEffects(GameObject explosion)
+    {
+        Hitbox bulletHit = this.GetComponent<Hitbox>();
+        Hitbox explosionHit = explosion.GetComponent<Hitbox>();
+        explosion.GetComponent<Hitbox>().InitializeHitbox(bulletHit.Source.GetDamage().GetValue(), bulletHit.Source);
+        explosionHit.Burn = bulletHit.Burn;
+        explosionHit.StunTime = bulletHit.StunTime;
+        return explosion;
     }
     public void ModifyBlastRadius(float adjustment)
     {

@@ -11,10 +11,20 @@ public class Gun : MonoBehaviour
     [Header("1. Explosive Shot")]
 	public GameObject explosiveProjectile;
 	public float explosiveCoolDelay = 1.5f;
-	public float SubsequentBlastRadiusBonus = .7f;
-	[Header("2. Knockback")]
-	public float knockBackPerStack = 5f;
-	//subsequent meaning each additional duplicate of this mod gives you .7f bigger blast radius
+	public float blastRadiusBonusPerStack = .7f;
+    // each additional duplicate of this mod gives you .7f bigger blast radius
+    [Header("2. Knockback")]
+    public float knockBackPerStack = 1.5f;
+    [Header("3. Peripheral Bullet")]
+    public float minSpread = 10f;
+    public float spreadMultiplier = 10f;
+    [Header("4. Peircing Bullets")]
+    public int piercesPerStack = 1;
+    [Header("5. Ignition Bullets")]
+    public float burnDamagePerStack = 2f;
+    public float burnTime = 3f;
+
+
     [Header("Crosshair Spread")]
     public float spreadSpeed = 5f;
     public float minXGap = 14f;
@@ -25,6 +35,7 @@ public class Gun : MonoBehaviour
     private OverHeat overheat;
     private Player player;
     private ExplosiveShot expShot;
+    private PlayerController controller;
 
     //Crosshair Variables
     private RectTransform[] crossArr;
@@ -34,7 +45,8 @@ public class Gun : MonoBehaviour
     {
         player = GetComponent<Player>();
         overheat = GetComponent<OverHeat>();
-        screenXhair = GetComponent<PlayerController>().screenXhair;
+        controller = player.GetComponent<PlayerController>();
+        screenXhair = controller.screenXhair;
         crossArr = new RectTransform[] {(RectTransform) screenXhair.Find("top"), 
                             (RectTransform) screenXhair.Find("bottom"), 
                             (RectTransform) screenXhair.Find("left"), 
@@ -50,14 +62,25 @@ public class Gun : MonoBehaviour
         expShot = instance.GetComponent<ExplosiveShot>();
         if (expShot != null)
         {
-        	int amount = player.GetSkillManager().GetSkillStack("Explosive Shot");
+        	int amount = player.GetSkillStack("Explosive Shot");
 	    	//changeblastradius, the more of the skill you have the bigger it is.
-	    	expShot.ModifyBlastRadius(amount*SubsequentBlastRadiusBonus);
+	    	expShot.ModifyBlastRadius(amount* blastRadiusBonusPerStack);
         }
         //apply generic modifications
         instance = ModifyProjectile(instance);
         instance.transform.Rotate(Vector3.forward,Random.Range(-spreadAngle, spreadAngle),Space.World);
+        int stacks = player.GetSkillStack("Peripheral Bullet");
+        bool right = controller.IsAimingRight();
+        for (int i = 0; i < stacks; i++)
+        {
+            float angle = spreadAngle + minSpread + spreadMultiplier * i;
+            if (!right) { angle *= -1;}
+            GameObject extraBullet = (GameObject)Instantiate(instance, spawnpoint, instance.transform.rotation);
+            extraBullet.transform.Rotate(Vector3.forward, angle, Space.World);
+            extraBullet.GetComponent<Hitbox>().InitializeHitbox(player.GetDamage().GetValue(), player);
+        }
         instance.GetComponent<Hitbox>().InitializeHitbox(player.GetDamage().GetValue(), player);
+        
     }
 
     private void FixedUpdate() 
@@ -75,7 +98,10 @@ public class Gun : MonoBehaviour
     		//this will be true on the first shot and only on the first shot
     		if (overheat.GetHeat() <= overheat.GetHeatAddedPerShot())
     		{
-    			return explosiveProjectile;
+                
+                Hitbox hit = explosiveProjectile.GetComponent<Hitbox>();
+                hit.Damage = player.GetDamage().GetValue();
+                return explosiveProjectile;
     		}
     		overheat.ModifyCoolDelay(explosiveCoolDelay);
     	}
@@ -93,8 +119,11 @@ public class Gun : MonoBehaviour
     public GameObject ModifyProjectile(GameObject bullet)
     {	
     	Hitbox hit = bullet.GetComponent<Hitbox>();
-    	//adds knockbackforce to the bullet equal to the amount of stacks the player has
-    	hit.Knockbackforce += knockBackPerStack * player.GetSkillManager().GetSkillStack("Knockback");
+    	//adds knockbackforce, burndamage, & piercing equal to the bullet equal to the amount of stacks the player has
+    	hit.Knockbackforce += knockBackPerStack * player.GetSkillStack("Knockback");
+        hit.MaxHits += piercesPerStack * player.GetSkillStack("Piercing Bullets");
+        float bDmg = burnDamagePerStack * player.GetSkillStack("Ignition Bullets");
+        hit.Burn = new Vector2(burnTime, bDmg);
     	return bullet;
     }
     private void UpdateCrosshairBloom()

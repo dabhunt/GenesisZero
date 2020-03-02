@@ -26,7 +26,6 @@ public class AudioManager : MonoBehaviour
             Destroy(gameObject);
             return;
         }
-        DontDestroyOnLoad(gameObject);
 
         setVolumeMaster = AudioListener.volume;
         setVolumeMusic = 1.0f;

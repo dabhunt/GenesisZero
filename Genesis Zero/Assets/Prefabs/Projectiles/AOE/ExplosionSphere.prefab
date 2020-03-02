@@ -52,7 +52,7 @@ MeshRenderer:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 7446024088350224124}
-  m_Enabled: 1
+  m_Enabled: 0
   m_CastShadows: 1
   m_ReceiveShadows: 1
   m_DynamicOccludee: 1
@@ -128,7 +128,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 1e7773cfab260d141aad2bd82731dee2, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  Damage: 120
+  Damage: 10
   Critical: 0
   HurtsAllies: 0
   HurtsEnemies: 1
@@ -136,7 +136,9 @@ MonoBehaviour:
   MaxHits: 10
   Knockbackforce: 10
   DirectionalKnockback: 1
-  Burn: {x: 2, y: 10}
+  StunTime: 0
+  LifeTime: 99
+  Burn: {x: 0, y: 0}
   Collider: {fileID: 7237362000396769751}
   Source: {fileID: 0}
 --- !u!135 &7237362000396769751
