@@ -169,7 +169,7 @@ public class PlatformShooterAI : AIController
         isGrounded = Physics.SphereCast(groundRay, groundCheckRadius, groundCheckDistance, groundCheckMask, QueryTriggerInteraction.Ignore);
     }
 
-    protected override void OnDrawGizmos()
+    protected void OnDrawGizmosSelected()
     {
         base.OnDrawGizmos();
         Gizmos.color = Color.yellow;

@@ -197,7 +197,7 @@ public class PlatformPatrollerAI : AIController
         }
     }
 
-    protected override void OnDrawGizmos()
+    protected void OnDrawGizmosSelected()
     {
         base.OnDrawGizmos();
         Gizmos.color = Color.yellow;
