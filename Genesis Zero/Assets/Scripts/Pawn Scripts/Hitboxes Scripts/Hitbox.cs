@@ -28,7 +28,7 @@ public class Hitbox : MonoBehaviour
     public float Knockbackforce;        // Force of knockback 
     public bool DirectionalKnockback;   // If true, the knockback direction is equal to the direction the hitbox is moving
 
-    [HideInInspector]
+    //[HideInInspector]
     public float StunTime = 0;
 
     [HideInInspector]
@@ -40,6 +40,8 @@ public class Hitbox : MonoBehaviour
     public Collider Collider;
     public Pawn Source;         // Source is a reference to the pawn that spawned this hitbox. Optional, used if things like critchance is calculated
     //public GameObject DamageNumberObject;
+    public string hitEffectVFX = "VFX_BulletSparks";
+    public float VFX_ScaleReduction = 15f;
     private List<GameObject> hittargets = new List<GameObject>();
 
     private Vector3 lastposition;
@@ -57,6 +59,7 @@ public class Hitbox : MonoBehaviour
             spawnposition = transform.position;
         }
     }
+
 
     // Start is called before the first frame update
     void Start()
@@ -219,9 +222,8 @@ public class Hitbox : MonoBehaviour
                 {
                     emit.GetComponent<DamageNumber>().SetColor(new Color(.25f, .25f, .25f));
                 }
-
+                GameObject vfx = VFXManager.instance.PlayEffect(hitEffectVFX, new Vector3(transform.position.x, transform.position.y, transform.position.z), 0f, Mathf.Clamp(damagetaken / VFX_ScaleReduction, .2f, 3.5f));
                 hittargets.Add(other.transform.root.gameObject);
-
                 --MaxHits;
             }
             else if (Intangible == false && other != GetComponent<Collider>() && !(other.GetComponentInParent<Hurtbox>() || other.GetComponent<Hurtbox>()) && !siblingcolliders && !other.isTrigger)

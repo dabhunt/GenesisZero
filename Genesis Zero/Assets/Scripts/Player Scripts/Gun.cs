@@ -14,7 +14,7 @@ public class Gun : MonoBehaviour
 	public float blastRadiusBonusPerStack = .7f;
     // each additional duplicate of this mod gives you .7f bigger blast radius
     [Header("2. Knockback")]
-    public float knockBackPerStack = 5f;
+    public float knockBackPerStack = 1.5f;
     [Header("3. Peripheral Bullet")]
     public float minSpread = 10f;
     public float spreadMultiplier = 10f;
@@ -119,10 +119,10 @@ public class Gun : MonoBehaviour
     public GameObject ModifyProjectile(GameObject bullet)
     {	
     	Hitbox hit = bullet.GetComponent<Hitbox>();
-    	//adds knockbackforce to the bullet equal to the amount of stacks the player has
+    	//adds knockbackforce, burndamage, & piercing equal to the bullet equal to the amount of stacks the player has
     	hit.Knockbackforce += knockBackPerStack * player.GetSkillStack("Knockback");
         hit.MaxHits += piercesPerStack * player.GetSkillStack("Piercing Bullets");
-        float bDmg = burnDamagePerStack * player.GetSkillStack("Burn");
+        float bDmg = burnDamagePerStack * player.GetSkillStack("Ignition Bullets");
         hit.Burn = new Vector2(burnTime, bDmg);
     	return bullet;
     }

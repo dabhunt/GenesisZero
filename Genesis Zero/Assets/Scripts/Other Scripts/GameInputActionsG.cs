@@ -312,7 +312,7 @@ public class @GameInputActionsG : IInputActionCollection, IDisposable
                 {
                     ""name"": """",
                     ""id"": ""448bddf9-d0be-4464-a158-c1afb48bc31d"",
-                    ""path"": ""<Keyboard>/1"",
+                    ""path"": ""<Keyboard>/q"",
                     ""interactions"": """",
                     ""processors"": """",
                     ""groups"": ""Keyboard&Mouse"",
@@ -323,7 +323,7 @@ public class @GameInputActionsG : IInputActionCollection, IDisposable
                 {
                     ""name"": """",
                     ""id"": ""f439d375-3560-45fc-b63b-8b9a5af94caf"",
-                    ""path"": """",
+                    ""path"": ""<Gamepad>/buttonEast"",
                     ""interactions"": """",
                     ""processors"": """",
                     ""groups"": ""Gamepads"",
@@ -334,7 +334,7 @@ public class @GameInputActionsG : IInputActionCollection, IDisposable
                 {
                     ""name"": """",
                     ""id"": ""78d30b40-61bf-43fc-b0a7-15c9894a9cec"",
-                    ""path"": ""<Keyboard>/2"",
+                    ""path"": ""<Keyboard>/e"",
                     ""interactions"": """",
                     ""processors"": """",
                     ""groups"": ""Keyboard&Mouse"",
@@ -345,7 +345,7 @@ public class @GameInputActionsG : IInputActionCollection, IDisposable
                 {
                     ""name"": """",
                     ""id"": ""7799b530-2c93-41d1-be90-67b41d50edca"",
-                    ""path"": """",
+                    ""path"": ""<Gamepad>/buttonWest"",
                     ""interactions"": """",
                     ""processors"": """",
                     ""groups"": ""Gamepads"",

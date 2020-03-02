@@ -26,7 +26,7 @@ public class AIController : Pawn
     protected bool targetVisible = false;
 
     protected float stateTime = 0.0f; // Duration of current state
-
+    private bool stunnedLastFrame = false;
     public AIStateEvent StateChangeEvent; // Invoked whenever the state is changed and passes in the new state to called methods
 
     protected ObjectTracker tracker;
@@ -71,10 +71,17 @@ public class AIController : Pawn
             CheckTargetVisibility();
         }
         targetPosition = GetTargetFollowPoint();
-
+        //if AI was stunned last frame, but not this frame, change state to AIState.Follow
+        if (stunnedLastFrame == true && !IsStunned())
+        {
+            ChangeState(AIState.Follow);
+            stunnedLastFrame = false;
+        }
         if (IsStunned())
         {
+            print("Enemy is stunned!");
             ChangeState(AIState.Idle);
+            stunnedLastFrame = true;
         }
         else if (Target != null)
         {
@@ -123,7 +130,6 @@ public class AIController : Pawn
 
         //Debug.Log(state);
     }
-
     /**
      * Returns the current state of the AI
      */

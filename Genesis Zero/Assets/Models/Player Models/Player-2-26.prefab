@@ -1615,6 +1615,7 @@ GameObject:
   - component: {fileID: 8540867151082718750}
   - component: {fileID: 6880937030858555989}
   - component: {fileID: 5643833200986752009}
+  - component: {fileID: 337563389558446157}
   m_Layer: 0
   m_Name: ybot
   m_TagString: Player
@@ -1673,8 +1674,9 @@ MonoBehaviour:
   doubleJumpStrength: 12
   horCastPadding: 0.1
   vertCastPadding: 0.1
-  rollDistance: 5
+  rollDuration: 3
   rollSpeedMult: 1.5
+  rollCooldownDuration: 3
   jumpBufferTime: 0.2
   immoveables:
     serializedVersion: 2
@@ -1803,6 +1805,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   Stats: {fileID: 11400000, guid: 10a432e85e7536b4584dd51a18495a93, type: 2}
+  healthPerStack: 5
 --- !u!114 &3701792247965839953
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -1835,8 +1838,13 @@ MonoBehaviour:
   explosiveProjectile: {fileID: 7446024088350224124, guid: 152e92bbf2faf81489bf77708cbf939d,
     type: 3}
   explosiveCoolDelay: 1.5
-  SubsequentBlastRadiusBonus: 0.7
+  blastRadiusBonusPerStack: 0.7
   knockBackPerStack: 5
+  minSpread: 10
+  spreadMultiplier: 10
+  piercesPerStack: 1
+  burnDamagePerStack: 2
+  burnTime: 3
   spreadSpeed: 15
   minXGap: 14
   maxXGap: 60
@@ -1927,6 +1935,19 @@ MonoBehaviour:
   checksPerSecond: 2
   coolRatePerStack: 1.1
   heatReductionPerStack: 0.9
+  extraBloomPerStack: 1.2
+--- !u!114 &337563389558446157
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 3701792247965839959}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 7f8c3c4cfc63b424a9d79eb305988e04, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
 --- !u!1 &3701792248019680946
 GameObject:
   m_ObjectHideFlags: 0
@@ -3395,7 +3416,7 @@ GameObject:
   m_Component:
   - component: {fileID: 6880937029521011099}
   m_Layer: 0
-  m_Name: Player-2-18
+  m_Name: Player-2-26
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
