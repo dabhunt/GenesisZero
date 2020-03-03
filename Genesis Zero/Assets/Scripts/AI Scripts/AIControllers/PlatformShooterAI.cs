@@ -31,12 +31,14 @@ public class PlatformShooterAI : AIController
     public ParticleSystem attackParticles;
 
     public float groundCheckDistance = 1.0f;
+    public float groundCheckStartHeight = 0.0f;
     public float groundCheckRadius = 0.5f;
     public LayerMask groundCheckMask;
 
     public GameObject AttackProjectile;
     public float AttackLaunchInterval = 1.0f;
     private float attackLaunchTime = 0.0f;
+    public Vector3 ProjectileStart = Vector3.zero;
 
     protected void Awake()
     {
@@ -143,7 +145,7 @@ public class PlatformShooterAI : AIController
                 attackLaunchTime = AttackLaunchInterval;
                 if (AttackProjectile != null)
                 {
-                    GameObject spawnedProjectile = Instantiate(AttackProjectile, transform.position, Quaternion.LookRotation(Vector3.forward, (Target.position - transform.position).normalized));
+                    GameObject spawnedProjectile = Instantiate(AttackProjectile, transform.position + new Vector3(ProjectileStart.x * faceDir, ProjectileStart.y, ProjectileStart.z), Quaternion.LookRotation(Vector3.forward, (Target.position - transform.position).normalized));
                     Hitbox spawnedHitbox = spawnedProjectile.GetComponent<Hitbox>();
                     if (spawnedHitbox != null)
                     {
@@ -165,14 +167,18 @@ public class PlatformShooterAI : AIController
       */
     protected override void GroundCheck()
     {
-        Ray groundRay = new Ray(transform.position, Vector3.down);
+        Ray groundRay = new Ray(transform.position + Vector3.up * groundCheckStartHeight, Vector3.down);
         isGrounded = Physics.SphereCast(groundRay, groundCheckRadius, groundCheckDistance, groundCheckMask, QueryTriggerInteraction.Ignore);
     }
 
     protected void OnDrawGizmosSelected()
     {
         base.OnDrawGizmos();
+        Gizmos.color = Color.magenta;
+        Gizmos.DrawWireSphere(transform.position + Vector3.up * groundCheckStartHeight, groundCheckRadius);
         Gizmos.color = Color.yellow;
-        Gizmos.DrawWireSphere(transform.position + Vector3.down * groundCheckDistance, groundCheckRadius);
+        Gizmos.DrawWireSphere(transform.position + Vector3.up * groundCheckStartHeight + Vector3.down * groundCheckDistance, groundCheckRadius);
+        Gizmos.color = Color.green;
+        Gizmos.DrawWireSphere(transform.position + new Vector3(ProjectileStart.x * faceDir, ProjectileStart.y, ProjectileStart.z), 0.1f);
     }
 }

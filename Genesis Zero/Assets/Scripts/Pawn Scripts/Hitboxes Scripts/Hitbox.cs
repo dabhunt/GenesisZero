@@ -165,12 +165,12 @@ public class Hitbox : MonoBehaviour
                 bool special = (bp && bp.SpecialPart);
                 if (special)
                 {
-                    //Debug.Log("Special hit " + other.transform.root.name);
+                    Debug.Log("Special hit " + other.transform.root.name);
                     finaldamage *= bp.damagemultipler;
                 }
                 else
                 {
-                    //Debug.Log("Hit " + other.transform.root.name);
+                    Debug.Log("Hit " + other.transform.root.name);
                 }
 
                 if (Source != null)
@@ -207,7 +207,7 @@ public class Hitbox : MonoBehaviour
 
                 float damagetaken = p.TakeDamage(finaldamage, Source);
 
-                GameObject emit = VFXManager.instance.PlayEffect("DamageNumber", new Vector3(p.transform.position.x, p.transform.position.y + 1, p.transform.position.z - .5f));
+                GameObject emit = VFXManager.instance.PlayEffect("DamageNumber", new Vector3(transform.position.x, transform.position.y + 1, transform.position.z - .5f));
                 emit.GetComponent<DamageNumber>().SetNumber(damagetaken, Critical);
 
                 if (Critical)
@@ -288,13 +288,13 @@ public class Hitbox : MonoBehaviour
         if (col.GetComponent<SphereCollider>() != null)
         {
             //Debug.Log("C");
-            Gizmos.DrawWireSphere(col.transform.position - col.GetComponent<SphereCollider>().center, col.GetComponent<SphereCollider>().radius);
+            Gizmos.DrawWireSphere(col.transform.TransformPoint(col.GetComponent<SphereCollider>().center), col.GetComponent<SphereCollider>().radius);
         }
 
         if (col.GetComponent<BoxCollider>() != null)
         {
             //Debug.Log(col.GetComponent<BoxCollider>().center);
-            Gizmos.DrawWireCube(col.transform.position + col.GetComponent<BoxCollider>().center, col.GetComponent<BoxCollider>().size);
+            Gizmos.DrawWireCube(col.transform.TransformPoint(col.GetComponent<BoxCollider>().center), col.GetComponent<BoxCollider>().size);
         }
 
     }
