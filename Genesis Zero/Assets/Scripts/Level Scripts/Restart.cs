@@ -19,7 +19,6 @@ public class Restart : MonoBehaviour
     {
     	//if player is dead, restart the scene
     	if (temp == null){
-    		exitingScene = true;
     		RestartScene();
     	} else{
     		exitingScene = false;
@@ -27,9 +26,10 @@ public class Restart : MonoBehaviour
     }
 
     // Update is called once per frame
-    void RestartScene()
+    public void RestartScene()
     {
-    	string scene = SceneManager.GetActiveScene().name;
+        exitingScene = true;
+        string scene = SceneManager.GetActiveScene().name;
 		//Load it
 		SceneManager.LoadScene(scene, LoadSceneMode.Single);
     }

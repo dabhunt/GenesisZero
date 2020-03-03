@@ -10,6 +10,7 @@ public class StateManager : MonoBehaviour
     private float TimeScale = 1;
     private float Timer = 0;
     private bool IsPaused;
+    private Restart restart;
 
     private void Awake()
     {
@@ -25,6 +26,9 @@ public class StateManager : MonoBehaviour
     {
         GameObject temp = GameObject.FindWithTag("Player");
         player = temp.GetComponent<Player>();
+        temp = GameObject.FindWithTag("StateManager");
+        restart = temp.GetComponent<Restart>();
+        
     }
 
     private void Update()
@@ -48,6 +52,10 @@ public class StateManager : MonoBehaviour
         {
             string skillStr = player.GetSkillManager().GetRandomSkill().name;
             player.GetSkillManager().SpawnMod(new Vector3(player.transform.position.x+2, player.transform.position.y+5, 0), skillStr);
+        }
+        if (Input.GetKey(KeyCode.Backspace)) 
+        {
+            restart.RestartScene();
         }
 
     }

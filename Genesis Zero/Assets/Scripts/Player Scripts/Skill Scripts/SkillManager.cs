@@ -256,6 +256,22 @@ public class SkillManager
     {
         updated = boolean;
     }
+    public SkillObject GetSkillFromString(string name) 
+    {
+        if (Skills.ContainsKey(name))
+        {
+            Object[] skills = Resources.LoadAll("Skills");
+            for (int i = 0; i < skills.Length; i++)
+            {
+                if (skills[i].name == name)
+                {
+
+                    return (SkillObject)skills[i];
+                }
+            }
+        }
+        return null;
+    }
 
     public bool GetUpdated()
     {

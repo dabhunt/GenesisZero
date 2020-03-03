@@ -84,6 +84,10 @@ public class AbilityCasting : MonoBehaviour
                 InitializeAbility(1, 0, num);
                 CastSpartanLaser();
                 break;
+            case "Wound Sealant":
+                InitializeAbility(100, 0, num);
+                CastWoundSealant();
+                break;
         }
         ui.Cast();
     }
@@ -194,6 +198,14 @@ public class AbilityCasting : MonoBehaviour
     {
         GameObject hitbox = SpawnGameObject("SpartanLaser", CastAtAngle(transform.position, aimDir, .5f), GetComponent<Gun>().firePoint.rotation);
         hitbox.GetComponent<Hitbox>().InitializeHitbox(player.GetDamage().GetValue() + 5, player);
+    }
+
+    private void CastWoundSealant()
+    {
+        SkillObject skill = player.GetSkillManager().GetSkillFromString("Wound Sealant");
+        player.GetSkillManager().RemoveSkill(skill);
+        player.Heal(55);
+        ResetAbilityCooldown1();
     }
 
     private GameObject SpawnGameObject(string name, Vector2 position, Quaternion quat)

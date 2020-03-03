@@ -6,7 +6,7 @@ public class Player : Pawn
 {
     SkillManager SkillManager;
     public Statistic Essence;
-    public float healthPerStack = 5;
+    public float healthPerStack = 8;
 
     private void Awake()
     {
