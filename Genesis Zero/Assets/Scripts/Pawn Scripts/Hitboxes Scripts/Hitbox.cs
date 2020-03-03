@@ -33,6 +33,8 @@ public class Hitbox : MonoBehaviour
 
     [HideInInspector]
     public float LifeTime = 99;
+    public delegate void OnKill();
+    public static OnKill killDelegate;
 
     [Tooltip("(X: Burntime, Y: Damage per second)")]
     public Vector2 Burn = new Vector2(0, 0);
@@ -206,6 +208,7 @@ public class Hitbox : MonoBehaviour
                 }
 
                 float damagetaken = p.TakeDamage(finaldamage, Source);
+                if(p.GetHealth().GetValue() <= 0) killDelegate();
 
                 GameObject emit = VFXManager.instance.PlayEffect("DamageNumber", new Vector3(transform.position.x, transform.position.y + 1, transform.position.z - .5f));
                 emit.GetComponent<DamageNumber>().SetNumber(damagetaken, Critical);
