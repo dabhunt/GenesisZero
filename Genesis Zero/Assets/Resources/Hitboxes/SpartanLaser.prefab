@@ -17,6 +17,7 @@ GameObject:
   - component: {fileID: 4204024712769973434}
   - component: {fileID: -5625754253452083393}
   - component: {fileID: 7272671475684631625}
+  - component: {fileID: 2899899730627199396}
   m_Layer: 0
   m_Name: SpartanLaser
   m_TagString: Untagged
@@ -114,9 +115,9 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 78599237b72dc114eafaaeb56fcaf281, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  speed: 120
+  speed: 80
   gravity: 0
-  lifeTime: 0.5
+  lifeTime: 1
   direction: {x: 0, y: 0, z: 0}
 --- !u!114 &7323713832238595723
 MonoBehaviour:
@@ -140,6 +141,7 @@ MonoBehaviour:
   DirectionalKnockback: 1
   StunTime: 0
   LifeTime: 99
+  LastTargetHit: {fileID: 0}
   Burn: {x: 0, y: 0}
   Collider: {fileID: -5625754253452083393}
   Source: {fileID: 0}
@@ -181,7 +183,7 @@ SphereCollider:
   m_IsTrigger: 1
   m_Enabled: 1
   serializedVersion: 2
-  m_Radius: 0.05
+  m_Radius: 0.085
   m_Center: {x: 0, y: 0, z: 0}
 --- !u!114 &7272671475684631625
 MonoBehaviour:
@@ -196,6 +198,18 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   Detachment: {fileID: 7504852634243103965}
+--- !u!114 &2899899730627199396
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 7446024088350224124}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: dec894ab43411bc4dbd308e13cd0d3dc, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
 --- !u!1 &7504852634243103965
 GameObject:
   m_ObjectHideFlags: 0

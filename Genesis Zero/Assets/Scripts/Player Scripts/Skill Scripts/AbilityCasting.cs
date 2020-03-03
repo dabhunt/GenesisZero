@@ -193,8 +193,7 @@ public class AbilityCasting : MonoBehaviour
     private void CastSpartanLaser()
     {
         GameObject hitbox = SpawnGameObject("SpartanLaser", CastAtAngle(transform.position, aimDir, .5f), GetComponent<Gun>().firePoint.rotation);
-        hitbox.GetComponent<Hitbox>().InitializeHitbox(player.GetDamage().GetValue(), player);
-
+        hitbox.GetComponent<Hitbox>().InitializeHitbox(player.GetDamage().GetValue() + 5, player);
     }
 
     private GameObject SpawnGameObject(string name, Vector2 position, Quaternion quat)
