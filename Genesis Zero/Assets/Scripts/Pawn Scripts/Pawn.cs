@@ -277,7 +277,7 @@ public class Pawn : MonoBehaviour
         burntick = Time.deltaTime;
         burndamage = damage;
         burning.SetTime(time);
-        GameObject burnemit = VFXManager.instance.PlayEffectForDuration("VFX_BurningTest", transform.position, burntime);
+        GameObject burnemit = VFXManager.instance.PlayEffectForDuration("VFX_BurnEffect", transform.position, burntime);
         burnemit.transform.parent = transform;
 
     }
