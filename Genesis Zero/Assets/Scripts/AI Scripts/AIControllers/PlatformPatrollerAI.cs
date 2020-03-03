@@ -28,12 +28,14 @@ public class PlatformPatrollerAI : AIController
     public float MaxFollowHeight = 5.0f; // Maximum height above the enemy for which the target will be tracked after going out of sight
 
     public float groundCheckDistance = 1.0f;
+    public float groundCheckStartHeight = 0.0f;
     public float groundCheckRadius = 0.5f;
     public LayerMask groundCheckMask;
 
     public ParticleSystem chargeParticles;
     public ParticleSystem attackParticles;
     public GameObject AttackHitbox;
+    public Vector3 AttackHitboxStart = Vector3.zero;
     private Transform spawnedHitboxObj; // Refernce to currently spawned hitbox object
 
     protected void Awake()
@@ -156,7 +158,7 @@ public class PlatformPatrollerAI : AIController
      */
     protected override void GroundCheck()
     {
-        Ray groundRay = new Ray(transform.position, Vector3.down);
+        Ray groundRay = new Ray(transform.position + Vector3.up * groundCheckStartHeight, Vector3.down);
         isGrounded = Physics.SphereCast(groundRay, groundCheckRadius, groundCheckDistance, groundCheckMask, QueryTriggerInteraction.Ignore);
     }
 
@@ -179,7 +181,7 @@ public class PlatformPatrollerAI : AIController
         if (AttackHitbox != null)
         {
             spawnedHitboxObj = Instantiate(AttackHitbox, Vector3.zero, Quaternion.identity, transform).transform;
-            spawnedHitboxObj.localPosition = Vector3.zero;
+            spawnedHitboxObj.localPosition = AttackHitboxStart;
             spawnedHitboxObj.localRotation = Quaternion.identity;
             Hitbox spawnedHitbox = spawnedHitboxObj.GetComponent<Hitbox>();
             spawnedHitbox.InitializeHitbox(GetDamage().GetValue(), this);
@@ -200,7 +202,11 @@ public class PlatformPatrollerAI : AIController
     protected void OnDrawGizmosSelected()
     {
         base.OnDrawGizmos();
+        Gizmos.color = Color.magenta;
+        Gizmos.DrawWireSphere(transform.position + Vector3.up * groundCheckStartHeight, groundCheckRadius);
         Gizmos.color = Color.yellow;
-        Gizmos.DrawWireSphere(transform.position + Vector3.down * groundCheckDistance, groundCheckRadius);
+        Gizmos.DrawWireSphere(transform.position + Vector3.up * groundCheckStartHeight + Vector3.down * groundCheckDistance, groundCheckRadius);
+        Gizmos.color = Color.green;
+        Gizmos.DrawWireSphere(transform.position + new Vector3(AttackHitboxStart.x * faceDir, AttackHitboxStart.y, AttackHitboxStart.z), 0.1f);
     }
 }
