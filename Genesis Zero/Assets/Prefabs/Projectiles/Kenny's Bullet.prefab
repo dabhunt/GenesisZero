@@ -34,6 +34,7 @@ Transform:
   m_LocalPosition: {x: 0, y: 0, z: 0}
   m_LocalScale: {x: 0.16, y: 0.16, z: 0.16}
   m_Children:
+  - {fileID: 9129500003363780806}
   - {fileID: 3500592279723788074}
   m_Father: {fileID: 0}
   m_RootOrder: 0
@@ -53,7 +54,7 @@ MeshRenderer:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 7446024088350224124}
-  m_Enabled: 1
+  m_Enabled: 0
   m_CastShadows: 1
   m_ReceiveShadows: 1
   m_DynamicOccludee: 1
@@ -166,13 +167,16 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   vfxName: VFX_BulletSparks
+  vfxScaleMultiplier: 0
   sounds: []
   quitting: 0
-  EssenceDropChance: 0
+  minEssenceDrop: 0
+  maxEssenceDrop: 0
   ModifierDropChance: 0
+  minDropVelocity: 0
+  maxDropVelocity: 0
   EssencePrefab: {fileID: 0}
   ModifierPrefab: {fileID: 0}
-  ModTypes: []
 --- !u!1 &7504852634243103965
 GameObject:
   m_ObjectHideFlags: 0
@@ -202,7 +206,7 @@ Transform:
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children: []
   m_Father: {fileID: 7446024088350224067}
-  m_RootOrder: 0
+  m_RootOrder: 1
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!96 &8407928777640946929
 TrailRenderer:
@@ -212,7 +216,7 @@ TrailRenderer:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 7504852634243103965}
-  m_Enabled: 1
+  m_Enabled: 0
   m_CastShadows: 1
   m_ReceiveShadows: 1
   m_DynamicOccludee: 1
@@ -310,3 +314,78 @@ TrailRenderer:
   m_MinVertexDistance: 0.1
   m_Autodestruct: 0
   m_Emitting: 1
+--- !u!1001 &4829042510462860800
+PrefabInstance:
+  m_ObjectHideFlags: 0
+  serializedVersion: 2
+  m_Modification:
+    m_TransformParent: {fileID: 7446024088350224067}
+    m_Modifications:
+    - target: {fileID: 631523260252257766, guid: a713eb8a398a53240a65604f5eddb06f,
+        type: 3}
+      propertyPath: m_Name
+      value: vfx_Bullet
+      objectReference: {fileID: 0}
+    - target: {fileID: 4446824634872678086, guid: a713eb8a398a53240a65604f5eddb06f,
+        type: 3}
+      propertyPath: m_LocalPosition.x
+      value: 7.010711
+      objectReference: {fileID: 0}
+    - target: {fileID: 4446824634872678086, guid: a713eb8a398a53240a65604f5eddb06f,
+        type: 3}
+      propertyPath: m_LocalPosition.y
+      value: -0.02981088
+      objectReference: {fileID: 0}
+    - target: {fileID: 4446824634872678086, guid: a713eb8a398a53240a65604f5eddb06f,
+        type: 3}
+      propertyPath: m_LocalPosition.z
+      value: 8.092875
+      objectReference: {fileID: 0}
+    - target: {fileID: 4446824634872678086, guid: a713eb8a398a53240a65604f5eddb06f,
+        type: 3}
+      propertyPath: m_LocalRotation.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 4446824634872678086, guid: a713eb8a398a53240a65604f5eddb06f,
+        type: 3}
+      propertyPath: m_LocalRotation.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 4446824634872678086, guid: a713eb8a398a53240a65604f5eddb06f,
+        type: 3}
+      propertyPath: m_LocalRotation.z
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 4446824634872678086, guid: a713eb8a398a53240a65604f5eddb06f,
+        type: 3}
+      propertyPath: m_LocalRotation.w
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 4446824634872678086, guid: a713eb8a398a53240a65604f5eddb06f,
+        type: 3}
+      propertyPath: m_RootOrder
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 4446824634872678086, guid: a713eb8a398a53240a65604f5eddb06f,
+        type: 3}
+      propertyPath: m_LocalEulerAnglesHint.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 4446824634872678086, guid: a713eb8a398a53240a65604f5eddb06f,
+        type: 3}
+      propertyPath: m_LocalEulerAnglesHint.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 4446824634872678086, guid: a713eb8a398a53240a65604f5eddb06f,
+        type: 3}
+      propertyPath: m_LocalEulerAnglesHint.z
+      value: 0
+      objectReference: {fileID: 0}
+    m_RemovedComponents: []
+  m_SourcePrefab: {fileID: 100100000, guid: a713eb8a398a53240a65604f5eddb06f, type: 3}
+--- !u!4 &9129500003363780806 stripped
+Transform:
+  m_CorrespondingSourceObject: {fileID: 4446824634872678086, guid: a713eb8a398a53240a65604f5eddb06f,
+    type: 3}
+  m_PrefabInstance: {fileID: 4829042510462860800}
+  m_PrefabAsset: {fileID: 0}

@@ -9,6 +9,10 @@ public class AbilityCasting : MonoBehaviour
     PlayerController PC;
     SkillManager skillmanager;
 
+    [Header("Time Dilation Ability")]
+    public float timeScale = .5f;
+    public float effectDuration = 3.2f;
+
     private float AbitityCasttime1;
     private float AbilityCooldown1;
     private float TotalAbitityCasttime1;
@@ -18,7 +22,8 @@ public class AbilityCasting : MonoBehaviour
     private float AbilityCooldown2;
     private float TotalAbitityCasttime2;
     private float TotalAbilityCooldown2;
-
+    public GameObject abilityCooldownPanel;
+    private AbilityCD ui;
     private Vector2 aimDir;
     // Start is called before the first frame update
     void Start()
@@ -26,10 +31,9 @@ public class AbilityCasting : MonoBehaviour
         player = GetComponent<Player>();
         skillmanager = player.GetSkillManager();
         PC = GetComponent<PlayerController>();
+        ui = abilityCooldownPanel.GetComponent<AbilityCD>();
         aimDir = new Vector2(0, 0);
     }
-
-
     // Update is called once per frame
     void Update()
     {
@@ -40,7 +44,6 @@ public class AbilityCasting : MonoBehaviour
         UpdateAbilities();
 
     }
-
     public void CastAbility1()
     {
         if (CanCastAbility1())
@@ -78,6 +81,7 @@ public class AbilityCasting : MonoBehaviour
                 CastSlowDown();
                 break;
         }
+        ui.Cast();
     }
 
     private bool CanCastAbility1()
@@ -125,7 +129,6 @@ public class AbilityCasting : MonoBehaviour
         Mathf.Clamp(AbitityCasttime1 -= Time.deltaTime, 0, TotalAbitityCasttime1);
         Mathf.Clamp(AbitityCasttime2 -= Time.deltaTime, 0, TotalAbitityCasttime2);
     }
-
     public float GetAbilityCooldownRatio1()
     {
         return AbilityCooldown1 / TotalAbilityCooldown1;
@@ -165,7 +168,6 @@ public class AbilityCasting : MonoBehaviour
         hitbox.transform.parent = transform;
         hitbox.GetComponent<Hitbox>().SetLifeTime(.5f);
     }
-
     private void CastOverdrive(int num)
     {
         if (num == 1) // Reset Ability2
@@ -181,15 +183,13 @@ public class AbilityCasting : MonoBehaviour
 
     private void CastSlowDown()
     {
-        StateManager.instance.ChangeTimeScale(.5f, 2);
+        StateManager.instance.ChangeTimeScale(timeScale, effectDuration);
     }
-
     private GameObject SpawnGameObject(string name, Vector2 position)
     {
         GameObject effect = Instantiate(Resources.Load<GameObject>("Hitboxes/" + name), position, Quaternion.identity);
         return effect;
     }
-
     private Vector2 CastAtAngle(Vector2 position, Vector2 direction, float distance)
     {
         Vector2 result = position + direction.normalized * distance;
