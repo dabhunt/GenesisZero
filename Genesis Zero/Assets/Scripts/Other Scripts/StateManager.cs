@@ -33,6 +33,12 @@ public class StateManager : MonoBehaviour
                 Timer = 0;
             }
         }
+        //temporary input usage for demo tomorrow
+        if (Input.GetKey(KeyCode.Escape))
+        {
+            Application.Quit();
+        }
+    
     }
 
     //This pauses game

@@ -5,7 +5,7 @@ using UnityEngine.UI;
 
 public class CreateWindow : MonoBehaviour
 {
-    public GameObject windowPrefab;
+    public GameObject pauseWindow;
     //public GameObject buttonPrefab;
     public GameObject windowSacrificePrefab;
     private GameObject runtimeWindow;
@@ -16,19 +16,12 @@ public class CreateWindow : MonoBehaviour
         GameObject tempObj = GameObject.FindWithTag("CanvasUI");
         canvas = tempObj.GetComponent<Canvas>();
     }
-    void Update()
+    public void CreatePauseWindow()
     {
-        
-    }
-    public void CreateNewWindow(string windowName)
-    {
-        if (windowName == "sacrifice")
-        {
-            runtimeWindow = Instantiate(windowSacrificePrefab);
-        }
-    	
+        runtimeWindow = Instantiate(pauseWindow);
         runtimeWindow.transform.SetParent (canvas.transform, false);
         Time.timeScale = 0f;
+        print("create pause window running..");
     }
     public void DestroyWindow()
     {

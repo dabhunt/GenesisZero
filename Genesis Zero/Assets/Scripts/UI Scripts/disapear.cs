@@ -10,8 +10,8 @@ public class disapear : MonoBehaviour
     public Text instructions;
     void Start()
     {
-       
-         Invoke("Showtext", 4);
+        Cursor.visible = false;
+        Invoke("Showtext", 4);
     }
 
     // Update is called once per frame
