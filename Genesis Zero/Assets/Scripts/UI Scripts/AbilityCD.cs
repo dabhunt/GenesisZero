@@ -12,6 +12,8 @@ public class AbilityCD : MonoBehaviour
     void Start()
     {
         player = FindObjectOfType<Player>();
+        ability1.fillAmount = 0;
+        ability2.fillAmount = 0;
     }
     void Update()
     {
