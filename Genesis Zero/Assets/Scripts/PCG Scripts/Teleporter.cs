@@ -11,8 +11,10 @@ public class Teleporter : MonoBehaviour
 	{
 		if (other.GetComponent<Player>())
     	{
-    		thePlayer.transform.position = destination.transform.position;
-    	}
+			//thePlayer.transform.position = destination.position;
+			//thePlayer.transform.position = new Vector3(-120, 16, 0);
+			GameObject.FindWithTag("Player").transform.position = new Vector3(-120, 16, 0);;
+		}
 		
 	}
 }

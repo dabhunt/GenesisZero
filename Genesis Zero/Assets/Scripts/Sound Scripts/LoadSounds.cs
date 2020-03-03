@@ -30,9 +30,9 @@ public class LoadSounds : MonoBehaviour
         }
            
         //randomly choose what to play in the background, ambient, or one of our two music tracks   
-        //int rng = Random.Range(0,music.Length);
-        //aManager.AddTrack("Music/"+music[rng].name,music[rng].name, MasterMusicVolume, 1f, true, true);
-        aManager.AddTrack("Music/"+music[0].name,music[0].name, MasterMusicVolume, 1f, true, true);
+        int rng = Random.Range(0,music.Length);
+        aManager.AddTrack("Music/"+music[rng].name,music[rng].name, MasterMusicVolume, 1f, true, true);
+        //aManager.AddTrack("Music/"+music[0].name,music[0].name, MasterMusicVolume, 1f, true, true);
 
         // (name of actual file, name to be called by, volume, pitch, bool looping, bool playonwake);
         //add all the tracks to playlist

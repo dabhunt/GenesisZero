@@ -113,6 +113,19 @@ public class TileManager : MonoBehaviour
 				spawnVector.z += 2;
 			}
 			
+			//Spawn Teleporter
+			if (Random.Range(0, 10) == 0)
+			{
+				GameObject exitPortal = GameObject.Find("Teleporter_Mock2");
+				spawnVector.y += 7;
+				spawnVector.x -= 22;
+				spawnVector.z -= 2;
+				exitPortal.transform.position = spawnVector;
+				spawnVector.y -= 7;
+				spawnVector.x += 22;
+				spawnVector.z += 2;
+			}
+			
 			//Iterate counting variables
 			shift--;
 			end--;

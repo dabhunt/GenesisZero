@@ -33,6 +33,8 @@ public class Hitbox : MonoBehaviour
 
     [HideInInspector]
     public float LifeTime = 99;
+    public delegate void OnKill();
+    public static OnKill killDelegate;
 
     [Tooltip("(X: Burntime, Y: Damage per second)")]
     public Vector2 Burn = new Vector2(0, 0);
@@ -206,8 +208,9 @@ public class Hitbox : MonoBehaviour
                 }
 
                 float damagetaken = p.TakeDamage(finaldamage, Source);
+                if(p.GetHealth().GetValue() <= 0) killDelegate();
 
-                GameObject emit = VFXManager.instance.PlayEffect("DamageNumber", new Vector3(p.transform.position.x, p.transform.position.y + 1, p.transform.position.z - .5f));
+                GameObject emit = VFXManager.instance.PlayEffect("DamageNumber", new Vector3(transform.position.x, transform.position.y + 1, transform.position.z - .5f));
                 emit.GetComponent<DamageNumber>().SetNumber(damagetaken, Critical);
 
                 if (Critical)
@@ -288,13 +291,13 @@ public class Hitbox : MonoBehaviour
         if (col.GetComponent<SphereCollider>() != null)
         {
             //Debug.Log("C");
-            Gizmos.DrawWireSphere(col.transform.position - col.GetComponent<SphereCollider>().center, col.GetComponent<SphereCollider>().radius);
+            Gizmos.DrawWireSphere(col.transform.TransformPoint(col.GetComponent<SphereCollider>().center), col.GetComponent<SphereCollider>().radius);
         }
 
         if (col.GetComponent<BoxCollider>() != null)
         {
             //Debug.Log(col.GetComponent<BoxCollider>().center);
-            Gizmos.DrawWireCube(col.transform.position + col.GetComponent<BoxCollider>().center, col.GetComponent<BoxCollider>().size);
+            Gizmos.DrawWireCube(col.transform.TransformPoint(col.GetComponent<BoxCollider>().center), col.GetComponent<BoxCollider>().size);
         }
 
     }

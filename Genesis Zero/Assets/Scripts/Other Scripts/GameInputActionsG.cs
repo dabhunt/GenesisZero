@@ -212,6 +212,17 @@ public class @GameInputActionsG : IInputActionCollection, IDisposable
                 },
                 {
                     ""name"": """",
+                    ""id"": ""0fb0233a-0dc1-4b2d-b593-6ac88d169a90"",
+                    ""path"": ""<Keyboard>/space"",
+                    ""interactions"": """",
+                    ""processors"": """",
+                    ""groups"": """",
+                    ""action"": ""Jump"",
+                    ""isComposite"": false,
+                    ""isPartOfComposite"": false
+                },
+                {
+                    ""name"": """",
                     ""id"": ""c85a4b82-a8a0-4871-8a66-950d82bdba88"",
                     ""path"": ""<Mouse>/leftButton"",
                     ""interactions"": """",
@@ -257,8 +268,8 @@ public class @GameInputActionsG : IInputActionCollection, IDisposable
                 {
                     ""name"": """",
                     ""id"": ""628acdc3-f2b8-4a1d-b722-524bb7cd51a8"",
-                    ""path"": ""<Keyboard>/e"",
-                    ""interactions"": """",
+                    ""path"": ""<Mouse>/rightButton"",
+                    ""interactions"": ""Press"",
                     ""processors"": """",
                     ""groups"": ""Keyboard&Mouse"",
                     ""action"": ""Interact"",

@@ -608,7 +608,6 @@ MonoBehaviour:
   infoLeft: Abilities are earned by restoring fallen gods. They are powerful combat
     tools that enhance your combat and/or mobility.
   infoRight: 
-  hoverDelay: 0
 --- !u!114 &8043917327581143869
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -820,7 +819,6 @@ MonoBehaviour:
   infoLeft: Abilities are earned by restoring fallen gods. They are powerful combat
     tools that enhance your combat and/or mobility.
   infoRight: 
-  hoverDelay: 0
 --- !u!1 &2904619426371880211
 GameObject:
   m_ObjectHideFlags: 0
@@ -1157,7 +1155,6 @@ MonoBehaviour:
   infoLeft: This is your Overheat bar. The hotter your gun gets, the worse accuracy
     your gun will have.
   infoRight: 
-  hoverDelay: 0.5
 --- !u!114 &549187899
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -1228,7 +1225,6 @@ MonoBehaviour:
   infoLeft: This bar represents how much health you have left. If it reaches 0, you
     die. How predictable.
   infoRight: 
-  hoverDelay: 0.5
 --- !u!1 &2904619427100708762
 GameObject:
   m_ObjectHideFlags: 0
@@ -1327,7 +1323,6 @@ MonoBehaviour:
     can be used to purchase modifiers, super charge abilities, and more. Each container
     stores 20 Essence. '
   infoRight: 
-  hoverDelay: 0.5
 --- !u!114 &2904619427100708765
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -1689,8 +1684,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 1e5a6a6fc3c433149aee1906d5654de3, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  windowPrefab: {fileID: 2237319443854516929, guid: f0aa38ca44fa93442ae04f90a438d8ab,
-    type: 3}
+  pauseWindow: {fileID: 0}
   windowSacrificePrefab: {fileID: 0}
   canvas: {fileID: 2904619427626037459}
 --- !u!114 &2904619427626037470
@@ -2074,7 +2068,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   m_Material: {fileID: 0}
   m_Color: {r: 1, g: 1, b: 1, a: 1}
-  m_RaycastTarget: 1
+  m_RaycastTarget: 0
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
@@ -2110,7 +2104,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   speed: 0.01
-  instructions: {fileID: 0}
+  instructions: {fileID: 9065761845292310666}
 --- !u!1 &5487606842684791182
 GameObject:
   m_ObjectHideFlags: 0
