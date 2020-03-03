@@ -8,6 +8,7 @@ public class DeactivateDistant : MonoBehaviour
     //enemies closer than this will be reactivated
     public float deactivateDist = 32f;
     public float updatesPerSecond=1f;
+    public float enemyDistOffset = 5f;
     //which game tags to check and deactivate if out of range
     public string[] tags = new string[] {"Enemy"};
     private List<GameObject> objects = new List<GameObject>();
@@ -35,8 +36,15 @@ public class DeactivateDistant : MonoBehaviour
     		}
    			for (int i = 0; i < objects.Count; i++){
    				if (objects[i] != null){
-	   				//check each objects distance relative to the player transform, if outside the designated distance, it's inactive otherwise it's active.
-	   				float dist =  Vector3.Distance(player.transform.position, objects[i].transform.position);
+                    //check each objects distance relative to the player transform, if outside the designated distance, it's inactive otherwise it's active.
+                    float dist = Vector3.Distance(player.transform.position, objects[i].transform.position);
+                    if (objects[i].gameObject.tag == "Enemy")
+                    {
+                        //make it so that enemies load in slower than cubbies, preventing them from falling through cubbies that haven't loaded yet
+                        dist -= enemyDistOffset;
+                    }
+	   				
+	   				
 	   				if (dist > deactivateDist){
 	   					objects[i].SetActive(false);
 	   				}

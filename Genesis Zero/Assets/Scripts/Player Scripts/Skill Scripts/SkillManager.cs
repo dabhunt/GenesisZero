@@ -267,7 +267,7 @@ public class SkillManager
         return AddedSkill;
     }
 
-    public void SetAddedSKill(SkillObject so)
+    public void SetAddedSkill(SkillObject so)
     {
         AddedSkill = so;
     }

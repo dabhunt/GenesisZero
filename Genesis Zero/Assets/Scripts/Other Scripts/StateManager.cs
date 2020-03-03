@@ -5,10 +5,9 @@ using UnityEngine;
 public class StateManager : MonoBehaviour
 {
     public static StateManager instance;
-
     private float TimeScale;
     private float Timer;
-
+    private Player player;
     private bool IsPaused;
 
     private void Awake()
@@ -20,6 +19,11 @@ public class StateManager : MonoBehaviour
             Destroy(gameObject);
             return;
         }
+    }
+    private void Start()
+    {
+        GameObject temp = GameObject.FindWithTag("Player");
+        player = temp.GetComponent<Player>();
     }
 
     private void Update()
@@ -38,7 +42,13 @@ public class StateManager : MonoBehaviour
         {
             Application.Quit();
         }
-    
+        //temporary input usage for demo tomorrow
+        if (Input.GetKey(KeyCode.Backslash))
+        {
+            string skillStr = player.GetSkillManager().GetRandomSkill().name;
+            player.GetSkillManager().SpawnMod(new Vector3(player.transform.position.x+2, player.transform.position.y+5, 0), skillStr);
+        }
+
     }
 
     //This pauses game

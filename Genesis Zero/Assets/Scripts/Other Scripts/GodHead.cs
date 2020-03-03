@@ -39,7 +39,7 @@ public class GodHead : MonoBehaviour
             if (!inputActions.PlayerControls.enabled == true) return;
             if (Vector3.Distance(player.transform.position, transform.position) <= activeDistance)
             {
-                StateManager.instance.PauseGame();
+                //StateManager.instance.PauseGame();
                 GameInputManager.instance.SwitchControlMap("MenuControls");
                 InitializeUI();
                 isActive = true;
@@ -49,8 +49,6 @@ public class GodHead : MonoBehaviour
     private void UpdateUI()
     {
         if (!isActive) return;
-
-        
     }
 
     private void InitializeUI()
@@ -106,7 +104,7 @@ public class GodHead : MonoBehaviour
             child.gameObject.SetActive(false);
         }
         sacUI.gameObject.SetActive(false);
-        StateManager.instance.UnpauseGame();
+        //StateManager.instance.UnpauseGame();
         GameInputManager.instance.SwitchControlMap("PlayerControls");
     }
 }

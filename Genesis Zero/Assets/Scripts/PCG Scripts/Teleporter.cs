@@ -11,8 +11,8 @@ public class Teleporter : MonoBehaviour
 	{
 		if (other.GetComponent<Player>())
     	{
-    		thePlayer.transform.position = destination.transform.position;
-    	}
+			thePlayer.transform.Translate(destination.transform.position, Space.World);
+		}
 		
 	}
 }
