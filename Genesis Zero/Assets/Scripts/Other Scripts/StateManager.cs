@@ -1,13 +1,14 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.SceneManagement;
 
 public class StateManager : MonoBehaviour
 {
     public static StateManager instance;
 
-    private float TimeScale;
-    private float Timer;
+    private float TimeScale = 1;
+    private float Timer = 0;
 
     private bool IsPaused;
 
@@ -24,13 +25,13 @@ public class StateManager : MonoBehaviour
 
     private void Update()
     {
-        if (Timer > 0)
+        if (Timer >= 0)
         {
             Timer -= Time.unscaledDeltaTime;
-            if (Timer <= 0)
+            if (Timer < 0)
             {
                 ChangeTimeScale(1, 0);
-                Timer = 0;
+                
             }
         }
         //temporary input usage for demo tomorrow
@@ -39,6 +40,11 @@ public class StateManager : MonoBehaviour
             Application.Quit();
         }
     
+    }
+
+    void OnSceneLoaded(Scene scene, LoadSceneMode mode)
+    {
+        ChangeTimeScale(1, 0);
     }
 
     //This pauses game
@@ -59,7 +65,7 @@ public class StateManager : MonoBehaviour
         Time.timeScale = TimeScale;
         Time.fixedDeltaTime = 0.02f * TimeScale;
     }
-    
+
     public void ChangeTimeScale(float timescale, float time)
     {
         TimeScale = timescale;
