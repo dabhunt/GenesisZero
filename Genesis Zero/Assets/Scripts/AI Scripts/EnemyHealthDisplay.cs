@@ -7,8 +7,8 @@ public class EnemyHealthDisplay : MonoBehaviour
     // Start is called before the first frame update
     private Pawn pawn;
     private Hurtbox hb;
-    public GameObject healthObj;
-    public Image healthBar;
+    public GameObject healthBar;
+    //public Image healthBar;
     private float maxHealth;
     void Start()
     {
@@ -23,8 +23,8 @@ public class EnemyHealthDisplay : MonoBehaviour
         float hp = pawn.GetHealth().GetValue();
         if (hp < maxHealth)
         {
-            healthObj.SetActive(true);
-            healthBar.fillAmount = hp / maxHealth;
+            healthBar.SetActive(true);
+            healthBar.transform.localScale = new Vector3((hp/maxHealth)*2,.5f, 1);
         }
     }
 }
