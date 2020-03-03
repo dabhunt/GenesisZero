@@ -40,7 +40,7 @@ public class AbilityCasting : MonoBehaviour
 
         Vector3 pos = new Vector3(Input.mousePosition.x, Input.mousePosition.y, Mathf.Abs(Camera.main.transform.position.z - transform.position.z));
         Vector3 mousePosition = Camera.main.ScreenToWorldPoint(pos);
-        aimDir = mousePosition - transform.position;
+        aimDir = GetComponent<PlayerController>().screenXhair.transform.position - transform.position;
         UpdateAbilities();
 
     }
@@ -79,6 +79,10 @@ public class AbilityCasting : MonoBehaviour
             case "Time Dilation":
                 InitializeAbility(10, 0, num);
                 CastSlowDown();
+                break;
+            case "Culling Blast":
+                InitializeAbility(1, 0, num);
+                CastSpartanLaser();
                 break;
         }
         ui.Cast();
@@ -153,8 +157,8 @@ public class AbilityCasting : MonoBehaviour
     {
         player.GetComponent<PlayerController>().SetVertVel(0);
         player.KnockBackForced(-aimDir + Vector2.up, 25);
-        GameObject hitbox = SpawnGameObject("PulseBurstHitbox", CastAtAngle(transform.position, aimDir, 1));
-        hitbox.GetComponent<Hitbox>().InitializeHitbox(GetComponent<Player>().GetDamage().GetValue()/4, GetComponent<Player>());
+        GameObject hitbox = SpawnGameObject("PulseBurstHitbox", CastAtAngle(transform.position, aimDir, 1), Quaternion.identity);
+        hitbox.GetComponent<Hitbox>().InitializeHitbox(GetComponent<Player>().GetDamage().GetValue() / 4, GetComponent<Player>());
         hitbox.GetComponent<Hitbox>().SetStunTime(1);
         hitbox.GetComponent<Hitbox>().SetLifeTime(.1f);
     }
@@ -163,7 +167,7 @@ public class AbilityCasting : MonoBehaviour
     {
         player.GetComponent<PlayerController>().SetVertVel(0);
         player.KnockBackForced(aimDir + Vector2.up, 25);
-        GameObject hitbox = SpawnGameObject("BurstChargeHitbox", transform.position);
+        GameObject hitbox = SpawnGameObject("BurstChargeHitbox", transform.position, Quaternion.identity);
         hitbox.GetComponent<Hitbox>().InitializeHitbox(GetComponent<Player>().GetDamage().GetValue() / 4, GetComponent<Player>());
         hitbox.transform.parent = transform;
         hitbox.GetComponent<Hitbox>().SetLifeTime(.5f);
@@ -178,16 +182,24 @@ public class AbilityCasting : MonoBehaviour
         {
             ResetAbilityCooldown1();
         }
-        player.GetSpeed().AddBonus(player.GetSpeed().GetBaseValue()/2, 2); // 50% MS for 2 seconds
+        player.GetSpeed().AddBonus(player.GetSpeed().GetBaseValue() / 2, 2); // 50% MS for 2 seconds
     }
 
     private void CastSlowDown()
     {
         StateManager.instance.ChangeTimeScale(timeScale, effectDuration);
     }
-    private GameObject SpawnGameObject(string name, Vector2 position)
+
+    private void CastSpartanLaser()
     {
-        GameObject effect = Instantiate(Resources.Load<GameObject>("Hitboxes/" + name), position, Quaternion.identity);
+        GameObject hitbox = SpawnGameObject("SpartanLaser", CastAtAngle(transform.position, aimDir, .5f), GetComponent<Gun>().firePoint.rotation);
+        hitbox.GetComponent<Hitbox>().InitializeHitbox(player.GetDamage().GetValue(), player);
+
+    }
+
+    private GameObject SpawnGameObject(string name, Vector2 position, Quaternion quat)
+    {
+        GameObject effect = Instantiate(Resources.Load<GameObject>("Hitboxes/" + name), position, quat);
         return effect;
     }
     private Vector2 CastAtAngle(Vector2 position, Vector2 direction, float distance)
