@@ -7,7 +7,7 @@ public class SpartanLaser : MonoBehaviour
 {
     public void Start()
     {
-        Hitbox.killDelegate += CheckHit;
+        GetComponent<Hitbox>().killDelegate += CheckHit;
     }
     // Update is called once per frame
     void CheckHit()
