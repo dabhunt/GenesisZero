@@ -207,8 +207,9 @@ public class Hitbox : MonoBehaviour
                     p.Burn(Burn.x, Burn.y);
                 }
 
+                float phealth = p.GetHealth().GetValue();
                 float damagetaken = p.TakeDamage(finaldamage, Source);
-                if(p.GetHealth().GetValue() <= 0) killDelegate();
+                if(damagetaken >= phealth) killDelegate();
 
                 GameObject emit = VFXManager.instance.PlayEffect("DamageNumber", new Vector3(transform.position.x, transform.position.y + 1, transform.position.z - .5f));
                 emit.GetComponent<DamageNumber>().SetNumber(damagetaken, Critical);
