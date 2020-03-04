@@ -51,6 +51,7 @@ public class Gun : MonoBehaviour
                             (RectTransform) screenXhair.Find("bottom"), 
                             (RectTransform) screenXhair.Find("left"), 
                             (RectTransform) screenXhair.Find("right")};
+        UpdateCrosshairBloom();
     }
 
     public void Shoot()
@@ -128,15 +129,16 @@ public class Gun : MonoBehaviour
     }
     private void UpdateCrosshairBloom()
     {
-        Vector3[] vecs = {Vector3.up, Vector3.down, Vector3.left, Vector3.right};
+        Vector3[] vecs = { Vector3.up, Vector3.down, Vector3.left, Vector3.right };
         //float diff = ((maxXGap - minXGap) * overheat.GetHeat()) / 100;
-        float target = maxXGap *(overheat.GetHeat()/100);
+        float target = maxXGap * ((overheat.GetHeat()+ minXGap)/ 100 );
         if (overheat.GetHeat() == 0)
-        	return;
+            return;
         spread = Mathf.Lerp(spread, target, spreadSpeed * Time.fixedDeltaTime);
         spread = Mathf.Clamp(spread, minXGap, maxXGap);
-        for (int i = 0; i < crossArr.Length; i++)
+        for (int i = 0; i < crossArr.Length; i++) { 
             crossArr[i].transform.localPosition = vecs[i] * spread;
+        }
     }
 }
 
