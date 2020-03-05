@@ -249,6 +249,12 @@ public class SkillManager
         string temp = ability2;
         SetAbility2(ability1);
         SetAbility1(temp);
+        if (player.GetComponent<AbilityCasting>())
+        {
+            player.GetComponent<AbilityCasting>().SwapAbilityCooldowns();
+            player.GetComponent<AbilityCasting>().CastUI(0);
+            player.GetComponent<AbilityCasting>().CastUI(1);
+        }
         SetUpdated(true);
     }
 
@@ -256,7 +262,7 @@ public class SkillManager
     {
         updated = boolean;
     }
-    public SkillObject GetSkillFromString(string name) 
+    public SkillObject GetSkillFromString(string name)
     {
         if (Skills.ContainsKey(name))
         {

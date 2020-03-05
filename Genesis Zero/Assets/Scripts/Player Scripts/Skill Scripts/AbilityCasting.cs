@@ -77,6 +77,11 @@ public class AbilityCasting : MonoBehaviour
 
     }
 
+    public void CastUI(int num)
+    {
+        ui.Cast(num);
+    }
+
     private void CastAbility(string name, int num)
     {
         switch (name)
@@ -201,6 +206,28 @@ public class AbilityCasting : MonoBehaviour
     public void ResetAbilityCooldown2()
     {
         AbilityCooldown2 = 0;
+    }
+
+
+    public void SwapAbilityCooldowns()
+    {
+        float TCastTime = AbilityCasttime1;
+        float TCooldown = AbilityCooldown1;
+        float TTotalCastTime = TotalAbilityCasttime1;
+        float TTotalCooldown = TotalAbilityCooldown1;
+        float TActiveTime = ActiveTime1;
+
+        AbilityCasttime1 = AbilityCasttime2;
+        AbilityCooldown1 = AbilityCooldown2;
+        TotalAbilityCasttime1 = TotalAbilityCasttime2;
+        TotalAbilityCooldown1 = TotalAbilityCooldown2;
+        ActiveTime1 = ActiveTime2;
+
+        AbilityCasttime2 = TCastTime;
+        AbilityCooldown2 = TCooldown;
+        TotalAbilityCasttime2 = TTotalCastTime;
+        TotalAbilityCooldown2 = TTotalCooldown;
+        ActiveTime2 = TActiveTime;
     }
 
     private void CastPulseBurst()
