@@ -18,12 +18,17 @@ public class AbilityCasting : MonoBehaviour
     //.4 = 40% more than base attack speed
     public float MS_AttackSpeedBoost = .4f;
     public float MS_Cooldown = 8f;
+    [Header("Spartan Laser")]
+    //each successful kill makes the laser 20% larger
+    public float scaleMultiPerKill = 1.2f;
 
+    private AudioManager aManager;
     private float AbilityCasttime1;
     private float AbilityCooldown1;
     private float TotalAbilityCasttime1;
     private float TotalAbilityCooldown1;
     private float ActiveTime1;
+
     
     private float AbilityCasttime2;
     private float AbilityCooldown2;
@@ -41,6 +46,7 @@ public class AbilityCasting : MonoBehaviour
         PC = GetComponent<PlayerController>();
         ui = AbilityCooldownPanel.GetComponent<AbilityCD>();
         aimDir = new Vector2(0, 0);
+        aManager = FindObjectOfType<AudioManager>();
     }
     // Update is called once per frame
     void Update()
@@ -237,7 +243,12 @@ public class AbilityCasting : MonoBehaviour
     private void CastSpartanLaser()
     {
         GameObject hitbox = SpawnGameObject("SpartanLaser", CastAtAngle(transform.position, aimDir, .5f), GetComponent<Gun>().firePoint.rotation);
-        hitbox.GetComponent<Hitbox>().InitializeHitbox(player.GetDamage().GetValue() + 5, player);
+        SpartanLaser laser = hitbox.GetComponent<SpartanLaser>();
+        UniqueEffects U = GetComponent<UniqueEffects>();
+        float scale = Mathf.Pow(scaleMultiPerKill, U.GetKillCount());
+        hitbox.transform.localScale = new Vector3(scale, scale, scale);
+        float damage = U.CalculateDmg();
+        hitbox.GetComponent<Hitbox>().InitializeHitbox(damage, player);
     }
 
     private void CastWoundSealant()

@@ -32,30 +32,33 @@ public class AbilityCD : MonoBehaviour
     {
         for (int i = 0; i < 2; i++)
         {
-            AbilityCasting ac = player.GetComponent<AbilityCasting>();
-            cd[i] = ac.GetAbilityCooldownRatio(i);
-            if (cooling[i] == true)
+            if (player != null)
             {
-                abilityBackground[i].color = defaultColor;
-                if (cd[i] >= activeCutoff)
+                AbilityCasting ac = player.GetComponent<AbilityCasting>();
+                cd[i] = ac.GetAbilityCooldownRatio(i);
+                if (cooling[i] == true)
                 {
-                    //change sprite to represent activated/ animated colors
-                    currentColor = Color.Lerp(defaultColor, activeColor, Mathf.PingPong(Time.time, 1));
-                    abilityBackground[i].color = currentColor;
+                    abilityBackground[i].color = defaultColor;
+                    if (cd[i] >= activeCutoff)
+                    {
+                        //change sprite to represent activated/ animated colors
+                        currentColor = Color.Lerp(defaultColor, activeColor, Mathf.PingPong(Time.time, 1));
+                        abilityBackground[i].color = currentColor;
+                    }
+                    else
+                    {
+                        abilityOverlay[i].fillAmount = cd[i];
+                        abilityOverlay[i].color = coolingColor;
+                    }
                 }
                 else
                 {
-                    abilityOverlay[i].fillAmount = cd[i];
-                    abilityOverlay[i].color = coolingColor;
+                    abilityOverlay[i].color = defaultColor;
                 }
-            }
-            else
-            {
-                abilityOverlay[i].color = defaultColor;
-            }
-            if (cd[i] <= 0)
-            {
-                cooling[i] = false;
+                if (cd[i] <= 0)
+                {
+                    cooling[i] = false;
+                }
             }
         }
     }
