@@ -210,7 +210,6 @@ public class Statistic
         float mb = 0;
         if (bonusamounts.Count > 0)
         {
-            exhaustedbonuses.Clear();
             foreach (Bonus bonus in bonusamounts)
             {
                 if (bonus.CheckBonus())
@@ -239,7 +238,7 @@ public class Statistic
                 maxbonuses = mb;
             }
 
-            return;
+            exhaustedbonuses.Clear();
         }
         if (b != bonuses)
         {
