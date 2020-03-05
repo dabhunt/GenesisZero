@@ -273,6 +273,16 @@ public class SkillManager
         return null;
     }
 
+    public bool IsActive()
+    {
+
+        return true;
+    }
+    public void SetActive()
+    {
+
+    }
+
     public bool GetUpdated()
     {
         return updated;

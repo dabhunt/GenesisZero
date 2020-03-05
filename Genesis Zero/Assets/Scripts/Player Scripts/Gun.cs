@@ -17,7 +17,7 @@ public class Gun : MonoBehaviour
     public float knockBackPerStack = 1.5f;
     [Header("3. Peripheral Bullet")]
     public float minSpread = 10f;
-    public float spreadMultiplier = 10f;
+    public float spreadMultiplier = .3f;
     [Header("4. Peircing Bullets")]
     public int piercesPerStack = 1;
     [Header("5. Ignition Bullets")]
@@ -36,6 +36,7 @@ public class Gun : MonoBehaviour
     private Player player;
     private ExplosiveShot expShot;
     private PlayerController controller;
+    AbilityCasting ac;
 
     //Crosshair Variables
     private RectTransform[] crossArr;
@@ -46,6 +47,7 @@ public class Gun : MonoBehaviour
         player = GetComponent<Player>();
         overheat = GetComponent<OverHeat>();
         controller = player.GetComponent<PlayerController>();
+        ac = player.GetComponent<AbilityCasting>();
         screenXhair = controller.screenXhair;
         crossArr = new RectTransform[] {(RectTransform) screenXhair.Find("top"), 
                             (RectTransform) screenXhair.Find("bottom"), 
@@ -70,20 +72,35 @@ public class Gun : MonoBehaviour
         //apply generic modifications
         instance = ModifyProjectile(instance);
         instance.transform.Rotate(Vector3.forward,Random.Range(-spreadAngle, spreadAngle),Space.World);
-        int stacks = player.GetSkillStack("Peripheral Bullet");
-        bool right = controller.IsAimingRight();
-        for (int i = 0; i < stacks; i++)
-        {
-            float angle = spreadAngle + minSpread + spreadMultiplier * i;
-            if (!right) { angle *= -1;}
-            GameObject extraBullet = (GameObject)Instantiate(instance, spawnpoint, instance.transform.rotation);
-            extraBullet.transform.Rotate(Vector3.forward, angle, Space.World);
-            extraBullet.GetComponent<Hitbox>().InitializeHitbox(player.GetDamage().GetValue(), player);
-        }
         instance.GetComponent<Hitbox>().InitializeHitbox(player.GetDamage().GetValue(), player);
-        
+        //add 1 to stacks, because Compound X applies like a secondary stack of Atom splitter
+        int stacks = player.GetSkillStack("Compound X") + 1;
+        bool right = controller.IsAimingRight();
+        //if you have just atom splitter, it will spawn 1 bullet above and below your gun based on minSpread value
+        if (ac.IsAbilityActive("Atom Splitter"))
+        {
+            
+            //currently not necessary to use the atom splitter stacks, but we can replace this with a fun mod that makes this stronger
+            for (int s = 0; s < stacks; s++)
+            {
+                for (int i = 0; i < 2; i++)
+                { 
+                    //if it's divisible by 2, then reverse the value of the min offset to go below the gun instead of above
+                    if ((i + 1) % 2 == 0)
+                    {
+                        spreadAngle *= -1;
+                    }
+                    float angle = spreadAngle + minSpread*(spreadAngle*spreadMultiplier)*(s+1);
+                    if (!right) { angle *= -1;}
+                    GameObject extraBullet = (GameObject)Instantiate(GetProjectile(), spawnpoint, instance.transform.rotation);
+                    extraBullet.transform.Rotate(Vector3.forward, angle, Space.World);
+                    extraBullet.GetComponent<Hitbox>().MaxHits += 2;
+                    extraBullet.GetComponent<Hitbox>().InitializeHitbox(player.GetDamage().GetValue(), player);
+                    
+                }
+            }
+        }
     }
-
     private void FixedUpdate() 
     {
         UpdateCrosshairBloom();
