@@ -79,8 +79,6 @@ public class Gun : MonoBehaviour
         //if you have just atom splitter, it will spawn 1 bullet above and below your gun based on minSpread value
         if (ac.IsAbilityActive("Atom Splitter"))
         {
-            
-            //currently not necessary to use the atom splitter stacks, but we can replace this with a fun mod that makes this stronger
             for (int s = 0; s < stacks; s++)
             {
                 for (int i = 0; i < 2; i++)

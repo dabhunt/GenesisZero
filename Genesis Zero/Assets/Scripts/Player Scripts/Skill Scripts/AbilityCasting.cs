@@ -57,6 +57,7 @@ public class AbilityCasting : MonoBehaviour
         if (CanCastAbility1())
         {
             CastAbility(skillmanager.GetAbility1().name, 1);
+            ui.Cast(0);
         }
     }
 
@@ -65,7 +66,9 @@ public class AbilityCasting : MonoBehaviour
         if (CanCastAbility2())
         {
             CastAbility(skillmanager.GetAbility2().name, 2);
+            ui.Cast(1);
         }
+
     }
 
     private void CastAbility(string name, int num)
@@ -73,7 +76,6 @@ public class AbilityCasting : MonoBehaviour
         switch (name)
         {
             case "Pulse Burst":
-              
                 InitializeAbility(3, 0, 0, num);
                 CastPulseBurst();
                 break;
@@ -104,7 +106,6 @@ public class AbilityCasting : MonoBehaviour
                 CastMultiShot();
                 break;
         }
-        ui.Cast();
     }
 
     private bool CanCastAbility1()
@@ -163,13 +164,12 @@ public class AbilityCasting : MonoBehaviour
         ActiveTime1 = Mathf.Clamp(ActiveTime1 -= Time.deltaTime, 0, TotalAbilityCooldown1);
         ActiveTime2 = Mathf.Clamp(ActiveTime2 -= Time.deltaTime, 0, TotalAbilityCooldown2);
     }
-    public float GetAbilityCooldownRatio1()
+    public float GetAbilityCooldownRatio(int num)
     {
-        return AbilityCooldown1 / TotalAbilityCooldown1;
-    }
-
-    public float GetAbilityCooldownRatio2()
-    {
+        if (num == 0)
+        {
+            return AbilityCooldown1 / TotalAbilityCooldown1;
+        }
         return AbilityCooldown2 / TotalAbilityCooldown2;
     }
     //check to see if an Ability is currently active by passing the name of the Ability
@@ -249,6 +249,7 @@ public class AbilityCasting : MonoBehaviour
     private void CastMultiShot()
     {
         player.GetAttackSpeed().AddBonus(player.GetAttackSpeed().GetBaseValue() * MS_AttackSpeedBoost, MS_ActiveTime);
+        print("cast multi shot");
     }
 
     private GameObject SpawnGameObject(string name, Vector2 position, Quaternion quat)

@@ -6,61 +6,61 @@ using UnityEngine.UI;
 public class AbilityCD : MonoBehaviour
 {
     Player player;
-    public Image ability1Overlay;
-    public Image ability2Overlay;
-    public Image ability1Background;
-    public Image ability2Background;
+    public Image[] abilityOverlay;
+    public Image[] abilityBackground;
     public Color defaultColor = new Color(0.04705f, 0.1098f, 0.1294f);
     public Color activeColor;
+    public Color coolingColor;
     private Color currentColor;
-    private bool cooling;
+    private bool[] cooling = new bool[2];
+    private float[] cd = new float[2];
     //this is done so that active items show the color/animation, and also regular abilities flash the color briefly before going on cool down
     public float activeCutoff= .98f;
     void Start()
     {
         player = FindObjectOfType<Player>();
-        ability1Overlay.fillAmount = 0;
-        ability2Overlay.fillAmount = 0;
-        
+        abilityOverlay[0].fillAmount = 0f;
+        abilityOverlay[1].fillAmount = 0f;
+        abilityOverlay[0].color = defaultColor;
+        abilityOverlay[1].color = defaultColor;
+        cooling[0] = false;
+        cooling[1] = false;
+        cd[0] = 0;
+        cd[1] = 0;
     }
     void Update()
     {
-        if (cooling)
+        for (int i = 0; i < 2; i++)
         {
             AbilityCasting ac = player.GetComponent<AbilityCasting>();
-            float cd1 = ac.GetAbilityCooldownRatio1();
-            float cd2 = ac.GetAbilityCooldownRatio2();
-            ability1Background.color = defaultColor;
-            ability2Background.color = defaultColor;
-            if (cd1 >= activeCutoff)
+            cd[i] = ac.GetAbilityCooldownRatio(i);
+            if (cooling[i] == true)
             {
-                //change sprite to represent activated/ animated colors
-               
-                currentColor = Color.Lerp(defaultColor, activeColor, Mathf.PingPong(Time.time, 1));
-                ability1Background.color = currentColor;
+                abilityBackground[i].color = defaultColor;
+                if (cd[i] >= activeCutoff)
+                {
+                    //change sprite to represent activated/ animated colors
+                    currentColor = Color.Lerp(defaultColor, activeColor, Mathf.PingPong(Time.time, 1));
+                    abilityBackground[i].color = currentColor;
+                }
+                else
+                {
+                    abilityOverlay[i].fillAmount = cd[i];
+                    abilityOverlay[i].color = coolingColor;
+                }
             }
-            else { 
-                ability1Overlay.fillAmount = cd1;
-                ability1Overlay.color = Color.black;
-             }
-            if (cd2 >= activeCutoff)
+            else
             {
-                //change sprite to represent activated/ animated colors
-                currentColor = Color.Lerp(defaultColor, activeColor, Mathf.PingPong(Time.time, 1));
-                ability2Background.color = currentColor;
+                abilityOverlay[i].color = defaultColor;
             }
-            else { ability2Overlay.fillAmount = cd2;
-                ability2Overlay.color = Color.black;
-            }
-            if (ability1Overlay.fillAmount <= 0 && ability2Overlay.fillAmount <= 0)
+            if (cd[i] <= 0)
             {
-                cooling = false;
+                cooling[i] = false;
             }
         }
-       
     }
-    public void Cast()
+    public void Cast(int num)
     {
-        cooling = true;
+            cooling[num] = true;
     }
 }
