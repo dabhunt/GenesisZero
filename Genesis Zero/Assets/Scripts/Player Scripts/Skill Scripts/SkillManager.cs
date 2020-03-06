@@ -28,6 +28,11 @@ public class SkillManager
     private List<SkillObject> goldmods;  // List of goldmods in the game
     private List<SkillObject> startermods; // List of startermods in the game
 
+    // Lower the number, lower the chance. Determined by this order (0 - 100)
+    private int goldchance = 10; 
+    private int greenchance = 40; // Realistically its greenchance - goldchance in code
+    // No white chance becuase it is the default if the other two do not go through
+
     public SkillManager(Player p)
     {
         player = p;
@@ -209,10 +214,7 @@ public class SkillManager
         return Skills.ContainsKey(name);
     }
 
-    /**
-     * Returns a random SkillObject that exists in the resources/skills folder
-     * Includes whites, greens, and golds
-     */
+    [System.Obsolete(" :P Kenny Here, this function is deprecated. Use GetRandomMod() instead ")]
     public SkillObject GetRandomSkill()
     {
         Object[] skills = Resources.LoadAll("Skills");
@@ -223,6 +225,71 @@ public class SkillManager
             skill = (SkillObject)skills[Random.Range(0, skills.Length)];
         }
         return skill;
+    }
+
+    /**
+    * Returns a random SkillObject that exists in the resources/skills folder
+    * Includes whites, greens, and golds
+    */
+    public SkillObject GetRandomMod()
+    {
+        Object[] skills = Resources.LoadAll("Skills");
+        SkillObject skill = (SkillObject)skills[Random.Range(0, skills.Length)];
+        //this fixes the problem of this function also returning abilities
+        while (skill.IsAbility)
+        {
+            skill = (SkillObject)skills[Random.Range(0, skills.Length)];
+        }
+        return skill;
+    }
+
+    /**
+    * Returns a random SkillObject/mod incoporating chance
+    * Includes whites, greens, and golds from the gamep pool. NOT from player
+    */
+    public SkillObject GetRandomModByChance()
+    {
+        int num = Random.Range(0, 100);
+
+        if (num < goldchance) // Gold (0 - 10)
+        {
+            return GetRandomGolds(1)[0];
+        }
+        else if (num < greenchance) // Green (11 - 40)
+        {
+            return GetRandomGreens(1)[0];
+        }
+        else // White (41 - 100)
+        {
+            return GetRandomWhites(1)[0];
+        }
+    }
+
+    /**
+    * Returns a random mods incoporating chance
+    * Includes whites, greens, and golds from the gamep pool. NOT from player
+    */
+    public List<SkillObject> GetRandomModsByChance(int amount)
+    {
+        List<SkillObject> returnlist = new List<SkillObject>();
+        for (int i = 0; i < amount; i++)
+        {
+            int num = Random.Range(0, 100);
+
+            if (num < goldchance) // Gold (0 - 10)
+            {
+                returnlist.Add(GetRandomGolds(1)[0]);
+            }
+            else if (num < greenchance) // Green (11 - 40)
+            {
+                returnlist.Add(GetRandomGreens(1)[0]);
+            }
+            else // White (41 - 100)
+            {
+                returnlist.Add(GetRandomWhites(1)[0]);
+            }
+        }
+        return returnlist;
     }
 
     /**
