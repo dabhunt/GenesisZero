@@ -20,20 +20,29 @@ public class Pawn : MonoBehaviour
     private float burntime, burndamage, burntick; //burndamage is damage per second
     private float slowtime, knockbackforce;
     private Vector3 knockbackvector;
-    private bool ForcedKnockBack;
+    private bool Initialized, ForcedKnockBack;
 
     protected void Start()
     {
-        if (Stats != null)
-        {
-            AddStats();
-        }
-        else
-        {
-            Debug.LogError("No statistics have been assigned to " + transform.parent.name);
-        }
+        Initialize();
+    }
 
-        InitializeStatuses();
+    public void Initialize()
+    {
+        if (Initialized == false)
+        {
+            if (Stats != null)
+            {
+                AddStats();
+            }
+            else
+            {
+                Debug.LogError("No statistics have been assigned to " + transform.parent.name);
+            }
+            InitializeStatuses();
+
+            Initialized = true;
+        }
     }
 
     /**
@@ -98,14 +107,7 @@ public class Pawn : MonoBehaviour
 
     protected void Update()
     {
-        foreach (Statistic stat in statistics)
-        {
-            stat.UpdateStatistics();
-        }
-        foreach (Status status in statuses)
-        {
-            status.UpdateStatus();
-        }
+        UpdateStats();
 
         if (IsBurning())
         {
@@ -178,6 +180,19 @@ public class Pawn : MonoBehaviour
             }
 
         }
+    }
+
+    public void UpdateStats()
+    {
+        foreach (Statistic stat in statistics)
+        {
+            stat.UpdateStatistics();
+        }
+        foreach (Status status in statuses)
+        {
+            status.UpdateStatus();
+        }
+
     }
 
     // ------------------------- ACCESS FUNCTIONS ------------------------------//

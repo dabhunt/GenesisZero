@@ -114,6 +114,10 @@ public class AbilityCasting : MonoBehaviour
                 InitializeAbility(MS_Cooldown, 0, MS_ActiveTime, num);
                 CastMultiShot();
                 break;
+            case "Heat Vent Shield":
+                InitializeAbility(8, 0, 2, num);
+                CastHeatShield(num);
+                break;
         }
     }
 
@@ -286,6 +290,20 @@ public class AbilityCasting : MonoBehaviour
     {
         player.GetAttackSpeed().AddBonus(player.GetAttackSpeed().GetBaseValue() * MS_AttackSpeedBoost, MS_ActiveTime);
         print("cast multi shot");
+    }
+
+    private void CastHeatShield(int num)
+    {
+        if (GetComponent<OverHeat>().GetHeat() > 0)
+        {
+            GameObject shield = SpawnGameObject("HeatVentShield", transform.position, Quaternion.identity);
+            shield.transform.parent = transform;
+            shield.GetComponent<Pawn>().Initialize();
+            shield.GetComponent<Pawn>().UpdateStats();
+            shield.GetComponent<Pawn>().GetHealth().SetMaxValue(GetComponent<OverHeat>().GetHeat());
+            GetComponent<OverHeat>().Increment(-GetComponent<OverHeat>().GetHeat());
+            Destroy(shield, num == 1 ? ActiveTime1 : ActiveTime2);
+        }
     }
 
     private GameObject SpawnGameObject(string name, Vector2 position, Quaternion quat)
