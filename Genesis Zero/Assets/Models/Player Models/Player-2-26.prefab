@@ -63,7 +63,7 @@ MeshRenderer:
   m_RenderingLayerMask: 1
   m_RendererPriority: 0
   m_Materials:
-  - {fileID: 5933963014426037138, guid: 1f6ce25779f0dd340aeff0280beac270, type: 3}
+  - {fileID: 2100000, guid: 08fda02dfca87614db958de03c96612e, type: 2}
   m_StaticBatchInfo:
     firstSubMesh: 0
     subMeshCount: 0
@@ -1606,7 +1606,6 @@ GameObject:
   - component: {fileID: 3701792247965839961}
   - component: {fileID: 3701792247965839965}
   - component: {fileID: 3701792247965839954}
-  - component: {fileID: 3701792247965839955}
   - component: {fileID: 3701792247965839952}
   - component: {fileID: 3701792247965839953}
   - component: {fileID: 3701792247965839958}
@@ -1652,7 +1651,7 @@ CapsuleCollider:
   m_IsTrigger: 0
   m_Enabled: 1
   m_Radius: 0.15
-  m_Height: 1.8537972
+  m_Height: 1.7
   m_Direction: 1
   m_Center: {x: 0, y: 0, z: 0}
 --- !u!114 &3701792247965839954
@@ -1675,7 +1674,7 @@ MonoBehaviour:
   horCastPadding: 0.1
   vertCastPadding: 0.1
   rollDuration: 1
-  rollSpeedMult: 1.5
+  rollSpeedMult: 1.7
   rollCooldownDuration: 3
   jumpBufferTime: 0.2
   immoveables:
@@ -1694,104 +1693,6 @@ MonoBehaviour:
   screenXhair: {fileID: 0}
   gamePadSens: 15
   triggerResetTime: 0.25
---- !u!114 &3701792247965839955
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 3701792247965839959}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 62899f850307741f2a39c98a8b639597, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  m_Actions: {fileID: -944628639613478452, guid: ba48c28255e100842b14282001484f6e,
-    type: 3}
-  m_NotificationBehavior: 2
-  m_UIInputModule: {fileID: 0}
-  m_DeviceLostEvent:
-    m_PersistentCalls:
-      m_Calls: []
-  m_DeviceRegainedEvent:
-    m_PersistentCalls:
-      m_Calls: []
-  m_ActionEvents:
-  - m_PersistentCalls:
-      m_Calls: []
-    m_ActionId: ccc0f839-e827-467c-b4ee-be18c02ca35e
-    m_ActionName: PlayerControls/Move[/Keyboard/w,/Keyboard/s,/Keyboard/a,/Keyboard/d,/Keyboard/upArrow,/Keyboard/downArrow,/Keyboard/leftArrow,/Keyboard/rightArrow]
-  - m_PersistentCalls:
-      m_Calls: []
-    m_ActionId: 95a719cb-580b-4379-94fd-1776eeaec549
-    m_ActionName: PlayerControls/Look/Aim[/Mouse/delta]
-  - m_PersistentCalls:
-      m_Calls: []
-    m_ActionId: 0a784de5-0df8-4345-81b1-6cb16db6728f
-    m_ActionName: PlayerControls/Jump[/Keyboard/space]
-  - m_PersistentCalls:
-      m_Calls:
-      - m_Target: {fileID: 3701792247965839954}
-        m_MethodName: Jump
-        m_Mode: 0
-        m_Arguments:
-          m_ObjectArgument: {fileID: 0}
-          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
-          m_IntArgument: 0
-          m_FloatArgument: 0
-          m_StringArgument: 
-          m_BoolArgument: 0
-        m_CallState: 2
-    m_ActionId: be22d5e4-0e46-40f3-9252-c020cfafbd37
-    m_ActionName: PlayerControls/Fire[/Mouse/leftButton]
-  - m_PersistentCalls:
-      m_Calls: []
-    m_ActionId: 5a85d603-2e77-42c4-8bdd-536b415de140
-    m_ActionName: PlayerControls/Pause[/Keyboard/escape]
-  - m_PersistentCalls:
-      m_Calls: []
-    m_ActionId: 3dc8c984-4a1a-4303-9b44-a59d2dea0415
-    m_ActionName: PlayerControls/Pause[/Keyboard/escape]
-  - m_PersistentCalls:
-      m_Calls:
-      - m_Target: {fileID: 3701792247965839954}
-        m_MethodName: DodgeRoll
-        m_Mode: 0
-        m_Arguments:
-          m_ObjectArgument: {fileID: 0}
-          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
-          m_IntArgument: 0
-          m_FloatArgument: 0
-          m_StringArgument: 
-          m_BoolArgument: 0
-        m_CallState: 2
-    m_ActionId: d34c41c0-3e49-4d96-8e5e-2de4da6a116c
-    m_ActionName: PlayerControls/Roll[/Keyboard/space]
-  - m_PersistentCalls:
-      m_Calls: []
-    m_ActionId: 37cdc43c-1b80-4a86-9c7c-e7179db50e60
-    m_ActionName: PlayerControls/Interact[/Keyboard/e]
-  - m_PersistentCalls:
-      m_Calls: []
-    m_ActionId: 63a18198-8d8c-487e-b2ca-33af879bdfd9
-    m_ActionName: MenuControls/Select[/Mouse/leftButton]
-  - m_PersistentCalls:
-      m_Calls: []
-    m_ActionId: 5750c837-e1e9-4e63-afcc-5da20ffc6761
-    m_ActionName: MenuControls/Unpause[/Keyboard/escape]
-  - m_PersistentCalls:
-      m_Calls: []
-    m_ActionId: b24e1496-76e7-4b67-a25b-64ac8937ff02
-    m_ActionName: MenuControls/MoveSelect[/Keyboard/w,/Keyboard/s,/Keyboard/a,/Keyboard/d]
-  - m_PersistentCalls:
-      m_Calls: []
-    m_ActionId: 4d62d319-b168-4bd5-9a6e-2cf8d19ebdcc
-    m_ActionName: MenuControls/CursorPosition[/Mouse/position]
-  m_NeverAutoSwitchControlSchemes: 0
-  m_DefaultControlScheme: 
-  m_DefaultActionMap: PlayerControls
-  m_SplitScreenIndex: 0
-  m_Camera: {fileID: 0}
 --- !u!114 &3701792247965839952
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -1841,7 +1742,7 @@ MonoBehaviour:
   blastRadiusBonusPerStack: 0.7
   knockBackPerStack: 5
   minSpread: 10
-  spreadMultiplier: 10
+  spreadMultiplier: 0.3
   piercesPerStack: 1
   burnDamagePerStack: 2
   burnTime: 3
@@ -1935,10 +1836,11 @@ MonoBehaviour:
   checksPerSecond: 2
   coolRatePerStack: 1.1
   heatReductionPerStack: 0.9
-  SL_bonusPerKill: 10
-  SL_baseDmg: 200
-  SL_maxDmg: 250
-  SL_decayTime: 15
+  SL_cooldown: 5.5
+  SL_bonusPerKill: 15
+  SL_baseDmg: 30
+  SL_maxDmg: 100
+  SL_decayTime: 12
 --- !u!114 &337563389558446157
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -3431,7 +3333,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!4 &6880937029521011099
 Transform:
   m_ObjectHideFlags: 0
