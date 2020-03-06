@@ -247,8 +247,9 @@ public class AbilityCasting : MonoBehaviour
         player.GetComponent<PlayerController>().SetVertVel(0);
         player.KnockBackForced(aimDir + Vector2.up, 35);
         GameObject hitbox = SpawnGameObject("BurstChargeHitbox", transform.position, Quaternion.identity);
-        hitbox.GetComponent<Hitbox>().InitializeHitbox(GetComponent<Player>().GetDamage().GetValue() / 4, GetComponent<Player>());
+        hitbox.GetComponent<Hitbox>().InitializeHitbox(GetComponent<Player>().GetDamage().GetValue() / 2, GetComponent<Player>());
         hitbox.transform.parent = transform;
+        player.SetInvunerable(.5f);
         hitbox.GetComponent<Hitbox>().SetLifeTime(.5f);
     }
     private void CastOverdrive(int num)

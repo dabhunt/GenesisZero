@@ -46,7 +46,7 @@ public class EssenceFill : MonoBehaviour
 		            }
 		        }
 
-		        if (capsuleCount <= TotalCapsules-1){
+		        if (capsuleCount < TotalCapsules-1){
 			        //calculate how much essence can be put in the remaining capsule on UI
 			        float remainderFill = essenceQuantity % EssencePerCapsule;
 			        //print("remainderFill after just %" remainderFill);
