@@ -21,8 +21,6 @@ public class AbilityCasting : MonoBehaviour
     [Header("Spartan Laser")]
     //each successful kill makes the laser 20% larger
     public float scaleMultiPerKill = 1.2f;
-
-    private AudioManager aManager;
     private float AbilityCasttime1;
     private float AbilityCooldown1;
     private float TotalAbilityCasttime1;
@@ -46,7 +44,7 @@ public class AbilityCasting : MonoBehaviour
         PC = GetComponent<PlayerController>();
         ui = AbilityCooldownPanel.GetComponent<AbilityCD>();
         aimDir = new Vector2(0, 0);
-        aManager = FindObjectOfType<AudioManager>();
+        
     }
     // Update is called once per frame
     void Update()
