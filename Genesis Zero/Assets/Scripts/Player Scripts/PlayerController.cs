@@ -391,6 +391,7 @@ public class PlayerController : MonoBehaviour
                 //Rotate the character depending on roll direction
                 if (rollDirection < 0 && isFacingRight)
                 {
+                    //if the 90 degree values are zero, then the roll works while moving but not when standing still
                     transform.rotation = Quaternion.Euler(0, -90, 0);
                     isFacingRight = false;
                 }

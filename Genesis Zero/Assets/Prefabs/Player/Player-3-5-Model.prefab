@@ -259,6 +259,7 @@ GameObject:
   - component: {fileID: 1711681247181738544}
   - component: {fileID: 1711681247181738554}
   - component: {fileID: 1711681247181738555}
+  - component: {fileID: 2258941775013569430}
   m_Layer: 0
   m_Name: Player_24_71
   m_TagString: Player
@@ -298,7 +299,7 @@ Animator:
   m_Controller: {fileID: 9100000, guid: 7be73bb44de03b94899ead09486382cd, type: 2}
   m_CullingMode: 1
   m_UpdateMode: 0
-  m_ApplyRootMotion: 1
+  m_ApplyRootMotion: 0
   m_LinearVelocityBlending: 0
   m_WarningMessage: 
   m_HasTransformHierarchy: 1
@@ -357,6 +358,9 @@ MonoBehaviour:
   piercesPerStack: 1
   burnDamagePerStack: 2
   burnTime: 3
+  stunDuration: 0.4
+  exploitCoolDelay: 0.6
+  reductionPerStack: 0.1
   spreadSpeed: 15
   minXGap: 14
   maxXGap: 60
@@ -393,7 +397,7 @@ MonoBehaviour:
   doubleJumpStrength: 12
   horCastPadding: 0.1
   vertCastPadding: 0.1
-  rollDuration: 3
+  rollDuration: 1
   rollSpeedMult: 1.5
   rollCooldownDuration: 3
   jumpBufferTime: 0.2
@@ -408,7 +412,7 @@ MonoBehaviour:
   airSpeedMult: 0.85
   slopeRayDistMult: 1.25
   canvasRef: {fileID: 0}
-  gunObject: {fileID: 0}
+  gunObject: {fileID: 7227858106059894648}
   worldXhair: {fileID: 5241313394227047371}
   screenXhair: {fileID: 0}
   gamePadSens: 15
@@ -480,8 +484,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: ba70d5fbfe07dd04583d3f4a5c50a34e, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  baseBloomMultiplier: 1
-  baseHeatAddedPerShot: 7
+  baseBloomMultiplier: 0.9
+  baseHeatAddedPerShot: 3.3
   baseCoolRatePerSecond: 38
   baseDelayBeforeCooling: 0.5
   ticksPerSecond: 20
@@ -505,6 +509,18 @@ MonoBehaviour:
   MS_Cooldown: 8
   scaleMultiPerKill: 1.2
   AbilityCooldownPanel: {fileID: 0}
+--- !u!114 &2258941775013569430
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1647482455526414067}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 8842f5724281ef04684255e96cf6fc62, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
 --- !u!1 &1649652645718008470
 GameObject:
   m_ObjectHideFlags: 0

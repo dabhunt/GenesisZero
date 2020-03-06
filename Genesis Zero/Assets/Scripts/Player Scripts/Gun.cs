@@ -9,9 +9,10 @@ public class Gun : MonoBehaviour
     public GameObject basicProjectile;
     [Header("Bullet Modifiers")]
     [Header("1. Explosive Shot")]
-	public GameObject explosiveProjectile;
-	public float explosiveCoolDelay = 1.5f;
-	public float blastRadiusBonusPerStack = .7f;
+    public GameObject explosiveProjectile;
+    //extra seconds the player has to wait before
+    public float explosiveCoolDelay = .5f;
+    public float blastRadiusBonusPerStack = .7f;
     // each additional duplicate of this mod gives you .7f bigger blast radius
     [Header("2. Knockback")]
     public float knockBackPerStack = 1.5f;
@@ -23,6 +24,13 @@ public class Gun : MonoBehaviour
     [Header("5. Ignition Bullets")]
     public float burnDamagePerStack = 2f;
     public float burnTime = 3f;
+    [Header("6. Hardware Exploit")]
+    //in seconds
+    public float stunDuration = .4f;
+    public float exploitCoolDelay = .6f;
+    public Color stunBulletColor;
+    //only reduces it's own, not others by .1
+    public float reductionPerStack = .1f;
 
 
     [Header("Crosshair Spread")]
@@ -105,21 +113,18 @@ public class Gun : MonoBehaviour
     }
     public GameObject GetProjectile()
     {
-    	//theoretically projectile effects should be additive if possible, though this may be unrealistic
-    	// eventually this should be refactored so it does a skill check BEFORE getting projectiles, so that multishot and more creative changes can be made
-    	if (player.HasSkill("Explosive Shot"))
-        {
-    		//only fire an explosive shot if the player has 0 heat
-    		//to balance this the cooldelay is increased to 1.5x the base cool delay
-    		//this will be true on the first shot and only on the first shot
-    		if (overheat.GetHeat() <= overheat.GetHeatAddedPerShot())
-    		{
-                
+    	//only fire an explosive shot if the player has 0 heat
+    	//to balance this the cooldelay is increased to 1.5x the base cool delay
+    	//this will be true on the first shot and only on the first shot
+    	if (overheat.GetHeat() <= overheat.GetHeatAddedPerShot())
+    	{
+            
+            if (player.HasSkill("Explosive Shot"))
+            {
                 Hitbox hit = explosiveProjectile.GetComponent<Hitbox>();
                 hit.Damage = player.GetDamage().GetValue();
                 return explosiveProjectile;
-    		}
-    		overheat.ModifyCoolDelay(explosiveCoolDelay);
+    	    }
     	}
         /*
     	else if()
@@ -140,7 +145,27 @@ public class Gun : MonoBehaviour
         hit.MaxHits += piercesPerStack * player.GetSkillStack("Piercing Bullets");
         float bDmg = burnDamagePerStack * player.GetSkillStack("Ignition Bullets");
         hit.Burn = new Vector2(burnTime, bDmg);
-    	return bullet;
+        float totalCoolDelay = 0;
+        if (player.HasSkill("Explosive Shot"))
+            totalCoolDelay = explosiveCoolDelay;
+        int exploitStacks = player.GetSkillStack("Hardware Exploit");
+        if (player.HasSkill("Hardware Exploit"))
+        {
+            //get the reduction amount, multiply by the amount of stacks
+            float reduction = player.GetSkillStack("Hardware Exploit") * reductionPerStack;
+            float delay = exploitCoolDelay - reduction;
+            totalCoolDelay += exploitCoolDelay;
+            //if heat is at 0, apply the stun
+            if (overheat.GetHeat() <= overheat.GetHeatAddedPerShot())
+            {
+                bullet = GetComponent<ChangeColor>().NewColor(bullet, stunBulletColor);
+                hit.StunTime = stunDuration;
+            }
+           
+        }
+        //modifycooldelay needs a multiplier, so 1 + whatever delays there are
+        overheat.ModifyCoolDelay(1+totalCoolDelay);
+        return bullet;
     }
     private void UpdateCrosshairBloom()
     {

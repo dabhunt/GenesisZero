@@ -115,7 +115,7 @@ public class AbilityCasting : MonoBehaviour
                 CastMultiShot();
                 break;
             case "Heat Vent Shield":
-                InitializeAbility(8, 0, 2, num);
+                InitializeAbility(8, 0, 4, num);
                 CastHeatShield(num);
                 break;
         }
