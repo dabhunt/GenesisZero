@@ -117,7 +117,7 @@ public class AbilityCasting : MonoBehaviour
                 CastMultiShot();
                 break;
             case "Heat Vent Shield":
-                InitializeAbility(3, 0, 2, num);
+                InitializeAbility(8, 0, 2, num);
                 CastHeatShield(num);
                 break;
         }
@@ -301,8 +301,8 @@ public class AbilityCasting : MonoBehaviour
             GameObject shield = SpawnGameObject("HeatVentShield", transform.position, Quaternion.identity);
             shield.transform.parent = transform;
             shield.GetComponent<Pawn>().Initialize();
+            shield.GetComponent<Pawn>().UpdateStats();
             shield.GetComponent<Pawn>().GetHealth().SetMaxValue(GetComponent<OverHeat>().GetHeat());
-            shield.GetComponent<Pawn>().GetHealth().SetValue(GetComponent<OverHeat>().GetHeat());
             GetComponent<OverHeat>().Increment(-GetComponent<OverHeat>().GetHeat());
             Destroy(shield, num == 1 ? ActiveTime1 : ActiveTime2);
         }
