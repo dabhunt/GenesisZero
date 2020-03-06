@@ -24,6 +24,11 @@ public class Pawn : MonoBehaviour
 
     protected void Start()
     {
+        Initialize();
+    }
+
+    public void Initialize()
+    {
         if (Stats != null)
         {
             AddStats();
