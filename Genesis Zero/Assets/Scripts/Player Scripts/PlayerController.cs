@@ -311,8 +311,8 @@ public class PlayerController : MonoBehaviour
         {
             isGrounded = true;
             if (Physics.Raycast(transform.position, Vector3.down, out hit, characterHeight * 0.5f, immoveables))
-                if (hit.distance < 0.5f * characterHeight + vertCastPadding)
-                    transform.position = Vector3.Lerp(transform.position, transform.position + Vector3.up * characterHeight * 0.5f, 5 * Time.fixedDeltaTime);
+                if (hit.distance < 2f * characterHeight + vertCastPadding)
+                    transform.position = Vector3.Lerp(transform.position, transform.position + Vector3.up * .5f* characterHeight , 5 * Time.fixedDeltaTime);
 
             if (vertVel < 0)
                 vertVel = 0;

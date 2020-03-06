@@ -168,7 +168,7 @@ public class Pawn : MonoBehaviour
                 }
                 else if (GetComponent<PlayerController>() && colliding == true)
                 {
-                    transform.position += translation;
+                    transform.position -= translation;
                     knockbackforce = 0;
                 }
             }
