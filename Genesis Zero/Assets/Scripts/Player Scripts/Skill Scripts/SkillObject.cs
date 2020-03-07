@@ -15,7 +15,10 @@ public class SkillObject : ScriptableObject
     public string Description;
 
     public bool IsAbility;
+    [Tooltip("0 - Ability, 1 - White, 2 - Green, 3 - Gold")]
+    public int Rarity = 1;
 
+    [Space]
     public float health;
     public float damage;
     public float speed;
