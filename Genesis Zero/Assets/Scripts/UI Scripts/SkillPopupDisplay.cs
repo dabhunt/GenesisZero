@@ -53,11 +53,12 @@ public class SkillPopupDisplay : MonoBehaviour
         }
     }
 
-    public void SetPopup(Sprite icon, string name, string text)
+    public void SetPopup(Sprite icon, string name, string text, Color color)
     {
         Icon.sprite = icon;
         Name.text = name;
         Text.text = text;
+        Icon.color = color;
     }
 
     public void Popup()

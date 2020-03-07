@@ -18,7 +18,6 @@ public class ExplosiveShot : MonoBehaviour
     public GameObject explosionPrefab;
    	private GameObject runtimeExplosion;
    	private Restart restartScript;
-   	private float startScale = .1f;
     private AudioManager aManager;
     private Player player;
     void Start()

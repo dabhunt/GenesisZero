@@ -82,7 +82,7 @@ public class SpawnOnDestroy : MonoBehaviour
                     GameObject randMod = Instantiate(ModifierPrefab, new Vector3(transform.position.x, transform.position.y, 0), Quaternion.identity);
                     randMod = Drop(randMod);
                     SkillPickup pickup = randMod.GetComponent<SkillPickup>();
-                    pickup.skill = player.GetSkillManager().GetRandomSkill();
+                    pickup.skill = player.GetSkillManager().GetRandomModByChance();
                     //SimpleTooltip TT = randMod.GetComponent<SimpleTooltip>();
                    //SimpleTooltip tooltip = gameObject.AddComponent<SimpleTooltip>();
                     //tooltip.infoLeft = pickup.skill.Description;

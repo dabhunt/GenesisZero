@@ -8,9 +8,9 @@ public class SkillManager
 
     private List<SkillObject> skillobjects; // List of all skillobjects(mods and abilities) the player has.
     private List<SkillObject> playermods;
-    private List<SkillObject> playerwhitemods; // List of whitemods in the game
-    private List<SkillObject> playerbluemods; // List of bluemods in the game
-    private List<SkillObject> playergoldmods;  // List of goldmods in the game
+    private List<SkillObject> playerwhitemods; //  List of white mods the player has
+    private List<SkillObject> playerbluemods; // List of blue mods the player has
+    private List<SkillObject> playergoldmods;  //  List of gold mods the player has
     private List<SkillObject> playerabilities;
     private SkillObject AddedSkill; //Null when no skills have been added recently
     private Player player;
@@ -78,22 +78,23 @@ public class SkillManager
             {
                 modamount++;
                 playermods.Add(skill);
-                switch (skill.Rarity)
-                {
-                    case 1:
-                        playerwhitemods.Add(skill);
-                        break;
-                    case 2:
-                        playerbluemods.Add(skill);
-                        break;
-                    case 3:
-                        playergoldmods.Add(skill);
-                        break;
-                    default:
-                        Debug.LogWarning("Skill Object [" + skill.name + "] is not initialized with a proper rarity (0 - 3)");
-                        playerwhitemods.Add(skill);
-                        break;
-                }
+                //this section was throwing errors, and causing double stacking when picking up
+                //switch (skill.Rarity)
+                //{
+                //    case 1:
+                //        playerwhitemods.Add(skill);
+                //        break;
+                //    case 2:
+                //        playerbluemods.Add(skill);
+                //        break;
+                //    case 3:
+                //        playergoldmods.Add(skill);
+                //        break;
+                //    default:
+                //        Debug.LogWarning("Skill Object [" + skill.name + "] is not initialized with a proper rarity (0 - 3)");
+                //        playerwhitemods.Add(skill);
+                //        break;
+                //}
 
             }
         }
