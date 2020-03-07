@@ -9,7 +9,7 @@ public class SkillManager
     private List<SkillObject> skillobjects; // List of all skillobjects(mods and abilities) the player has.
     private List<SkillObject> playermods;
     private List<SkillObject> playerwhitemods; // List of whitemods in the game
-    private List<SkillObject> playergreenmods; // List of greenmods in the game
+    private List<SkillObject> playerbluemods; // List of bluemods in the game
     private List<SkillObject> playergoldmods;  // List of goldmods in the game
     private List<SkillObject> playerabilities;
     private SkillObject AddedSkill; //Null when no skills have been added recently
@@ -24,13 +24,13 @@ public class SkillManager
 
     // Reference lists for all mods in the game
     private List<SkillObject> whitemods; // List of whitemods in the game
-    private List<SkillObject> greenmods; // List of greenmods in the game
+    private List<SkillObject> bluemods; // List of bluemods in the game
     private List<SkillObject> goldmods;  // List of goldmods in the game
     private List<SkillObject> startermods; // List of startermods in the game
 
     // Lower the number, lower the chance. Determined by this order (0 - 100)
     private int goldchance = 10; 
-    private int greenchance = 40; // Realistically its greenchance - goldchance in code
+    private int bluechance = 40; // Realistically its bluechance - goldchance in code
     // No white chance becuase it is the default if the other two do not go through
 
     public SkillManager(Player p)
@@ -41,7 +41,7 @@ public class SkillManager
         playermods = new List<SkillObject>();
         playerabilities = new List<SkillObject>();
         whitemods = new List<SkillObject>();
-        greenmods = new List<SkillObject>();
+        bluemods = new List<SkillObject>();
         goldmods = new List<SkillObject>();
         startermods = new List<SkillObject>();
         InitializeLists();
@@ -84,7 +84,7 @@ public class SkillManager
                         playerwhitemods.Add(skill);
                         break;
                     case 2:
-                        playergreenmods.Add(skill);
+                        playerbluemods.Add(skill);
                         break;
                     case 3:
                         playergoldmods.Add(skill);
@@ -137,7 +137,7 @@ public class SkillManager
                             playerwhitemods.Remove(skill);
                             break;
                         case 2:
-                            playergreenmods.Remove(skill);
+                            playerbluemods.Remove(skill);
                             break;
                         case 3:
                             playergoldmods.Remove(skill);
@@ -187,7 +187,7 @@ public class SkillManager
                     whitemods.Add(skills[i]);
                     break;
                 case 2:
-                    greenmods.Add(skills[i]);
+                    bluemods.Add(skills[i]);
                     break;
                 case 3:
                     goldmods.Add(skills[i]);
@@ -229,7 +229,7 @@ public class SkillManager
 
     /**
     * Returns a random SkillObject that exists in the resources/skills folder
-    * Includes whites, greens, and golds
+    * Includes whites, blues, and golds
     */
     public SkillObject GetRandomMod()
     {
@@ -245,7 +245,7 @@ public class SkillManager
 
     /**
     * Returns a random SkillObject/mod incoporating chance
-    * Includes whites, greens, and golds from the gamep pool. NOT from player
+    * Includes whites, blues, and golds from the gamep pool. NOT from player
     */
     public SkillObject GetRandomModByChance()
     {
@@ -255,7 +255,7 @@ public class SkillManager
         {
             return GetRandomGolds(1)[0];
         }
-        else if (num < greenchance) // Green (11 - 40)
+        else if (num < bluechance) // Green (11 - 40)
         {
             return GetRandomGreens(1)[0];
         }
@@ -267,7 +267,7 @@ public class SkillManager
 
     /**
     * Returns a random mods incoporating chance
-    * Includes whites, greens, and golds from the gamep pool. NOT from player
+    * Includes whites, blues, and golds from the gamep pool. NOT from player
     */
     public List<SkillObject> GetRandomModsByChance(int amount)
     {
@@ -280,7 +280,7 @@ public class SkillManager
             {
                 returnlist.Add(GetRandomGolds(1)[0]);
             }
-            else if (num < greenchance) // Green (11 - 40)
+            else if (num < bluechance) // Green (11 - 40)
             {
                 returnlist.Add(GetRandomGreens(1)[0]);
             }
@@ -326,7 +326,7 @@ public class SkillManager
                 picklist.AddRange(whitemods);
                 break;
             case 2:
-                picklist.AddRange(greenmods);
+                picklist.AddRange(bluemods);
                 break;
             case 3:
                 picklist.AddRange(goldmods);
@@ -379,11 +379,11 @@ public class SkillManager
                 picklist.AddRange(playerwhitemods);
                 break;
             case 2:
-                if (amount > playergreenmods.Count)
+                if (amount > playerbluemods.Count)
                 {
-                    return playergreenmods;
+                    return playerbluemods;
                 }
-                picklist.AddRange(playergreenmods);
+                picklist.AddRange(playerbluemods);
                 break;
             case 3:
                 if (amount > playergoldmods.Count)
