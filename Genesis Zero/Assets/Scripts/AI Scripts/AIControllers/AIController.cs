@@ -17,6 +17,8 @@ public class AIController : Pawn
     public float IdlePatrolIntervalMax = 2.0f; // Maximum time interval for switching between idling and patrolling
     private float idlePatrolIntervalCurrent = 1.0f; // Randomly chosen interval in range
     protected bool isGrounded = false;
+    public Vector3 Origin;
+    protected Vector3 trueOrigin = Vector3.zero;
 
     public Transform Target; // Target or player object to follow and attack
     protected Vector3 targetPosition = Vector3.zero; // Position to move to
@@ -64,6 +66,7 @@ public class AIController : Pawn
     new protected void FixedUpdate()
     {
         base.FixedUpdate();
+        UpdateOrigin();
         GroundCheck();
 
         if (Target != null)
@@ -252,6 +255,22 @@ public class AIController : Pawn
         isGrounded = false;
     }
 
+    /*
+     * Returns the origin of the object, potentially transformed by facing direction.
+     */
+    public Vector3 GetOrigin()
+    {
+        return trueOrigin;
+    }
+
+    /*
+     * Updates the true origin.
+     */
+    protected virtual void UpdateOrigin()
+    {
+        trueOrigin = transform.TransformPoint(Origin);
+    }
+
     /**
      * Returns the distance to the target/player
      */
@@ -259,7 +278,7 @@ public class AIController : Pawn
     {
         if (Target != null)
         {
-            return Vector3.Distance(transform.position, Target.position);
+            return Vector3.Distance(trueOrigin, Target.position);
         }
         return 0.0f;
     }
@@ -285,9 +304,9 @@ public class AIController : Pawn
         {
             if (BehaviorProperties.UseLineOfSight)
             {
-                Vector3 toTarget = Target.position - transform.position;
+                Vector3 toTarget = Target.position - trueOrigin;
                 RaycastHit[] sightHits = new RaycastHit[BehaviorProperties.MaxSightCastHits];
-                if (Physics.RaycastNonAlloc(transform.position, toTarget.normalized, sightHits, toTarget.magnitude, BehaviorProperties.SightMask, QueryTriggerInteraction.Ignore) > 0)
+                if (Physics.RaycastNonAlloc(trueOrigin, toTarget.normalized, sightHits, toTarget.magnitude, BehaviorProperties.SightMask, QueryTriggerInteraction.Ignore) > 0)
                 {
                     for (int i = 0; i < sightHits.Length; i++)
                     {
@@ -339,26 +358,28 @@ public class AIController : Pawn
      */
     protected virtual void OnDrawGizmos()
     {
+        if (!Application.isPlaying) { UpdateOrigin(); }
+
         if (targetVisible)
         {
             Gizmos.color = Color.green;
-            Gizmos.DrawLine(transform.position, Target.position);
+            Gizmos.DrawLine(trueOrigin, Target.position);
         }
 
         if (alertTracking)
         {
             Gizmos.color = Color.blue;
-            Gizmos.DrawLine(transform.position, alertPoint);
+            Gizmos.DrawLine(trueOrigin, alertPoint);
         }
 
         if (BehaviorProperties != null)
         {
             Gizmos.color = Color.cyan;
-            GizmosExtra.DrawWireCircle(transform.position, Vector3.forward, BehaviorProperties.DetectRadius);
+            GizmosExtra.DrawWireCircle(trueOrigin, Vector3.forward, BehaviorProperties.DetectRadius);
             Gizmos.color = Color.yellow;
-            GizmosExtra.DrawWireCircle(transform.position, Vector3.forward, BehaviorProperties.AvoidRadius);
+            GizmosExtra.DrawWireCircle(trueOrigin, Vector3.forward, BehaviorProperties.AvoidRadius);
             Gizmos.color = Color.red;
-            GizmosExtra.DrawWireCircle(transform.position, Vector3.forward, BehaviorProperties.AttackRadius);
+            GizmosExtra.DrawWireCircle(trueOrigin, Vector3.forward, BehaviorProperties.AttackRadius);
         }
     }
 
