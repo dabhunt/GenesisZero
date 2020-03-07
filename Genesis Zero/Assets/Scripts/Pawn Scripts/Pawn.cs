@@ -160,7 +160,7 @@ public class Pawn : MonoBehaviour
                     Vector3 p2 = p1 + Vector3.up * cc.height;
                     colliding = Physics.CapsuleCast(p1, p2, cc.radius, knockbackvector, out hit, translation.magnitude);
                     if (colliding) colliding = !hit.collider.isTrigger;
-                    translation = colliding ? -translation : translation;
+                    translation = colliding ? -translation*2f : translation;
                 }
                 if (GetComponent<PlayerController>() && colliding == false)
                 {
@@ -172,7 +172,6 @@ public class Pawn : MonoBehaviour
                     knockbackforce = 0;
                 }
             }
-
             if (knockbackforce < 1)
             {
                 ForcedKnockBack = false;
@@ -294,6 +293,7 @@ public class Pawn : MonoBehaviour
         burning.SetTime(time);
         GameObject burnemit = VFXManager.instance.PlayEffectForDuration("VFX_BurnEffect", transform.position, burntime);
         burnemit.transform.parent = transform;
+        burnemit.transform.localScale = new Vector3(1, 1, 1);
 
     }
 
