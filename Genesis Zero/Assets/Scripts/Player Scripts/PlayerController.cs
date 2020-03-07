@@ -311,8 +311,8 @@ public class PlayerController : MonoBehaviour
         {
             isGrounded = true;
             if (Physics.Raycast(transform.position, Vector3.down, out hit, characterHeight * 0.5f, immoveables))
-                if (hit.distance < 0.5f * characterHeight + vertCastPadding)
-                    transform.position = Vector3.Lerp(transform.position, transform.position + Vector3.up * characterHeight * 0.5f, 5 * Time.fixedDeltaTime);
+                if (hit.distance < 2f * characterHeight + vertCastPadding)
+                    transform.position = Vector3.Lerp(transform.position, transform.position + Vector3.up * .5f* characterHeight , 5 * Time.fixedDeltaTime);
 
             if (vertVel < 0)
                 vertVel = 0;
@@ -391,6 +391,7 @@ public class PlayerController : MonoBehaviour
                 //Rotate the character depending on roll direction
                 if (rollDirection < 0 && isFacingRight)
                 {
+                    //if the 90 degree values are zero, then the roll works while moving but not when standing still
                     transform.rotation = Quaternion.Euler(0, -90, 0);
                     isFacingRight = false;
                 }

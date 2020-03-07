@@ -21,8 +21,6 @@ public class AbilityCasting : MonoBehaviour
     [Header("Spartan Laser")]
     //each successful kill makes the laser 20% larger
     public float scaleMultiPerKill = 1.2f;
-
-    private AudioManager aManager;
     private float AbilityCasttime1;
     private float AbilityCooldown1;
     private float TotalAbilityCasttime1;
@@ -46,7 +44,7 @@ public class AbilityCasting : MonoBehaviour
         PC = GetComponent<PlayerController>();
         ui = AbilityCooldownPanel.GetComponent<AbilityCD>();
         aimDir = new Vector2(0, 0);
-        aManager = FindObjectOfType<AudioManager>();
+        
     }
     // Update is called once per frame
     void Update()
@@ -117,8 +115,12 @@ public class AbilityCasting : MonoBehaviour
                 CastMultiShot();
                 break;
             case "Heat Vent Shield":
-                InitializeAbility(8, 0, 2, num);
+                InitializeAbility(8, 0, 4, num);
                 CastHeatShield(num);
+                break;
+            case "Fire Dash":
+                InitializeAbility(3, 0, 0, num);
+                CastFireDash();
                 break;
         }
     }
@@ -240,7 +242,7 @@ public class AbilityCasting : MonoBehaviour
         player.KnockBackForced(-aimDir + Vector2.up, 25);
         GameObject hitbox = SpawnGameObject("PulseBurstHitbox", CastAtAngle(transform.position, aimDir, 1), Quaternion.identity);
         hitbox.GetComponent<Hitbox>().InitializeHitbox(GetComponent<Player>().GetDamage().GetValue() / 4, GetComponent<Player>());
-        hitbox.GetComponent<Hitbox>().SetStunTime(1);
+        hitbox.GetComponent<Hitbox>().SetStunTime(1.2f);
         hitbox.GetComponent<Hitbox>().SetLifeTime(.1f);
     }
 
@@ -249,8 +251,19 @@ public class AbilityCasting : MonoBehaviour
         player.GetComponent<PlayerController>().SetVertVel(0);
         player.KnockBackForced(aimDir + Vector2.up, 25);
         GameObject hitbox = SpawnGameObject("BurstChargeHitbox", transform.position, Quaternion.identity);
-        hitbox.GetComponent<Hitbox>().InitializeHitbox(GetComponent<Player>().GetDamage().GetValue() / 4, GetComponent<Player>());
+        hitbox.GetComponent<Hitbox>().InitializeHitbox(GetComponent<Player>().GetDamage().GetValue() / 2, GetComponent<Player>());
         hitbox.transform.parent = transform;
+        player.SetInvunerable(.5f);
+        hitbox.GetComponent<Hitbox>().SetLifeTime(.5f);
+    }
+    private void CastFireDash()
+    {
+        player.GetComponent<PlayerController>().SetVertVel(0);
+        player.KnockBackForced(aimDir + Vector2.up, 25);
+        GameObject hitbox = SpawnGameObject("FireDashHitbox", transform.position, Quaternion.identity);
+        hitbox.GetComponent<Hitbox>().InitializeHitbox(GetComponent<Player>().GetDamage().GetValue() / 2, GetComponent<Player>());
+        hitbox.transform.parent = transform;
+        player.SetInvunerable(.5f);
         hitbox.GetComponent<Hitbox>().SetLifeTime(.5f);
     }
     private void CastOverdrive(int num)

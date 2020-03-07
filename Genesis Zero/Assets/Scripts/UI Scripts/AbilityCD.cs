@@ -19,14 +19,14 @@ public class AbilityCD : MonoBehaviour
     void Start()
     {
         player = FindObjectOfType<Player>();
-        abilityOverlay[0].fillAmount = 0f;
-        abilityOverlay[1].fillAmount = 0f;
-        abilityOverlay[0].color = defaultColor;
-        abilityOverlay[1].color = defaultColor;
-        cooling[0] = false;
-        cooling[1] = false;
-        cd[0] = 0;
-        cd[1] = 0;
+        for (int i = 0; i < 2; i++)
+        {
+            abilityOverlay[i].fillAmount = 0f;
+            abilityOverlay[i].color = defaultColor;
+            abilityBackground[i].color = defaultColor;
+            cooling[i] = false;
+            cd[i] = 0;
+        }
     }
     void Update()
     {
