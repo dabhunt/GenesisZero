@@ -39,6 +39,9 @@ public class SkillManager
         Skills = new Dictionary<string, int>();
         skillobjects = new List<SkillObject>();
         playermods = new List<SkillObject>();
+        playerwhitemods = new List<SkillObject>();
+        playerbluemods = new List<SkillObject>();
+        playergoldmods = new List<SkillObject>();
         playerabilities = new List<SkillObject>();
         whitemods = new List<SkillObject>();
         bluemods = new List<SkillObject>();
@@ -78,23 +81,22 @@ public class SkillManager
             {
                 modamount++;
                 playermods.Add(skill);
-                //this section was throwing errors, and causing double stacking when picking up
-                //switch (skill.Rarity)
-                //{
-                //    case 1:
-                //        playerwhitemods.Add(skill);
-                //        break;
-                //    case 2:
-                //        playerbluemods.Add(skill);
-                //        break;
-                //    case 3:
-                //        playergoldmods.Add(skill);
-                //        break;
-                //    default:
-                //        Debug.LogWarning("Skill Object [" + skill.name + "] is not initialized with a proper rarity (0 - 3)");
-                //        playerwhitemods.Add(skill);
-                //        break;
-                //}
+                switch (skill.Rarity)
+                {
+                    case 1:
+                        playerwhitemods.Add(skill);
+                        break;
+                    case 2:
+                        playerbluemods.Add(skill);
+                        break;
+                    case 3:
+                        playergoldmods.Add(skill);
+                        break;
+                    default:
+                        Debug.LogWarning("Skill Object [" + skill.name + "] is not initialized with a proper rarity (0 - 3)");
+                        playerwhitemods.Add(skill);
+                        break;
+                }
 
             }
         }
