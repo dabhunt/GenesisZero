@@ -12,6 +12,7 @@ public class SkillUIElement : MonoBehaviour
     public Image Icon;
     public SkillObject Skill;
     public int StackNumber;
+    public Color iColor = Color.white;
     // Start is called before the first frame update
     void Start()
     {
@@ -20,10 +21,12 @@ public class SkillUIElement : MonoBehaviour
             GetComponent<Image>().sprite = Icon.sprite;
         }
     }
-    public void UpdateSkillUIElement(Sprite icon, int stacknumber, SkillObject skill)
+    public void UpdateSkillUIElement(Sprite icon, int stacknumber, SkillObject skill, Color color)
     {
         Icon.sprite = icon;
+        iColor = color;
         GetComponent<Image>().sprite = icon;
+        GetComponent<Image>().color = color;
         StackNumber = stacknumber;
         if (stacknumber > 1)
         {
@@ -35,23 +38,27 @@ public class SkillUIElement : MonoBehaviour
         }
         Skill = skill;
         
+        
     }
     public void SetStack(int num)
     {
-        UpdateSkillUIElement(Icon.sprite, num, Skill);
+        UpdateSkillUIElement(Icon.sprite, num, Skill, iColor);
     }
 
     public void AddStack(int num)
     {
-        UpdateSkillUIElement(Icon.sprite, StackNumber + num, Skill);
+        UpdateSkillUIElement(Icon.sprite, StackNumber + num, Skill, iColor);
     }
-
+    public void SetColor(Color color)
+    {
+        UpdateSkillUIElement(Icon.sprite, StackNumber, Skill, color);
+    }
     public void SetIcon(Sprite icon)
     {
-        UpdateSkillUIElement(icon, StackNumber, Skill);
+        UpdateSkillUIElement(icon, StackNumber, Skill, iColor);
     }
     public void SetSkill(SkillObject skill)
     {
-        UpdateSkillUIElement(Icon.sprite, StackNumber, Skill);
+        UpdateSkillUIElement(Icon.sprite, StackNumber, Skill, iColor);
     }
 }

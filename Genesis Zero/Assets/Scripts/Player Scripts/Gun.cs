@@ -9,20 +9,28 @@ public class Gun : MonoBehaviour
     public GameObject basicProjectile;
     [Header("Bullet Modifiers")]
     [Header("1. Explosive Shot")]
-	public GameObject explosiveProjectile;
-	public float explosiveCoolDelay = 1.5f;
-	public float blastRadiusBonusPerStack = .7f;
+    public GameObject explosiveProjectile;
+    //extra seconds the player has to wait before
+    public float explosiveCoolDelay = .5f;
+    public float blastRadiusBonusPerStack = .7f;
     // each additional duplicate of this mod gives you .7f bigger blast radius
     [Header("2. Knockback")]
     public float knockBackPerStack = 1.5f;
     [Header("3. Peripheral Bullet")]
     public float minSpread = 10f;
-    public float spreadMultiplier = 10f;
+    public float spreadMultiplier = .3f;
     [Header("4. Peircing Bullets")]
     public int piercesPerStack = 1;
     [Header("5. Ignition Bullets")]
     public float burnDamagePerStack = 2f;
     public float burnTime = 3f;
+    [Header("6. Hardware Exploit")]
+    //in seconds
+    public float stunDuration = .4f;
+    public float exploitCoolDelay = .6f;
+    public Color stunBulletColor;
+    //only reduces it's own, not others by .1
+    public float reductionPerStack = .1f;
 
 
     [Header("Crosshair Spread")]
@@ -36,6 +44,7 @@ public class Gun : MonoBehaviour
     private Player player;
     private ExplosiveShot expShot;
     private PlayerController controller;
+    AbilityCasting ac;
 
     //Crosshair Variables
     private RectTransform[] crossArr;
@@ -46,11 +55,13 @@ public class Gun : MonoBehaviour
         player = GetComponent<Player>();
         overheat = GetComponent<OverHeat>();
         controller = player.GetComponent<PlayerController>();
+        ac = player.GetComponent<AbilityCasting>();
         screenXhair = controller.screenXhair;
         crossArr = new RectTransform[] {(RectTransform) screenXhair.Find("top"), 
                             (RectTransform) screenXhair.Find("bottom"), 
                             (RectTransform) screenXhair.Find("left"), 
                             (RectTransform) screenXhair.Find("right")};
+        UpdateCrosshairBloom();
     }
 
     public void Shoot()
@@ -69,41 +80,51 @@ public class Gun : MonoBehaviour
         //apply generic modifications
         instance = ModifyProjectile(instance);
         instance.transform.Rotate(Vector3.forward,Random.Range(-spreadAngle, spreadAngle),Space.World);
-        int stacks = player.GetSkillStack("Peripheral Bullet");
-        bool right = controller.IsAimingRight();
-        for (int i = 0; i < stacks; i++)
-        {
-            float angle = spreadAngle + minSpread + spreadMultiplier * i;
-            if (!right) { angle *= -1;}
-            GameObject extraBullet = (GameObject)Instantiate(instance, spawnpoint, instance.transform.rotation);
-            extraBullet.transform.Rotate(Vector3.forward, angle, Space.World);
-            extraBullet.GetComponent<Hitbox>().InitializeHitbox(player.GetDamage().GetValue(), player);
-        }
         instance.GetComponent<Hitbox>().InitializeHitbox(player.GetDamage().GetValue(), player);
-        
+        //add 1 to stacks, because Compound X applies like a secondary stack of Atom splitter
+        int stacks = player.GetSkillStack("Compound X") + 1;
+        bool right = controller.IsAimingRight();
+        //if you have just atom splitter, it will spawn 1 bullet above and below your gun based on minSpread value
+        if (ac.IsAbilityActive("Atom Splitter"))
+        {
+            for (int s = 0; s < stacks; s++)
+            {
+                for (int i = 0; i < 2; i++)
+                { 
+                    //if it's divisible by 2, then reverse the value of the min offset to go below the gun instead of above
+                    if ((i + 1) % 2 == 0)
+                    {
+                        spreadAngle *= -1;
+                    }
+                    float angle = spreadAngle + minSpread*(spreadAngle*spreadMultiplier)*(s+1);
+                    if (!right) { angle *= -1;}
+                    GameObject extraBullet = (GameObject)Instantiate(GetProjectile(), spawnpoint, instance.transform.rotation);
+                    extraBullet.transform.Rotate(Vector3.forward, angle, Space.World);
+                    extraBullet.GetComponent<Hitbox>().MaxHits += 2;
+                    extraBullet.GetComponent<Hitbox>().InitializeHitbox(player.GetDamage().GetValue(), player);
+                    
+                }
+            }
+        }
     }
-
     private void FixedUpdate() 
     {
         UpdateCrosshairBloom();
     }
     public GameObject GetProjectile()
     {
-    	//theoretically projectile effects should be additive if possible, though this may be unrealistic
-    	// eventually this should be refactored so it does a skill check BEFORE getting projectiles, so that multishot and more creative changes can be made
-    	if (player.HasSkill("Explosive Shot"))
-        {
-    		//only fire an explosive shot if the player has 0 heat
-    		//to balance this the cooldelay is increased to 1.5x the base cool delay
-    		//this will be true on the first shot and only on the first shot
-    		if (overheat.GetHeat() <= overheat.GetHeatAddedPerShot())
-    		{
-                
+    	//only fire an explosive shot if the player has 0 heat
+    	//to balance this the cooldelay is increased to 1.5x the base cool delay
+    	//this will be true on the first shot and only on the first shot
+    	if (overheat.GetHeat() <= overheat.GetHeatAddedPerShot())
+    	{
+            
+            if (player.HasSkill("Explosive Shot"))
+            {
                 Hitbox hit = explosiveProjectile.GetComponent<Hitbox>();
                 hit.Damage = player.GetDamage().GetValue();
                 return explosiveProjectile;
-    		}
-    		overheat.ModifyCoolDelay(explosiveCoolDelay);
+    	    }
     	}
         /*
     	else if()
@@ -124,19 +145,40 @@ public class Gun : MonoBehaviour
         hit.MaxHits += piercesPerStack * player.GetSkillStack("Piercing Bullets");
         float bDmg = burnDamagePerStack * player.GetSkillStack("Ignition Bullets");
         hit.Burn = new Vector2(burnTime, bDmg);
-    	return bullet;
+        float totalCoolDelay = 0;
+        if (player.HasSkill("Explosive Shot"))
+            totalCoolDelay = explosiveCoolDelay;
+        int exploitStacks = player.GetSkillStack("Hardware Exploit");
+        if (player.HasSkill("Hardware Exploit"))
+        {
+            //get the reduction amount, multiply by the amount of stacks
+            float reduction = player.GetSkillStack("Hardware Exploit") * reductionPerStack;
+            float delay = exploitCoolDelay - reduction;
+            totalCoolDelay += exploitCoolDelay;
+            //if heat is at 0, apply the stun
+            if (overheat.GetHeat() <= overheat.GetHeatAddedPerShot())
+            {
+                bullet = GetComponent<ChangeColor>().NewColor(bullet, stunBulletColor);
+                hit.StunTime = stunDuration;
+            }
+           
+        }
+        //modifycooldelay needs a multiplier, so 1 + whatever delays there are
+        overheat.ModifyCoolDelay(1+totalCoolDelay);
+        return bullet;
     }
     private void UpdateCrosshairBloom()
     {
-        Vector3[] vecs = {Vector3.up, Vector3.down, Vector3.left, Vector3.right};
+        Vector3[] vecs = { Vector3.up, Vector3.down, Vector3.left, Vector3.right };
         //float diff = ((maxXGap - minXGap) * overheat.GetHeat()) / 100;
-        float target = maxXGap *(overheat.GetHeat()/100);
+        float target = maxXGap * ((overheat.GetHeat()+ minXGap)/ 100 );
         if (overheat.GetHeat() == 0)
-        	return;
+            return;
         spread = Mathf.Lerp(spread, target, spreadSpeed * Time.fixedDeltaTime);
         spread = Mathf.Clamp(spread, minXGap, maxXGap);
-        for (int i = 0; i < crossArr.Length; i++)
+        for (int i = 0; i < crossArr.Length; i++) { 
             crossArr[i].transform.localPosition = vecs[i] * spread;
+        }
     }
 }
 

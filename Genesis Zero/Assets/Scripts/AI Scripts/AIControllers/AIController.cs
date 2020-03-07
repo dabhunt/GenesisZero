@@ -79,7 +79,6 @@ public class AIController : Pawn
         }
         if (IsStunned())
         {
-            print("Enemy is stunned!");
             ChangeState(AIState.Idle);
             stunnedLastFrame = true;
         }

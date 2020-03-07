@@ -10,7 +10,7 @@ public class disapear : MonoBehaviour
     public Text instructions;
     void Start()
     {
-        Cursor.visible = false;
+        //Cursor.visible = false;
         Invoke("Showtext", 4);
        
     }

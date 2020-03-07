@@ -8,20 +8,27 @@ public class ExplosiveShot : MonoBehaviour
     public bool quitting;
     
     public float baseblastRadius = 5.0f;
+    public float blastRadius = 8.0f;
     public float lerpMultiplier=1;
+    public bool inheritOnHitEffects = false;
     //how fast the sphere grows in size
     public string vfxName;
+    public string sfxName = "SFX_AOE";
+    public Vector2 burn;
     public GameObject explosionPrefab;
    	private GameObject runtimeExplosion;
    	private Restart restartScript;
-   	private float startScale = .1f;
-   	private float blastRadius;
+    private AudioManager aManager;
+    private Player player;
     void Start()
     {
         quitting = false;
         GameObject temp = GameObject.FindWithTag("StateManager");
+        aManager = FindObjectOfType<AudioManager>();
         restartScript = temp.GetComponent<Restart>();
-        //blastRadius = baseblastRadius;
+        temp = GameObject.FindWithTag("Player");
+        player = temp.GetComponent<Player>();
+
     }
     private void OnDestroy()
     {
@@ -34,11 +41,20 @@ public class ExplosiveShot : MonoBehaviour
         	Vector3 spawnPoint = new Vector3(transform.position.x, transform.position.y,0);
         	//this is for collision, not VFX
  			runtimeExplosion = Instantiate(explosionPrefab,spawnPoint, Quaternion.identity);
-            runtimeExplosion = InheritOnHitEffects(runtimeExplosion);
- 			AOE AOEscript = runtimeExplosion.GetComponent<AOE>();
- 			AOEscript.setScaleTarget(startScale, blastRadius, lerpMultiplier);
- 			//print("blastRadius = " + blastRadius + "during the on destroy call last section");
- 			GameObject emit = VFXManager.instance.PlayEffect(vfxName, new Vector3(transform.position.x, transform.position.y, transform.position.z), 0f, blastRadius/baseblastRadius);
+
+            Hitbox hit = runtimeExplosion.GetComponent<Hitbox>();
+            SphereCollider collide = GetComponent<SphereCollider>();
+            if (blastRadius < baseblastRadius)
+                blastRadius = baseblastRadius;
+            if (inheritOnHitEffects)
+                runtimeExplosion = InheritOnHitEffects(runtimeExplosion);
+            if (collide != null)
+                collide.radius = blastRadius;
+            //AOE AOEscript = runtimeExplosion.GetComponent<AOE>();
+            //AOEscript.setScaleTarget(startScale, blastRadius, lerpMultiplier);
+            hit.InitializeHitbox(player.GetDamage().GetValue(), player);
+            GameObject emit = VFXManager.instance.PlayEffect(vfxName, new Vector3(transform.position.x, transform.position.y, transform.position.z), 0f, blastRadius/baseblastRadius);
+            aManager.PlaySoundOneShot(sfxName);
         }
        
     }

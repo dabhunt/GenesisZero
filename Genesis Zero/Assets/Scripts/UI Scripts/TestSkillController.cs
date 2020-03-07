@@ -17,7 +17,7 @@ public class TestSkillController : MonoBehaviour
         Player p = GetComponent<Player>();
         if (Input.GetKeyDown(KeyCode.F))
         {
-            p.GetSkillManager().GetRandomSkill();
+            p.GetSkillManager().GetRandomMod();
         }
     }
 }

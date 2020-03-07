@@ -12,17 +12,28 @@ public class AbilityCasting : MonoBehaviour
     [Header("Time Dilation Ability")]
     public float timeScale = .5f;
     public float effectDuration = 3.2f;
-
-    private float AbitityCasttime1;
+    [Header("Multi Shot Ability (Active)")]
+    //how long the effect lasts
+    public float MS_ActiveTime;
+    //.4 = 40% more than base attack speed
+    public float MS_AttackSpeedBoost = .4f;
+    public float MS_Cooldown = 8f;
+    [Header("Spartan Laser")]
+    //each successful kill makes the laser 20% larger
+    public float scaleMultiPerKill = 1.2f;
+    private float AbilityCasttime1;
     private float AbilityCooldown1;
-    private float TotalAbitityCasttime1;
+    private float TotalAbilityCasttime1;
     private float TotalAbilityCooldown1;
+    private float ActiveTime1;
 
-    private float AbitityCasttime2;
+    
+    private float AbilityCasttime2;
     private float AbilityCooldown2;
-    private float TotalAbitityCasttime2;
+    private float TotalAbilityCasttime2;
     private float TotalAbilityCooldown2;
-    public GameObject abilityCooldownPanel;
+    private float ActiveTime2;
+    public GameObject AbilityCooldownPanel;
     private AbilityCD ui;
     private Vector2 aimDir;
     // Start is called before the first frame update
@@ -31,8 +42,9 @@ public class AbilityCasting : MonoBehaviour
         player = GetComponent<Player>();
         skillmanager = player.GetSkillManager();
         PC = GetComponent<PlayerController>();
-        ui = abilityCooldownPanel.GetComponent<AbilityCD>();
+        ui = AbilityCooldownPanel.GetComponent<AbilityCD>();
         aimDir = new Vector2(0, 0);
+        
     }
     // Update is called once per frame
     void Update()
@@ -49,6 +61,7 @@ public class AbilityCasting : MonoBehaviour
         if (CanCastAbility1())
         {
             CastAbility(skillmanager.GetAbility1().name, 1);
+            ui.Cast(0);
         }
     }
 
@@ -57,7 +70,14 @@ public class AbilityCasting : MonoBehaviour
         if (CanCastAbility2())
         {
             CastAbility(skillmanager.GetAbility2().name, 2);
+            ui.Cast(1);
         }
+
+    }
+
+    public void CastUI(int num)
+    {
+        ui.Cast(num);
     }
 
     private void CastAbility(string name, int num)
@@ -65,84 +85,125 @@ public class AbilityCasting : MonoBehaviour
         switch (name)
         {
             case "Pulse Burst":
-                InitializeAbility(3, 0, num);
+                InitializeAbility(3, 0, 0, num);
                 CastPulseBurst();
                 break;
             case "Burst Charge":
-                InitializeAbility(3, 0, num);
+                InitializeAbility(3, 0,0, num);
                 CastBurstCharge();
                 break;
             case "Overdrive":
-                InitializeAbility(20, 0, num);
+                InitializeAbility(20, 0,0, num);
                 CastOverdrive(num);
                 break;
             case "Time Dilation":
-                InitializeAbility(10, 0, num);
+                InitializeAbility(10, 0,0, num);
                 CastSlowDown();
                 break;
             case "Culling Blast":
-                InitializeAbility(1, 0, num);
+                InitializeAbility(7, 0,0, num);
                 CastSpartanLaser();
                 break;
+            case "Wound Sealant":
+                InitializeAbility(100, 0,0, num);
+                CastWoundSealant();
+                break;
+            case "Atom Splitter":
+                //(Cooldown, Casttime, ActiveTime, Abilitynum)
+                //NOTE: Cooldown does not start going down until the Active wears off
+                InitializeAbility(MS_Cooldown, 0, MS_ActiveTime, num);
+                CastMultiShot();
+                break;
+            case "Heat Vent Shield":
+                InitializeAbility(8, 0, 4, num);
+                CastHeatShield(num);
+                break;
+            case "Fire Dash":
+                InitializeAbility(3, 0, 0, num);
+                CastFireDash();
+                break;
         }
-        ui.Cast();
     }
 
     private bool CanCastAbility1()
     {
-        return (AbitityCasttime1 <= 0 && AbilityCooldown1 <= 0 && skillmanager.GetAbility1() != null);
+        return (AbilityCasttime1 <= 0 && AbilityCooldown1 <= 0 && skillmanager.GetAbility1() != null);
     }
 
     private bool CanCastAbility2()
     {
-        return (AbitityCasttime2 <= 0 && AbilityCooldown2 <= 0 && skillmanager.GetAbility2() != null);
+        return (AbilityCasttime2 <= 0 && AbilityCooldown2 <= 0 && skillmanager.GetAbility2() != null);
     }
 
-    private void InitializeAbility(float cooldown, float casttime, int num)
+    private void InitializeAbility(float cooldown, float casttime, float activeTime, int num)
     {
         if (num == 1)
         {
-            InitializeAbility1(cooldown, casttime);
+            InitializeAbility1(cooldown, casttime, activeTime);
         }
         else
         {
-            InitializeAbility2(cooldown, casttime);
+            InitializeAbility2(cooldown, casttime, activeTime);
         }
     }
 
-    private void InitializeAbility1(float cooldown, float casttime)
+    private void InitializeAbility1(float cooldown, float casttime, float activeTime)
     {
         AbilityCooldown1 = cooldown;
         TotalAbilityCooldown1 = cooldown;
-        AbitityCasttime1 = casttime;
-        TotalAbitityCasttime1 = casttime;
+        AbilityCasttime1 = casttime;
+        TotalAbilityCasttime1 = casttime;
+        ActiveTime1 = activeTime;
     }
 
-    private void InitializeAbility2(float cooldown, float casttime)
+    private void InitializeAbility2(float cooldown, float casttime, float activeTime)
     {
         AbilityCooldown2 = cooldown;
         TotalAbilityCooldown2 = cooldown;
-        AbitityCasttime2 = casttime;
-        TotalAbitityCasttime2 = casttime;
+        AbilityCasttime2 = casttime;
+        TotalAbilityCasttime2 = casttime;
+        ActiveTime2 = activeTime;
     }
 
     private void UpdateAbilities()
     {
-        Mathf.Clamp(AbilityCooldown1 -= Time.deltaTime, 0, TotalAbilityCooldown1);
-        Mathf.Clamp(AbilityCooldown2 -= Time.deltaTime, 0, TotalAbilityCooldown2);
-        Mathf.Clamp(AbitityCasttime1 -= Time.deltaTime, 0, TotalAbitityCasttime1);
-        Mathf.Clamp(AbitityCasttime2 -= Time.deltaTime, 0, TotalAbitityCasttime2);
-    }
-    public float GetAbilityCooldownRatio1()
-    {
-        return AbilityCooldown1 / TotalAbilityCooldown1;
-    }
+        if (ActiveTime1 <= 0)
+        {
+            AbilityCasttime1 = Mathf.Clamp(AbilityCasttime1 -= Time.deltaTime, 0, TotalAbilityCasttime1);
+            AbilityCooldown1 = Mathf.Clamp(AbilityCooldown1 -= Time.deltaTime, 0, TotalAbilityCooldown1);
+        }
+        if (ActiveTime2 <= 0)
+        {
+            AbilityCasttime2 = Mathf.Clamp(AbilityCasttime2 -= Time.deltaTime, 0, TotalAbilityCasttime2);
+            AbilityCooldown2 = Mathf.Clamp(AbilityCooldown2 -= Time.deltaTime, 0, TotalAbilityCooldown2);
+        }
 
-    public float GetAbilityCooldownRatio2()
+        ActiveTime1 = Mathf.Clamp(ActiveTime1 -= Time.deltaTime, 0, TotalAbilityCooldown1);
+        ActiveTime2 = Mathf.Clamp(ActiveTime2 -= Time.deltaTime, 0, TotalAbilityCooldown2);
+    }
+    public float GetAbilityCooldownRatio(int num)
     {
+        if (num == 0)
+        {
+            return AbilityCooldown1 / TotalAbilityCooldown1;
+        }
         return AbilityCooldown2 / TotalAbilityCooldown2;
     }
-
+    //check to see if an Ability is currently active by passing the name of the Ability
+    public bool IsAbilityActive(string name)
+    {
+        if (skillmanager.GetAbility1() !=null && skillmanager.GetAbility1().name == name)
+        {
+            if (ActiveTime1 > 0)
+                return true;
+        }
+        if (skillmanager.GetAbility2() != null && skillmanager.GetAbility2().name == name)
+        {
+            if (ActiveTime2 > 0)
+                return true;
+        }
+        return false;
+    }
     public void ResetAbilityCooldown1()
     {
         AbilityCooldown1 = 0;
@@ -153,13 +214,35 @@ public class AbilityCasting : MonoBehaviour
         AbilityCooldown2 = 0;
     }
 
+
+    public void SwapAbilityCooldowns()
+    {
+        float TCastTime = AbilityCasttime1;
+        float TCooldown = AbilityCooldown1;
+        float TTotalCastTime = TotalAbilityCasttime1;
+        float TTotalCooldown = TotalAbilityCooldown1;
+        float TActiveTime = ActiveTime1;
+
+        AbilityCasttime1 = AbilityCasttime2;
+        AbilityCooldown1 = AbilityCooldown2;
+        TotalAbilityCasttime1 = TotalAbilityCasttime2;
+        TotalAbilityCooldown1 = TotalAbilityCooldown2;
+        ActiveTime1 = ActiveTime2;
+
+        AbilityCasttime2 = TCastTime;
+        AbilityCooldown2 = TCooldown;
+        TotalAbilityCasttime2 = TTotalCastTime;
+        TotalAbilityCooldown2 = TTotalCooldown;
+        ActiveTime2 = TActiveTime;
+    }
+
     private void CastPulseBurst()
     {
         player.GetComponent<PlayerController>().SetVertVel(0);
         player.KnockBackForced(-aimDir + Vector2.up, 25);
         GameObject hitbox = SpawnGameObject("PulseBurstHitbox", CastAtAngle(transform.position, aimDir, 1), Quaternion.identity);
         hitbox.GetComponent<Hitbox>().InitializeHitbox(GetComponent<Player>().GetDamage().GetValue() / 4, GetComponent<Player>());
-        hitbox.GetComponent<Hitbox>().SetStunTime(1);
+        hitbox.GetComponent<Hitbox>().SetStunTime(1.2f);
         hitbox.GetComponent<Hitbox>().SetLifeTime(.1f);
     }
 
@@ -168,8 +251,19 @@ public class AbilityCasting : MonoBehaviour
         player.GetComponent<PlayerController>().SetVertVel(0);
         player.KnockBackForced(aimDir + Vector2.up, 25);
         GameObject hitbox = SpawnGameObject("BurstChargeHitbox", transform.position, Quaternion.identity);
-        hitbox.GetComponent<Hitbox>().InitializeHitbox(GetComponent<Player>().GetDamage().GetValue() / 4, GetComponent<Player>());
+        hitbox.GetComponent<Hitbox>().InitializeHitbox(GetComponent<Player>().GetDamage().GetValue() / 2, GetComponent<Player>());
         hitbox.transform.parent = transform;
+        player.SetInvunerable(.5f);
+        hitbox.GetComponent<Hitbox>().SetLifeTime(.5f);
+    }
+    private void CastFireDash()
+    {
+        player.GetComponent<PlayerController>().SetVertVel(0);
+        player.KnockBackForced(aimDir + Vector2.up, 25);
+        GameObject hitbox = SpawnGameObject("FireDashHitbox", transform.position, Quaternion.identity);
+        hitbox.GetComponent<Hitbox>().InitializeHitbox(GetComponent<Player>().GetDamage().GetValue() / 2, GetComponent<Player>());
+        hitbox.transform.parent = transform;
+        player.SetInvunerable(.5f);
         hitbox.GetComponent<Hitbox>().SetLifeTime(.5f);
     }
     private void CastOverdrive(int num)
@@ -193,7 +287,38 @@ public class AbilityCasting : MonoBehaviour
     private void CastSpartanLaser()
     {
         GameObject hitbox = SpawnGameObject("SpartanLaser", CastAtAngle(transform.position, aimDir, .5f), GetComponent<Gun>().firePoint.rotation);
-        hitbox.GetComponent<Hitbox>().InitializeHitbox(player.GetDamage().GetValue() + 5, player);
+        SpartanLaser laser = hitbox.GetComponent<SpartanLaser>();
+        UniqueEffects U = GetComponent<UniqueEffects>();
+        float scale = Mathf.Pow(scaleMultiPerKill, U.GetKillCount());
+        hitbox.transform.localScale = new Vector3(scale, scale, scale);
+        float damage = U.CalculateDmg();
+        hitbox.GetComponent<Hitbox>().InitializeHitbox(damage, player);
+    }
+
+    private void CastWoundSealant()
+    {
+        SkillObject skill = player.GetSkillManager().GetSkillFromString("Wound Sealant");
+        player.GetSkillManager().RemoveSkill(skill);
+        player.Heal(55);
+    }
+    private void CastMultiShot()
+    {
+        player.GetAttackSpeed().AddBonus(player.GetAttackSpeed().GetBaseValue() * MS_AttackSpeedBoost, MS_ActiveTime);
+        print("cast multi shot");
+    }
+
+    private void CastHeatShield(int num)
+    {
+        if (GetComponent<OverHeat>().GetHeat() > 0)
+        {
+            GameObject shield = SpawnGameObject("HeatVentShield", transform.position, Quaternion.identity);
+            shield.transform.parent = transform;
+            shield.GetComponent<Pawn>().Initialize();
+            shield.GetComponent<Pawn>().UpdateStats();
+            shield.GetComponent<Pawn>().GetHealth().SetMaxValue(GetComponent<OverHeat>().GetHeat());
+            GetComponent<OverHeat>().Increment(-GetComponent<OverHeat>().GetHeat());
+            Destroy(shield, num == 1 ? ActiveTime1 : ActiveTime2);
+        }
     }
 
     private GameObject SpawnGameObject(string name, Vector2 position, Quaternion quat)

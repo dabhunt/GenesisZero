@@ -62,7 +62,7 @@ public class TileManager : MonoBehaviour
 				//Randomly Select Case (0-4)
 				int tileRand;
 				float offset = Random.Range(minOffset,maxOffset);
-				if (floorWidth > 2) tileRand = Random.Range(0, 4);
+				if (floorWidth > 3) tileRand = Random.Range(0, 4);
 				else tileRand = 0;
 				
 				if (tileRand == 0) shift = floorWidth; // Case 0

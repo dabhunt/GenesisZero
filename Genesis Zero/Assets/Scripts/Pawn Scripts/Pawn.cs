@@ -20,20 +20,29 @@ public class Pawn : MonoBehaviour
     private float burntime, burndamage, burntick; //burndamage is damage per second
     private float slowtime, knockbackforce;
     private Vector3 knockbackvector;
-    private bool ForcedKnockBack;
+    private bool Initialized, ForcedKnockBack;
 
     protected void Start()
     {
-        if (Stats != null)
-        {
-            AddStats();
-        }
-        else
-        {
-            Debug.LogError("No statistics have been assigned to " + transform.parent.name);
-        }
+        Initialize();
+    }
 
-        InitializeStatuses();
+    public void Initialize()
+    {
+        if (Initialized == false)
+        {
+            if (Stats != null)
+            {
+                AddStats();
+            }
+            else
+            {
+                Debug.LogError("No statistics have been assigned to " + transform.parent.name);
+            }
+            InitializeStatuses();
+
+            Initialized = true;
+        }
     }
 
     /**
@@ -98,14 +107,7 @@ public class Pawn : MonoBehaviour
 
     protected void Update()
     {
-        foreach (Statistic stat in statistics)
-        {
-            stat.UpdateStatistics();
-        }
-        foreach (Status status in statuses)
-        {
-            status.UpdateStatus();
-        }
+        UpdateStats();
 
         if (IsBurning())
         {
@@ -158,7 +160,7 @@ public class Pawn : MonoBehaviour
                     Vector3 p2 = p1 + Vector3.up * cc.height;
                     colliding = Physics.CapsuleCast(p1, p2, cc.radius, knockbackvector, out hit, translation.magnitude);
                     if (colliding) colliding = !hit.collider.isTrigger;
-                    translation = colliding ? -translation : translation;
+                    translation = colliding ? -translation*2f : translation;
                 }
                 if (GetComponent<PlayerController>() && colliding == false)
                 {
@@ -166,11 +168,10 @@ public class Pawn : MonoBehaviour
                 }
                 else if (GetComponent<PlayerController>() && colliding == true)
                 {
-                    transform.position += translation;
+                    transform.position -= translation;
                     knockbackforce = 0;
                 }
             }
-
             if (knockbackforce < 1)
             {
                 ForcedKnockBack = false;
@@ -178,6 +179,19 @@ public class Pawn : MonoBehaviour
             }
 
         }
+    }
+
+    public void UpdateStats()
+    {
+        foreach (Statistic stat in statistics)
+        {
+            stat.UpdateStatistics();
+        }
+        foreach (Status status in statuses)
+        {
+            status.UpdateStatus();
+        }
+
     }
 
     // ------------------------- ACCESS FUNCTIONS ------------------------------//
@@ -279,6 +293,7 @@ public class Pawn : MonoBehaviour
         burning.SetTime(time);
         GameObject burnemit = VFXManager.instance.PlayEffectForDuration("VFX_BurnEffect", transform.position, burntime);
         burnemit.transform.parent = transform;
+        burnemit.transform.localScale = new Vector3(1, 1, 1);
 
     }
 
