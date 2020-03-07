@@ -160,6 +160,9 @@ public class PlatformPatrollerAI : AIController
         }
     }
 
+    /**
+     * Overrides origin setting for this enemy
+     */
     protected override void UpdateOrigin()
     {
         trueOrigin = transform.position + new Vector3(Origin.x * faceDir, Origin.y, Origin.z);

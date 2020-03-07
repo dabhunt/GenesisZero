@@ -247,7 +247,7 @@ public class AIController : Pawn
         return isGrounded;
     }
 
-    /*
+    /**
      * Inheriting enemies can override this to implement their own ground check methods.
      */
     protected virtual void GroundCheck()
@@ -255,7 +255,7 @@ public class AIController : Pawn
         isGrounded = false;
     }
 
-    /*
+    /**
      * Returns the origin of the object, potentially transformed by facing direction.
      */
     public Vector3 GetOrigin()
@@ -263,7 +263,7 @@ public class AIController : Pawn
         return trueOrigin;
     }
 
-    /*
+    /**
      * Updates the true origin.
      */
     protected virtual void UpdateOrigin()

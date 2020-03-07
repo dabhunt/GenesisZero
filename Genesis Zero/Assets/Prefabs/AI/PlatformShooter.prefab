@@ -4932,6 +4932,7 @@ MonoBehaviour:
   BehaviorProperties: {fileID: 11400000, guid: c41cedfcc9ef2af409526a3f27032ced, type: 2}
   IdlePatrolIntervalMin: 1
   IdlePatrolIntervalMax: 2
+  Origin: {x: 0, y: 1.48, z: 0}
   Target: {fileID: 0}
   StateChangeEvent:
     m_PersistentCalls:
@@ -4949,9 +4950,11 @@ MonoBehaviour:
   groundCheckDistance: 0.2
   groundCheckStartHeight: 1.25
   groundCheckRadius: 1
+  ForwardEdgeRay: {x: 1.4, y: -1.9, z: 0}
+  BackEdgeRay: {x: -1.4, y: -1.9, z: 0}
   groundCheckMask:
     serializedVersion: 2
-    m_Bits: 4294967295
+    m_Bits: 1
   AttackProjectile: {fileID: 6641631083453567850, guid: 1b5e9b6d2186b0a499598904343c6fea,
     type: 3}
   AttackLaunchInterval: 0.4
