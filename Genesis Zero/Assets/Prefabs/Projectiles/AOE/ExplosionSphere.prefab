@@ -10,12 +10,10 @@ GameObject:
   m_Component:
   - component: {fileID: 7446024088350224067}
   - component: {fileID: 7446024088350224064}
-  - component: {fileID: 7446024088350224065}
   - component: {fileID: 7446024088350224126}
   - component: {fileID: -1694434105571815367}
   - component: {fileID: 7323713832238595723}
   - component: {fileID: 7237362000396769751}
-  - component: {fileID: 4150331635226642204}
   m_Layer: 0
   m_Name: ExplosionSphere
   m_TagString: Untagged
@@ -45,45 +43,6 @@ MeshFilter:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 7446024088350224124}
   m_Mesh: {fileID: 10207, guid: 0000000000000000e000000000000000, type: 0}
---- !u!23 &7446024088350224065
-MeshRenderer:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 7446024088350224124}
-  m_Enabled: 0
-  m_CastShadows: 1
-  m_ReceiveShadows: 1
-  m_DynamicOccludee: 1
-  m_MotionVectors: 1
-  m_LightProbeUsage: 1
-  m_ReflectionProbeUsage: 1
-  m_RayTracingMode: 2
-  m_RenderingLayerMask: 1
-  m_RendererPriority: 0
-  m_Materials:
-  - {fileID: 2541457280464432744, guid: fe35c7ddcb2f3104499d7f6de78cb37a, type: 3}
-  m_StaticBatchInfo:
-    firstSubMesh: 0
-    subMeshCount: 0
-  m_StaticBatchRoot: {fileID: 0}
-  m_ProbeAnchor: {fileID: 0}
-  m_LightProbeVolumeOverride: {fileID: 0}
-  m_ScaleInLightmap: 1
-  m_ReceiveGI: 1
-  m_PreserveUVs: 0
-  m_IgnoreNormalsForChartDetection: 0
-  m_ImportantGI: 0
-  m_StitchLightmapSeams: 1
-  m_SelectedEditorRenderState: 3
-  m_MinimumChartSize: 4
-  m_AutoUVMaxDistance: 0.5
-  m_AutoUVMaxAngle: 89
-  m_LightmapParameters: {fileID: 0}
-  m_SortingLayerID: 0
-  m_SortingLayer: 0
-  m_SortingOrder: 0
 --- !u!54 &7446024088350224126
 Rigidbody:
   m_ObjectHideFlags: 0
@@ -132,15 +91,17 @@ MonoBehaviour:
   Critical: 0
   HurtsAllies: 0
   HurtsEnemies: 1
-  Intangible: 0
-  MaxHits: 10
+  Intangible: 1
+  MaxHits: 25
   Knockbackforce: 10
   DirectionalKnockback: 1
   StunTime: 0
   LifeTime: 99
-  Burn: {x: 0, y: 0}
+  Burn: {x: 3, y: 4}
   Collider: {fileID: 7237362000396769751}
   Source: {fileID: 0}
+  hitEffectVFX: VFX_BulletSparks
+  VFX_ScaleReduction: 15
 --- !u!135 &7237362000396769751
 SphereCollider:
   m_ObjectHideFlags: 0
@@ -152,17 +113,5 @@ SphereCollider:
   m_IsTrigger: 1
   m_Enabled: 1
   serializedVersion: 2
-  m_Radius: 0.1
+  m_Radius: 5
   m_Center: {x: 0, y: 0, z: 0}
---- !u!114 &4150331635226642204
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 7446024088350224124}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 996a64271a7824343a0425aea7a1f01f, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 

@@ -131,7 +131,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 1e7773cfab260d141aad2bd82731dee2, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  Damage: 20
+  Damage: 30
   Critical: 0
   HurtsAllies: 0
   HurtsEnemies: 1
@@ -173,8 +173,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   vfxName: 
   vfxScaleMultiplier: 0
-  sounds:
-  - SFX_AOE
+  sounds: []
   quitting: 0
   minEssenceDrop: 0
   maxEssenceDrop: 0
@@ -196,9 +195,13 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   quitting: 0
-  baseblastRadius: 5
+  baseblastRadius: 15
+  blastRadius: 8
   lerpMultiplier: 2.3
+  inheritOnHitEffects: 1
   vfxName: VFX_ExplosionAOE
+  sfxName: SFX_ExplosionEnemy
+  burn: {x: 3, y: 4}
   explosionPrefab: {fileID: 7446024088350224124, guid: c0846e1c799e06c40a4689e31eef28b5,
     type: 3}
 --- !u!1 &7504852634243103965

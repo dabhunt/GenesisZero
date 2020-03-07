@@ -8,23 +8,24 @@ public class AOE : MonoBehaviour
 	private float endScale;
 	private float lerpScale=0;
 	private float lerpMultiplier;
-	private SphereCollider collider;
+	private SphereCollider collide;
 
     public void setScaleTarget(float startSize, float blastRadius, float lerpMulti){
     	startScale = startSize;
     	endScale = blastRadius;
     	lerpMultiplier = lerpMulti;
-    	collider = GetComponent<SphereCollider>();
+    	collide = GetComponent<SphereCollider>();
     	//print("blastRadius: " + endScale);
     }
-    void FixedUpdate(){
-    		//print("fixed update on AOE running");
-            if (collider!= null){
-                if (collider.radius >= endScale){
-                //print("destroying");
+    void FixedUpdate()
+    {
+    	//print("fixed update on AOE running");
+        if (collide!= null){
+            if (collide.radius >= endScale){
+                print("destroying");
                 Destroy(this.gameObject);
             } else{
-                collider.radius = Mathf.Lerp(startScale, endScale,lerpScale);
+                collide.radius = Mathf.Lerp(startScale, endScale,lerpScale);
                 lerpScale += Time.deltaTime*lerpMultiplier;
             }
         }

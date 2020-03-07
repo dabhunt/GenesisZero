@@ -118,6 +118,10 @@ public class AbilityCasting : MonoBehaviour
                 InitializeAbility(8, 0, 4, num);
                 CastHeatShield(num);
                 break;
+            case "Fire Dash":
+                InitializeAbility(3, 0, 0, num);
+                CastFireDash();
+                break;
         }
     }
 
@@ -247,6 +251,16 @@ public class AbilityCasting : MonoBehaviour
         player.GetComponent<PlayerController>().SetVertVel(0);
         player.KnockBackForced(aimDir + Vector2.up, 25);
         GameObject hitbox = SpawnGameObject("BurstChargeHitbox", transform.position, Quaternion.identity);
+        hitbox.GetComponent<Hitbox>().InitializeHitbox(GetComponent<Player>().GetDamage().GetValue() / 2, GetComponent<Player>());
+        hitbox.transform.parent = transform;
+        player.SetInvunerable(.5f);
+        hitbox.GetComponent<Hitbox>().SetLifeTime(.5f);
+    }
+    private void CastFireDash()
+    {
+        player.GetComponent<PlayerController>().SetVertVel(0);
+        player.KnockBackForced(aimDir + Vector2.up, 25);
+        GameObject hitbox = SpawnGameObject("FireDashHitbox", transform.position, Quaternion.identity);
         hitbox.GetComponent<Hitbox>().InitializeHitbox(GetComponent<Player>().GetDamage().GetValue() / 2, GetComponent<Player>());
         hitbox.transform.parent = transform;
         player.SetInvunerable(.5f);
