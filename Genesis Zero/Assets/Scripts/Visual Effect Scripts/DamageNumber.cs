@@ -23,8 +23,8 @@ public class DamageNumber : MonoBehaviour
     {
         multi = -1 + 2 * (time / starttime);
         time -= Time.deltaTime;
-        //number.color = new Color(color.r, color.g, color.b, time / starttime);
-        number.color = new Color(1, 1, 1, time / starttime);
+        number.color = new Color(color.r, color.g, color.b, time / starttime);
+        //number.color = new Color(1, 1, 1, time / starttime);
         transform.position += new Vector3(Mathf.Abs(multi) * Time.deltaTime, multi * Time.deltaTime, 0);
     }
 

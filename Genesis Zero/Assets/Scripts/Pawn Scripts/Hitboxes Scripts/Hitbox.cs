@@ -212,7 +212,7 @@ public class Hitbox : MonoBehaviour
                 if (damagetaken >= phealth)
                     if (killDelegate != null) killDelegate();
 
-                GameObject emit = VFXManager.instance.PlayEffect("DamageNumber", new Vector3(transform.position.x, transform.position.y + 1, transform.position.z - .5f));
+                GameObject emit = VFXManager.instance.PlayEffect("DamageNumber", new Vector3(transform.position.x - 1, transform.position.y + 1, transform.position.z - 4f));
                 emit.GetComponent<DamageNumber>().SetNumber(damagetaken, Critical);
 
                 if (Critical)
