@@ -8,5 +8,37 @@ using UnityEngine;
  */
 public class AIChargeWarning : MonoBehaviour
 {
+    private AIController controller;
+    private Renderer rend;
+    public Vector3 StartScale = Vector3.one;
+    public Vector3 EndScale = Vector3.one;
+    public bool DisableWhileNotCharging = true;
 
+    private void Awake()
+    {
+        controller = GetComponentInParent<AIController>();
+        rend = GetComponent<Renderer>();
+    }
+
+    private void FixedUpdate()
+    {
+        if (controller == null) { return; }
+
+        transform.localScale = Vector3.Lerp(StartScale, EndScale, controller.GetNormalizedChargeTime());
+
+        if (rend != null)
+        {
+            if (controller.GetState() == AIController.AIState.Charge)
+            {
+                if (!rend.enabled)
+                {
+                    rend.enabled = true;
+                }
+            }
+            else if (rend.enabled && DisableWhileNotCharging)
+            {
+                rend.enabled = false;
+            }
+        }
+    }
 }
