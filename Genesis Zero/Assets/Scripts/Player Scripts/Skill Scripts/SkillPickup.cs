@@ -12,17 +12,19 @@ public class SkillPickup : MonoBehaviour
     // Start is called before the first frame update
     void Start()
     {
+        target = GameObject.FindGameObjectWithTag("Player");
+        Player player = target.GetComponent<Player>();
         if (skill == null)
         {
-            // Add default skill
+            skill = player.GetSkillManager().GetRandomModByChance();
+            VFXManager.instance.ChangeColor(this.gameObject, player.GetSkillManager().GetColor(skill));
         }
-        if (GetComponent<SimpleTooltip>()!=null)
+        else if (GetComponent<SimpleTooltip>()!=null)
         {
             GetComponent<SimpleTooltip>().infoLeft = skill.Description;
         }
         isMod = skill.IsAbility ? false : true;
-        target = GameObject.FindGameObjectWithTag("Player");
-        Player player = target.GetComponent<Player>();
+       
         if (skill != null)
             VFXManager.instance.ChangeColor(this.gameObject, player.GetSkillManager().GetColor(skill));
     }
