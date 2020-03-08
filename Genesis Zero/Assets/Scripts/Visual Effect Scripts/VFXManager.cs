@@ -101,12 +101,11 @@ public class VFXManager : MonoBehaviour
             Renderer r = child.gameObject.GetComponent<Renderer>();
             if (r != null && r.material.HasProperty("_EmissiveColor"))
             {
-                print("it does have _EmissiveColor..");
                 child.gameObject.GetComponent<Renderer>().material.SetColor("_EmissiveColor", color);
             }
             if (r != null && r.material.HasProperty("_ShallowColor"))
             {
-                print("it does have _EmissiveColor..");
+              
                 child.gameObject.GetComponent<Renderer>().material.SetColor("_ShallowColor", color);
             }
             if (child.childCount > 0)

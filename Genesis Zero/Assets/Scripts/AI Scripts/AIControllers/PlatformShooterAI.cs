@@ -33,6 +33,10 @@ public class PlatformShooterAI : AIController
     public float groundCheckDistance = 1.0f;
     public float groundCheckStartHeight = 0.0f;
     public float groundCheckRadius = 0.5f;
+    public Vector3 ForwardEdgeRay;
+    public Vector3 BackEdgeRay;
+    private bool edgeInFront = false;
+    private bool edgeBehind = false;
     public LayerMask groundCheckMask;
 
     public GameObject AttackProjectile;
@@ -62,7 +66,7 @@ public class PlatformShooterAI : AIController
         base.SetTarget(tr);
         if (Target != null && tracker != null)
         {
-            tracker.GiveUpCondition = () => { return tracker.PeekFirstPoint().y > transform.position.y + MaxFollowHeight; };
+            tracker.GiveUpCondition = () => { return tracker.PeekFirstPoint().y > transform.position.y + MaxFollowHeight || tracker.PeekFirstPoint().y < transform.position.y - MaxFollowHeight; };
         }
     }
 
@@ -85,12 +89,27 @@ public class PlatformShooterAI : AIController
             }
 
             targetSpeed = MoveSpeed;
-            frb.Accelerate(Mathf.Sign(transform.position.x - targetPosition.x) * Vector3.right * Mathf.Min(GetAvoidCloseness(), AvoidAccelLimit) * Acceleration * AvoidAmount); // Acceleration to keep away from the target
+            if (isGrounded && faceDir == Mathf.RoundToInt(Mathf.Sign(targetPosition.x - transform.position.x)))
+            {
+                if (!edgeInFront)
+                {
+                    targetSpeed = 0.0f;
+                }
+
+                if (edgeBehind)
+                {
+                    frb.Accelerate(Mathf.Sign(transform.position.x - targetPosition.x) * Vector3.right * Mathf.Min(GetAvoidCloseness(), AvoidAccelLimit) * Acceleration * AvoidAmount); // Acceleration to keep away from the target
+                }
+            }
         }
         else if (state == AIState.Patrol)
         {
-            targetSpeed = PatrolSpeed;
-            faceDir = Mathf.RoundToInt(Mathf.Sign(Mathf.Sin(Time.time * PatrolSwitchRate)));
+            targetSpeed = isGrounded ? PatrolSpeed : 0.0f;
+            if (isGrounded && !edgeInFront)
+            {
+                patrolCycleOffset += Mathf.PI;
+            }
+            faceDir = Mathf.RoundToInt(Mathf.Sign(Mathf.Sin(Time.time * PatrolSwitchRate + patrolCycleOffset)));
         }
         else if (state == AIState.Idle)
         {
@@ -163,12 +182,24 @@ public class PlatformShooterAI : AIController
     }
 
     /**
+      * Overrides origin setting for this enemy
+      */
+    protected override void UpdateOrigin()
+    {
+        trueOrigin = transform.position + new Vector3(Origin.x * faceDir, Origin.y, Origin.z);
+    }
+
+    /**
       * Checks if the enemy is on the ground
       */
     protected override void GroundCheck()
     {
         Ray groundRay = new Ray(transform.position + Vector3.up * groundCheckStartHeight, Vector3.down);
         isGrounded = Physics.SphereCast(groundRay, groundCheckRadius, groundCheckDistance, groundCheckMask, QueryTriggerInteraction.Ignore);
+        Ray forwardRay = new Ray(trueOrigin, new Vector3(ForwardEdgeRay.x * faceDir, ForwardEdgeRay.y, ForwardEdgeRay.z));
+        Ray backRay = new Ray(trueOrigin, new Vector3(BackEdgeRay.x * faceDir, BackEdgeRay.y, BackEdgeRay.z));
+        edgeInFront = Physics.Raycast(forwardRay, ForwardEdgeRay.magnitude, groundCheckMask, QueryTriggerInteraction.Ignore);
+        edgeBehind = Physics.Raycast(backRay, BackEdgeRay.magnitude, groundCheckMask, QueryTriggerInteraction.Ignore);
     }
 
     protected void OnDrawGizmosSelected()
@@ -178,6 +209,9 @@ public class PlatformShooterAI : AIController
         Gizmos.DrawWireSphere(transform.position + Vector3.up * groundCheckStartHeight, groundCheckRadius);
         Gizmos.color = Color.yellow;
         Gizmos.DrawWireSphere(transform.position + Vector3.up * groundCheckStartHeight + Vector3.down * groundCheckDistance, groundCheckRadius);
+        Gizmos.color = Color.red;
+        Gizmos.DrawRay(trueOrigin, new Vector3(ForwardEdgeRay.x * faceDir, ForwardEdgeRay.y, ForwardEdgeRay.z));
+        Gizmos.DrawRay(trueOrigin, new Vector3(BackEdgeRay.x * faceDir, BackEdgeRay.y, BackEdgeRay.z));
         Gizmos.color = Color.green;
         Gizmos.DrawWireSphere(transform.position + new Vector3(ProjectileStart.x * faceDir, ProjectileStart.y, ProjectileStart.z), 0.1f);
     }

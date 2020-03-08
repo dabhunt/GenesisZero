@@ -583,7 +583,7 @@ public class SkillManager
         switch (sk.Rarity)
         {
             case 2:
-                color = new Color(0.618f, 0f, 1f);
+                color = new Color(0, .93f, 1f);
                 break;
             case 3:
                 color = new Color(1, 0.83f, 0);

@@ -30,6 +30,9 @@ public class PlatformPatrollerAI : AIController
     public float groundCheckDistance = 1.0f;
     public float groundCheckStartHeight = 0.0f;
     public float groundCheckRadius = 0.5f;
+    public Vector3 ForwardEdgeRay;
+    //public Vector3 BackEdgeRay;
+    private bool edgeInFront = false;
     public LayerMask groundCheckMask;
 
     public ParticleSystem chargeParticles;
@@ -90,7 +93,11 @@ public class PlatformPatrollerAI : AIController
         }
         else if (state == AIState.Patrol)
         {
-            targetSpeed = PatrolSpeed;
+            targetSpeed = isGrounded ? PatrolSpeed : 0.0f;
+            if (isGrounded && !edgeInFront)
+            {
+                patrolCycleOffset += Mathf.PI;
+            }
             faceDir = Mathf.RoundToInt(Mathf.Sign(Mathf.Sin(Time.time * PatrolSwitchRate + patrolCycleOffset)));
         }
         else if (state == AIState.Idle)
@@ -154,12 +161,23 @@ public class PlatformPatrollerAI : AIController
     }
 
     /**
+     * Overrides origin setting for this enemy
+     */
+    protected override void UpdateOrigin()
+    {
+        trueOrigin = transform.position + new Vector3(Origin.x * faceDir, Origin.y, Origin.z);
+    }
+
+    /**
      * Checks if the enemy is on the ground
      */
     protected override void GroundCheck()
     {
         Ray groundRay = new Ray(transform.position + Vector3.up * groundCheckStartHeight, Vector3.down);
         isGrounded = Physics.SphereCast(groundRay, groundCheckRadius, groundCheckDistance, groundCheckMask, QueryTriggerInteraction.Ignore);
+        Ray forwardRay = new Ray(trueOrigin, new Vector3(ForwardEdgeRay.x * faceDir, ForwardEdgeRay.y, ForwardEdgeRay.z));
+        //Ray backRay = new Ray(trueOrigin, new Vector3(BackEdgeRay.x * faceDir, BackEdgeRay.y, BackEdgeRay.z));
+        edgeInFront = Physics.Raycast(forwardRay, ForwardEdgeRay.magnitude, groundCheckMask, QueryTriggerInteraction.Ignore);
     }
 
     /**
@@ -206,6 +224,9 @@ public class PlatformPatrollerAI : AIController
         Gizmos.DrawWireSphere(transform.position + Vector3.up * groundCheckStartHeight, groundCheckRadius);
         Gizmos.color = Color.yellow;
         Gizmos.DrawWireSphere(transform.position + Vector3.up * groundCheckStartHeight + Vector3.down * groundCheckDistance, groundCheckRadius);
+        Gizmos.color = Color.red;
+        Gizmos.DrawRay(trueOrigin, new Vector3(ForwardEdgeRay.x * faceDir, ForwardEdgeRay.y, ForwardEdgeRay.z));
+        //Gizmos.DrawRay(trueOrigin, new Vector3(BackEdgeRay.x * faceDir, BackEdgeRay.y, BackEdgeRay.z));
         Gizmos.color = Color.green;
         Gizmos.DrawWireSphere(transform.position + new Vector3(AttackHitboxStart.x * faceDir, AttackHitboxStart.y, AttackHitboxStart.z), 0.1f);
     }
