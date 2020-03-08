@@ -18,7 +18,6 @@ public class SpawnOnDestroy : MonoBehaviour
     public float minDropVelocity;
     public float maxDropVelocity;
     public GameObject EssencePrefab;
-    public GameObject ModifierPrefab;
 
     private SkillObject ModDrop;
     private Player player;
@@ -79,14 +78,11 @@ public class SpawnOnDestroy : MonoBehaviour
                 // if modifier drop chance exceeds the random value from 0 to 1.0f, it drops
                 if (ModifierDropChance > Random.value)
                 {
-                    GameObject randMod = Instantiate(ModifierPrefab, new Vector3(transform.position.x, transform.position.y, 0), Quaternion.identity);
-                    randMod = Drop(randMod);
-                    SkillPickup pickup = randMod.GetComponent<SkillPickup>();
-                    pickup.skill = player.GetSkillManager().GetRandomModByChance();
-                    //SimpleTooltip TT = randMod.GetComponent<SimpleTooltip>();
-                   //SimpleTooltip tooltip = gameObject.AddComponent<SimpleTooltip>();
-                    //tooltip.infoLeft = pickup.skill.Description;
-                    //gets random skill from skillmanagers resource folder 
+                    SkillManager sk = player.GetSkillManager();
+                    SkillObject mod = sk.GetRandomModByChance();
+                    GameObject modObj = sk.SpawnMod(transform.position, mod.name);
+                    //change the color of the mod to the color based on rarity
+                    VFXManager.instance.ChangeColor(modObj, sk.GetColor(mod));
                 }
              
             }

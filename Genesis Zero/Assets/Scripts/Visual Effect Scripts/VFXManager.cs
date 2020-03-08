@@ -79,6 +79,42 @@ public class VFXManager : MonoBehaviour
             }
         }
     }
+    public GameObject ChangeColor(GameObject vfx, Color color)
+    {
+        RecursiveChildColor(vfx.transform, color);
+        return vfx;
+    }
+    public void RecursiveChildColor(Transform t, Color color)
+    {
+        foreach (Transform child in t)
+        {
+            //if the child has a particle system, trail renderer, or mod related shader,  set those values to the desired color
+            if (child.gameObject.GetComponent<ParticleSystem>() != null)
+            {
+                var main = child.gameObject.GetComponent<ParticleSystem>().main;
+                main.startColor = color;
+            }
+            if (child.gameObject.GetComponent<TrailRenderer>() != null)
+            {
+                child.gameObject.GetComponent<TrailRenderer>().startColor = color;
+            }
+            Renderer r = child.gameObject.GetComponent<Renderer>();
+            if (r != null && r.material.HasProperty("_EmissiveColor"))
+            {
+                print("it does have _EmissiveColor..");
+                child.gameObject.GetComponent<Renderer>().material.SetColor("_EmissiveColor", color);
+            }
+            if (r != null && r.material.HasProperty("_ShallowColor"))
+            {
+                print("it does have _EmissiveColor..");
+                child.gameObject.GetComponent<Renderer>().material.SetColor("_ShallowColor", color);
+            }
+            if (child.childCount > 0)
+            {
+                RecursiveChildColor(child, color);
+            }
+        }
+    }
 
     public GameObject PlayEffect(string name, Vector3 position, float delay)
     {

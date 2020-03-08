@@ -577,6 +577,23 @@ public class SkillManager
         }
         return null;
     }
+    public Color GetColor(SkillObject sk)
+    {
+        Color color;
+        switch (sk.Rarity)
+        {
+            case 2:
+                color = new Color(0.618f, 0f, 1f);
+                break;
+            case 3:
+                color = new Color(1, 0.83f, 0);
+                break;
+            default:
+                color = Color.white;
+                break;
+        }
+        return color;
+    }
 
     public bool IsActive()
     {

@@ -22,6 +22,9 @@ public class SkillPickup : MonoBehaviour
         }
         isMod = skill.IsAbility ? false : true;
         target = GameObject.FindGameObjectWithTag("Player");
+        Player player = target.GetComponent<Player>();
+        if (skill != null)
+            VFXManager.instance.ChangeColor(this.gameObject, player.GetSkillManager().GetColor(skill));
     }
 
     // Update is called once per frame

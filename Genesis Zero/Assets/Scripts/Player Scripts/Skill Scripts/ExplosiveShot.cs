@@ -7,8 +7,8 @@ public class ExplosiveShot : MonoBehaviour
 {
     public bool quitting;
     
-    public float baseblastRadius = 5.0f;
-    public float blastRadius = 8.0f;
+    public float baseblastRadius = 3.5f;
+    public float blastRadius = 3.5f;
     public float lerpMultiplier=1;
     public bool inheritOnHitEffects = false;
     //how fast the sphere grows in size
@@ -53,6 +53,7 @@ public class ExplosiveShot : MonoBehaviour
             //AOE AOEscript = runtimeExplosion.GetComponent<AOE>();
             //AOEscript.setScaleTarget(startScale, blastRadius, lerpMultiplier);
             hit.InitializeHitbox(player.GetDamage().GetValue(), player);
+            hit.SetLifeTime(.4f);
             GameObject emit = VFXManager.instance.PlayEffect(vfxName, new Vector3(transform.position.x, transform.position.y, transform.position.z), 0f, blastRadius/baseblastRadius);
             aManager.PlaySoundOneShot(sfxName);
         }

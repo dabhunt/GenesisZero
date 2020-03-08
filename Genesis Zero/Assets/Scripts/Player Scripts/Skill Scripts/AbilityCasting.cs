@@ -303,7 +303,7 @@ public class AbilityCasting : MonoBehaviour
     }
     private void CastMultiShot()
     {
-        player.GetAttackSpeed().AddBonus(player.GetAttackSpeed().GetBaseValue() * MS_AttackSpeedBoost, MS_ActiveTime);
+        //player.GetAttackSpeed().AddBonus(player.GetAttackSpeed().GetBaseValue() * MS_AttackSpeedBoost, MS_ActiveTime);
         print("cast multi shot");
     }
 

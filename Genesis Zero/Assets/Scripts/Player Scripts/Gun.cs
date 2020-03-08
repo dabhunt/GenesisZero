@@ -31,6 +31,8 @@ public class Gun : MonoBehaviour
     public Color stunBulletColor;
     //only reduces it's own, not others by .1
     public float reductionPerStack = .1f;
+    [Header("Atom Splitter (Multishot)")]
+    public float AS_heatMulti = .6f;
 
 
     [Header("Crosshair Spread")]
@@ -87,11 +89,13 @@ public class Gun : MonoBehaviour
         //if you have just atom splitter, it will spawn 1 bullet above and below your gun based on minSpread value
         if (ac.IsAbilityActive("Atom Splitter"))
         {
+            float heatFromExtraBullets = 0; 
             for (int s = 0; s < stacks; s++)
             {
                 for (int i = 0; i < 2; i++)
-                { 
+                {
                     //if it's divisible by 2, then reverse the value of the min offset to go below the gun instead of above
+                    heatFromExtraBullets++;
                     if ((i + 1) % 2 == 0)
                     {
                         spreadAngle *= -1;
@@ -105,6 +109,7 @@ public class Gun : MonoBehaviour
                     
                 }
             }
+            overheat.ModifyHeatPerShot(heatFromExtraBullets*AS_heatMulti);
         }
     }
     private void FixedUpdate() 
@@ -158,7 +163,7 @@ public class Gun : MonoBehaviour
             //if heat is at 0, apply the stun
             if (overheat.GetHeat() <= overheat.GetHeatAddedPerShot())
             {
-                bullet = GetComponent<ChangeColor>().NewColor(bullet, stunBulletColor);
+                bullet =VFXManager.instance.ChangeColor(bullet, stunBulletColor);
                 hit.StunTime = stunDuration;
             }
            

@@ -1,5 +1,17 @@
 %YAML 1.1
 %TAG !u! tag:unity3d.com,2011:
+--- !u!114 &6288315135317393199
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2280710022046471026}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 8842f5724281ef04684255e96cf6fc62, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
 --- !u!1 &2727501474454769957
 GameObject:
   m_ObjectHideFlags: 0
@@ -170,6 +182,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   deactivateDist: 30
   updatesPerSecond: 1.7
+  enemyDistOffset: 5
   tags:
   - Enemy
   - PCGTile
@@ -641,6 +654,12 @@ PrefabInstance:
       objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: d77ad118f51b77d4ea0cecb5287748e4, type: 3}
+--- !u!1 &2280710022046471026 stripped
+GameObject:
+  m_CorrespondingSourceObject: {fileID: 7339903451989431307, guid: d77ad118f51b77d4ea0cecb5287748e4,
+    type: 3}
+  m_PrefabInstance: {fileID: 8825409178311755641}
+  m_PrefabAsset: {fileID: 0}
 --- !u!4 &2280710022046471024 stripped
 Transform:
   m_CorrespondingSourceObject: {fileID: 7339903451989431305, guid: d77ad118f51b77d4ea0cecb5287748e4,

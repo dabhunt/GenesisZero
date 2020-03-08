@@ -47,7 +47,7 @@ public class SkillDisplay : MonoBehaviour
             if (SkillManager.GetAddedSkill() != null)
             {
                 SkillObject s = SkillManager.GetAddedSkill();
-                PopupElement.GetComponent<SkillPopupDisplay>().SetPopup(s.Icon, s.name, s.Description, s.GetColor());
+                PopupElement.GetComponent<SkillPopupDisplay>().SetPopup(s.Icon, s.name, s.Description, SkillManager.GetColor(s));
                 PopupElement.GetComponent<SkillPopupDisplay>().Popup();
                 SkillManager.SetAddedSkill(null);
             }
@@ -78,7 +78,7 @@ public class SkillDisplay : MonoBehaviour
                 instance.transform.parent = transform;
                 instance.transform.localScale = new Vector3(1, 1, 1);
                 instance.GetComponent<SkillUIElement>().SetIcon(skills[i].Icon);
-                instance.GetComponent<SkillUIElement>().SetColor(skills[i].GetColor());
+                instance.GetComponent<SkillUIElement>().SetColor(SkillManager.GetColor(skills[i]));
                 instance.GetComponent<SkillUIElement>().SetStack(SkillManager.GetSkillStack(skills[i].name));
                 instance.GetComponent<SimpleTooltip>().infoLeft = skills[i].Description;
                 skilldisplay.Add(instance);
@@ -90,7 +90,7 @@ public class SkillDisplay : MonoBehaviour
                 abil1.transform.parent = transform;
                 abil1.transform.localScale = new Vector3(1, 1, 1);
                 abil1.GetComponent<SkillUIElement>().SetIcon(skills[i].Icon);
-                abil1.GetComponent<SkillUIElement>().SetColor(skills[i].GetColor());
+                abil1.GetComponent<SkillUIElement>().SetColor(SkillManager.GetColor(skills[i]));
                 abil1.GetComponent<SimpleTooltip>().infoLeft = skills[i].Description;
                 skilldisplay.Add(abil1);
             }
@@ -100,7 +100,7 @@ public class SkillDisplay : MonoBehaviour
                 abil2.transform.parent = transform;
                 abil2.transform.localScale = new Vector3(1, 1, 1);
                 abil2.GetComponent<SkillUIElement>().SetIcon(skills[i].Icon);
-                abil2.GetComponent<SkillUIElement>().SetColor(skills[i].GetColor());
+                abil2.GetComponent<SkillUIElement>().SetColor(SkillManager.GetColor(skills[i]));
                 abil2.GetComponent<SimpleTooltip>().infoLeft = skills[i].Description;
                 skilldisplay.Add(abil2);
             }

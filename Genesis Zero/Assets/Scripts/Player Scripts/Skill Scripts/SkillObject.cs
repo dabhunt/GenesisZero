@@ -31,22 +31,4 @@ public class SkillObject : ScriptableObject
     public float range;
     public float shield;
     public float weight;
-
-    public Color GetColor()
-    {
-        Color color;
-        switch (Rarity)
-        {
-            case 2:
-                color = new Color(0.618f, 0f, 1f);
-                break;
-            case 3:
-                color = new Color(1, 0.83f, 0);
-                break;
-            default:
-                color = Color.white;
-                break;
-        }
-        return color;
-    }
 }
