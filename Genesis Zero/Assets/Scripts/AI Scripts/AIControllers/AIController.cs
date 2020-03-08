@@ -353,11 +353,11 @@ public class AIController : Pawn
         return Vector3.zero;
     }
 
-    public float GetNormalizedAttackTime()
+    public float GetNormalizedChargeTime()
     {
-        if (BehaviorProperties != null && state == AIState.Attack)
+        if (BehaviorProperties != null && state == AIState.Charge)
         {
-            return stateTime / Mathf.Max(0.001f, BehaviorProperties.AttackDuration);
+            return stateTime / Mathf.Max(0.001f, BehaviorProperties.AttackChargeTime);
         }
         return 0.0f;
     }
