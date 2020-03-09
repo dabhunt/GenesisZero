@@ -30,12 +30,6 @@ public class GodHead : MonoBehaviour
     private void Update()
     {
         UpdateUI();
-        InputUpdate();
-        if (Input.GetKeyDown(KeyCode.F))
-        {
-            if (isActive)
-                Interact();
-        }
     }
 
     private void Start()
@@ -50,34 +44,29 @@ public class GodHead : MonoBehaviour
         modObjUI = new List<GameObject>();
         //confirmUI.gameObject.SetActive(false);
     }
-    public void InputInteract(InputAction.CallbackContext ctx)
+    public void Interact(InputAction.CallbackContext ctx)
     {
         if (ctx.performed)
         {
-            Interact();
+            if (!isActive)
+                return;
+
+            //if(inputActions.MenuControls.enabled) return;
+            if (Vector3.Distance(player.transform.position, transform.position) <= activeDistance)
+            {
+                //StateManager.instance.PauseGame();
+                GameInputManager.instance.SwitchControlMap("MenuControls");
+                isActive = true;
+                InitializeUI();
+            }
         }
     }
-    public void Interact()
-    {
-        
-        //if (!inputActions.PlayerControls.enabled == true)
-        //{
-        //    CloseUI();
-        //}
-        if (Vector3.Distance(player.transform.position, transform.position) <= activeDistance)
-        {
-            //StateManager.instance.PauseGame();
-         
-            GameInputManager.instance.SwitchControlMap("MenuControls");
-            isActive = true;
-            InitializeUI();
-        }
-    }
+
     public void Select(InputAction.CallbackContext ctx)
     {
         if (ctx.performed)
         {
-            //UpdateSelect(modSelectNum);
+            
         }
     }
     public void UpdateSelect(int num)
@@ -98,8 +87,6 @@ public class GodHead : MonoBehaviour
             string desc = modObjUI[num].GetComponent<SkillUIElement>().Skill.Description;
             selection.transform.Find("Name").gameObject.GetComponent<Text>().text = name;
             selection.transform.Find("Description").gameObject.GetComponent<Text>().text = desc;
-            
-            
         }
 
         //confirmUI.gameObject.SetActive(true);
@@ -112,36 +99,12 @@ public class GodHead : MonoBehaviour
         skillManager.SpawnAbility(spawnPoint, skillManager.GetRandomAbility().name);
         CloseUI();
     }
-    private void InputUpdate()
-    {
-        //if (!confirmationWindowOpen)
-        //{
-        //    if (moveInput.x > 0)
-        //    {
-        //        modSelectNum++;
-        //    }
-        //    if (moveInput.y > 0)
-        //    {
-        //        if (modSelectNum != -1)
-        //        {
-        //            modSelectNum = 1;
-        //        }
-        //    }
-        //    if (moveInput.x < 0)
-        //    {
-        //        modSelectNum--;
-        //    }
-        //    if (moveInput.y < 0)
-        //    {
-        //        modSelectNum = -1;
-        //    }
-        //    Mathf.Clamp(modSelectNum, 0, 2);
-        //}
-    }
 
     private void UpdateUI()
     {
         if (!isActive) return;
+
+        
 
     }
 
@@ -154,6 +117,7 @@ public class GodHead : MonoBehaviour
         List<SkillObject> modSkills = skillManager.GetRandomModsFromPlayer(3);
         Vector2 screenPos;
         Vector2 headScreenPos;
+
         if (modSkills.Count > 0)
         {
             int num = 0;
@@ -182,15 +146,12 @@ public class GodHead : MonoBehaviour
         //confirmUI.anchoredPosition = screenPos;
         //sets default selection to position 0
         UpdateSelect(0);
-
     }
     public void CloseUI()
     {
         isActive = false;
-        //foreach (RectTransform child in sacModObjs.transform)
-        //{
-        //    child.gameObject.SetActive(false);
-        //}
+        foreach (RectTransform child in sacModObjs.transform) 
+            child.gameObject.SetActive(false);
         sacUI.gameObject.SetActive(false);
         //StateManager.instance.UnpauseGame();
         modSelectNum = -1;
