@@ -13,6 +13,8 @@ public class SkillObject : ScriptableObject
 
     [TextArea]
     public string Description;
+    [TextArea]
+    public string SimpleDescription;
 
     public bool IsAbility;
     [Tooltip("0 - Ability, 1 - White, 2 - Green, 3 - Gold")]
