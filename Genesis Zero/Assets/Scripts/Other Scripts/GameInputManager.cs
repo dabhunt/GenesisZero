@@ -7,7 +7,7 @@ public class GameInputManager : MonoBehaviour
 {
     public static GameInputManager instance;
     private GameInputActions inputActions;
-    private InputActionAsset actionMaps;
+    private InputActionAsset actionAsset;
     private void Awake() 
     {
         if (instance == null)
@@ -18,7 +18,8 @@ public class GameInputManager : MonoBehaviour
             return;
         }
         inputActions = new GameInputActions();
-        actionMaps = inputActions.GetInputActionAsset();
+        actionAsset = inputActions.GetInputActionAsset();
+        //inputActions.MenuControls.Disable();
     }
 
     private void OnDisable() 
@@ -40,17 +41,18 @@ public class GameInputManager : MonoBehaviour
     //this function was not working as intended, I disabled it - David
     public void SwitchControlMap(string name)
     {
-        Debug.Log("SwitchingControlMap to " + actionMaps.name);
+        Debug.Log("SwitchingControlMap to " + name);
 
-        actionMaps.FindActionMap(name);
-        //print("actionMap.name=" +actionMap.name);
-        //if (actionMap.name == name)
-        //{
-        //    actionMap.Enable();
-        //}
-        //else
-        //{
-        //    actionMap.Disable();
-        //}
+        foreach (var map in actionAsset.actionMaps)
+        {
+            if (map.name == name)
+            {
+                actionAsset.FindActionMap(map.name).Enable();
+            }
+            else
+            {
+                actionAsset.FindActionMap(map.name).Disable();
+            }
+        }
     }
 }
