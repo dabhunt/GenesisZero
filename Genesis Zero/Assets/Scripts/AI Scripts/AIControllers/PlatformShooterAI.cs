@@ -75,6 +75,8 @@ public class PlatformShooterAI : AIController
         base.FixedUpdate();
         if (Target == null) { return; }
 
+        float slopeForceFactor = Vector3.Dot(groundNormal, Vector3.left * faceDir) + 1.0f; // Adjust movement force based on slope steepness
+
         if (state == AIState.Follow || state == AIState.Charge || state == AIState.Attack || state == AIState.Cooldown)
         {
             faceDirPrev = faceDir;
@@ -98,7 +100,7 @@ public class PlatformShooterAI : AIController
 
                 if (edgeBehind)
                 {
-                    frb.Accelerate(Mathf.Sign(transform.position.x - targetPosition.x) * Vector3.right * Mathf.Min(GetAvoidCloseness(), AvoidAccelLimit) * Acceleration * AvoidAmount); // Acceleration to keep away from the target
+                    frb.Accelerate(Mathf.Sign(transform.position.x - targetPosition.x) * Vector3.right * Mathf.Min(GetAvoidCloseness(), AvoidAccelLimit) * Acceleration * AvoidAmount * slopeForceFactor); // Acceleration to keep away from the target
                 }
             }
         }
@@ -114,11 +116,15 @@ public class PlatformShooterAI : AIController
         else if (state == AIState.Idle)
         {
             targetSpeed = 0.0f;
+            if (isGrounded)
+            {
+                frb.Accelerate(-frb.GetVelocity() * 50f * slopeForceFactor);
+            }
         }
         faceDirChangeTime += Time.fixedDeltaTime;
 
         targetSpeed *= GetSpeed().GetValue();
-        frb.Accelerate(Vector3.right * (targetSpeed * faceDir - frb.GetVelocity().x) * Acceleration); // Accelerate toward the target
+        frb.Accelerate(Vector3.right * (targetSpeed * faceDir - frb.GetVelocity().x) * Acceleration * slopeForceFactor); // Accelerate toward the target
 
         // Smoothly rotate to face target
         lookAngle = Mathf.Lerp(lookAngle, -faceDir * Mathf.PI * 0.5f + Mathf.PI * 0.5f, rotateRate * Time.fixedDeltaTime);
@@ -164,7 +170,8 @@ public class PlatformShooterAI : AIController
                 attackLaunchTime = AttackLaunchInterval;
                 if (AttackProjectile != null)
                 {
-                    GameObject spawnedProjectile = Instantiate(AttackProjectile, transform.position + new Vector3(ProjectileStart.x * faceDir, ProjectileStart.y, ProjectileStart.z), Quaternion.LookRotation(Vector3.forward, (Target.position - transform.position).normalized));
+                    GameObject spawnedProjectile = Instantiate(AttackProjectile, transform.position + new Vector3(ProjectileStart.x * faceDir, ProjectileStart.y, ProjectileStart.z),
+                        Quaternion.LookRotation(Vector3.forward, (Target.position - transform.position - new Vector3(ProjectileStart.x * faceDir, ProjectileStart.y, ProjectileStart.z)).normalized));
                     Hitbox spawnedHitbox = spawnedProjectile.GetComponent<Hitbox>();
                     if (spawnedHitbox != null)
                     {
@@ -195,7 +202,9 @@ public class PlatformShooterAI : AIController
     protected override void GroundCheck()
     {
         Ray groundRay = new Ray(transform.position + Vector3.up * groundCheckStartHeight, Vector3.down);
-        isGrounded = Physics.SphereCast(groundRay, groundCheckRadius, groundCheckDistance, groundCheckMask, QueryTriggerInteraction.Ignore);
+        RaycastHit hit = new RaycastHit();
+        isGrounded = Physics.SphereCast(groundRay, groundCheckRadius, out hit, groundCheckDistance, groundCheckMask, QueryTriggerInteraction.Ignore);
+        groundNormal = isGrounded ? hit.normal : Vector3.up;
         Ray forwardRay = new Ray(trueOrigin, new Vector3(ForwardEdgeRay.x * faceDir, ForwardEdgeRay.y, ForwardEdgeRay.z));
         Ray backRay = new Ray(trueOrigin, new Vector3(BackEdgeRay.x * faceDir, BackEdgeRay.y, BackEdgeRay.z));
         edgeInFront = Physics.Raycast(forwardRay, ForwardEdgeRay.magnitude, groundCheckMask, QueryTriggerInteraction.Ignore);

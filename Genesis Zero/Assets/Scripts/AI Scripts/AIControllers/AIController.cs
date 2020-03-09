@@ -17,6 +17,7 @@ public class AIController : Pawn
     public float IdlePatrolIntervalMax = 2.0f; // Maximum time interval for switching between idling and patrolling
     private float idlePatrolIntervalCurrent = 1.0f; // Randomly chosen interval in range
     protected bool isGrounded = false;
+    protected Vector3 groundNormal = Vector3.zero;
     public Vector3 Origin;
     protected Vector3 trueOrigin = Vector3.zero;
 
@@ -255,6 +256,7 @@ public class AIController : Pawn
     protected virtual void GroundCheck()
     {
         isGrounded = false;
+        groundNormal = Vector3.zero;
     }
 
     /**
