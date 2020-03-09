@@ -67,7 +67,7 @@ public class GodHead : MonoBehaviour
         if (Vector3.Distance(player.transform.position, transform.position) <= activeDistance)
         {
             //StateManager.instance.PauseGame();
-            print("switching");
+         
             GameInputManager.instance.SwitchControlMap("MenuControls");
             isActive = true;
             InitializeUI();
@@ -83,7 +83,6 @@ public class GodHead : MonoBehaviour
     public void UpdateSelect(int num)
     {
         //will add a confirmation window later
-        print("how many times does this run? better be once");
         if (modSelectNum == num)
         {
             //FinalConfirmSelection();
@@ -95,8 +94,6 @@ public class GodHead : MonoBehaviour
             //move the selection sprite to the right
             selection.transform.localPosition = new Vector3((157f * num)-selectionOffset, selection.transform.localPosition.y, selection.transform.localPosition.z);
             //name = selection.gameObject.transform.Find("Name").gameObject;
-            if (modObjUI[num].GetComponent<SkillUIElement>().Skill.name == null)
-            { print("it's null value for the name"); }
             string name = modObjUI[num].GetComponent<SkillUIElement>().Skill.name;
             string desc = modObjUI[num].GetComponent<SkillUIElement>().Skill.Description;
             selection.transform.Find("Name").gameObject.GetComponent<Text>().text = name;
@@ -109,7 +106,6 @@ public class GodHead : MonoBehaviour
     }
     public void FinalConfirmSelection()
     {
-        print("Finalconfirmselction");
         SkillObject skill = modObjUI[modSelectNum].GetComponent<SkillUIElement>().Skill;
         skillManager.RemoveSkill(skill);
         Vector3 spawnPoint = new Vector3(transform.position.x, transform.position.y + 2, 0);
@@ -179,7 +175,7 @@ public class GodHead : MonoBehaviour
         {
             //Maybe have a message saying that you got no skills right now
         }
-        headScreenPos = canvasRef.worldCamera.WorldToScreenPoint(new Vector3(player.transform.position.x, player.transform.position.y, 0));
+        headScreenPos = canvasRef.worldCamera.WorldToScreenPoint(new Vector3(player.transform.position.x, player.transform.position.y+1.5f, 0));
         RectTransformUtility.ScreenPointToLocalPointInRectangle(canvasRef.transform as RectTransform, headScreenPos, canvasRef.worldCamera, out screenPos);
         sacUI.anchoredPosition = screenPos;
         
