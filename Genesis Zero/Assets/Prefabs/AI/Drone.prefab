@@ -6019,7 +6019,6 @@ MonoBehaviour:
   StateChangeEvent:
     m_PersistentCalls:
       m_Calls: []
-  TrackGiveUpTime: 10
   RotationRate: 10
   MoveSpeed: 8
   Acceleration: 5
@@ -6034,6 +6033,12 @@ MonoBehaviour:
   AttackProjectile: {fileID: 6641631083453567850, guid: 1b5e9b6d2186b0a499598904343c6fea,
     type: 3}
   AttackLaunchInterval: 0.2
+  WallCheckCasts: 6
+  WallCheckDistance: 2
+  WallMask:
+    serializedVersion: 2
+    m_Bits: 1
+  WallAvoidForce: 30
 --- !u!114 &2037691598
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -6050,6 +6055,7 @@ MonoBehaviour:
   MaxPoints: 30
   TrackInterval: 0.1
   AutoDequeueDistance: 3
+  TrackGiveUpTime: 10
 --- !u!54 &1692614117
 Rigidbody:
   m_ObjectHideFlags: 0

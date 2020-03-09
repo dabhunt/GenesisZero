@@ -5164,23 +5164,28 @@ MonoBehaviour:
   StateChangeEvent:
     m_PersistentCalls:
       m_Calls: []
-  TrackGiveUpTime: 10
   RotationRate: 10
   MoveSpeed: 7
   Acceleration: 5
   SideDecel: 2
   AvoidAmount: 6
   AvoidAccelLimit: 1.5
+  PatrolSpeed: 1
+  PatrolRotateRate: 30
   vfxName: VFX_ExplosionEnemy
   blastRadius: 4
   lerpMultiplier: 2.3
   startScale: 0.01
-  PatrolSpeed: 1
-  PatrolRotateRate: 30
   chargeParticles: {fileID: 8686154435648022828}
   attackParticles: {fileID: 2000804235089814667}
   explosionPrefab: {fileID: 6641631083453567850, guid: e7f154a9fc29bcb429ca9d7203da43ec,
     type: 3}
+  WallCheckCasts: 6
+  WallCheckDistance: 2
+  WallMask:
+    serializedVersion: 2
+    m_Bits: 1
+  WallAvoidForce: 30
 --- !u!114 &2037691598
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -5197,6 +5202,7 @@ MonoBehaviour:
   MaxPoints: 20
   TrackInterval: 0.1
   AutoDequeueDistance: 3
+  TrackGiveUpTime: 10
 --- !u!114 &6912679872711996446
 MonoBehaviour:
   m_ObjectHideFlags: 0
