@@ -16,7 +16,7 @@ public class SkillUIElement : MonoBehaviour
     // Start is called before the first frame update
     void Start()
     {
-        if (GetComponent<Image>())
+        if (GetComponent<Image>() && Icon != null)
         {
             GetComponent<Image>().sprite = Icon.sprite;
         }
@@ -37,8 +37,6 @@ public class SkillUIElement : MonoBehaviour
             GetComponentInChildren<Text>().text = "";
         }
         Skill = skill;
-        
-        
     }
     public void SetStack(int num)
     {
