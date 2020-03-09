@@ -11,6 +11,7 @@ public class PlatformShooterAI : AIController
 {
     protected FakeRigidbody frb;
 
+    [Header("Movement")]
     public float MoveSpeed = 10f; // Maximum movement speed
     private float targetSpeed = 0.0f;
     public float Acceleration = 5.0f; // Rate of acceleration
@@ -27,9 +28,7 @@ public class PlatformShooterAI : AIController
     public float rotateRate = 1.0f;
     public float MaxFollowHeight = 5.0f; // Maximum height above the enemy for which the target will be tracked after going out of sight
 
-    public ParticleSystem chargeParticles;
-    public ParticleSystem attackParticles;
-
+    [Header("Ground Checking")]
     public float groundCheckDistance = 1.0f;
     public float groundCheckStartHeight = 0.0f;
     public float groundCheckRadius = 0.5f;
@@ -39,6 +38,9 @@ public class PlatformShooterAI : AIController
     private bool edgeBehind = false;
     public LayerMask groundCheckMask;
 
+    [Header("Attack")]
+    public ParticleSystem chargeParticles;
+    public ParticleSystem attackParticles;
     public GameObject AttackProjectile;
     public float AttackLaunchInterval = 1.0f;
     private float attackLaunchTime = 0.0f;

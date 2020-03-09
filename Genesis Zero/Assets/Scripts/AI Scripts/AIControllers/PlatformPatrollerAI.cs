@@ -11,6 +11,7 @@ public class PlatformPatrollerAI : AIController
 {
     protected FakeRigidbody frb;
 
+    [Header("Movement")]
     public float MoveSpeed = 10f; // Maximum movement speed
     public float LungeSpeed = 20f; // Lunging attack speed
     public float JumpSpeed = 10f; // Vertical jump speed for lunge attack
@@ -27,6 +28,7 @@ public class PlatformPatrollerAI : AIController
     public float rotateRate = 1.0f;
     public float MaxFollowHeight = 5.0f; // Maximum height above the enemy for which the target will be tracked after going out of sight
 
+    [Header("Ground Checking")]
     public float groundCheckDistance = 1.0f;
     public float groundCheckStartHeight = 0.0f;
     public float groundCheckRadius = 0.5f;
@@ -35,6 +37,7 @@ public class PlatformPatrollerAI : AIController
     private bool edgeInFront = false;
     public LayerMask groundCheckMask;
 
+    [Header("Attack")]
     public ParticleSystem chargeParticles;
     public ParticleSystem attackParticles;
     public GameObject AttackHitbox;

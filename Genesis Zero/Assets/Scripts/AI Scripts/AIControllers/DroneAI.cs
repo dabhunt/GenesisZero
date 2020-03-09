@@ -12,6 +12,7 @@ public class DroneAI : AIController
     protected FakeRigidbody frb;
 
     private Vector3 lookDir = Vector3.up;
+    [Header("Movement")]
     public float RotationRate = 10f; // How fast to rotate
     public float MoveSpeed = 10f; // Maximum movement speed
     private float targetSpeed = 0.0f;
@@ -25,6 +26,7 @@ public class DroneAI : AIController
     public float PatrolRotateRate = 1.0f; // Rotation rate while patrolling
     private int patrolDir = 1;
 
+    [Header("Attack")]
     public ParticleSystem chargeParticles;
     public ParticleSystem attackParticles;
 

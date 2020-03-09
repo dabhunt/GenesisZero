@@ -12,6 +12,7 @@ public class DroneExploderAI : AIController
     protected FakeRigidbody frb;
 
     private Vector3 lookDir = Vector3.up;
+    [Header("Movement")]
     public float RotationRate = 10f; // How fast to rotate
     public float MoveSpeed = 10f; // Maximum movement speed
     private float targetSpeed = 0.0f;
@@ -20,15 +21,17 @@ public class DroneExploderAI : AIController
     public float AvoidAmount = 1.0f; // How much to accelerate away from the target
     public float AvoidAccelLimit = 1.0f; // Limit on avoidance acceleration
 
+    public float PatrolSpeed = 5.0f; // Movement speed while patrolling
+    public float PatrolRotateRate = 1.0f; // Rotation rate while patrolling
+    private int patrolDir = 1;
+
+    [Header("Effects")]
     public string vfxName = "VFX_Explosion";
     public float blastRadius = 5f;
     public float lerpMultiplier = 2.3f;
     public float startScale=.01f;
 
-    public float PatrolSpeed = 5.0f; // Movement speed while patrolling
-    public float PatrolRotateRate = 1.0f; // Rotation rate while patrolling
-    private int patrolDir = 1;
-
+    [Header("Attack")]
     public ParticleSystem chargeParticles;
     public ParticleSystem attackParticles;
     public GameObject explosionPrefab;
