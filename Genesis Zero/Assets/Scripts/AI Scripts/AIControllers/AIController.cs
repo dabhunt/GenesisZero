@@ -33,7 +33,6 @@ public class AIController : Pawn
     public AIStateEvent StateChangeEvent; // Invoked whenever the state is changed and passes in the new state to called methods
 
     protected ObjectTracker tracker;
-    //private float trackFollowTime = 0.0f;
 
     new protected void Start()
     {
@@ -132,9 +131,8 @@ public class AIController : Pawn
         {
             alertTrackTime = 0.0f;
         }
-
-        //Debug.Log(trackFollowTime);
     }
+
     /**
      * Returns the current state of the AI
      */
@@ -352,13 +350,14 @@ public class AIController : Pawn
         else if (tracker != null)
         {
             alertTracking = false;
-            //trackFollowTime += Time.fixedDeltaTime;
             return tracker.PeekFirstPoint();
         }
-        //trackFollowTime = 0.0f;
         return Vector3.zero;
     }
-
+    
+    /**
+     * Returns the normalized progress of charging before an attack
+     */
     public float GetNormalizedChargeTime()
     {
         if (BehaviorProperties != null && state == AIState.Charge)

@@ -63,7 +63,9 @@ public class PlatformPatrollerAI : AIController
         base.SetTarget(tr);
         if (Target != null && tracker != null)
         {
-            tracker.GiveUpCondition = () => { return tracker.PeekFirstPoint().y > transform.position.y + MaxFollowHeight; };
+            tracker.GiveUpCondition = () => {
+                return tracker.PeekFirstPoint().y > transform.position.y + MaxFollowHeight;
+            };
         }
     }
 
