@@ -1,28 +1,30 @@
 ﻿using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.InputSystem;
+using UnityEngine.UI;
 
 public class GodHead : MonoBehaviour
 {
     public float activeDistance = 5.0f;
     public int modsToChooseFrom = 3;
+    public float selectionOffset = -157f;
     private GameObject player;
     private GameInputActions inputActions;
     private Vector2 moveInput;
     private float selectInput;
     private float interactInput;
     private RectTransform sacUI;
+    private GameObject selection;
     //private RectTransform confirmUI;
     private GameObject sacModObjs;
-    private GameObject selection;
     private Canvas canvasRef;
     private SkillManager skillManager;
-    public List<GameObject> modObjUI;
+    private List<GameObject> modObjUI;
     //private SkillUIElement skillUIElement;
-    private bool isActive = false;
-    private bool confirmationWindowOpen = false;
+    private bool isActive = true;
+    //private bool confirmationWindowOpen = false;
     //change to private later below this point
-    public int modSelectNum;
+    private int modSelectNum = -1;
     //public List<SkillObject> modSkills;
 
     private void Update()
@@ -31,7 +33,8 @@ public class GodHead : MonoBehaviour
         InputUpdate();
         if (Input.GetKeyDown(KeyCode.F))
         {
-            Interact();
+            if (isActive)
+                Interact();
         }
     }
 
@@ -43,6 +46,8 @@ public class GodHead : MonoBehaviour
         inputActions.PlayerControls.Interact.performed += ctx => interactInput = ctx.ReadValue<float>();
         skillManager = player.GetComponent<Player>().GetSkillManager();
         canvasRef = GameObject.FindGameObjectWithTag("CanvasUI").GetComponent<Canvas>();
+        modSelectNum = -1;
+        modObjUI = new List<GameObject>();
         //confirmUI.gameObject.SetActive(false);
     }
     public void InputInteract(InputAction.CallbackContext ctx)
@@ -54,34 +59,50 @@ public class GodHead : MonoBehaviour
     }
     public void Interact()
     {
-        print("interact running");
-        if (!inputActions.PlayerControls.enabled == true) return;
+        
+        //if (!inputActions.PlayerControls.enabled == true)
+        //{
+        //    CloseUI();
+        //}
         if (Vector3.Distance(player.transform.position, transform.position) <= activeDistance)
         {
             //StateManager.instance.PauseGame();
             print("switching");
             GameInputManager.instance.SwitchControlMap("MenuControls");
-            InitializeUI();
             isActive = true;
+            InitializeUI();
         }
     }
     public void Select(InputAction.CallbackContext ctx)
     {
         if (ctx.performed)
         {
-            UpdateSelect(modSelectNum);
+            //UpdateSelect(modSelectNum);
         }
     }
     public void UpdateSelect(int num)
     {
         //will add a confirmation window later
+        print("how many times does this run? better be once");
         if (modSelectNum == num)
         {
-            FinalConfirmSelection();
+            //FinalConfirmSelection();
         }
         else
         {
-            selection.transform.position = new Vector3(157f * modSelectNum, selection.transform.position.y, selection.transform.position.z);
+            modSelectNum = num;
+            selection = GameObject.FindGameObjectWithTag("Selection");
+            //move the selection sprite to the right
+            selection.transform.localPosition = new Vector3((157f * num)-selectionOffset, selection.transform.localPosition.y, selection.transform.localPosition.z);
+            //name = selection.gameObject.transform.Find("Name").gameObject;
+            if (modObjUI[num].GetComponent<SkillUIElement>().Skill.name == null)
+            { print("it's null value for the name"); }
+            string name = modObjUI[num].GetComponent<SkillUIElement>().Skill.name;
+            string desc = modObjUI[num].GetComponent<SkillUIElement>().Skill.Description;
+            selection.transform.Find("Name").gameObject.GetComponent<Text>().text = name;
+            selection.transform.Find("Description").gameObject.GetComponent<Text>().text = desc;
+            
+            
         }
 
         //confirmUI.gameObject.SetActive(true);
@@ -97,29 +118,29 @@ public class GodHead : MonoBehaviour
     }
     private void InputUpdate()
     {
-        if (!confirmationWindowOpen)
-        {
-            if (moveInput.x > 0)
-            {
-                modSelectNum++;
-            }
-            if (moveInput.y > 0)
-            {
-                if (modSelectNum != -1)
-                {
-                    modSelectNum = 1;
-                }
-            }
-            if (moveInput.x < 0)
-            {
-                modSelectNum--;
-            }
-            if (moveInput.y < 0)
-            {
-                modSelectNum = -1;
-            }
-            Mathf.Clamp(modSelectNum, 0, 2);
-        }
+        //if (!confirmationWindowOpen)
+        //{
+        //    if (moveInput.x > 0)
+        //    {
+        //        modSelectNum++;
+        //    }
+        //    if (moveInput.y > 0)
+        //    {
+        //        if (modSelectNum != -1)
+        //        {
+        //            modSelectNum = 1;
+        //        }
+        //    }
+        //    if (moveInput.x < 0)
+        //    {
+        //        modSelectNum--;
+        //    }
+        //    if (moveInput.y < 0)
+        //    {
+        //        modSelectNum = -1;
+        //    }
+        //    Mathf.Clamp(modSelectNum, 0, 2);
+        //}
     }
 
     private void UpdateUI()
@@ -132,7 +153,8 @@ public class GodHead : MonoBehaviour
     {
         sacUI = (RectTransform) canvasRef.transform.Find("SacrificeUI");
         sacModObjs = sacUI.gameObject.transform.Find("SacMods").gameObject;
-        selection = sacModObjs.gameObject.transform.Find("Selection").gameObject;
+        sacUI.gameObject.SetActive(true);
+        
         List<SkillObject> modSkills = skillManager.GetRandomModsFromPlayer(3);
         Vector2 screenPos;
         Vector2 headScreenPos;
@@ -143,16 +165,13 @@ public class GodHead : MonoBehaviour
             {
                 if (child.gameObject.GetComponent<SkillUIElement>() != null && num < modsToChooseFrom && num < modSkills.Count)
                 {
-                    print("skillManager.GetColor(modSkills[num])" + skillManager.GetColor(modSkills[num]));
-                    child.gameObject.GetComponent<SkillUIElement>().SetIcon(modSkills[num].Icon);
-                    child.gameObject.GetComponent<SkillUIElement>().SetColor(skillManager.GetColor(modSkills[num]));
                     child.gameObject.SetActive(true);
+
+                    child.gameObject.GetComponent<SkillUIElement>().SetIcon(modSkills[num].Icon);
+                    child.gameObject.GetComponent<SkillUIElement>().SetSkill(modSkills[num]);
+                    child.gameObject.GetComponent<SkillUIElement>().SetColor(skillManager.GetColor(modSkills[num]));
                     modObjUI.Add(child.gameObject);
                     num++;
-                }
-                else
-                {
-                    break;
                 }
             }
         }
@@ -163,18 +182,22 @@ public class GodHead : MonoBehaviour
         headScreenPos = canvasRef.worldCamera.WorldToScreenPoint(new Vector3(player.transform.position.x, player.transform.position.y, 0));
         RectTransformUtility.ScreenPointToLocalPointInRectangle(canvasRef.transform as RectTransform, headScreenPos, canvasRef.worldCamera, out screenPos);
         sacUI.anchoredPosition = screenPos;
+        
         //confirmUI.anchoredPosition = screenPos;
-        sacUI.gameObject.SetActive(true);
+        //sets default selection to position 0
+        UpdateSelect(0);
+
     }
-    private void CloseUI()
+    public void CloseUI()
     {
         isActive = false;
-        foreach (RectTransform child in sacModObjs.transform)
-        {
-            child.gameObject.SetActive(false);
-        }
+        //foreach (RectTransform child in sacModObjs.transform)
+        //{
+        //    child.gameObject.SetActive(false);
+        //}
         sacUI.gameObject.SetActive(false);
         //StateManager.instance.UnpauseGame();
+        modSelectNum = -1;
         GameInputManager.instance.SwitchControlMap("PlayerControls");
     }
 }

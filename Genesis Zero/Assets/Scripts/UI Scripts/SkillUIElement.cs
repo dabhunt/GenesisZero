@@ -34,7 +34,8 @@ public class SkillUIElement : MonoBehaviour
         }
         else
         {
-            GetComponentInChildren<Text>().text = "";
+           if (GetComponentInChildren<Text>() != null)
+                GetComponentInChildren<Text>().text = "";
         }
         Skill = skill;
     }
@@ -57,6 +58,6 @@ public class SkillUIElement : MonoBehaviour
     }
     public void SetSkill(SkillObject skill)
     {
-        UpdateSkillUIElement(Icon.sprite, StackNumber, Skill, iColor);
+        UpdateSkillUIElement(Icon.sprite, StackNumber,skill, iColor);
     }
 }

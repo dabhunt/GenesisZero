@@ -37,19 +37,20 @@ public class GameInputManager : MonoBehaviour
     }
 
     //This switches the control map to the one with "name" as its name
+    //this function was not working as intended, I disabled it - David
     public void SwitchControlMap(string name)
     {
-        Debug.Log("SwitchingControlMap");
-        foreach (var actionMap in actionMaps)
-        {
-            if (actionMap.name == name)
-            {
-                actionMap.Enable();
-            }
-            else
-            {
-                actionMap.Disable();
-            }
-        }
+        Debug.Log("SwitchingControlMap to " + actionMaps.name);
+
+        actionMaps.FindActionMap(name);
+        //print("actionMap.name=" +actionMap.name);
+        //if (actionMap.name == name)
+        //{
+        //    actionMap.Enable();
+        //}
+        //else
+        //{
+        //    actionMap.Disable();
+        //}
     }
 }
