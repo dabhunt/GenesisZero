@@ -27,7 +27,7 @@ Transform:
   m_GameObject: {fileID: 5035244238239286246}
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
   m_LocalPosition: {x: 0, y: 0, z: 0}
-  m_LocalScale: {x: 2, y: 2, z: 2}
+  m_LocalScale: {x: 4, y: 4, z: 4}
   m_Children: []
   m_Father: {fileID: 7446024088350224067}
   m_RootOrder: 0
@@ -142,12 +142,12 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 1e7773cfab260d141aad2bd82731dee2, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  Damage: 20
+  Damage: 10
   Critical: 0
   HurtsAllies: 0
   HurtsEnemies: 1
   Intangible: 1
-  MaxHits: 99
+  MaxHits: 3
   Knockbackforce: 3
   DirectionalKnockback: 0
   StunTime: 0
@@ -155,7 +155,7 @@ MonoBehaviour:
   Burn: {x: 0, y: 0}
   Collider: {fileID: -5625754253452083393}
   Source: {fileID: 0}
-  hitEffectVFX: 0
+  hitEffectVFX: 
   VFX_ScaleReduction: 15
 --- !u!135 &-5625754253452083393
 SphereCollider:
@@ -168,7 +168,7 @@ SphereCollider:
   m_IsTrigger: 1
   m_Enabled: 1
   serializedVersion: 2
-  m_Radius: 1
+  m_Radius: 2
   m_Center: {x: 0, y: 0, z: 0}
 --- !u!114 &-7698120187089560635
 MonoBehaviour:

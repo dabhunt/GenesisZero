@@ -35,7 +35,12 @@ public class EmitOnDestroy : MonoBehaviour
             {
                 if (g)
                 {
-                    GameObject emit = (GameObject)Instantiate(g, transform.position, Quaternion.identity);
+                    try
+                    {
+                        GameObject emit = (GameObject)Instantiate(g, transform.position, Quaternion.identity);
+                    }
+                    catch { }
+
                 }
             }
         }

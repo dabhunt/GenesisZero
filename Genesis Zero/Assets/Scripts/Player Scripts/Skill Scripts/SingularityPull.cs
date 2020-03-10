@@ -4,9 +4,11 @@ using UnityEngine;
 
 public class SingularityPull : MonoBehaviour
 {
+    private List<GameObject> PulledTargets;
     // Start is called before the first frame update
     void Start()
     {
+        PulledTargets = new List<GameObject>();
         Collider[] collisions = null;
         if (GetComponent<SphereCollider>())
         {
@@ -20,10 +22,18 @@ public class SingularityPull : MonoBehaviour
                 float distance = Vector2.Distance(p.transform.position, transform.position);
                 float radius = 3;
                 float force = 10 * (distance / radius);
-                p.KnockBack(transform.position - p.transform.position, force);
+                p.KnockBack((transform.position - p.transform.position) + Vector3.up/2, force);
                 p.GetStunnedStatus().AddTime(1);
-                Debug.Log("Pulled");
+                PulledTargets.Add(col.gameObject);
             }
+        }
+    }
+
+    private void FixedUpdate()
+    {
+        foreach (GameObject g in PulledTargets)
+        {
+            g.transform.position = Vector2.Lerp(g.transform.position, transform.position, Time.fixedDeltaTime);
         }
     }
 }
