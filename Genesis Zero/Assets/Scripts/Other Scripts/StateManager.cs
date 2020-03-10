@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.SceneManagement;
+using UnityEngine.Rendering.PostProcessing;
 
 public class StateManager : MonoBehaviour
 {
@@ -11,6 +12,7 @@ public class StateManager : MonoBehaviour
     private float Timer = 0;
     private bool IsPaused;
     private Restart restart;
+
 
     private void Awake()
     {

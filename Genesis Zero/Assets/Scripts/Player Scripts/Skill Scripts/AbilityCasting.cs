@@ -11,7 +11,7 @@ public class AbilityCasting : MonoBehaviour
 
     [Header("Time Dilation Ability")]
     public float timeScale = .5f;
-    public float effectDuration = 3.2f;
+    public float TS_effectDuration = 3.2f;
     [Header("Multi Shot Ability (Active)")]
     //how long the effect lasts
     public float MS_ActiveTime;
@@ -290,7 +290,8 @@ public class AbilityCasting : MonoBehaviour
 
     private void CastSlowDown()
     {
-        StateManager.instance.ChangeTimeScale(timeScale, effectDuration);
+        StateManager.instance.ChangeTimeScale(timeScale, TS_effectDuration);
+        VFXManager.instance.TimeEffect(TS_effectDuration, 1);
     }
 
     private void CastSpartanLaser()
