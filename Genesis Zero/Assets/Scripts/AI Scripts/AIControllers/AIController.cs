@@ -308,7 +308,8 @@ public class AIController : Pawn
             {
                 Vector3 toTarget = Target.position - trueOrigin;
                 RaycastHit[] sightHits = new RaycastHit[BehaviorProperties.MaxSightCastHits];
-                if (Physics.RaycastNonAlloc(trueOrigin, toTarget.normalized, sightHits, toTarget.magnitude, BehaviorProperties.SightMask, QueryTriggerInteraction.Ignore) > 0)
+                //if (Physics.RaycastNonAlloc(trueOrigin, toTarget.normalized, sightHits, toTarget.magnitude, BehaviorProperties.SightMask, QueryTriggerInteraction.Ignore) > 0)
+                if (Physics.SphereCastNonAlloc(trueOrigin, 0.1f, toTarget.normalized, sightHits, toTarget.magnitude, BehaviorProperties.SightMask, QueryTriggerInteraction.Ignore) > 0)
                 {
                     for (int i = 0; i < sightHits.Length; i++)
                     {
