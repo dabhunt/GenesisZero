@@ -26,7 +26,7 @@ public class Gun : MonoBehaviour
     public float burnTime = 3f;
     [Header("6. Hardware Exploit")]
     //in seconds
-    public float stunDuration = .4f;
+    public float stunDuration = .1f;
     public float exploitCoolDelay = .6f;
     public Color stunBulletColor;
     //only reduces it's own, not others by .1
@@ -160,13 +160,8 @@ public class Gun : MonoBehaviour
             float reduction = player.GetSkillStack("Hardware Exploit") * reductionPerStack;
             float delay = exploitCoolDelay - reduction;
             totalCoolDelay += exploitCoolDelay;
-            //if heat is at 0, apply the stun
-            if (overheat.GetHeat() <= overheat.GetHeatAddedPerShot())
-            {
-                bullet =VFXManager.instance.ChangeColor(bullet, stunBulletColor);
-                hit.StunTime = stunDuration;
-            }
-           
+            bullet =VFXManager.instance.ChangeColor(bullet, stunBulletColor);
+            hit.StunTime = stunDuration;
         }
         //modifycooldelay needs a multiplier, so 1 + whatever delays there are
         overheat.ModifyCoolDelay(1+totalCoolDelay);

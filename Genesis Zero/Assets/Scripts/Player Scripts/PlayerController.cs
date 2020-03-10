@@ -570,6 +570,8 @@ public class PlayerController : MonoBehaviour
     private void AnimStateUpdate()
     {
         float xSpeed = GetCurrentSpeed();
+        if (isFacingRight != isAimingRight)
+            xSpeed *= -1;
         float ySpeed = vertVel;
 
         animator.SetFloat("xSpeed", xSpeed);
