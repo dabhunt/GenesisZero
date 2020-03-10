@@ -5035,7 +5035,6 @@ MonoBehaviour:
   StateChangeEvent:
     m_PersistentCalls:
       m_Calls: []
-  TrackGiveUpTime: 10
   MoveSpeed: 10
   Acceleration: 5
   AvoidAmount: 6
@@ -5044,8 +5043,6 @@ MonoBehaviour:
   PatrolSwitchRate: 1.5
   rotateRate: 10
   MaxFollowHeight: 5
-  chargeParticles: {fileID: 3414326379961094680}
-  attackParticles: {fileID: 751653433110049400}
   groundCheckDistance: 0.2
   groundCheckStartHeight: 1.02
   groundCheckRadius: 0.75
@@ -5054,6 +5051,8 @@ MonoBehaviour:
   groundCheckMask:
     serializedVersion: 2
     m_Bits: 1
+  chargeParticles: {fileID: 3414326379961094680}
+  attackParticles: {fileID: 751653433110049400}
   AttackProjectile: {fileID: 6641631083453567850, guid: 4861a6201fafb454fb4a48b05424d802,
     type: 3}
   AttackLaunchInterval: 1.01
@@ -5074,6 +5073,7 @@ MonoBehaviour:
   MaxPoints: 20
   TrackInterval: 0.1
   AutoDequeueDistance: 2
+  TrackGiveUpTime: 10
 --- !u!114 &1691705310207626296
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -5972,6 +5972,11 @@ PrefabInstance:
         type: 3}
       propertyPath: m_Name
       value: Health
+      objectReference: {fileID: 0}
+    - target: {fileID: 4031689214767328608, guid: 18d1c83ec65c808428b406c129120d9c,
+        type: 3}
+      propertyPath: m_Layer
+      value: 9
       objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 18d1c83ec65c808428b406c129120d9c, type: 3}
