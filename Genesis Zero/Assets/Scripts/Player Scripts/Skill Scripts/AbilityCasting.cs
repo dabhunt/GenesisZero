@@ -127,7 +127,7 @@ public class AbilityCasting : MonoBehaviour
                 CastFireDash();
                 break;
             case "Singularity":
-                InitializeAbility(4, 0, 0, num);
+                InitializeAbility(12, 0, 0, num);
                 CastSingularity();
                 break;
         }
