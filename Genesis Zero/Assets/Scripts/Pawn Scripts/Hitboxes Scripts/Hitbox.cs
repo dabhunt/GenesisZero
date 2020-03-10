@@ -183,7 +183,7 @@ public class Hitbox : MonoBehaviour
                     }
                 }
 
-                if (Knockbackforce > 0)
+                if (Knockbackforce > 0 && p.IsInvunerable() == false)
                 {
                     if (DirectionalKnockback && Source != null)
                     {
