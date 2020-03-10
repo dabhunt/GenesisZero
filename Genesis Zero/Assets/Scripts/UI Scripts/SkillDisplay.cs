@@ -47,7 +47,7 @@ public class SkillDisplay : MonoBehaviour
             if (SkillManager.GetAddedSkill() != null)
             {
                 SkillObject s = SkillManager.GetAddedSkill();
-                PopupElement.GetComponent<SkillPopupDisplay>().SetPopup(s.Icon, s.name, s.Description, SkillManager.GetColor(s));
+                PopupElement.GetComponent<SkillPopupDisplay>().SetPopup(s.Icon, s.name, s.SimpleDescription, SkillManager.GetColor(s));
                 PopupElement.GetComponent<SkillPopupDisplay>().Popup();
                 SkillManager.SetAddedSkill(null);
             }
