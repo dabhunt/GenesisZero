@@ -571,7 +571,8 @@ public class PlayerController : MonoBehaviour
     {
         float xSpeed = GetCurrentSpeed();
         float ySpeed = vertVel;
-
+        if (isFacingRight != isAimingRight)
+            xSpeed *= -1;
         animator.SetFloat("xSpeed", xSpeed);
         animator.SetFloat("ySpeed", ySpeed);
         animator.SetBool("isGrounded", isGrounded);
