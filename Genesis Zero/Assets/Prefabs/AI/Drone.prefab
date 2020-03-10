@@ -6130,7 +6130,7 @@ MonoBehaviour:
   RotationRate: 10
   MoveSpeed: 8
   Acceleration: 5
-  SideDecel: 1.5
+  SideDecel: 2
   AvoidAmount: 6
   AvoidAccelLimit: 1.5
   spawnProjectileSpot: {fileID: 6634079260451948134}
@@ -6141,6 +6141,12 @@ MonoBehaviour:
   AttackProjectile: {fileID: 6641631083453567850, guid: 1b5e9b6d2186b0a499598904343c6fea,
     type: 3}
   AttackLaunchInterval: 0.2
+  WallCheckCasts: 6
+  WallCheckDistance: 2
+  WallMask:
+    serializedVersion: 2
+    m_Bits: 1
+  WallAvoidForce: 40
 --- !u!114 &2037691598
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -6154,9 +6160,10 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   Target: {fileID: 0}
-  MaxPoints: 30
-  TrackInterval: 0.1
-  AutoDequeueDistance: 3
+  MaxPoints: 60
+  TrackInterval: 0.05
+  AutoDequeueDistance: 2
+  TrackGiveUpTime: 10
 --- !u!54 &1692614117
 Rigidbody:
   m_ObjectHideFlags: 0
@@ -6169,7 +6176,7 @@ Rigidbody:
   m_Drag: 1
   m_AngularDrag: 0.05
   m_UseGravity: 0
-  m_IsKinematic: 1
+  m_IsKinematic: 0
   m_Interpolate: 0
   m_Constraints: 120
   m_CollisionDetection: 3

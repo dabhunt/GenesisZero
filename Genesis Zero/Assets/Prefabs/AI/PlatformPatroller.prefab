@@ -5085,7 +5085,7 @@ CapsuleCollider:
   m_IsTrigger: 0
   m_Enabled: 1
   m_Radius: 0.38
-  m_Height: 1.32
+  m_Height: 0.9
   m_Direction: 0
   m_Center: {x: 0, y: 0.55, z: 0}
 --- !u!114 &7599204422373525046
@@ -5121,17 +5121,17 @@ MonoBehaviour:
           m_BoolArgument: 0
         m_CallState: 2
   MoveSpeed: 13
-  LungeSpeed: 7
-  JumpSpeed: 5
+  LungeSpeed: 15
+  LungeVerticality: 0.4
   Acceleration: 5
   PatrolSpeed: 5
   PatrolSwitchRate: 1.5
   rotateRate: 10
   MaxFollowHeight: 3
-  groundCheckDistance: 0.15
-  groundCheckStartHeight: 0.9
-  groundCheckRadius: 0.7
-  ForwardEdgeRay: {x: 1, y: -1.3, z: 0}
+  groundCheckDistance: 0.11
+  groundCheckStartHeight: 0.79
+  groundCheckRadius: 0.58
+  ForwardEdgeRay: {x: 1, y: -1.8, z: 0}
   groundCheckMask:
     serializedVersion: 2
     m_Bits: 1
@@ -5139,7 +5139,7 @@ MonoBehaviour:
   attackParticles: {fileID: 751653433110049400}
   AttackHitbox: {fileID: 2017013749830094998, guid: aadae5178b4fe3f4bb56bd3aa543cb2d,
     type: 3}
-  AttackHitboxStart: {x: 0.246, y: 0.825, z: 0}
+  AttackHitboxStart: {x: 0.2, y: 0.9, z: 0}
 --- !u!114 &4884162759698704238
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -5156,6 +5156,7 @@ MonoBehaviour:
   MaxPoints: 20
   TrackInterval: 0.1
   AutoDequeueDistance: 2
+  TrackGiveUpTime: 10
 --- !u!114 &1691705310207626296
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -5264,8 +5265,6 @@ MonoBehaviour:
   minDropVelocity: 0.75
   maxDropVelocity: 1.2
   EssencePrefab: {fileID: 3175629662073271086, guid: ddc3274a97a8ffc41bb3097e97f19942,
-    type: 3}
-  ModifierPrefab: {fileID: 2493648811206171248, guid: ac8b05e93bf88fa488c9b7e45be8fac0,
     type: 3}
 --- !u!114 &8275886534224753088
 MonoBehaviour:

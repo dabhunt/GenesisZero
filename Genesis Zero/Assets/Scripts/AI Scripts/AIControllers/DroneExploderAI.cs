@@ -12,6 +12,7 @@ public class DroneExploderAI : AIController
     protected FakeRigidbody frb;
 
     private Vector3 lookDir = Vector3.up;
+    [Header("Movement")]
     public float RotationRate = 10f; // How fast to rotate
     public float MoveSpeed = 10f; // Maximum movement speed
     private float targetSpeed = 0.0f;
@@ -20,15 +21,17 @@ public class DroneExploderAI : AIController
     public float AvoidAmount = 1.0f; // How much to accelerate away from the target
     public float AvoidAccelLimit = 1.0f; // Limit on avoidance acceleration
 
-    public string vfxName = "VFX_Explosion";
-    public float blastRadius = 5f;
-    public float lerpMultiplier = 2.3f;
-    public float startScale=.01f;
-
     public float PatrolSpeed = 5.0f; // Movement speed while patrolling
     public float PatrolRotateRate = 1.0f; // Rotation rate while patrolling
     private int patrolDir = 1;
 
+    [Header("Effects")]
+    public string vfxName = "VFX_Explosion";
+    public float blastRadius = 5f;
+    public float lerpMultiplier = 2.3f;
+    public float startScale = .01f;
+
+    [Header("Attack")]
     public ParticleSystem chargeParticles;
     public ParticleSystem attackParticles;
     public GameObject explosionPrefab;
@@ -73,6 +76,12 @@ public class DroneExploderAI : AIController
         frb.Accelerate(-transform.right * frb.GetVelocity().magnitude * Vector3.Dot(transform.right, frb.GetVelocity().normalized) * SideDecel); // Deceleration to prevent sideways movement
         transform.rotation = Quaternion.LookRotation(Vector3.forward, lookDir); // Actual rotation
 
+        CheckWalls();
+        if (isCloseToWall)
+        {
+            frb.Accelerate((transform.position - wallPoint).normalized * (1.0f - (transform.position - wallPoint).magnitude / WallCheckDistance) * WallAvoidForce);
+        }
+
         // Particles to show charge and attack states (for testing)
         if (chargeParticles != null)
         {
@@ -112,7 +121,7 @@ public class DroneExploderAI : AIController
     {
         if (explosionPrefab != null)
         {
-        	
+
             GameObject spawnedExplosion = Instantiate(explosionPrefab, transform.position, Quaternion.identity);
             Hitbox spawnedHitbox = spawnedExplosion.GetComponent<Hitbox>();
             spawnedHitbox.InitializeHitbox(GetDamage().GetValue(), this);
@@ -135,5 +144,44 @@ public class DroneExploderAI : AIController
     private void DestroySelf()
     {
         Destroy(gameObject);
+    }
+
+    /**
+     * Checks for closeness to walls in order to avoid them
+     */
+    protected void CheckWalls()
+    {
+        if (!wallCheckCycleInProgress)
+        {
+            StartCoroutine(WallCheckCycle());
+        }
+    }
+
+    [Header("Wall Checking")]
+    public int WallCheckCasts = 6;
+    public float WallCheckDistance = 1.0f;
+    public LayerMask WallMask;
+    private bool wallCheckCycleInProgress = false;
+    protected bool isCloseToWall = false;
+    protected Vector3 wallPoint = Vector3.zero;
+    public float WallAvoidForce = 10f;
+
+    IEnumerator WallCheckCycle()
+    {
+        wallCheckCycleInProgress = true;
+        float castAngle = 2.0f / WallCheckCasts * Mathf.PI;
+        float curAngle = 0.0f;
+        Vector3 castDir = Vector3.zero;
+        for (int i = 0; i < WallCheckCasts; i++)
+        {
+            castDir = new Vector3(Mathf.Sin(curAngle), Mathf.Cos(curAngle), 0.0f);
+            RaycastHit hit = new RaycastHit();
+            isCloseToWall = Physics.Raycast(transform.position, castDir, out hit, WallCheckDistance, WallMask, QueryTriggerInteraction.Ignore);
+            wallPoint = isCloseToWall ? hit.point : Vector3.zero;
+            //Debug.DrawRay(transform.position, castDir * WallCheckDistance);
+            curAngle += castAngle;
+            yield return new WaitForFixedUpdate();
+        }
+        wallCheckCycleInProgress = false;
     }
 }
