@@ -14,7 +14,7 @@ public class PlatformPatrollerAI : AIController
     [Header("Movement")]
     public float MoveSpeed = 10f; // Maximum movement speed
     public float LungeSpeed = 20f; // Lunging attack speed
-    public float JumpSpeed = 10f; // Vertical jump speed for lunge attack
+    public float LungeVerticality = 0.5f; // Amount to jump vertically for horizontal lunges
     private float targetSpeed = 0.0f;
     public float Acceleration = 5.0f; // Rate of acceleration
 
@@ -66,7 +66,8 @@ public class PlatformPatrollerAI : AIController
         base.SetTarget(tr);
         if (Target != null && tracker != null)
         {
-            tracker.GiveUpCondition = () => {
+            tracker.GiveUpCondition = () =>
+            {
                 return tracker.PeekFirstPoint().y > transform.position.y + MaxFollowHeight;
             };
         }
@@ -96,7 +97,7 @@ public class PlatformPatrollerAI : AIController
         }
         else if (state == AIState.Attack)
         {
-            targetSpeed = LungeSpeed;
+            targetSpeed = 0.0f;
         }
         else if (state == AIState.Patrol)
         {
@@ -132,7 +133,10 @@ public class PlatformPatrollerAI : AIController
         }
 
         targetSpeed *= GetSpeed().GetValue();
-        frb.Accelerate(Vector3.right * (targetSpeed * faceDir - frb.GetVelocity().x) * Acceleration * slopeForceFactor); // Accelerate toward the target
+        if ((isGrounded && state != AIState.Attack) || state == AIState.Cooldown)
+        {
+            frb.Accelerate(Vector3.right * (targetSpeed * faceDir - frb.GetVelocity().x) * Acceleration * slopeForceFactor); // Accelerate toward the target
+        }
 
         // Smoothly rotate to face target
         lookAngle = Mathf.Lerp(lookAngle, -faceDir * Mathf.PI * 0.5f + Mathf.PI * 0.5f, rotateRate * Time.fixedDeltaTime);
@@ -200,7 +204,14 @@ public class PlatformPatrollerAI : AIController
     {
         if (state == AIState.Attack)
         {
-            frb.AddVelocity(Vector3.up * JumpSpeed + Vector3.right * faceDir * LungeSpeed);
+            Vector3 normalizedTargetDir = (Target.position - trueOrigin).normalized;
+            //Vector3 lungeDir = (Vector3.right * faceDir + Vector3.up * Mathf.Abs(Vector3.Dot(normalizedTargetDir, Vector3.right)) * LungeVerticality).normalized;
+
+            //if (Vector3.Dot(normalizedTargetDir, Vector3.up) > 0)
+            //{
+            Vector3 lungeDir = (normalizedTargetDir + Vector3.up * Mathf.Abs(Vector3.Dot(normalizedTargetDir, Vector3.right)) * LungeVerticality).normalized;
+            //}
+            frb.AddVelocity(lungeDir * LungeSpeed);
         }
     }
 
