@@ -115,7 +115,7 @@ ParticleSystem:
     startLifetime:
       serializedVersion: 2
       minMaxState: 0
-      scalar: 5
+      scalar: 0.8
       minScalar: 5
       maxCurve:
         serializedVersion: 2
@@ -4830,7 +4830,7 @@ MonoBehaviour:
   DirectionalKnockback: 0
   StunTime: 0.5
   LifeTime: 99
-  Burn: {x: 0, y: 0}
+  Burn: {x: 3, y: 4}
   Collider: {fileID: 7237362000396769751}
   Source: {fileID: 0}
   hitEffectVFX: VFX_BulletSparks
@@ -4969,7 +4969,7 @@ MonoBehaviour:
   quitting: 0
   baseblastRadius: 5
   blastRadius: 5
-  lerpMultiplier: 1
+  lerpMultiplier: 1.5
   inheritOnHitEffects: 0
   vfxName: VFX_ExplosionRed
   sfxName: SFX_ExplosionEnemy
@@ -5062,6 +5062,16 @@ PrefabInstance:
   m_Modification:
     m_TransformParent: {fileID: 7446024088350224067}
     m_Modifications:
+    - target: {fileID: 643335761247011271, guid: 52b82f97b0d3c164195d8a438a56306c,
+        type: 3}
+      propertyPath: lengthInSec
+      value: 0.8
+      objectReference: {fileID: 0}
+    - target: {fileID: 643335761247011271, guid: 52b82f97b0d3c164195d8a438a56306c,
+        type: 3}
+      propertyPath: InitialModule.startLifetime.scalar
+      value: 0.8
+      objectReference: {fileID: 0}
     - target: {fileID: 2602092459282102548, guid: 52b82f97b0d3c164195d8a438a56306c,
         type: 3}
       propertyPath: m_IsActive
