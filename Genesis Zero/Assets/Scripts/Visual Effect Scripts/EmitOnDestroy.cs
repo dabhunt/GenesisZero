@@ -33,7 +33,10 @@ public class EmitOnDestroy : MonoBehaviour
         {
             foreach (GameObject g in Emits)
             {
-                GameObject emit = (GameObject)Instantiate(g, transform.position, Quaternion.identity);
+                if (g)
+                {
+                    GameObject emit = (GameObject)Instantiate(g, transform.position, Quaternion.identity);
+                }
             }
         }
     }

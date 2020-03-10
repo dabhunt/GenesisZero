@@ -123,7 +123,7 @@ public class AbilityCasting : MonoBehaviour
                 CastFireDash();
                 break;
             case "Singularity":
-                InitializeAbility(12, 0, 0, num);
+                InitializeAbility(4, 0, 0, num);
                 CastSingularity();
                 break;
         }
@@ -327,7 +327,8 @@ public class AbilityCasting : MonoBehaviour
 
     private void CastSingularity()
     {
-
+        GameObject hitbox = SpawnGameObject("Sing_Projectile", CastAtAngle(transform.position, aimDir, .5f), GetComponent<Gun>().firePoint.rotation);
+        hitbox.GetComponent<Hitbox>().InitializeHitbox(1, player);
     }
 
     private GameObject SpawnGameObject(string name, Vector2 position, Quaternion quat)
