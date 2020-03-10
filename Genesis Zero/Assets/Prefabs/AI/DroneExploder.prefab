@@ -5138,7 +5138,7 @@ Transform:
   - {fileID: 3651389065654081840}
   - {fileID: 5420805064465176855}
   - {fileID: 8591462774337295706}
-  - {fileID: 5386383848438797756}
+  - {fileID: 1917502669623857559}
   - {fileID: 1233786275}
   m_Father: {fileID: 0}
   m_RootOrder: 0
@@ -5170,16 +5170,22 @@ MonoBehaviour:
   SideDecel: 2
   AvoidAmount: 6
   AvoidAccelLimit: 1.5
+  PatrolSpeed: 1
+  PatrolRotateRate: 30
   vfxName: VFX_ExplosionEnemy
   blastRadius: 4
   lerpMultiplier: 2.3
   startScale: 0.01
-  PatrolSpeed: 1
-  PatrolRotateRate: 30
   chargeParticles: {fileID: 8686154435648022828}
   attackParticles: {fileID: 2000804235089814667}
   explosionPrefab: {fileID: 6641631083453567850, guid: e7f154a9fc29bcb429ca9d7203da43ec,
     type: 3}
+  WallCheckCasts: 6
+  WallCheckDistance: 2
+  WallMask:
+    serializedVersion: 2
+    m_Bits: 1
+  WallAvoidForce: 40
 --- !u!114 &2037691598
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -5193,9 +5199,10 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   Target: {fileID: 0}
-  MaxPoints: 20
-  TrackInterval: 0.1
-  AutoDequeueDistance: 3
+  MaxPoints: 60
+  TrackInterval: 0.05
+  AutoDequeueDistance: 2
+  TrackGiveUpTime: 10
 --- !u!114 &6912679872711996446
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -6685,15 +6692,15 @@ PrefabInstance:
       objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: cb4e24f42efe5ba49994737723cf2862, type: 3}
---- !u!4 &8295615035699033398 stripped
-Transform:
-  m_CorrespondingSourceObject: {fileID: 3860812052871562049, guid: cb4e24f42efe5ba49994737723cf2862,
-    type: 3}
-  m_PrefabInstance: {fileID: 5083347881051436663}
-  m_PrefabAsset: {fileID: 0}
 --- !u!198 &8686154435648022828 stripped
 ParticleSystem:
   m_CorrespondingSourceObject: {fileID: 4467789114266476379, guid: cb4e24f42efe5ba49994737723cf2862,
+    type: 3}
+  m_PrefabInstance: {fileID: 5083347881051436663}
+  m_PrefabAsset: {fileID: 0}
+--- !u!4 &8295615035699033398 stripped
+Transform:
+  m_CorrespondingSourceObject: {fileID: 3860812052871562049, guid: cb4e24f42efe5ba49994737723cf2862,
     type: 3}
   m_PrefabInstance: {fileID: 5083347881051436663}
   m_PrefabAsset: {fileID: 0}

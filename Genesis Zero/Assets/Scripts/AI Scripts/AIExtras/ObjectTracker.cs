@@ -18,6 +18,8 @@ public class ObjectTracker : MonoBehaviour
     private float trackTime = 0.0f;
     private bool tracking = false;
     public float AutoDequeueDistance = -1.0f; // If the tracker is closer than this distance to the oldest point, it will be dequeued
+    private float timeSinceDequeue = 0.0f;
+    public float TrackGiveUpTime = 10f; // If a point has not been dequeued within this time, the tracker gives up
     private bool reachedEnd = false;
     public Func<bool> GiveUpCondition = () => { return false; }; // Used for deciding when the tracker should stop trying to track/follow the target
 
@@ -40,6 +42,7 @@ public class ObjectTracker : MonoBehaviour
             trackTime = 0.0f;
         }
 
+        timeSinceDequeue = points.Count > 0 ? timeSinceDequeue + Time.fixedDeltaTime : 0.0f;
         if (AutoDequeueDistance >= 0 && points.Count > 0)
         {
             if (Vector3.Distance(transform.position, points.Peek()) <= AutoDequeueDistance)
@@ -48,7 +51,7 @@ public class ObjectTracker : MonoBehaviour
             }
         }
 
-        if (GiveUpCondition())
+        if (GiveUpCondition() || timeSinceDequeue > TrackGiveUpTime)
         {
             reachedEnd = true;
         }
@@ -130,6 +133,7 @@ public class ObjectTracker : MonoBehaviour
             {
                 reachedEnd = true;
             }
+            timeSinceDequeue = 0.0f;
             return points.Dequeue();
         }
         else
