@@ -92,6 +92,7 @@ public class PlayerController : MonoBehaviour
     //sound variables
     private bool walkSoundPlaying = false;
     private PlayerSounds sound;
+    private LayerMask defaultLayerMask;
     
 
     private void Awake()
@@ -107,7 +108,7 @@ public class PlayerController : MonoBehaviour
         inputActions.PlayerControls.AimController.performed += ctx => aimInputController = ctx.ReadValue<Vector2>();
         inputActions.PlayerControls.Fire.performed += ctx => fireInput = ctx.ReadValue<float>();
         inputActions.PlayerControls.Interact.performed += ctx => interactInput = ctx.ReadValue<float>();
-
+        defaultLayerMask = immoveables;
         sound = FindObjectOfType<AudioManager>().GetComponent<PlayerSounds>();
         animator = GetComponent<Animator>();
         gun = GetComponent<Gun>();
@@ -130,6 +131,16 @@ public class PlayerController : MonoBehaviour
         UpdateJump();
         UpdateDodgeRoll();
         DrawDebugLines();
+    }
+    //this swaps out the layermask while abilities are active / player is invulnerable so they can pass through enemies and bullets
+    public void NewLayerMask(LayerMask newMask, float duration)
+    {
+        immoveables = newMask;
+        Invoke("ResetLayerMask", duration);
+    }
+    public void ResetLayerMask()
+    {
+        immoveables = defaultLayerMask;
     }
 
     /* This controls the character general movements
@@ -571,7 +582,8 @@ public class PlayerController : MonoBehaviour
     {
         float xSpeed = GetCurrentSpeed();
         float ySpeed = vertVel;
-
+        if (isFacingRight != isAimingRight)
+            xSpeed *= -1;
         animator.SetFloat("xSpeed", xSpeed);
         animator.SetFloat("ySpeed", ySpeed);
         animator.SetBool("isGrounded", isGrounded);

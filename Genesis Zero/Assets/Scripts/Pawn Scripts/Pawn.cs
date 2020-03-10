@@ -109,7 +109,7 @@ public class Pawn : MonoBehaviour
     {
         UpdateStats();
 
-        if (IsBurning())
+        if (IsBurning() && IsInvunerable() == false)
         {
             if (burntick >= .5f)
             {

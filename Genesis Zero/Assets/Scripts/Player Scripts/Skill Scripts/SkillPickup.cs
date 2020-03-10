@@ -21,7 +21,7 @@ public class SkillPickup : MonoBehaviour
         }
         else if (GetComponent<SimpleTooltip>()!=null)
         {
-            GetComponent<SimpleTooltip>().infoLeft = skill.Description;
+            GetComponent<SimpleTooltip>().infoLeft = skill.SimpleDescription;
         }
         isMod = skill.IsAbility ? false : true;
        
@@ -52,6 +52,11 @@ public class SkillPickup : MonoBehaviour
                 GetComponent<Rigidbody>().velocity = GetComponent<Rigidbody>().velocity.normalized * (mag *.9f);
                 //GetComponent<Rigidbody>().velocity *= .3f;
             }
+        }
+
+        if (added == true)
+        {
+            Destroy(gameObject);
         }
     }
 
@@ -94,11 +99,6 @@ public class SkillPickup : MonoBehaviour
                         added = true;
                     }
                 }
-            }
-
-            if (added == true)
-            {
-                Destroy(gameObject);
             }
 
         }

@@ -108,7 +108,7 @@ GameObject:
   - component: {fileID: 8637861909230029147}
   - component: {fileID: 3299242368818931539}
   - component: {fileID: 2669053272421062064}
-  m_Layer: 0
+  m_Layer: 9
   m_Name: Plane.001
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -176,6 +176,158 @@ MeshRenderer:
   m_SortingLayerID: 0
   m_SortingLayer: 0
   m_SortingOrder: 0
+--- !u!1 &530079593301630670
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 8711785209898319216}
+  - component: {fileID: 892635394233668858}
+  - component: {fileID: 3440290222160884764}
+  - component: {fileID: 6803382396214001101}
+  m_Layer: 9
+  m_Name: Hurtbox
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &8711785209898319216
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 530079593301630670}
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: -0.051, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_Children: []
+  m_Father: {fileID: 2000804235349801761}
+  m_RootOrder: 13
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &892635394233668858
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 530079593301630670}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 500094fbd1270ef4eab440843c0d2d13, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  SpecialPart: 0
+  damagemultipler: 1
+--- !u!135 &3440290222160884764
+SphereCollider:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 530079593301630670}
+  m_Material: {fileID: 0}
+  m_IsTrigger: 1
+  m_Enabled: 1
+  serializedVersion: 2
+  m_Radius: 0.3
+  m_Center: {x: 0, y: 0, z: 0}
+--- !u!54 &6803382396214001101
+Rigidbody:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 530079593301630670}
+  serializedVersion: 2
+  m_Mass: 1
+  m_Drag: 0
+  m_AngularDrag: 0.05
+  m_UseGravity: 0
+  m_IsKinematic: 1
+  m_Interpolate: 0
+  m_Constraints: 0
+  m_CollisionDetection: 3
+--- !u!1 &649588251510255599
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 1298530015805084368}
+  - component: {fileID: 8449501498870073288}
+  - component: {fileID: 3532076496665106494}
+  - component: {fileID: 5142741791918885133}
+  m_Layer: 9
+  m_Name: Hurtbox (1)
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &1298530015805084368
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 649588251510255599}
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 0.337, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_Children: []
+  m_Father: {fileID: 2000804235349801761}
+  m_RootOrder: 14
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &8449501498870073288
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 649588251510255599}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 500094fbd1270ef4eab440843c0d2d13, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  SpecialPart: 0
+  damagemultipler: 1
+--- !u!135 &3532076496665106494
+SphereCollider:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 649588251510255599}
+  m_Material: {fileID: 0}
+  m_IsTrigger: 1
+  m_Enabled: 1
+  serializedVersion: 2
+  m_Radius: 0.15
+  m_Center: {x: 0, y: 0, z: 0}
+--- !u!54 &5142741791918885133
+Rigidbody:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 649588251510255599}
+  serializedVersion: 2
+  m_Mass: 1
+  m_Drag: 0
+  m_AngularDrag: 0.05
+  m_UseGravity: 0
+  m_IsKinematic: 1
+  m_Interpolate: 0
+  m_Constraints: 0
+  m_CollisionDetection: 3
 --- !u!1 &919793119717724465
 GameObject:
   m_ObjectHideFlags: 0
@@ -386,7 +538,7 @@ GameObject:
   - component: {fileID: 3961076591293910535}
   - component: {fileID: 6301464402806570513}
   - component: {fileID: 3176865187873709565}
-  m_Layer: 0
+  m_Layer: 9
   m_Name: Sphere (2)
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -463,10 +615,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 4119939090360357163}
-  - component: {fileID: 3607131107452725186}
-  - component: {fileID: 3573330650433640468}
-  - component: {fileID: 3772586923207650990}
-  m_Layer: 0
+  m_Layer: 9
   m_Name: BoneBoi
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -511,50 +660,6 @@ Transform:
   m_Father: {fileID: 2000804235349801761}
   m_RootOrder: 5
   m_LocalEulerAnglesHint: {x: 180, y: -90, z: 0}
---- !u!114 &3607131107452725186
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1114551979783889720}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 500094fbd1270ef4eab440843c0d2d13, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  SpecialPart: 0
-  damagemultipler: 1
---- !u!54 &3573330650433640468
-Rigidbody:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1114551979783889720}
-  serializedVersion: 2
-  m_Mass: 1
-  m_Drag: 0
-  m_AngularDrag: 0.05
-  m_UseGravity: 0
-  m_IsKinematic: 1
-  m_Interpolate: 0
-  m_Constraints: 0
-  m_CollisionDetection: 3
---- !u!136 &3772586923207650990
-CapsuleCollider:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1114551979783889720}
-  m_Material: {fileID: 0}
-  m_IsTrigger: 1
-  m_Enabled: 1
-  m_Radius: 0.2
-  m_Height: 1.3
-  m_Direction: 1
-  m_Center: {x: 0, y: 0.15, z: 0}
 --- !u!1 &1169650699819152723
 GameObject:
   m_ObjectHideFlags: 0
@@ -614,7 +719,7 @@ Rigidbody:
   m_Drag: 0
   m_AngularDrag: 0.05
   m_UseGravity: 0
-  m_IsKinematic: 0
+  m_IsKinematic: 1
   m_Interpolate: 0
   m_Constraints: 0
   m_CollisionDetection: 3
@@ -642,7 +747,7 @@ GameObject:
   - component: {fileID: 3242193261395999020}
   - component: {fileID: 3965226318703898499}
   - component: {fileID: 8807080208682411586}
-  m_Layer: 0
+  m_Layer: 9
   m_Name: NurbsPath
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -721,7 +826,7 @@ GameObject:
   - component: {fileID: 2037691622216057060}
   - component: {fileID: 7919455476229113560}
   - component: {fileID: 7933755580289863474}
-  m_Layer: 0
+  m_Layer: 9
   m_Name: Sphere
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -800,7 +905,7 @@ GameObject:
   - component: {fileID: 5966287694053337630}
   - component: {fileID: 5096787191294665462}
   - component: {fileID: 1110680920613270772}
-  m_Layer: 0
+  m_Layer: 9
   m_Name: Plane
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -879,7 +984,7 @@ GameObject:
   - component: {fileID: 6001341560035168793}
   - component: {fileID: 4193469662109189726}
   - component: {fileID: 816523568511316409}
-  m_Layer: 0
+  m_Layer: 9
   m_Name: SphereHead
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -958,7 +1063,7 @@ GameObject:
   - component: {fileID: 1754322210028594635}
   - component: {fileID: 2726225113229534020}
   - component: {fileID: 511620827060220475}
-  m_Layer: 0
+  m_Layer: 9
   m_Name: Sphere (1)
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -1037,7 +1142,7 @@ GameObject:
   - component: {fileID: 6785002193794546023}
   - component: {fileID: 8936117321647197302}
   - component: {fileID: 7324098445171738498}
-  m_Layer: 0
+  m_Layer: 9
   m_Name: NurbsPath.001
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -1116,7 +1221,7 @@ GameObject:
   - component: {fileID: 679824737722974200}
   - component: {fileID: 6159606589669703058}
   - component: {fileID: 2103893511077956513}
-  m_Layer: 0
+  m_Layer: 9
   m_Name: Tube (1)
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -5995,6 +6100,9 @@ Transform:
   - {fileID: 4653040097557791551}
   - {fileID: 3019656131525994779}
   - {fileID: 1964246946}
+  - {fileID: 8711785209898319216}
+  - {fileID: 1298530015805084368}
+  - {fileID: 2361266631580481703}
   m_Father: {fileID: 0}
   m_RootOrder: 0
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
@@ -6022,7 +6130,7 @@ MonoBehaviour:
   RotationRate: 10
   MoveSpeed: 8
   Acceleration: 5
-  SideDecel: 1.5
+  SideDecel: 2
   AvoidAmount: 6
   AvoidAccelLimit: 1.5
   spawnProjectileSpot: {fileID: 6634079260451948134}
@@ -6033,6 +6141,12 @@ MonoBehaviour:
   AttackProjectile: {fileID: 6641631083453567850, guid: 1b5e9b6d2186b0a499598904343c6fea,
     type: 3}
   AttackLaunchInterval: 0.2
+  WallCheckCasts: 6
+  WallCheckDistance: 2
+  WallMask:
+    serializedVersion: 2
+    m_Bits: 1
+  WallAvoidForce: 40
 --- !u!114 &2037691598
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -6046,9 +6160,10 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   Target: {fileID: 0}
-  MaxPoints: 30
-  TrackInterval: 0.1
-  AutoDequeueDistance: 3
+  MaxPoints: 60
+  TrackInterval: 0.05
+  AutoDequeueDistance: 2
+  TrackGiveUpTime: 10
 --- !u!54 &1692614117
 Rigidbody:
   m_ObjectHideFlags: 0
@@ -6104,8 +6219,6 @@ MonoBehaviour:
   maxDropVelocity: 1.2
   EssencePrefab: {fileID: 3175629662073271086, guid: ddc3274a97a8ffc41bb3097e97f19942,
     type: 3}
-  ModifierPrefab: {fileID: 6767189360673188612, guid: e7d03f9fab36e7e4db6535b7f84981ce,
-    type: 3}
 --- !u!114 &5625797433993196297
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -6119,9 +6232,9 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   colliders:
-  - {fileID: 3772586923207650990}
   - {fileID: 5416669898960581429}
   - {fileID: 1352004831972246229}
+  - {fileID: 3440290222160884764}
 --- !u!136 &869227651630817831
 CapsuleCollider:
   m_ObjectHideFlags: 0
@@ -6158,7 +6271,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 3019656131525994779}
-  m_Layer: 0
+  m_Layer: 9
   m_Name: SmallUnderTube Variant (1)
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -6194,7 +6307,7 @@ GameObject:
   - component: {fileID: 999202043885170282}
   - component: {fileID: 2076714558372100291}
   - component: {fileID: 902935277894183570}
-  m_Layer: 0
+  m_Layer: 9
   m_Name: NurbsPath.006
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -6472,7 +6585,7 @@ GameObject:
   - component: {fileID: 4562311211589745339}
   - component: {fileID: 6393465800379397573}
   - component: {fileID: 5955439681891792285}
-  m_Layer: 0
+  m_Layer: 9
   m_Name: Sphere.001
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -6551,7 +6664,7 @@ GameObject:
   - component: {fileID: 486933877000222335}
   - component: {fileID: 6035898558078600139}
   - component: {fileID: 8257401606247798335}
-  m_Layer: 0
+  m_Layer: 9
   m_Name: Cube.001
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -6630,7 +6743,7 @@ GameObject:
   - component: {fileID: 2811730107934765330}
   - component: {fileID: 502523966656847867}
   - component: {fileID: 7025089260586808465}
-  m_Layer: 0
+  m_Layer: 9
   m_Name: NurbsPath.005
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -6709,7 +6822,7 @@ GameObject:
   - component: {fileID: 2796939585248953448}
   - component: {fileID: 710526134403531588}
   - component: {fileID: 4914525275979708204}
-  m_Layer: 0
+  m_Layer: 9
   m_Name: Cylinder
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -6788,7 +6901,7 @@ GameObject:
   - component: {fileID: 2772292768471730094}
   - component: {fileID: 2250887182057754650}
   - component: {fileID: 7607247070234685693}
-  m_Layer: 0
+  m_Layer: 9
   m_Name: NurbsPath.008
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -6867,7 +6980,7 @@ GameObject:
   - component: {fileID: 8586173209779176381}
   - component: {fileID: 421052492563476265}
   - component: {fileID: 6317964883240812340}
-  m_Layer: 0
+  m_Layer: 9
   m_Name: Cylinder.001
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -6944,7 +7057,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 4653040097557791551}
-  m_Layer: 0
+  m_Layer: 9
   m_Name: SmallUnderTube Variant
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -6980,7 +7093,7 @@ GameObject:
   - component: {fileID: 3694258970245810554}
   - component: {fileID: 2500740386428204281}
   - component: {fileID: 7718790020008906968}
-  m_Layer: 0
+  m_Layer: 9
   m_Name: NurbsPath.004
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -7059,7 +7172,7 @@ GameObject:
   - component: {fileID: 2273126297645392929}
   - component: {fileID: 2661159604377059921}
   - component: {fileID: 8351036327735886844}
-  m_Layer: 0
+  m_Layer: 9
   m_Name: Tube (3)
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -7138,7 +7251,7 @@ GameObject:
   - component: {fileID: 5028896529941488869}
   - component: {fileID: 4990745763312102216}
   - component: {fileID: 3230504357742025463}
-  m_Layer: 0
+  m_Layer: 9
   m_Name: NurbsPath.003
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -7217,7 +7330,7 @@ GameObject:
   - component: {fileID: 1262295412044832222}
   - component: {fileID: 8062884914810852769}
   - component: {fileID: 6453220264483315745}
-  m_Layer: 0
+  m_Layer: 9
   m_Name: Tube (3)
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -7296,7 +7409,7 @@ GameObject:
   - component: {fileID: 7462594571607053079}
   - component: {fileID: 6754397405142149432}
   - component: {fileID: 3316670249623536962}
-  m_Layer: 0
+  m_Layer: 9
   m_Name: NurbsPath.010
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -7375,7 +7488,7 @@ GameObject:
   - component: {fileID: 7783548822476105452}
   - component: {fileID: 1681219929085930110}
   - component: {fileID: 4645738580227399036}
-  m_Layer: 0
+  m_Layer: 9
   m_Name: Tube (1)
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -7493,7 +7606,7 @@ GameObject:
   - component: {fileID: 2912680590035343444}
   - component: {fileID: 9113693297783447751}
   - component: {fileID: 7061062553435628392}
-  m_Layer: 0
+  m_Layer: 9
   m_Name: Cylinder (2)
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -7572,7 +7685,7 @@ GameObject:
   - component: {fileID: 6701844392955700603}
   - component: {fileID: 321609973981486305}
   - component: {fileID: 1676849732533537333}
-  m_Layer: 0
+  m_Layer: 9
   m_Name: NurbsPath.002
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -7651,7 +7764,7 @@ GameObject:
   - component: {fileID: 2888263282709791602}
   - component: {fileID: 6354627848294587456}
   - component: {fileID: 3487262965281704754}
-  m_Layer: 0
+  m_Layer: 9
   m_Name: Cube.004
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -7778,7 +7891,7 @@ Rigidbody:
   m_Drag: 0
   m_AngularDrag: 0.05
   m_UseGravity: 0
-  m_IsKinematic: 0
+  m_IsKinematic: 1
   m_Interpolate: 0
   m_Constraints: 0
   m_CollisionDetection: 3
@@ -7806,7 +7919,7 @@ GameObject:
   - component: {fileID: 204189578947464234}
   - component: {fileID: 3024687629398838515}
   - component: {fileID: 3693080524860513845}
-  m_Layer: 0
+  m_Layer: 9
   m_Name: Cylinder (7)
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -7885,7 +7998,7 @@ GameObject:
   - component: {fileID: 7626891921653811847}
   - component: {fileID: 5882148348758062507}
   - component: {fileID: 4263350994052099052}
-  m_Layer: 0
+  m_Layer: 9
   m_Name: PotentialSkullFace
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -7964,7 +8077,7 @@ GameObject:
   - component: {fileID: 3929942112878506140}
   - component: {fileID: 5054639940328781572}
   - component: {fileID: 8199789773991291162}
-  m_Layer: 0
+  m_Layer: 9
   m_Name: NurbsPath.009
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -8043,7 +8156,7 @@ GameObject:
   - component: {fileID: 6393028002279776015}
   - component: {fileID: 8067438450329975485}
   - component: {fileID: 7918969237115793608}
-  m_Layer: 0
+  m_Layer: 9
   m_Name: Light
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -8242,7 +8355,7 @@ GameObject:
   - component: {fileID: 6502633209516579570}
   - component: {fileID: 4325338548023442310}
   - component: {fileID: 5342416669604555635}
-  m_Layer: 0
+  m_Layer: 9
   m_Name: NurbsPath.011
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -8321,7 +8434,7 @@ GameObject:
   - component: {fileID: 8047395594773878696}
   - component: {fileID: 3959135344285783900}
   - component: {fileID: 2727768176154040822}
-  m_Layer: 0
+  m_Layer: 9
   m_Name: Cylinder (2)
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -8400,7 +8513,7 @@ GameObject:
   - component: {fileID: 8303834889304401204}
   - component: {fileID: 7249008510122108873}
   - component: {fileID: 7393380435124657329}
-  m_Layer: 0
+  m_Layer: 9
   m_Name: Cylinder (7)
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -8479,7 +8592,7 @@ GameObject:
   - component: {fileID: 6162153657054818249}
   - component: {fileID: 7940005796901696671}
   - component: {fileID: 7424041263587630592}
-  m_Layer: 0
+  m_Layer: 9
   m_Name: NurbsPath.007
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -8547,6 +8660,82 @@ MeshRenderer:
   m_SortingLayerID: 0
   m_SortingLayer: 0
   m_SortingOrder: 0
+--- !u!1 &9071427122507981849
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 2361266631580481703}
+  - component: {fileID: 8618174707569022138}
+  - component: {fileID: 5733273459591178176}
+  - component: {fileID: 8069233475514563030}
+  m_Layer: 9
+  m_Name: Hurtbox (2)
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &2361266631580481703
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 9071427122507981849}
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: -0.529, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_Children: []
+  m_Father: {fileID: 2000804235349801761}
+  m_RootOrder: 15
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &8618174707569022138
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 9071427122507981849}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 500094fbd1270ef4eab440843c0d2d13, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  SpecialPart: 0
+  damagemultipler: 1
+--- !u!135 &5733273459591178176
+SphereCollider:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 9071427122507981849}
+  m_Material: {fileID: 0}
+  m_IsTrigger: 1
+  m_Enabled: 1
+  serializedVersion: 2
+  m_Radius: 0.18
+  m_Center: {x: 0, y: 0, z: 0}
+--- !u!54 &8069233475514563030
+Rigidbody:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 9071427122507981849}
+  serializedVersion: 2
+  m_Mass: 1
+  m_Drag: 0
+  m_AngularDrag: 0.05
+  m_UseGravity: 0
+  m_IsKinematic: 1
+  m_Interpolate: 0
+  m_Constraints: 0
+  m_CollisionDetection: 3
 --- !u!1001 &1692697486903054680
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -8614,17 +8803,22 @@ PrefabInstance:
       propertyPath: m_Name
       value: Health
       objectReference: {fileID: 0}
+    - target: {fileID: 4031689214767328608, guid: 18d1c83ec65c808428b406c129120d9c,
+        type: 3}
+      propertyPath: m_Layer
+      value: 9
+      objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 18d1c83ec65c808428b406c129120d9c, type: 3}
---- !u!1 &2346028645265931320 stripped
-GameObject:
-  m_CorrespondingSourceObject: {fileID: 4031689214767328608, guid: 18d1c83ec65c808428b406c129120d9c,
-    type: 3}
-  m_PrefabInstance: {fileID: 1692697486903054680}
-  m_PrefabAsset: {fileID: 0}
 --- !u!4 &1302988580678367016 stripped
 Transform:
   m_CorrespondingSourceObject: {fileID: 389717844343187056, guid: 18d1c83ec65c808428b406c129120d9c,
+    type: 3}
+  m_PrefabInstance: {fileID: 1692697486903054680}
+  m_PrefabAsset: {fileID: 0}
+--- !u!1 &2346028645265931320 stripped
+GameObject:
+  m_CorrespondingSourceObject: {fileID: 4031689214767328608, guid: 18d1c83ec65c808428b406c129120d9c,
     type: 3}
   m_PrefabInstance: {fileID: 1692697486903054680}
   m_PrefabAsset: {fileID: 0}
@@ -8694,6 +8888,11 @@ PrefabInstance:
         type: 3}
       propertyPath: m_Name
       value: ChargeParticles
+      objectReference: {fileID: 0}
+    - target: {fileID: 7230641546960950175, guid: cb4e24f42efe5ba49994737723cf2862,
+        type: 3}
+      propertyPath: m_IsActive
+      value: 0
       objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: cb4e24f42efe5ba49994737723cf2862, type: 3}

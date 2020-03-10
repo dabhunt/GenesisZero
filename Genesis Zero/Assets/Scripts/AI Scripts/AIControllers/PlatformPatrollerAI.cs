@@ -11,9 +11,10 @@ public class PlatformPatrollerAI : AIController
 {
     protected FakeRigidbody frb;
 
+    [Header("Movement")]
     public float MoveSpeed = 10f; // Maximum movement speed
     public float LungeSpeed = 20f; // Lunging attack speed
-    public float JumpSpeed = 10f; // Vertical jump speed for lunge attack
+    public float LungeVerticality = 0.5f; // Amount to jump vertically for horizontal lunges
     private float targetSpeed = 0.0f;
     public float Acceleration = 5.0f; // Rate of acceleration
 
@@ -27,6 +28,7 @@ public class PlatformPatrollerAI : AIController
     public float rotateRate = 1.0f;
     public float MaxFollowHeight = 5.0f; // Maximum height above the enemy for which the target will be tracked after going out of sight
 
+    [Header("Ground Checking")]
     public float groundCheckDistance = 1.0f;
     public float groundCheckStartHeight = 0.0f;
     public float groundCheckRadius = 0.5f;
@@ -35,6 +37,7 @@ public class PlatformPatrollerAI : AIController
     private bool edgeInFront = false;
     public LayerMask groundCheckMask;
 
+    [Header("Attack")]
     public ParticleSystem chargeParticles;
     public ParticleSystem attackParticles;
     public GameObject AttackHitbox;
@@ -63,7 +66,10 @@ public class PlatformPatrollerAI : AIController
         base.SetTarget(tr);
         if (Target != null && tracker != null)
         {
-            tracker.GiveUpCondition = () => { return tracker.PeekFirstPoint().y > transform.position.y + MaxFollowHeight; };
+            tracker.GiveUpCondition = () =>
+            {
+                return tracker.PeekFirstPoint().y > transform.position.y + MaxFollowHeight;
+            };
         }
     }
 
@@ -71,6 +77,8 @@ public class PlatformPatrollerAI : AIController
     {
         base.FixedUpdate();
         if (Target == null) { return; }
+
+        float slopeForceFactor = Vector3.Dot(groundNormal, Vector3.left * faceDir) + 1.0f; // Adjust movement force based on slope steepness
 
         if (state == AIState.Follow || state == AIState.Charge || state == AIState.Cooldown)
         {
@@ -89,7 +97,7 @@ public class PlatformPatrollerAI : AIController
         }
         else if (state == AIState.Attack)
         {
-            targetSpeed = LungeSpeed;
+            targetSpeed = 0.0f;
         }
         else if (state == AIState.Patrol)
         {
@@ -103,6 +111,10 @@ public class PlatformPatrollerAI : AIController
         else if (state == AIState.Idle)
         {
             targetSpeed = 0.0f;
+            if (isGrounded)
+            {
+                frb.Accelerate(-frb.GetVelocity() * 50f * slopeForceFactor);
+            }
         }
         faceDirChangeTime += Time.fixedDeltaTime;
 
@@ -121,7 +133,10 @@ public class PlatformPatrollerAI : AIController
         }
 
         targetSpeed *= GetSpeed().GetValue();
-        frb.Accelerate(Vector3.right * (targetSpeed * faceDir - frb.GetVelocity().x) * Acceleration); // Accelerate toward the target
+        if ((isGrounded && state != AIState.Attack) || state == AIState.Cooldown)
+        {
+            frb.Accelerate(Vector3.right * (targetSpeed * faceDir - frb.GetVelocity().x) * Acceleration * slopeForceFactor); // Accelerate toward the target
+        }
 
         // Smoothly rotate to face target
         lookAngle = Mathf.Lerp(lookAngle, -faceDir * Mathf.PI * 0.5f + Mathf.PI * 0.5f, rotateRate * Time.fixedDeltaTime);
@@ -174,7 +189,9 @@ public class PlatformPatrollerAI : AIController
     protected override void GroundCheck()
     {
         Ray groundRay = new Ray(transform.position + Vector3.up * groundCheckStartHeight, Vector3.down);
-        isGrounded = Physics.SphereCast(groundRay, groundCheckRadius, groundCheckDistance, groundCheckMask, QueryTriggerInteraction.Ignore);
+        RaycastHit hit = new RaycastHit();
+        isGrounded = Physics.SphereCast(groundRay, groundCheckRadius, out hit, groundCheckDistance, groundCheckMask, QueryTriggerInteraction.Ignore);
+        groundNormal = isGrounded ? hit.normal : Vector3.up;
         Ray forwardRay = new Ray(trueOrigin, new Vector3(ForwardEdgeRay.x * faceDir, ForwardEdgeRay.y, ForwardEdgeRay.z));
         //Ray backRay = new Ray(trueOrigin, new Vector3(BackEdgeRay.x * faceDir, BackEdgeRay.y, BackEdgeRay.z));
         edgeInFront = Physics.Raycast(forwardRay, ForwardEdgeRay.magnitude, groundCheckMask, QueryTriggerInteraction.Ignore);
@@ -187,7 +204,14 @@ public class PlatformPatrollerAI : AIController
     {
         if (state == AIState.Attack)
         {
-            frb.AddVelocity(Vector3.up * JumpSpeed + Vector3.right * faceDir * LungeSpeed);
+            Vector3 normalizedTargetDir = (Target.position - trueOrigin).normalized;
+            //Vector3 lungeDir = (Vector3.right * faceDir + Vector3.up * Mathf.Abs(Vector3.Dot(normalizedTargetDir, Vector3.right)) * LungeVerticality).normalized;
+
+            //if (Vector3.Dot(normalizedTargetDir, Vector3.up) > 0)
+            //{
+            Vector3 lungeDir = (normalizedTargetDir + Vector3.up * Mathf.Abs(Vector3.Dot(normalizedTargetDir, Vector3.right)) * LungeVerticality).normalized;
+            //}
+            frb.AddVelocity(lungeDir * LungeSpeed);
         }
     }
 

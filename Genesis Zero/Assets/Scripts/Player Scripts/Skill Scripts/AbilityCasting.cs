@@ -21,6 +21,9 @@ public class AbilityCasting : MonoBehaviour
     [Header("Spartan Laser")]
     //each successful kill makes the laser 20% larger
     public float scaleMultiPerKill = 1.2f;
+    [Header("FireDash")]
+    public LayerMask ignoreEnemiesLayerMask;
+    public float FD_duration = .5f;
     private float AbilityCasttime1;
     private float AbilityCooldown1;
     private float TotalAbilityCasttime1;
@@ -260,11 +263,12 @@ public class AbilityCasting : MonoBehaviour
     {
         player.GetComponent<PlayerController>().SetVertVel(0);
         player.KnockBackForced(aimDir + Vector2.up, 25);
+        player.GetComponent<PlayerController>().NewLayerMask(ignoreEnemiesLayerMask, FD_duration);
         GameObject hitbox = SpawnGameObject("FireDashHitbox", transform.position, Quaternion.identity);
         hitbox.GetComponent<Hitbox>().InitializeHitbox(GetComponent<Player>().GetDamage().GetValue() / 2, GetComponent<Player>());
         hitbox.transform.parent = transform;
-        player.SetInvunerable(.5f);
-        hitbox.GetComponent<Hitbox>().SetLifeTime(.5f);
+        player.SetInvunerable(FD_duration);
+        hitbox.GetComponent<Hitbox>().SetLifeTime(FD_duration);
     }
     private void CastOverdrive(int num)
     {

@@ -17,6 +17,7 @@ public class AIController : Pawn
     public float IdlePatrolIntervalMax = 2.0f; // Maximum time interval for switching between idling and patrolling
     private float idlePatrolIntervalCurrent = 1.0f; // Randomly chosen interval in range
     protected bool isGrounded = false;
+    protected Vector3 groundNormal = Vector3.zero;
     public Vector3 Origin;
     protected Vector3 trueOrigin = Vector3.zero;
 
@@ -32,7 +33,6 @@ public class AIController : Pawn
     public AIStateEvent StateChangeEvent; // Invoked whenever the state is changed and passes in the new state to called methods
 
     protected ObjectTracker tracker;
-    //private float trackFollowTime = 0.0f;
 
     new protected void Start()
     {
@@ -131,9 +131,8 @@ public class AIController : Pawn
         {
             alertTrackTime = 0.0f;
         }
-
-        //Debug.Log(trackFollowTime);
     }
+
     /**
      * Returns the current state of the AI
      */
@@ -255,6 +254,7 @@ public class AIController : Pawn
     protected virtual void GroundCheck()
     {
         isGrounded = false;
+        groundNormal = Vector3.zero;
     }
 
     /**
@@ -308,7 +308,8 @@ public class AIController : Pawn
             {
                 Vector3 toTarget = Target.position - trueOrigin;
                 RaycastHit[] sightHits = new RaycastHit[BehaviorProperties.MaxSightCastHits];
-                if (Physics.RaycastNonAlloc(trueOrigin, toTarget.normalized, sightHits, toTarget.magnitude, BehaviorProperties.SightMask, QueryTriggerInteraction.Ignore) > 0)
+                //if (Physics.RaycastNonAlloc(trueOrigin, toTarget.normalized, sightHits, toTarget.magnitude, BehaviorProperties.SightMask, QueryTriggerInteraction.Ignore) > 0)
+                if (Physics.SphereCastNonAlloc(trueOrigin, 0.1f, toTarget.normalized, sightHits, toTarget.magnitude, BehaviorProperties.SightMask, QueryTriggerInteraction.Ignore) > 0)
                 {
                     for (int i = 0; i < sightHits.Length; i++)
                     {
@@ -350,13 +351,14 @@ public class AIController : Pawn
         else if (tracker != null)
         {
             alertTracking = false;
-            //trackFollowTime += Time.fixedDeltaTime;
             return tracker.PeekFirstPoint();
         }
-        //trackFollowTime = 0.0f;
         return Vector3.zero;
     }
-
+    
+    /**
+     * Returns the normalized progress of charging before an attack
+     */
     public float GetNormalizedChargeTime()
     {
         if (BehaviorProperties != null && state == AIState.Charge)

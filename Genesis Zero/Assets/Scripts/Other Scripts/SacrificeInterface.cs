@@ -7,7 +7,7 @@ using UnityEngine.UI;
 public class SacrificeInterface : MonoBehaviour
 {
     private GodHead god;
-
+    private bool selectionMade = false;
     public void Start()
     {
 
@@ -40,9 +40,19 @@ public class SacrificeInterface : MonoBehaviour
     // button sends the int value of it's mod slot as a string, this gets sent to godhead script as updateselect + the mod slot
     public void SelectMod(string sint)
     {
+        this.gameObject.GetComponent<Button>().interactable = true;
         int modnum = int.Parse(sint);
         god = closestGod().GetComponent<GodHead>();
         god.UpdateSelect(modnum);
+    }
+    public void Accept()
+    {
+        god.FinalConfirmSelection();
+    }
+
+    public void Decline()
+    {
+        god.CloseUI();
     }
 
 }
