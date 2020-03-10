@@ -122,6 +122,10 @@ public class AbilityCasting : MonoBehaviour
                 InitializeAbility(3, 0, 0, num);
                 CastFireDash();
                 break;
+            case "Singularity":
+                InitializeAbility(12, 0, 0, num);
+                CastSingularity();
+                break;
         }
     }
 
@@ -319,6 +323,11 @@ public class AbilityCasting : MonoBehaviour
             GetComponent<OverHeat>().Increment(-GetComponent<OverHeat>().GetHeat());
             Destroy(shield, num == 1 ? ActiveTime1 : ActiveTime2);
         }
+    }
+
+    private void CastSingularity()
+    {
+
     }
 
     private GameObject SpawnGameObject(string name, Vector2 position, Quaternion quat)
