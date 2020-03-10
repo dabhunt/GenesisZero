@@ -50,7 +50,6 @@ public class ExplosiveShot : MonoBehaviour
                 runtimeExplosion = InheritOnHitEffects(runtimeExplosion);
             if (collide != null)
                 collide.radius = blastRadius;
-            collide.radius = blastRadius;
             //AOE AOEscript = runtimeExplosion.GetComponent<AOE>();
             //AOEscript.setScaleTarget(startScale, blastRadius, lerpMultiplier);
             hit.InitializeHitbox(player.GetDamage().GetValue(), player);
