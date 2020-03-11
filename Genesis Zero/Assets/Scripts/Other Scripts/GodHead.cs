@@ -10,9 +10,10 @@ public class GodHead : MonoBehaviour
     public float selectionOffset = -157f;
     private GameObject player;
     private GameInputActions inputActions;
+    private float interactInput;
     private Vector2 moveInput;
     private float selectInput;
-    private float interactInput;
+
     private RectTransform sacUI;
     private GameObject selection;
     //private RectTransform confirmUI;
@@ -36,8 +37,9 @@ public class GodHead : MonoBehaviour
     {
         player = GameObject.FindGameObjectWithTag("Player");
         inputActions = GameInputManager.instance.GetInputActions();
-        inputActions.MenuControls.Move.performed += ctx => moveInput = ctx.ReadValue<Vector2>();
         inputActions.PlayerControls.Interact.performed += ctx => interactInput = ctx.ReadValue<float>();
+        inputActions.MenuControls.Move.performed += ctx => moveInput = ctx.ReadValue<Vector2>();
+        
         skillManager = player.GetComponent<Player>().GetSkillManager();
         canvasRef = GameObject.FindGameObjectWithTag("CanvasUI").GetComponent<Canvas>();
         modSelectNum = -1;
@@ -153,6 +155,7 @@ public class GodHead : MonoBehaviour
         foreach (RectTransform child in sacModObjs.transform) 
             child.gameObject.SetActive(false);
         sacUI.gameObject.SetActive(false);
+        GetComponent<InteractPopup>().SetInteractable(false);
         //StateManager.instance.UnpauseGame();
         modSelectNum = -1;
         GameInputManager.instance.SwitchControlMap("PlayerControls");

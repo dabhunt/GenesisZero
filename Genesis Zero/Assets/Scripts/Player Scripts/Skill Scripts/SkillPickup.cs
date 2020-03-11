@@ -8,45 +8,59 @@ public class SkillPickup : MonoBehaviour
     public SkillObject skill;
     private bool added;
     private bool isMod;
+    private bool pressed;
+    private float attractDist = 4f;
     private GameObject target;
+    private Player player;
     // Start is called before the first frame update
     void Start()
     {
         target = GameObject.FindGameObjectWithTag("Player");
-        Player player = target.GetComponent<Player>();
+        player = target.GetComponent<Player>();
         if (skill == null)
         {
             skill = player.GetSkillManager().GetRandomModByChance();
             VFXManager.instance.ChangeColor(this.gameObject, player.GetSkillManager().GetColor(skill));
         }
-        else if (GetComponent<SimpleTooltip>()!=null)
+        else if (GetComponent<SimpleTooltip>() != null)
         {
             GetComponent<SimpleTooltip>().infoLeft = skill.SimpleDescription;
         }
         isMod = skill.IsAbility ? false : true;
-       
+
         if (skill != null)
-            VFXManager.instance.ChangeColor(this.gameObject, player.GetSkillManager().GetColor(skill));
-    }
+        {
+            if (skill.IsAbility)
+                VFXManager.instance.ChangeColor(this.gameObject, new Color(0, .11f, .18f, .66f));
+            else
+                VFXManager.instance.ChangeColor(this.gameObject, player.GetSkillManager().GetColor(skill));
+        }
+        //InvokeRepeating("CheckPopup", 0, .2f);
 
-    // Update is called once per frame
-    void Update()
+    }
+    private void Update()
     {
-        
+        if (Input.GetKey(KeyCode.F))
+        {
+            //if the player presses F within range, it will be pulled towards them
+            if (Vector3.Distance(player.transform.position, transform.position) <= attractDist)
+                pressed = true;
+        }
     }
-
     private void FixedUpdate()
     {
-        if (target != null){
+        if (target != null && pressed){
             // Force pull for pickup
+            if (GetComponent<Floating>() != null)
+                Destroy(GetComponent<Floating>());
             float distance = Vector2.Distance(transform.position, target.transform.position);
-            if (isMod && distance < 4)
+            if (distance <= attractDist)
             {
                 Vector3 direction = target.transform.position - transform.position;
                 direction.y += 1;
                 GetComponent<Rigidbody>().AddForce((direction) * (1 - (distance / 4)) / 2, ForceMode.Impulse);
             }
-            else if (isMod && GetComponent<Rigidbody>().velocity.magnitude > 12)
+            else if (GetComponent<Rigidbody>().velocity.magnitude > 12)
             {
                 float mag = GetComponent<Rigidbody>().velocity.magnitude;
                 GetComponent<Rigidbody>().velocity = GetComponent<Rigidbody>().velocity.normalized * (mag *.9f);

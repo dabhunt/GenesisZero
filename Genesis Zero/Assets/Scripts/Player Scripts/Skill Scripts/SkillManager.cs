@@ -29,7 +29,7 @@ public class SkillManager
     private List<SkillObject> startermods; // List of startermods in the game
 
     // Lower the number, lower the chance. Determined by this order (0 - 100)
-    private int goldchance = 10; 
+    private int goldchance = 5; 
     private int bluechance = 40; // Realistically its bluechance - goldchance in code
     // No white chance becuase it is the default if the other two do not go through
 
@@ -239,7 +239,7 @@ public class SkillManager
         Object[] skills = Resources.LoadAll("Skills");
         SkillObject skill = (SkillObject)skills[Random.Range(0, skills.Length)];
         //this fixes the problem of this function also returning abilities
-        while (skill.IsAbility)
+        while (skill.IsAbility || skill == null)
         {
             skill = (SkillObject)skills[Random.Range(0, skills.Length)];
         }
@@ -467,6 +467,7 @@ public class SkillManager
     public GameObject SpawnMod(Vector3 position, string name)
     {
         SkillObject so = (SkillObject)Resources.Load("Skills/" + name);
+        while (so.IsAbility || so == null) { return null; }
         GameObject emit = (GameObject)GameObject.Instantiate(Resources.Load("Pickups/ModPickup"), position, Quaternion.identity);
         emit.GetComponent<SkillPickup>().skill = so;
         return emit;
