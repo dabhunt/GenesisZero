@@ -42,7 +42,7 @@ public class SkillPickup : MonoBehaviour
     {   //if this skill is an ability, and the player has no room for new abilities change the text
         if (player.GetSkillManager().GetAbilityAmount() > 1 && skill.IsAbility)
             GetComponent<InteractPopup>().SetText("Press [F] to Replace Ability 1");
-        if (Input.GetKey(KeyCode.F))
+        if (Input.GetKeyDown(KeyCode.F))
         {
             //if the player presses F within range, it will be pulled towards them
             if (Vector3.Distance(player.transform.position, transform.position) <= attractDist)

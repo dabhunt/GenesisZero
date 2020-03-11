@@ -56,7 +56,7 @@ public class GodHead : MonoBehaviour
             //if(inputActions.MenuControls.enabled) return;
             if (Vector3.Distance(player.transform.position, transform.position) <= activeDistance)
             {
-                //StateManager.instance.PauseGame();
+                StateManager.instance.PauseGame();
                 GameInputManager.instance.SwitchControlMap("MenuControls");
                 isActive = true;
                 InitializeUI();
@@ -160,7 +160,7 @@ public class GodHead : MonoBehaviour
         foreach (RectTransform child in sacModObjs.transform) 
             child.gameObject.SetActive(false);
         sacUI.gameObject.SetActive(false);
-        //StateManager.instance.UnpauseGame();
+        StateManager.instance.UnpauseGame();
         modSelectNum = -1;
         GameInputManager.instance.SwitchControlMap("PlayerControls");
     }

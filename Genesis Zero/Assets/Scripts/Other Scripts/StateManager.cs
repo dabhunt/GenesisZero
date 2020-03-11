@@ -10,7 +10,7 @@ public class StateManager : MonoBehaviour
     private Player player;
     private float TimeScale = 1;
     private float Timer = 0;
-    private bool IsPaused;
+    private bool isPaused;
     private Restart restart;
 
 
@@ -72,7 +72,7 @@ public class StateManager : MonoBehaviour
     {
         //Pauses Game
         Debug.Log("Pausing Game");
-        IsPaused = true;
+        isPaused = true;
         Time.timeScale = 0;
     }
 
@@ -81,16 +81,20 @@ public class StateManager : MonoBehaviour
     {
         //UnPauses Game
         Debug.Log("UnPausing Game");
-        IsPaused = false;
+        isPaused = false;
         Time.timeScale = TimeScale;
         Time.fixedDeltaTime = 0.02f * TimeScale;
+    }
+    public bool IsPaused()
+    {
+        return isPaused;
     }
 
     public void ChangeTimeScale(float timescale, float time)
     {
         TimeScale = timescale;
         Timer = time;
-        if (!IsPaused)
+        if (!isPaused)
         {
             Time.timeScale = timescale;
             Time.fixedDeltaTime = 0.02f * TimeScale;
