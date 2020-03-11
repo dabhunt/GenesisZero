@@ -77,6 +77,15 @@ public class InteractPopup : MonoBehaviour
             SetScreenPos(screenPos);
         }
     }
+    public void DestroyPopUp()
+    {
+        Destroy(popup);
+    }
+    public void SetText(string poptext)
+    {
+        if (popup != null)
+            popup.GetComponentInChildren<Text>().text = poptext;
+    }
     private void OnDestroy()
     {
         Destroy(popup);
