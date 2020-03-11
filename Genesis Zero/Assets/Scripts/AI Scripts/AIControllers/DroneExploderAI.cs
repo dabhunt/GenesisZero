@@ -27,7 +27,8 @@ public class DroneExploderAI : AIController
 
     [Header("Effects")]
     public string vfxName = "VFX_Explosion";
-    public float blastRadius = 5f;
+    public float blastRadius = 3.5f;
+    public float scaleCorrector = 3.5f;
     public float lerpMultiplier = 2.3f;
     public float startScale = .01f;
 
@@ -125,7 +126,7 @@ public class DroneExploderAI : AIController
             GameObject spawnedExplosion = Instantiate(explosionPrefab, transform.position, Quaternion.identity);
             Hitbox spawnedHitbox = spawnedExplosion.GetComponent<Hitbox>();
             spawnedHitbox.InitializeHitbox(GetDamage().GetValue(), this);
-            GameObject emit = VFXManager.instance.PlayEffect(vfxName, new Vector3(transform.position.x, transform.position.y, transform.position.z), 0f, blastRadius);
+            GameObject emit = VFXManager.instance.PlayEffect(vfxName, new Vector3(transform.position.x, transform.position.y, transform.position.z), 0f, blastRadius/scaleCorrector);
             spawnedExplosion.GetComponent<ProjectileTest>().DestroyEvent.AddListener(DestroySelf);
             // Vector3 spawnPoint = new Vector3(transform.position.x, transform.position.y,0);
             // //this is for collision, not VFX

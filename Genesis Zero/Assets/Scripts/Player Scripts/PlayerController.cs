@@ -27,6 +27,7 @@ public class PlayerController : MonoBehaviour
     public float rollCooldownDuration = 3.0f;
     public float jumpBufferTime = 0.2f;
     public LayerMask immoveables; //LayerMask for bound checks
+    public LayerMask rollingLayerMask; //layermask used while rolling
     public bool debug;
 
     [Header("Physics")]
@@ -322,8 +323,8 @@ public class PlayerController : MonoBehaviour
         {
             isGrounded = true;
             if (Physics.Raycast(transform.position, Vector3.down, out hit, characterHeight * 0.5f, immoveables))
-                if (hit.distance < .5f * characterHeight + vertCastPadding)
-                    transform.position = Vector3.Lerp(transform.position, transform.position + Vector3.up * .5f* characterHeight , 5 * Time.fixedDeltaTime);
+                if (hit.distance < 1f * characterHeight + vertCastPadding)
+                    transform.position = Vector3.Lerp(transform.position, transform.position + Vector3.up * 1* characterHeight , 5 * Time.fixedDeltaTime);
 
             if (vertVel < 0)
                 vertVel = 0;
@@ -346,21 +347,27 @@ public class PlayerController : MonoBehaviour
         if (IsBlocked(Vector3.left))
         {
             if (Physics.Raycast(transform.position, Vector3.left, out hit, (characterWidth * 0.5f) + vertCastPadding, immoveables))
-                if (hit.distance < 2f  * characterWidth + horCastPadding)
-                    transform.position = Vector3.Lerp(transform.position, transform.position + Vector3.right * characterWidth * 0.5f, 5 * Time.fixedDeltaTime);
+                if (hit.distance < .5f * characterWidth + horCastPadding)
+                    transform.position = Vector3.Lerp(transform.position, transform.position + Vector3.right * characterWidth * .5f, 5 * Time.fixedDeltaTime);
         }
         if (IsBlocked(Vector3.right))
         {
             if (Physics.Raycast(transform.position, Vector3.right, out hit, (characterWidth * 0.5f) + vertCastPadding, immoveables))
-                if (hit.distance < 2f  * characterWidth + horCastPadding)
-                    transform.position = Vector3.Lerp(transform.position, transform.position + Vector3.left * characterWidth * 0.5f, 5 * Time.fixedDeltaTime);
+                if (hit.distance < .5f * characterWidth + horCastPadding)
+                    transform.position = Vector3.Lerp(transform.position, transform.position + Vector3.left * characterWidth * .5f, 5 * Time.fixedDeltaTime);
+        }
+        if (IsBlocked(Vector3.up))
+        {
+            if (Physics.Raycast(transform.position, Vector3.up, out hit, characterHeight * 0.5f, immoveables))
+                if (hit.distance < .5f * characterHeight + vertCastPadding)
+                    transform.position = Vector3.Lerp(transform.position, transform.position + Vector3.down * .5f * characterHeight, 5 * Time.fixedDeltaTime);
         }
     }
 
-    /* This fuction applies gravity to player
-     * when the player is falling
-     */
-    private void ApplyGravity()
+        /* This fuction applies gravity to player
+         * when the player is falling
+         */
+        private void ApplyGravity()
     {
         float startVel = vertVel;
         if (isGrounded)
@@ -396,6 +403,7 @@ public class PlayerController : MonoBehaviour
                     rollDirection =  isAimingRight ? 1 : -1;
                 isRolling = true;
                 GetComponent<Player>().SetInvunerable(rollDuration);
+                NewLayerMask(rollingLayerMask, rollDuration);
                 timeRolled = 0;
                 //lastRollingPosition = transform.position;
 
