@@ -27,6 +27,7 @@ public class SkillManager
     private List<SkillObject> bluemods; // List of bluemods in the game
     private List<SkillObject> goldmods;  // List of goldmods in the game
     private List<SkillObject> startermods; // List of startermods in the game
+    private List<SkillObject> abilities;
 
     // Lower the number, lower the chance. Determined by this order (0 - 100)
     private int goldchance = 5; 
@@ -181,7 +182,7 @@ public class SkillManager
 
     private void InitializeLists()
     {
-        SkillObject[] skills = Resources.LoadAll<SkillObject>("Skills");
+        SkillObject[] skills = Resources.LoadAll<SkillObject>("Skills/Modifiers");
         for (int i = 0; i < skills.Length; i++)
         {
             switch (skills[i].Rarity)
@@ -201,10 +202,17 @@ public class SkillManager
                     break;
             }
         }
+
         SkillObject[] sskills = Resources.LoadAll<SkillObject>("Skills/Starter Mods");
         for (int i = 0; i < sskills.Length; i++)
         {
             startermods.Add(sskills[i]);
+        }
+
+        SkillObject[] abils = Resources.LoadAll<SkillObject>("Skills/Abilities");
+        for (int i = 0; i < abils.Length; i++)
+        {
+            abilities.Add(abils[i]);
         }
     }
 
@@ -220,7 +228,7 @@ public class SkillManager
     [System.Obsolete(" :P Kenny Here, this function is deprecated. Use GetRandomMod() instead ")]
     public SkillObject GetRandomSkill()
     {
-        Object[] skills = Resources.LoadAll<SkillObject>("Skills");
+        Object[] skills = Resources.LoadAll<SkillObject>("Skills/Modifiers");
         SkillObject skill = (SkillObject)skills[Random.Range(0, skills.Length)];
         //this fixes the problem of this function also returning abilities
         while (skill.IsAbility)
@@ -231,12 +239,22 @@ public class SkillManager
     }
 
     /**
+* Returns a random SkillObject that exists in the resources/skills folder
+* Includes whites, blues, and golds
+*/
+    public SkillObject GetRandomStarterMod()
+    {
+        SkillObject SM = (SkillObject)startermods[Random.Range(0, startermods.Count)];
+        return SM;
+    }
+
+    /**
     * Returns a random SkillObject that exists in the resources/skills folder
     * Includes whites, blues, and golds
     */
     public SkillObject GetRandomMod()
     {
-        Object[] skills = Resources.LoadAll<SkillObject>("Skills");
+        Object[] skills = Resources.LoadAll<SkillObject>("Skills/Modifiers");
         SkillObject skill = (SkillObject)skills[Random.Range(0, skills.Length)];
         //this fixes the problem of this function also returning abilities
         skill = (SkillObject)skills[Random.Range(0, skills.Length)];
