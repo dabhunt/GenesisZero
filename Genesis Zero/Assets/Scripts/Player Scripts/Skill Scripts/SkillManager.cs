@@ -220,7 +220,7 @@ public class SkillManager
     [System.Obsolete(" :P Kenny Here, this function is deprecated. Use GetRandomMod() instead ")]
     public SkillObject GetRandomSkill()
     {
-        Object[] skills = Resources.LoadAll("Skills");
+        Object[] skills = Resources.LoadAll<SkillObject>("Skills");
         SkillObject skill = (SkillObject)skills[Random.Range(0, skills.Length)];
         //this fixes the problem of this function also returning abilities
         while (skill.IsAbility)
@@ -236,13 +236,10 @@ public class SkillManager
     */
     public SkillObject GetRandomMod()
     {
-        Object[] skills = Resources.LoadAll("Skills");
+        Object[] skills = Resources.LoadAll<SkillObject>("Skills");
         SkillObject skill = (SkillObject)skills[Random.Range(0, skills.Length)];
         //this fixes the problem of this function also returning abilities
-        while (skill.IsAbility)
-        {
-            skill = (SkillObject)skills[Random.Range(0, skills.Length)];
-        }
+        skill = (SkillObject)skills[Random.Range(0, skills.Length)];
         return skill;
     }
 
@@ -300,7 +297,7 @@ public class SkillManager
     */
     public SkillObject GetRandomAbility()
     {
-        Object[] skills = Resources.LoadAll("Skills/Abilities");
+        Object[] skills = Resources.LoadAll<SkillObject>("Skills/Abilities");
         SkillObject skill = (SkillObject)skills[Random.Range(0, skills.Length)];
         //Debug.Log(skill.name);
         return skill;
@@ -343,7 +340,7 @@ public class SkillManager
         // Once the the cases have been determined, random (non-duplicate) mods are picked from the game pool of mods
         for (int i = 0; i < amount; i++)
         {
-            int num = (int)Random.Range(0, picklist.Count);
+            int num = Random.Range(0, picklist.Count);
             returnlist.Add(picklist[num]);
             picklist.Remove(picklist[num]);
         }
@@ -466,7 +463,7 @@ public class SkillManager
 
     public GameObject SpawnMod(Vector3 position, string name)
     {
-        SkillObject so = (SkillObject)Resources.Load("Skills/" + name);
+        SkillObject so = Resources.Load<SkillObject>("Skills/" + name);
         GameObject emit = (GameObject)GameObject.Instantiate(Resources.Load("Pickups/ModPickup"), position, Quaternion.identity);
         emit.GetComponent<SkillPickup>().skill = so;
         return emit;
