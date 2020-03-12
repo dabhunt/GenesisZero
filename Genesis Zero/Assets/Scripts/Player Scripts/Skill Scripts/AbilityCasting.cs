@@ -11,7 +11,7 @@ public class AbilityCasting : MonoBehaviour
 
     [Header("Time Dilation Ability")]
     public float timeScale = .5f;
-    public float effectDuration = 3.2f;
+    public float TS_effectDuration = 3.2f;
     [Header("Multi Shot Ability (Active)")]
     //how long the effect lasts
     public float MS_ActiveTime;
@@ -39,6 +39,7 @@ public class AbilityCasting : MonoBehaviour
     public GameObject AbilityCooldownPanel;
     private AbilityCD ui;
     private Vector2 aimDir;
+    private Vector2 MousePosition;
     // Start is called before the first frame update
     void Start()
     {
@@ -54,7 +55,7 @@ public class AbilityCasting : MonoBehaviour
     {
 
         Vector3 pos = new Vector3(Input.mousePosition.x, Input.mousePosition.y, Mathf.Abs(Camera.main.transform.position.z - transform.position.z));
-        Vector3 mousePosition = Camera.main.ScreenToWorldPoint(pos);
+        MousePosition = Camera.main.ScreenToWorldPoint(pos);
         aimDir = GetComponent<PlayerController>().screenXhair.transform.position - transform.position;
         UpdateAbilities();
 
@@ -124,6 +125,10 @@ public class AbilityCasting : MonoBehaviour
             case "Fire Dash":
                 InitializeAbility(3, 0, 0, num);
                 CastFireDash();
+                break;
+            case "Singularity":
+                InitializeAbility(4, 0, 0, num);
+                CastSingularity();
                 break;
         }
     }
@@ -285,7 +290,8 @@ public class AbilityCasting : MonoBehaviour
 
     private void CastSlowDown()
     {
-        StateManager.instance.ChangeTimeScale(timeScale, effectDuration);
+        StateManager.instance.ChangeTimeScale(timeScale, TS_effectDuration);
+        VFXManager.instance.TimeEffect(TS_effectDuration, 1);
     }
 
     private void CastSpartanLaser()
@@ -322,6 +328,22 @@ public class AbilityCasting : MonoBehaviour
             shield.GetComponent<Pawn>().GetHealth().SetMaxValue(GetComponent<OverHeat>().GetHeat());
             GetComponent<OverHeat>().Increment(-GetComponent<OverHeat>().GetHeat());
             Destroy(shield, num == 1 ? ActiveTime1 : ActiveTime2);
+        }
+    }
+
+    private void CastSingularity()
+    {
+        GameObject hitbox = SpawnGameObject("Sing_Projectile", CastAtAngle(transform.position, aimDir, .5f), GetComponent<Gun>().firePoint.rotation);
+        hitbox.GetComponent<Hitbox>().InitializeHitbox(1, player);
+        hitbox.GetComponent<Projectile>().lifeTime = ((MousePosition - (Vector2)transform.position).magnitude / hitbox.GetComponent<Projectile>().speed);
+        if (hitbox.GetComponent<EmitOnDestroy>().Emits[0] != null)
+        {
+            GameObject pull = hitbox.GetComponent<EmitOnDestroy>().Emits[0];
+        }
+        if (hitbox.GetComponent<EmitOnDestroy>().Emits[0].GetComponent<EmitOnDestroy>().Emits[0] != null)
+        {
+            GameObject explosion = hitbox.GetComponent<EmitOnDestroy>().Emits[0].GetComponent<EmitOnDestroy>().Emits[0];
+            explosion.GetComponent<Hitbox>().InitializeHitbox(player.GetDamage().GetValue(), player);
         }
     }
 

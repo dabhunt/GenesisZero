@@ -227,7 +227,11 @@ public class Hitbox : MonoBehaviour
                 {
                     emit.GetComponent<DamageNumber>().SetColor(new Color(.25f, .25f, .25f));
                 }
-                GameObject vfx = VFXManager.instance.PlayEffect(hitEffectVFX, new Vector3(transform.position.x, transform.position.y, transform.position.z), 0f, Mathf.Clamp(damagetaken / VFX_ScaleReduction, .2f, 3.5f));
+                if (hitEffectVFX != "")
+                {
+                    GameObject vfx = VFXManager.instance.PlayEffect(hitEffectVFX, new Vector3(transform.position.x, transform.position.y, transform.position.z), 0f, Mathf.Clamp(damagetaken / VFX_ScaleReduction, .2f, 3.5f));
+                }
+               
                 hittargets.Add(other.transform.root.gameObject);
                 --MaxHits;
             }

@@ -37,19 +37,20 @@ public class CharacterAimFootIK : MonoBehaviour
 
     private void LateUpdate()
     {
-
-
-        if (Anim.GetBool("isRolling") == true)
+        if (!StateManager.instance.IsPaused())
         {
-            Chest.rotation = OriginalChestRotation;
-            Anim.SetLayerWeight(1, 0);
-        }
-        if (Anim.GetBool("isRolling") == false)
-        {
-            Anim.SetLayerWeight(1, 1);
-            Chest.LookAt(Target);
-            Chest.rotation = Chest.rotation * Quaternion.Euler(ChestOffset);
+            if (Anim.GetBool("isRolling") == true)
+            {
+                Chest.rotation = OriginalChestRotation;
+                Anim.SetLayerWeight(1, 0);
+            }
+            if (Anim.GetBool("isRolling") == false)
+            {
+                Anim.SetLayerWeight(1, 1);
+                Chest.LookAt(Target);
+                Chest.rotation = Chest.rotation * Quaternion.Euler(ChestOffset);
 
+            }
         }
 
     }

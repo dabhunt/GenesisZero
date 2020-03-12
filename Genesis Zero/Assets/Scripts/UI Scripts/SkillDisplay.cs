@@ -80,6 +80,7 @@ public class SkillDisplay : MonoBehaviour
                 instance.GetComponent<SkillUIElement>().SetIcon(skills[i].Icon);
                 instance.GetComponent<SkillUIElement>().SetColor(SkillManager.GetColor(skills[i]));
                 instance.GetComponent<SkillUIElement>().SetStack(SkillManager.GetSkillStack(skills[i].name));
+                instance.GetComponent<SkillUIElement>().SetSkill(skills[i]);
                 instance.GetComponent<SimpleTooltip>().infoLeft = skills[i].Description;
                 skilldisplay.Add(instance);
             }

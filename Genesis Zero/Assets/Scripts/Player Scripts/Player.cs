@@ -6,7 +6,7 @@ public class Player : Pawn
 {
     SkillManager SkillManager;
     public Statistic Essence;
-    public float healthPerStack = 8;
+    public float healthPerStack = 4;
 
     private void Awake()
     {
@@ -22,7 +22,7 @@ public class Player : Pawn
     // Update is called once per frame
     new void Update()
     {
-        if (Input.GetKeyDown(KeyCode.S))
+        if (Input.GetKeyDown(KeyCode.Tab))
         {
             SkillManager.SwapCurrentAbilities();
         }
