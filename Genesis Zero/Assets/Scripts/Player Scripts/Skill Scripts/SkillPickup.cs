@@ -9,7 +9,9 @@ public class SkillPickup : MonoBehaviour
     private bool added;
     private bool isMod;
     private bool pressed;
-    private float attractDist = 4f;
+    private float pickupDist = 4f;
+    public float acceleration = .2f;
+    public float speedvar = 4f;
     private GameObject target;
     private Player player;
     // Start is called before the first frame update
@@ -45,7 +47,7 @@ public class SkillPickup : MonoBehaviour
         if (Input.GetKeyDown(KeyCode.F))
         {
             //if the player presses F within range, it will be pulled towards them
-            if (Vector3.Distance(player.transform.position, transform.position) <= attractDist)
+            if (Vector3.Distance(player.transform.position, transform.position) <= pickupDist)
             {
                 pressed = true;
                 //if the nearby skill is an Ability 
@@ -66,20 +68,11 @@ public class SkillPickup : MonoBehaviour
             // Force pull for pickup
             if (GetComponentInChildren<Floating>() != null)
                 Destroy(GetComponentInChildren<Floating>());
-            float distance = Vector2.Distance(transform.position, target.transform.position);
-            if (distance <= attractDist)
-            {
-                Vector3 direction = target.transform.position - transform.position;
-                direction.y += 1;
-                GetComponent<Rigidbody>().AddForce((direction) * (1 - (distance / 4)) / 2, ForceMode.Impulse);
-            }
-            else if (GetComponent<Rigidbody>().velocity.magnitude > 12)
-            {
-                float mag = GetComponent<Rigidbody>().velocity.magnitude;
-                GetComponent<Rigidbody>().velocity = GetComponent<Rigidbody>().velocity.normalized * (mag *.9f);
-            }
+            speedvar *= 1.1f;
+            Vector3 tVec = new Vector3(target.transform.position.x, target.transform.position.y + .9f, 0);
+            transform.LookAt(tVec);
+            this.transform.position = Vector3.MoveTowards(this.transform.position, tVec, speedvar * Time.deltaTime);
         }
-
         if (added == true)
         {
             Destroy(gameObject);

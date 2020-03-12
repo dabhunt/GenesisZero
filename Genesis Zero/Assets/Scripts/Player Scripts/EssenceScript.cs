@@ -23,7 +23,9 @@ public class EssenceScript : MonoBehaviour
             float distance = Vector2.Distance(transform.position, transTarget);
 
             if (distance < attractionDistance){
-                transform.LookAt(target.transform.position);
+                if (GetComponent<Floating>() != null)
+                    Destroy(GetComponent<Floating>());
+                //transform.LookAt(target.transform.position);
                 speedvar = speedvar*1.1f;
                 this.transform.position = Vector3.MoveTowards(this.transform.position, transTarget, speedvar * Time.deltaTime);
             }
