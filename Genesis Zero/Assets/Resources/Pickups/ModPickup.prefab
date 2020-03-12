@@ -5017,10 +5017,11 @@ GameObject:
   - component: {fileID: 5172852885497664048}
   - component: {fileID: 1445071238403531195}
   - component: {fileID: 7501719054974816678}
-  - component: {fileID: 6767189360673188613}
   - component: {fileID: 6767189360673188615}
   - component: {fileID: 6767189360673188608}
   - component: {fileID: 6767189360673188614}
+  - component: {fileID: -8588205982657296633}
+  - component: {fileID: 6767189360673188613}
   m_Layer: 11
   m_Name: ModPickup
   m_TagString: Untagged
@@ -5095,22 +5096,6 @@ MeshRenderer:
   m_SortingLayerID: 0
   m_SortingLayer: 0
   m_SortingOrder: 0
---- !u!54 &6767189360673188613
-Rigidbody:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 6767189360673188612}
-  serializedVersion: 2
-  m_Mass: 1
-  m_Drag: 0
-  m_AngularDrag: 0.05
-  m_UseGravity: 1
-  m_IsKinematic: 0
-  m_Interpolate: 0
-  m_Constraints: 8
-  m_CollisionDetection: 0
 --- !u!65 &6767189360673188615
 BoxCollider:
   m_ObjectHideFlags: 0
@@ -5136,7 +5121,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 5890b6865d3086e438d8ba5ff9e401e9, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  skill: {fileID: 11400000, guid: 7c8cd438e6b5b5640af514e442e066b0, type: 2}
+  skill: {fileID: 0}
 --- !u!114 &6767189360673188614
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -5152,6 +5137,38 @@ MonoBehaviour:
   simpleTooltipStyle: {fileID: 11400000, guid: b60656fad1664684d8fb0085c2c6ccbb, type: 2}
   infoLeft: Boosts speed, defense, and damage.
   infoRight: 
+--- !u!114 &-8588205982657296633
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 6767189360673188612}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: d648338719157ee4c85938318b3704d9, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  checksPerSecond: 4
+  activeDistance: 2.5
+  scaleSize: 0.5
+  poptext: Press [F] to pickup
+--- !u!54 &6767189360673188613
+Rigidbody:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 6767189360673188612}
+  serializedVersion: 2
+  m_Mass: 1
+  m_Drag: 0
+  m_AngularDrag: 0.05
+  m_UseGravity: 1
+  m_IsKinematic: 0
+  m_Interpolate: 0
+  m_Constraints: 8
+  m_CollisionDetection: 0
 --- !u!1 &7010450288005160522
 GameObject:
   m_ObjectHideFlags: 0

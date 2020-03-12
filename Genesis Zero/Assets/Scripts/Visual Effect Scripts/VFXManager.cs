@@ -1,6 +1,7 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.Rendering.PostProcessing;
 
 /**
  * Kenny Doan
@@ -23,6 +24,13 @@ public class VFXManager : MonoBehaviour
         }
     }
 
+    public void TimeEffect(float duration,float intensity)
+    {
+        GetComponentInChildren<VFX_TimeDilation>().timeEffect(duration);
+        var distort = ScriptableObject.CreateInstance<LensDistortion>();
+        distort.enabled.Override(true);
+        distort.intensity.Override(1f);
+    }
     // I am very proud of this, I came up with it myself
     private void RecursiveChildScale(Transform t, float scaleMultiplier)
     {

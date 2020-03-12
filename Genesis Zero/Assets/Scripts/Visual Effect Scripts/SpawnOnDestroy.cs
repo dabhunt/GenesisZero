@@ -71,7 +71,8 @@ public class SpawnOnDestroy : MonoBehaviour
                 for (int i = 0; i < amount; i++)
                 {
                     // if essence drop chance exceeds the random value from 0 to 1.0f, it drops
-                    GameObject essence = Instantiate(EssencePrefab, new Vector3(transform.position.x, transform.position.y, -4), Quaternion.identity);
+                    float offset = i / (1.5f+Random.value * 4);
+                    GameObject essence = Instantiate(EssencePrefab, new Vector3(transform.position.x+offset, transform.position.y+ offset, -4), Quaternion.identity);
                     essence = Drop(essence);
                     //Destroy(rb);
                 }
@@ -79,7 +80,7 @@ public class SpawnOnDestroy : MonoBehaviour
                 if (ModifierDropChance > Random.value)
                 {
                     SkillManager sk = player.GetSkillManager();
-                    SkillObject mod = sk.GetRandomModByChance();
+                    SkillObject mod = sk.GetRandomMod();
                     GameObject modObj = sk.SpawnMod(transform.position, mod.name);
                     //change the color of the mod to the color based on rarity
                     VFXManager.instance.ChangeColor(modObj, sk.GetColor(mod));
@@ -93,10 +94,11 @@ public class SpawnOnDestroy : MonoBehaviour
     public GameObject Drop(GameObject obj)
     {
         Rigidbody rb = obj.GetComponent<Rigidbody>();
-        float force = Random.Range(minDropVelocity, maxDropVelocity);
+        //float force = Random.Range(minDropVelocity, maxDropVelocity);
+        float force = .5f;
         //random rotation and force applied
         obj.transform.rotation = Random.rotation;
-        rb.GetComponent<Rigidbody>().velocity = Random.onUnitSphere * force/2;
+        rb.GetComponent<Rigidbody>().velocity = Random.onUnitSphere * force;
         return obj;       
     }
     void OnApplicationQuit()

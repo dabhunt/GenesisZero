@@ -20,6 +20,7 @@ public class SkillUIElement : MonoBehaviour
         {
             GetComponent<Image>().sprite = Icon.sprite;
         }
+
     }
     public void UpdateSkillUIElement(Sprite icon, int stacknumber, SkillObject skill, Color color)
     {

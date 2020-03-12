@@ -33,7 +33,8 @@ public class SingularityPull : MonoBehaviour
     {
         foreach (GameObject g in PulledTargets)
         {
-            g.transform.position = Vector2.Lerp(g.transform.position, transform.position, Time.fixedDeltaTime);
+            if (g != null)
+                g.transform.position = Vector2.Lerp(g.transform.position, transform.position, Time.fixedDeltaTime);
         }
     }
 }

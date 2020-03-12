@@ -10,9 +10,10 @@ public class GodHead : MonoBehaviour
     public float selectionOffset = -157f;
     private GameObject player;
     private GameInputActions inputActions;
+    private float interactInput;
     private Vector2 moveInput;
     private float selectInput;
-    private float interactInput;
+
     private RectTransform sacUI;
     private GameObject selection;
     //private RectTransform confirmUI;
@@ -36,8 +37,9 @@ public class GodHead : MonoBehaviour
     {
         player = GameObject.FindGameObjectWithTag("Player");
         inputActions = GameInputManager.instance.GetInputActions();
-        inputActions.MenuControls.Move.performed += ctx => moveInput = ctx.ReadValue<Vector2>();
         inputActions.PlayerControls.Interact.performed += ctx => interactInput = ctx.ReadValue<float>();
+        inputActions.MenuControls.Move.performed += ctx => moveInput = ctx.ReadValue<Vector2>();
+        
         skillManager = player.GetComponent<Player>().GetSkillManager();
         canvasRef = GameObject.FindGameObjectWithTag("CanvasUI").GetComponent<Canvas>();
         modSelectNum = -1;
@@ -54,7 +56,7 @@ public class GodHead : MonoBehaviour
             //if(inputActions.MenuControls.enabled) return;
             if (Vector3.Distance(player.transform.position, transform.position) <= activeDistance)
             {
-                //StateManager.instance.PauseGame();
+                StateManager.instance.PauseGame();
                 GameInputManager.instance.SwitchControlMap("MenuControls");
                 isActive = true;
                 InitializeUI();
@@ -96,6 +98,13 @@ public class GodHead : MonoBehaviour
         SkillObject skill = modObjUI[modSelectNum].GetComponent<SkillUIElement>().Skill;
         skillManager.RemoveSkill(skill);
         Vector3 spawnPoint = new Vector3(transform.position.x, transform.position.y + 2, 0);
+        SkillObject ability = skillManager.GetRandomAbility();
+        //Guarantee that the player gets an ability they don't currently have
+        //Also, this may at some point even keep track of all abilities the player has ever gotten, to ensure maximum variety for the demo
+        while (skillManager.HasSkill(ability.name))
+        {
+           ability = skillManager.GetRandomAbility();
+        }
         skillManager.SpawnAbility(spawnPoint, skillManager.GetRandomAbility().name);
         CloseUI();
     }
@@ -103,17 +112,15 @@ public class GodHead : MonoBehaviour
     private void UpdateUI()
     {
         if (!isActive) return;
-
-        
-
     }
 
     private void InitializeUI()
     {
+        GetComponent<InteractPopup>().DestroyPopUp();
+        Destroy(GetComponent<InteractPopup>());
         sacUI = (RectTransform) canvasRef.transform.Find("SacrificeUI");
         sacModObjs = sacUI.gameObject.transform.Find("SacMods").gameObject;
         sacUI.gameObject.SetActive(true);
-        
         List<SkillObject> modSkills = skillManager.GetRandomModsFromPlayer(3);
         Vector2 screenPos;
         Vector2 headScreenPos;
@@ -153,7 +160,7 @@ public class GodHead : MonoBehaviour
         foreach (RectTransform child in sacModObjs.transform) 
             child.gameObject.SetActive(false);
         sacUI.gameObject.SetActive(false);
-        //StateManager.instance.UnpauseGame();
+        StateManager.instance.UnpauseGame();
         modSelectNum = -1;
         GameInputManager.instance.SwitchControlMap("PlayerControls");
     }
