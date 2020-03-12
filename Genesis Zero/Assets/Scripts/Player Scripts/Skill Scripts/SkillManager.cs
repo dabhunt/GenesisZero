@@ -48,6 +48,7 @@ public class SkillManager
         bluemods = new List<SkillObject>();
         goldmods = new List<SkillObject>();
         startermods = new List<SkillObject>();
+        abilities = new List<SkillObject>();
         InitializeLists();
     }
 
@@ -239,13 +240,31 @@ public class SkillManager
     }
 
     /**
-* Returns a random SkillObject that exists in the resources/skills folder
-* Includes whites, blues, and golds
-*/
+    * Returns a random SkillObject that exists in the resources/skills/starter mods folder
+    */
     public SkillObject GetRandomStarterMod()
     {
         SkillObject SM = (SkillObject)startermods[Random.Range(0, startermods.Count)];
         return SM;
+    }
+
+    /**
+    * Returns random starter mods of specified rarity in the game pool. NOT from player
+    */
+    public List<SkillObject> GetRandomStarterMods(int amount)
+    {
+        List<SkillObject> returnlist = new List<SkillObject>();
+        List<SkillObject> picklist = new List<SkillObject>();
+        picklist.AddRange(startermods);
+
+        // Once the the cases have been determined, random (non-duplicate) mods are picked from the game pool of mods
+        for (int i = 0; i < amount; i++)
+        {
+            int num = Random.Range(0, picklist.Count);
+            returnlist.Add(picklist[num]);
+            picklist.Remove(picklist[num]);
+        }
+        return returnlist;
     }
 
     /**
@@ -315,9 +334,7 @@ public class SkillManager
     */
     public SkillObject GetRandomAbility()
     {
-        Object[] skills = Resources.LoadAll<SkillObject>("Skills/Abilities");
-        SkillObject skill = (SkillObject)skills[Random.Range(0, skills.Length)];
-        //Debug.Log(skill.name);
+        SkillObject skill = (SkillObject)abilities[Random.Range(0, abilities.Count)];
         return skill;
     }
 
