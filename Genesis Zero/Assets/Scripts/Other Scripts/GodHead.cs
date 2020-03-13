@@ -2,12 +2,12 @@
 using UnityEngine;
 using UnityEngine.InputSystem;
 using UnityEngine.UI;
-
+using TMPro;
 public class GodHead : MonoBehaviour
 {
     public float activeDistance = 5.0f;
     public int modsToChooseFrom = 3;
-    public float selectionOffset = -157f;
+    public float selectionOffset = 166f;
     private GameObject player;
     private GameInputActions inputActions;
     private float interactInput;
@@ -83,12 +83,51 @@ public class GodHead : MonoBehaviour
             modSelectNum = num;
             selection = GameObject.FindGameObjectWithTag("Selection");
             //move the selection sprite to the right
-            selection.transform.localPosition = new Vector3((157f * num)-selectionOffset, selection.transform.localPosition.y, selection.transform.localPosition.z);
+            selection.transform.localPosition = new Vector3((selectionOffset * num)-selectionOffset, selection.transform.localPosition.y, selection.transform.localPosition.z);
             //name = selection.gameObject.transform.Find("Name").gameObject;
-            string name = modObjUI[num].GetComponent<SkillUIElement>().Skill.name;
-            string desc = modObjUI[num].GetComponent<SkillUIElement>().Skill.Description;
+            SkillObject skill = modObjUI[num].GetComponent<SkillUIElement>().Skill;
+            string name = skill.name;
+            string desc = skill.Description;
             selection.transform.Find("Name").gameObject.GetComponent<Text>().text = name;
             selection.transform.Find("Description").gameObject.GetComponent<Text>().text = desc;
+            GameObject extra = selection.transform.Find("ExtraCanister").gameObject;
+            string botText = "";
+            //get rarity color, convert to html so the color can be shown in text
+            Color sColor = skillManager.GetColor(skill);
+            string hex = ColorUtility.ToHtmlStringRGB(sColor);
+            extra.transform.Find("TopText").gameObject.GetComponent<TextMeshProUGUI>().text = "Sacrificing a Modifier of this <color=#" + hex + ">Rarity</color> ALSO requires:";
+            int canistersNeeded = 0;
+            extra.SetActive(true);
+            Button sacButton = sacUI.transform.Find("Sacrifice").GetComponent<Button>();
+            switch (skill.Rarity)
+            {
+                case 1:
+                    botText = "Canisters of Essence";
+                    canistersNeeded = 3;
+                    break;
+                case 2:
+                    botText = "Canister of Essence";
+                    canistersNeeded = 1;
+                    break;
+                case 3:
+                    extra.SetActive(false);
+                    break;
+
+            }
+            //if the player doesn't have enough canisters of essence to make that deal, make the button not interactable and change button text
+            if (canistersNeeded > player.GetComponent<Player>().GetFullCapsuleAmount())
+            {
+                sacButton.interactable = false;
+                sacButton.GetComponentInChildren<Text>().text = "Not Enough Essence";
+            }
+            else 
+            {
+                sacButton.interactable = true;
+                sacButton.GetComponentInChildren<Text>().text = "Sacrifice Modifer";
+            }
+            extra.transform.Find("BottomText").gameObject.GetComponent<TextMeshProUGUI>().text = botText;
+            extra.transform.Find("x1").gameObject.GetComponent<TextMeshProUGUI>().text = "x"+canistersNeeded.ToString();
+            
         }
 
         //confirmUI.gameObject.SetActive(true);
@@ -101,7 +140,7 @@ public class GodHead : MonoBehaviour
         SkillObject ability = skillManager.GetRandomAbility();
         //Guarantee that the player gets an ability they don't currently have
         //Also, this may at some point even keep track of all abilities the player has ever gotten, to ensure maximum variety for the demo
-        while (skillManager.HasSkill(ability.name))
+        while (skillManager.GetAbility1() == ability || skillManager.GetAbility2() == ability)
         {
            ability = skillManager.GetRandomAbility();
         }

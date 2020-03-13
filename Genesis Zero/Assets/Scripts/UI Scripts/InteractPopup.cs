@@ -29,6 +29,8 @@ public class InteractPopup : MonoBehaviour
     }
     private void DistanceCheck()
     {
+        if (player == null)
+            return;
         if (Vector3.Distance(player.transform.position, transform.position) <= activeDistance)
         {
             if (!interactable)

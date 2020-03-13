@@ -41,25 +41,22 @@ public class SkillPickup : MonoBehaviour
 
     }
     private void Update()
-    {   //if this skill is an ability, and the player has no room for new abilities change the text
-        if (player.GetSkillManager().GetAbilityAmount() > 1 && skill.IsAbility)
-            GetComponent<InteractPopup>().SetText("Press [F] to Replace Ability 1");
+    {  
         if (Input.GetKeyDown(KeyCode.F))
         {
             //if the player presses F within range, it will be pulled towards them
             if (Vector3.Distance(player.transform.position, transform.position) <= pickupDist)
             {
                 pressed = true;
-                //if the nearby skill is an Ability 
-                if (skill.IsAbility)
-                {   //if the player doesn't have that ability
-                    if (player.GetSkillManager().HasSkill(skill.name) == true)
-                    {
-                        GetComponent<InteractPopup>().SetText("Duplicate Abilities cannot be picked up");
-                        pressed = false;
-                    }
-                }
             }
+        }
+        //if this skill is an ability, and the player has no room for new abilities change the text
+        if (player.GetSkillManager().GetAbilityAmount() > 1 && skill.IsAbility)
+            GetComponent<InteractPopup>().SetText("Press [F] to Replace Ability 1");
+        if (player.GetSkillManager().HasSkill(skill.name) == true && skill.IsAbility)
+        { //if the ability is a duplicate, change the text to say you can't pick it up
+            GetComponent<InteractPopup>().SetText("Duplicate Abilities cannot be picked up");
+            pressed = false;
         }
     }
     private void FixedUpdate()

@@ -6,6 +6,8 @@ public class Player : Pawn
 {
     SkillManager SkillManager;
     public Statistic Essence;
+    private float MaxEssence = 100f;
+    private int MaxCapsules = 5;
     public float healthPerStack = 4;
 
     private void Awake()
@@ -63,7 +65,7 @@ public class Player : Pawn
 
     public void InitializePlayerStats()
     {
-        Essence = new Statistic(500); Essence.SetValue(0);
+        Essence = new Statistic(MaxEssence); Essence.SetValue(0);
     }
 
     public Statistic GetEssence()
@@ -75,11 +77,23 @@ public class Player : Pawn
     {
         return Essence.GetValue();
     }
-
+    public float GetMaxEssenceAmount()
+    {
+        return MaxEssence;
+    }
+    public float GetMaxCapsuleAmount()
+    {
+        return MaxCapsules;
+    }
+    public int GetFullCapsuleAmount()
+    {
+        int amount = (int)Essence.GetValue() / (int)MaxCapsules;
+        return amount;
+    }
     public void SetEssence(float amount)
     {
         float num = amount;
-        Mathf.Clamp(num, 0, 500);
+        Mathf.Clamp(num, 0, MaxEssence);
         GetEssence().SetValue(num);
     }
 
