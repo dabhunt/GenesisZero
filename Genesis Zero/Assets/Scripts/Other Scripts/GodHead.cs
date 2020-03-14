@@ -23,6 +23,7 @@ public class GodHead : MonoBehaviour
     private List<GameObject> modObjUI;
     //private SkillUIElement skillUIElement;
     private bool isActive = true;
+    private int canistersNeeded = 0;
     //private bool confirmationWindowOpen = false;
     //change to private later below this point
     private int modSelectNum = -1;
@@ -96,7 +97,7 @@ public class GodHead : MonoBehaviour
             Color sColor = skillManager.GetColor(skill);
             string hex = ColorUtility.ToHtmlStringRGB(sColor);
             extra.transform.Find("TopText").gameObject.GetComponent<TextMeshProUGUI>().text = "Sacrificing a Modifier of this <color=#" + hex + ">Rarity</color> ALSO requires:";
-            int canistersNeeded = 0;
+            canistersNeeded = 0;
             extra.SetActive(true);
             Button sacButton = sacUI.transform.Find("Sacrifice").GetComponent<Button>();
             switch (skill.Rarity)
@@ -145,6 +146,8 @@ public class GodHead : MonoBehaviour
            ability = skillManager.GetRandomAbility();
         }
         skillManager.SpawnAbility(spawnPoint, skillManager.GetRandomAbility().name);
+        int essenceCost = player.GetComponent<Player>().GetFullCapsuleAmount() * canistersNeeded * -1;
+        player.GetComponent<Player>().AddEssence(essenceCost);
         CloseUI();
     }
 
