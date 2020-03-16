@@ -52,15 +52,22 @@ public class GodHead : MonoBehaviour
         if (ctx.performed)
         {
             if (!isActive)
+            {
+                print("I'm not active, cuz im a dumb bitch");
                 return;
-            if(GameInputManager.instance.GetActiveControlMap() == "MenuControls")
+            }
+            if (GameInputManager.instance.GetActiveControlMap() == "MenuControls")
                 return;
-            if (Vector3.Distance(player.transform.position, transform.position) <= activeDistance)
+            if (Vector3.Distance(player.transform.position, transform.position) <= activeDistance && skillManager.GetModAmount() > 0)
             {
                 StateManager.instance.PauseGame();
                 GameInputManager.instance.SwitchControlMap("MenuControls");
                 isActive = true;
                 InitializeUI();
+            }
+            else
+            {
+                GetComponent<InteractPopup>().SetText("This Interaction requires at least one Modifier.");
             }
         }
     }

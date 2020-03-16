@@ -55,6 +55,10 @@ public class StateManager : MonoBehaviour
             string skillStr = player.GetSkillManager().GetRandomModByChance().name;
             player.GetSkillManager().SpawnMod(new Vector3(player.transform.position.x+2, player.transform.position.y+5, 0), skillStr);
         }
+        if (Input.GetKey(KeyCode.Home))
+        {
+            player.SetEssence(player.GetMaxEssenceAmount());
+        }
         if (Input.GetKey(KeyCode.Backspace)) 
         {
             restart.RestartScene();

@@ -74,10 +74,15 @@ public class Merchant : MonoBehaviour
         }
     }
     public void UpdateSelect(int num)
-    {
+    {   
         itemSelectNum = num;
         //gets the shop object associated with this selected number
         selectedShopItem = shopObjList[num];
+        //deselect all menu items setting deactive
+        for (int i = 0; i < gameObjList.Count; i++)
+            gameObjList[i].transform.Find("Select").gameObject.SetActive(false);
+        //select the current item by activating the select
+        gameObjList[num].transform.Find("Select").gameObject.SetActive(true);
         //update description, icon, and name in the display section on the left
         string name = selectedShopItem.VisibleName;
         string desc = selectedShopItem.Description;
@@ -86,11 +91,8 @@ public class Merchant : MonoBehaviour
         // if it's a mod, get the mod info instead
         if (selectedShopItem.Type == 0)
         {
-            name = gameObjList[num].transform.Find("Name").GetComponent<Text>().text;
-           
-            SkillObject mod = skillManager.GetSkillFromString(name);
-            print("mod name:" + mod.name);
-            print("mod rarity:" + mod.Rarity);
+            name = gameObjList[num].transform.Find("Name").GetComponent<Text>().text.ToString();
+            SkillObject mod = skillManager.GetModFromString(name);
             cost = "x" + (1 + mod.Rarity).ToString();
             icon = mod.Icon;
             desc = mod.Description;
@@ -106,6 +108,11 @@ public class Merchant : MonoBehaviour
             purchaseButton.interactable = false;
             purchaseButton.GetComponentInChildren<Text>().text = "Not Enough Essence";
         }
+        else 
+        {
+            purchaseButton.interactable = true;
+            purchaseButton.GetComponentInChildren<Text>().text = "Purchase Item";
+        }
     }
    
     private void UpdateUI()
@@ -117,7 +124,11 @@ public class Merchant : MonoBehaviour
     {
         //Destroy the "Press F to interact popup"
         GetComponent<InteractPopup>().DestroyPopUp();
-        Destroy(GetComponent<InteractPopup>());
+        GameObject[] pickups = GameObject.FindGameObjectsWithTag("Pickups");
+        for (int i = 0; i < pickups.Length; i++)
+        {
+            pickups[i].GetComponent<InteractPopup>().DestroyPopUp();
+        }
         merchantUI = (RectTransform) canvasRef.transform.Find("MerchantUI");
         shopItemsParent = merchantUI.gameObject.transform.Find("ShopItemParent").gameObject;
 
@@ -134,6 +145,7 @@ public class Merchant : MonoBehaviour
         foreach (RectTransform child in shopItemsParent.transform)
         {
             //if the object is a modifier, instead inherit Icon and Name from the associated skillobject
+            child.gameObject.SetActive(true);
             if (shopObjList[num].Type == 0)
             {
                 SkillObject mod = skillManager.GetRandomModByChance();
@@ -191,7 +203,7 @@ public class Merchant : MonoBehaviour
             default:
                 //defaults to a "mod" type, since there are 2 or more of these in the shop
                 string name = merchantUI.transform.Find("Name").GetComponent<Text>().text;
-                SkillObject mod = skillManager.GetSkillFromString(name);
+                SkillObject mod = skillManager.GetModFromString(name);
                 skillManager.SpawnMod(player.transform.position, mod.name);
                 break;
         }
@@ -202,7 +214,6 @@ public class Merchant : MonoBehaviour
     }
     public void CloseUI()
     {
-        isActive = false;
         foreach (RectTransform child in shopItemsParent.transform) 
             child.gameObject.SetActive(false);
         merchantUI.gameObject.SetActive(false);

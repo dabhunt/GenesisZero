@@ -304,10 +304,10 @@ public class AbilityCasting : MonoBehaviour
         float damage = U.CalculateDmg();
         hitbox.GetComponent<Hitbox>().InitializeHitbox(damage, player);
     }
-
+    //this won't work after the changes to getmodfromstring 
     private void CastWoundSealant()
     {
-        SkillObject skill = player.GetSkillManager().GetSkillFromString("Wound Sealant");
+        SkillObject skill = player.GetSkillManager().GetModFromString("Wound Sealant");
         player.GetSkillManager().RemoveSkill(skill);
         player.Heal(55);
     }

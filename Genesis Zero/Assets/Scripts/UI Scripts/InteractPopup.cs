@@ -65,8 +65,9 @@ public class InteractPopup : MonoBehaviour
 
     private void SetScreenPos(Vector2 screenPos)
     {
-        popup.transform.parent = canvasRef.transform;
-        popup.transform.localPosition = new Vector3(popup.transform.localPosition.x, popup.transform.localPosition.y, -5);
+        //popup.transform.parent = canvasRef.transform;
+        popup.transform.SetParent(canvasRef.transform);
+        popup.transform.localPosition = new Vector3(popup.transform.localPosition.x, popup.transform.localPosition.y, .1f);
         popup.transform.localScale = new Vector3(scaleSize,scaleSize,scaleSize);
         popup.GetComponent<RectTransform>().anchoredPosition = screenPos;
     }
@@ -81,7 +82,8 @@ public class InteractPopup : MonoBehaviour
     }
     public void DestroyPopUp()
     {
-        Destroy(popup);
+        if (popup != null)
+            Destroy(popup);
     }
     public void SetText(string poptext)
     {

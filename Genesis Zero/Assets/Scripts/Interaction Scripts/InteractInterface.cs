@@ -9,22 +9,13 @@ public class InteractInterface : MonoBehaviour
     private bool selectionMade = false;
     private string type;
     private GameObject closest;
-    public void Start()
-    {
-            
-    }
-
-    public void UpdateMod()
-    {
-
-    }
     //returns the closest object in the game with the tag "Interactable"
     public GameObject ClosestInteractable()
     {
         GameObject player = GameObject.FindGameObjectWithTag("Player");
         GameObject[] objArray = GameObject.FindGameObjectsWithTag("Interactable");
         GameObject closest = objArray[0];
-        float shortest = 0;
+        float shortest = Vector3.Distance(player.transform.position, objArray[0].transform.position);
         for (int i = 0; i < objArray.Length; i++)
         {
             float dist = Vector3.Distance(player.transform.position, objArray[i].transform.position);
@@ -54,19 +45,23 @@ public class InteractInterface : MonoBehaviour
     //God head functions Accept offer, decline offer
     public void Accept()
     {
+        closest = ClosestInteractable();
         closest.GetComponent<GodHead>().FinalConfirmSelection();
     }
     public void Decline()
     {
+        closest = ClosestInteractable();
         closest.GetComponent<GodHead>().CloseUI();
     }
     //Merchant functions Purchase, or exitshop
     public void Purchase()
     {
+        closest = ClosestInteractable();
         closest.GetComponent<Merchant>().FinalConfirmSelection();
     }
     public void ExitShop()
     {
+        closest = ClosestInteractable();
         closest.GetComponent<Merchant>().CloseUI();
     }
 
