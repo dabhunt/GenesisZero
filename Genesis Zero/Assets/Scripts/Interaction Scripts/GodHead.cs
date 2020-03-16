@@ -53,8 +53,8 @@ public class GodHead : MonoBehaviour
         {
             if (!isActive)
                 return;
-
-            //if(inputActions.MenuControls.enabled) return;
+            if(GameInputManager.instance.GetActiveControlMap() == "MenuControls")
+                return;
             if (Vector3.Distance(player.transform.position, transform.position) <= activeDistance)
             {
                 StateManager.instance.PauseGame();

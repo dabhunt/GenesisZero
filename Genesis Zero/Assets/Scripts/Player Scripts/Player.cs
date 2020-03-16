@@ -6,22 +6,22 @@ public class Player : Pawn
 {
     SkillManager SkillManager;
     public Statistic Essence;
+    public Statistic Keys;
     private float MaxEssence = 100f;
-    private int MaxCapsules = 5;
+    private float MaxKeys = 3f;
+    private float MaxCapsules = 5;
     public float healthPerStack = 4;
 
     private void Awake()
     {
         SkillManager = new SkillManager(this);
     }
-    // Start is called before the first frame update
     new void Start()
     {
         InitializePlayerStats();
         base.Start();
     }
 
-    // Update is called once per frame
     new void Update()
     {
         if (Input.GetKeyDown(KeyCode.Tab))
@@ -66,6 +66,7 @@ public class Player : Pawn
     public void InitializePlayerStats()
     {
         Essence = new Statistic(MaxEssence); Essence.SetValue(0);
+        Keys = new Statistic(MaxKeys); Keys.SetValue(0);
     }
 
     public Statistic GetEssence()
@@ -81,9 +82,37 @@ public class Player : Pawn
     {
         return MaxEssence;
     }
+    public Statistic GetKeys()
+    {
+        return Keys;
+    }
+    public void SetKeys(float amount)
+    {
+        float num = amount;
+        num = Mathf.Clamp(num, 0, MaxEssence);
+        GetKeys().SetValue(num);
+    }
+    public void AddKeys(int amount)
+    {
+        SetKeys(GetKeysAmount() + amount);
+    }
+    public float GetKeysAmount()
+    {
+        return Keys.GetValue();
+    }
+    public float GetMaxKeysAmount()
+    {
+        return MaxKeys;
+    }
     public float GetMaxCapsuleAmount()
     {
         return MaxCapsules;
+    }
+    public void SetMaxCapsuleAmount(float amount)
+    {
+        Mathf.Clamp(amount, 4, 6);
+        MaxEssence += GetFullCapsuleAmount();
+        MaxCapsules = amount;
     }
     public int GetFullCapsuleAmount()
     {

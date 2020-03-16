@@ -37,7 +37,6 @@ public class SkillPickup : MonoBehaviour
             else
                 VFXManager.instance.ChangeColor(this.gameObject, player.GetSkillManager().GetColor(skill));
         }
-        //InvokeRepeating("CheckPopup", 0, .2f);
 
     }
     private void Update()
@@ -49,7 +48,14 @@ public class SkillPickup : MonoBehaviour
             {
                 pressed = true;
             }
+            else
+            {
+                GetComponent<InteractPopup>().DestroyPopUp();
+            }
         }
+        //if the player has no more room for new modifiers, tell them
+        if (player.GetSkillManager().GetModAmount() >= player.GetSkillManager().GetModLimit())
+            GetComponent<InteractPopup>().SetText("Mod Limit Reached. Drop Unwanted Modifiers w/ Right Click");
         //if this skill is an ability, and the player has no room for new abilities change the text
         if (player.GetSkillManager().GetAbilityAmount() > 1 && skill.IsAbility)
             GetComponent<InteractPopup>().SetText("Press [F] to Replace Ability 1");
@@ -90,30 +96,22 @@ public class SkillPickup : MonoBehaviour
 
                 if (skill != null && added == false)
                 {
-                    //Check if it's an ability, cant have more than one
-                    if (skill.IsAbility && p.GetSkillManager().HasSkill(skill.name))
+                    // There are more than two abilities and a new ability is here
+                    if (skill.IsAbility && !p.GetSkillManager().HasSkill(skill.name) && p.GetSkillManager().GetAbilityAmount() >= 2)
                     {
-                        GetComponent<InteractPopup>().SetText("Duplicate Abilities cannot be picked up");
+                        // Prompt choice to swap out with current abilities
+                        SkillObject otherskill = p.GetSkillManager().GetAbility1();
+                        p.GetSkillManager().RemoveSkill(otherskill);
+                        GameObject ability = p.GetSkillManager().SpawnAbility(other.transform.position, otherskill.name);
+                        p.GetSkillManager().AddSkill(skill);
+                        ability.GetComponent<InteractPopup>().SetText("Press [F] to Replace Ability 1");
+                        //GameObject.FindObjectOfType<SkillDisplay>().CheckUpdate();
+                        added = true;
                     }
                     else
                     {
-                        // There are more than two abilities and a new ability is here
-                        if (skill.IsAbility && !p.GetSkillManager().HasSkill(skill.name) && p.GetSkillManager().GetAbilityAmount() >= 2)
-                        {
-                            // Prompt choice to swap out with current abilities
-                            SkillObject otherskill = p.GetSkillManager().GetAbility1();
-                            p.GetSkillManager().RemoveSkill(otherskill);
-                            GameObject ability = p.GetSkillManager().SpawnAbility(other.transform.position, otherskill.name);
-                            p.GetSkillManager().AddSkill(skill);
-                            ability.GetComponent<InteractPopup>().SetText("Press [F] to Replace Ability 1");
-                            //GameObject.FindObjectOfType<SkillDisplay>().CheckUpdate();
-                            added = true;
-                        }
-                        else
-                        {
-                            p.GetSkillManager().AddSkill(skill);
-                            added = true;
-                        }
+                        p.GetSkillManager().AddSkill(skill);
+                        added = true;
                     }
                 }
 

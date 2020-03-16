@@ -19,6 +19,8 @@ public class SkillManager
     private int modamount;
     private string ability1 = "";
     private string ability2 = "";
+    private int modLimit = 8;
+    private int ClampModLimit = 11;
 
     private bool updated;
 
@@ -58,6 +60,8 @@ public class SkillManager
      */
     public void AddSkill(SkillObject skill)
     {
+        if (GetModAmount() >= modLimit)
+            return;
         if (Skills.ContainsKey(skill.name)) // Adds to the stack of skills
         {
             Skills[skill.name] = Skills[skill.name] + 1;
@@ -303,7 +307,7 @@ public class SkillManager
     }
 
     /**
-    * Returns a random mods incoporating chance
+    * Returns an amount of random mods incoporating chance
     * Includes whites, blues, and golds from the gamep pool. NOT from player
     */
     public List<SkillObject> GetRandomModsByChance(int amount)
@@ -498,7 +502,7 @@ public class SkillManager
 
     public GameObject SpawnMod(Vector3 position, string name)
     {
-        SkillObject so = Resources.Load<SkillObject>("Skills/" + name);
+        SkillObject so = Resources.Load<SkillObject>("Skills/Modifiers/" + name);
         GameObject emit = (GameObject)GameObject.Instantiate(Resources.Load("Pickups/ModPickup"), position, Quaternion.identity);
         emit.GetComponent<SkillPickup>().skill = so;
         return emit;
@@ -635,6 +639,15 @@ public class SkillManager
     public void SetActive()
     {
 
+    }
+    public int GetModLimit()
+    {
+        return modLimit;
+    }
+    public void SetModLimit(float newLimit)
+    {
+        newLimit = Mathf.Clamp(newLimit, 7, ClampModLimit);
+        modLimit = (int)newLimit;
     }
 
     public bool GetUpdated()

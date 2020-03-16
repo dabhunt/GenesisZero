@@ -17,15 +17,22 @@ public class EssenceFill : MonoBehaviour
        	player = temp.GetComponent<Player>();
 		//update UI every .3 seconds, starting in .3 seconds;
 		//set Essence Per capsule equal to Max essence player can have divided by totalcapsules determined here
-		TotalCapsules = (int)player.GetMaxCapsuleAmount();
-		EssencePerCapsule = (int)(player.GetMaxEssenceAmount() / TotalCapsules);
+
        TotalCapsules = capsule.Length;
        InvokeRepeating("CalculateEssenceUI", 1/updatesPerSecond, 1/updatesPerSecond);
-       
+		setExtraCapsule(false);
     }
+	public void setExtraCapsule(bool boo)
+	{
+		Canvas canvasRef = GameObject.FindGameObjectWithTag("CanvasUI").GetComponent<Canvas>();
+		canvasRef.transform.Find("EssencePanel").Find("capsule (6)").gameObject.SetActive(boo);
+		canvasRef.transform.Find("EssencePanel").Find("bg capsule (6)").gameObject.SetActive(boo);
+	}
     void CalculateEssenceUI()
     {
-    	if (player != null){
+		TotalCapsules = (int)player.GetMaxCapsuleAmount();
+		EssencePerCapsule = (int)(player.GetMaxEssenceAmount() / TotalCapsules);
+		if (player != null){
 	    	float essenceQuantity = player.GetEssenceAmount();
 	    	//print("getEssence Quantity:" + essenceQuantity);
 	    	int capsuleCount = 0;
