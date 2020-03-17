@@ -45,9 +45,9 @@ public class Hitbox : MonoBehaviour
     public string hitEffectVFX = "VFX_BulletSparks";
     public float VFX_ScaleReduction = 15f;
     private List<GameObject> hittargets = new List<GameObject>();
-    private Player player;
     private Vector3 lastposition;
     private Vector3 spawnposition;
+    private UniqueEffects uniqueEffects;
 
     private void Awake()
     {
@@ -68,7 +68,8 @@ public class Hitbox : MonoBehaviour
     {
         //colliders.Clear();
         GameObject temp = GameObject.FindGameObjectWithTag("Player");
-        player = temp.GetComponent<Player>();
+        uniqueEffects = temp.GetComponent<Player>().GetComponent<UniqueEffects>();
+
         state = State.Active;
         if (GetComponent<Collider>() == null)
         {
@@ -223,19 +224,7 @@ public class Hitbox : MonoBehaviour
                 }
                 else if (special && bp.damagemultipler > 1)
                 {
-                    if (player != null)
-                    {
-                        float stacks = player.GetSkillManager().GetSkillStack("Mental Rush");
-                        if (stacks > 0)
-                        {
-                            float seconds = 0;
-                            if (stacks == 1) //1 second if 1 stack
-                                seconds = 1;
-                            else
-                                seconds = .5f + .5f * stacks; // increase by .5 seconds for additional stacks past 1
-                            player.GetComponent<AbilityCasting>().ReduceCooldowns(seconds);
-                        }
-                    }
+                    uniqueEffects.WeakPointHit();
                     emit.GetComponent<DamageNumber>().SetColor(Color.red);
                 }
                 else if (special && bp.damagemultipler < 1)

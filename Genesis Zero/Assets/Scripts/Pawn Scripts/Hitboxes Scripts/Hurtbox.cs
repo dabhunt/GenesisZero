@@ -23,8 +23,6 @@ public class Hurtbox : MonoBehaviour
     {
         colliders.Clear();
         AddCollliders(transform, colliders);
-        GameObject temp = GameObject.FindGameObjectWithTag("Player");
-        player = temp.GetComponent<Player>();
     }
     public void AddCollliders(Transform currentparent, List<Collider> colliders)
     {

@@ -43,6 +43,20 @@ public class UniqueEffects : MonoBehaviour
     {
         StackDecayTimer();
     }
+    public void WeakPointHit()
+    {
+        float stacks = player.GetSkillManager().GetSkillStack("Mental Rush");
+        if (stacks > 0)
+        {
+            float seconds = 0;
+            if (stacks == 1) //1 second if 1 stack
+                seconds = 1;
+            else
+                seconds = .5f + .5f * stacks; // increase by .5 seconds for additional stacks past 1
+            player.GetComponent<AbilityCasting>().ReduceCooldowns(seconds);
+        }
+        //other Modifier effects can be put inside this function
+    }
     void StackDecayTimer()
     {
         if (SL_killCount > 0)
