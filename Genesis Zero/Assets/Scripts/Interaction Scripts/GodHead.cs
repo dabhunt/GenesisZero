@@ -53,7 +53,6 @@ public class GodHead : MonoBehaviour
         {
             if (!isActive)
             {
-                print("I'm not active, cuz im a dumb bitch");
                 return;
             }
             if (GameInputManager.instance.GetActiveControlMap() == "MenuControls")

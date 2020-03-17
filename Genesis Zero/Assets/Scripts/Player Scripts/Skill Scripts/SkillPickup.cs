@@ -10,8 +10,7 @@ public class SkillPickup : MonoBehaviour
     private bool isMod;
     private bool pressed;
     private float pickupDist = 4f;
-    public float acceleration = .2f;
-    public float speedvar = 4f;
+    private float speedvar = 4f;
     private GameObject target;
     private Player player;
     // Start is called before the first frame update
@@ -44,7 +43,7 @@ public class SkillPickup : MonoBehaviour
         if (Input.GetKeyDown(KeyCode.F))
         {
             //if the player presses F within range, it will be pulled towards them
-            if (Vector3.Distance(player.transform.position, transform.position) <= pickupDist)
+            if (Vector3.Distance(player.transform.position, transform.position) <= pickupDist && player.GetSkillManager().GetModAmount() < player.GetSkillManager().GetModLimit())
             {
                 pressed = true;
             }

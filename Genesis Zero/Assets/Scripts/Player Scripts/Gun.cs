@@ -126,26 +126,23 @@ public class Gun : MonoBehaviour
     }
     public GameObject GetProjectile()
     {
-        if (player.HasSkill("PyroTechnics"))
-        {
-            //manually calculate crit for this mod, to find out if it should be instantiated
-            if (Random.Range(0, 100) < player.GetCritChance().GetValue() * 100)
-            {//crit!, meaning this bullet will also become an AOE explosive
+        float bDmg = 0;
+        if (Random.Range(0, 100) < player.GetCritChance().GetValue() * 100)
+        {//Any effects that need to apply due to crit should go here
+            //apply a burn to crits if you have ignition bullets
+            bDmg = burnDamagePerStack * player.GetSkillStack("Ignition Bullets");
+            if (player.GetSkillStack("PyroTechnics") > 0)
+            {
                 Hitbox hit = explosiveProjectile.GetComponent<Hitbox>();
                 hit.Damage = player.GetDamage().GetValue();
+                hit.Burn = new Vector2(3, bDmg);
                 hit.Critical = true;
                 return explosiveProjectile;
             }
-    	}
-    
-        /*
-    	else if()
-        {
-    		//more skill checks that change bullet
-    	}
-        */
-    	//if script makes it to here, you have no skills to change your projectile
-    	return basicProjectile;
+        }
+        if (bDmg > 0)
+            basicProjectile.GetComponent<Hitbox>().Burn = new Vector2(3, bDmg);
+        return basicProjectile;
     }
     //any effects that should apply to all bullets after they have been instantiated go here, such as knockback increasers for all bullets
     // effects put here will also apply to special bullets

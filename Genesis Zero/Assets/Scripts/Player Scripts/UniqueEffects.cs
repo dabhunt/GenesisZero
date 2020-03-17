@@ -45,7 +45,7 @@ public class UniqueEffects : MonoBehaviour
     }
     public void WeakPointHit()
     {
-        float stacks = player.GetSkillManager().GetSkillStack("Mental Rush");
+        float stacks = player.GetSkillManager().GetSkillStack("Adrenaline Rush");
         if (stacks > 0)
         {
             float seconds = 0;
