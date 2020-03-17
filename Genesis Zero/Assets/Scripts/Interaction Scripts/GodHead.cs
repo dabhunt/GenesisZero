@@ -29,11 +29,6 @@ public class GodHead : MonoBehaviour
     private int modSelectNum = -1;
     //public List<SkillObject> modSkills;
 
-    private void Update()
-    {
-        UpdateUI();
-    }
-
     private void Start()
     {
         player = GameObject.FindGameObjectWithTag("Player");
@@ -47,27 +42,30 @@ public class GodHead : MonoBehaviour
         modObjUI = new List<GameObject>();
         //confirmUI.gameObject.SetActive(false);
     }
-    public void Interact(InputAction.CallbackContext ctx)
+
+    private void Update()
     {
-        if (ctx.performed)
+        if (Input.GetKeyDown(KeyCode.F))
+            Interact();
+    }
+    public void Interact()
+    {
+        if (!isActive)
         {
-            if (!isActive)
-            {
-                return;
-            }
-            if (GameInputManager.instance.GetActiveControlMap() == "MenuControls")
-                return;
-            if (Vector3.Distance(player.transform.position, transform.position) <= activeDistance && skillManager.GetModAmount() > 0)
-            {
-                StateManager.instance.PauseGame();
-                GameInputManager.instance.SwitchControlMap("MenuControls");
-                isActive = true;
-                InitializeUI();
-            }
-            else
-            {
-                GetComponent<InteractPopup>().SetText("This Interaction requires at least one Modifier.");
-            }
+            return;
+        }
+        if (GameInputManager.instance.GetActiveControlMap() == "MenuControls")
+            return;
+        if (Vector3.Distance(player.transform.position, transform.position) <= activeDistance && skillManager.GetModAmount() > 0)
+        {
+            StateManager.instance.PauseGame();
+            GameInputManager.instance.SwitchControlMap("MenuControls");
+            isActive = true;
+            InitializeUI();
+        }
+        else
+        {
+            GetComponent<InteractPopup>().SetText("This Interaction requires at least one Modifier.");
         }
     }
 
@@ -152,16 +150,11 @@ public class GodHead : MonoBehaviour
            ability = skillManager.GetRandomAbility();
         }
         skillManager.SpawnAbility(spawnPoint, skillManager.GetRandomAbility().name);
-        int essenceCost = player.GetComponent<Player>().GetFullCapsuleAmount() * canistersNeeded * -1;
+        //calculate how many essence canisters to subtract from the player
+        int essenceCost = player.GetComponent<Player>().GetEssencePerCapsule() * canistersNeeded * -1;
         player.GetComponent<Player>().AddEssence(essenceCost);
         CloseUI();
     }
-
-    private void UpdateUI()
-    {
-        if (!isActive) return;
-    }
-
     private void InitializeUI()
     {
         //destroy all popups when entering the interface

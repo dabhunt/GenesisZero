@@ -108,16 +108,23 @@ public class Player : Pawn
     {
         return MaxCapsules;
     }
+    //this changes how many capsules the player can store essence in
     public void SetMaxCapsuleAmount(float amount)
     {
         amount = Mathf.Clamp(amount, 4, 6);
         MaxEssence += GetFullCapsuleAmount();
         MaxCapsules = amount;
     }
+    //this refers to how many full canisters of esessence the player has (not how much essence fits in a canister)
     public int GetFullCapsuleAmount()
     {
-        int amount = (int)Essence.GetValue() / (int)MaxCapsules;
+        int amount = (int)(Essence.GetValue() / GetEssencePerCapsule());
         return amount;
+    }
+    //this returns how much essence can fit in a single capsule
+    public int GetEssencePerCapsule()
+    {
+        return (int)(MaxEssence / MaxCapsules);
     }
     public void SetEssence(float amount)
     {

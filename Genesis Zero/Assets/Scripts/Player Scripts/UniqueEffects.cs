@@ -7,8 +7,11 @@ public class UniqueEffects : MonoBehaviour
     //this script contains non bullet related unique effects of modifiers outside the data structure of stats
     //if this is 2, it checks twice per second
    public float checksPerSecond = 2f;
-   //these are all done in multipliers, not in flat amounts
-   // 1.1 = 10% increase, .9f = 10% reduction
+    //these are all done in multipliers, not in flat amounts
+    // 1.1 = 10% increase, .9f = 10% reduction
+    [Header("Adrenaline Rush")]
+    public float coolReductionPerStack = .5f;
+    public float coolReductionSingleStack = 1;
     [Header("Better Coolant")]
     public float coolRatePerStack = 1.1f;
     [Header("Cooling Cell")]
@@ -48,11 +51,12 @@ public class UniqueEffects : MonoBehaviour
         float stacks = player.GetSkillManager().GetSkillStack("Adrenaline Rush");
         if (stacks > 0)
         {
+
             float seconds = 0;
             if (stacks == 1) //1 second if 1 stack
-                seconds = 1;
+                seconds = coolReductionSingleStack;
             else
-                seconds = .5f + .5f * stacks; // increase by .5 seconds for additional stacks past 1
+                seconds = Math.Abs(coolReductionSingleStack-coolReductionPerStack) + coolReductionPerStack * (stacks-1); // increase by .5 seconds for additional stacks past 1
             player.GetComponent<AbilityCasting>().ReduceCooldowns(seconds);
         }
         //other Modifier effects can be put inside this function

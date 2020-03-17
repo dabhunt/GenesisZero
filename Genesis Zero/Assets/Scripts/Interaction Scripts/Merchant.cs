@@ -24,6 +24,7 @@ public class Merchant : MonoBehaviour
     private List<ShopObject> shopObjList;
     private bool isActive = true;
     private int canistersNeeded = 0;
+    private bool firstInteraction = true;
     //private bool confirmationWindowOpen = false;
     //change to private later below this point
     private int itemSelectNum = -1;
@@ -33,7 +34,6 @@ public class Merchant : MonoBehaviour
     {
         if (Input.GetKeyDown(KeyCode.F))
             Interact();
-        UpdateUI();
     }
 
     private void Start()
@@ -61,7 +61,17 @@ public class Merchant : MonoBehaviour
             StateManager.instance.PauseGame();
             GameInputManager.instance.SwitchControlMap("MenuControls");
             isActive = true;
-            InitializeUI();
+            if (firstInteraction)
+            {
+                DestroyPopUps();
+                InitializeUI();
+            }
+            else 
+            {
+                DestroyPopUps();
+                merchantUI.gameObject.SetActive(true);
+            }
+                
             UpdateSelect(0);
         }
     }
@@ -114,21 +124,19 @@ public class Merchant : MonoBehaviour
             purchaseButton.GetComponentInChildren<Text>().text = "Purchase Item";
         }
     }
-   
-    private void UpdateUI()
+    private void DestroyPopUps()
     {
-        if (!isActive) return;
-    }
-
-    private void InitializeUI()
-    {
-        //Destroy the "Press F to interact popup"
         GetComponent<InteractPopup>().DestroyPopUp();
         GameObject[] pickups = GameObject.FindGameObjectsWithTag("Pickups");
         for (int i = 0; i < pickups.Length; i++)
         {
             pickups[i].GetComponent<InteractPopup>().DestroyPopUp();
         }
+    }
+    private void InitializeUI()
+    {
+        firstInteraction = false;
+        //Destroy the "Press F to interact popup"
         merchantUI = (RectTransform) canvasRef.transform.Find("MerchantUI");
         shopItemsParent = merchantUI.gameObject.transform.Find("ShopItemParent").gameObject;
 
@@ -142,6 +150,7 @@ public class Merchant : MonoBehaviour
         
         //using the already created template gameobject which is correctly positioned, make the rest
         int num = 0;
+        SkillObject duplicatePrevention = skillManager.GetRandomModByChance();
         foreach (RectTransform child in shopItemsParent.transform)
         {
             //if the object is a modifier, instead inherit Icon and Name from the associated skillobject
@@ -149,6 +158,11 @@ public class Merchant : MonoBehaviour
             if (shopObjList[num].Type == 0)
             {
                 SkillObject mod = skillManager.GetRandomModByChance();
+                while (duplicatePrevention == mod)
+                {
+                    mod = skillManager.GetRandomModByChance();
+                }
+                duplicatePrevention = mod;
                 child.transform.Find("Icon").GetComponent<Image>().sprite = mod.Icon;
                 child.transform.Find("Cost").GetComponent<Text>().text = "x"+(1 + mod.Rarity).ToString();
                 child.transform.Find("Name").GetComponent<Text>().text = mod.name;
@@ -207,15 +221,13 @@ public class Merchant : MonoBehaviour
                 skillManager.SpawnMod(player.transform.position, mod.name);
                 break;
         }
-        //calculate how much essence to subtract from the player
-        int essenceCost = player.GetComponent<Player>().GetFullCapsuleAmount() * canistersNeeded * -1;
+        //calculate how many essence canisters to subtract from the player
+        int essenceCost = player.GetComponent<Player>().GetEssencePerCapsule() * canistersNeeded * -1;
         player.GetComponent<Player>().AddEssence(essenceCost);
         CloseUI();
     }
     public void CloseUI()
     {
-        foreach (RectTransform child in shopItemsParent.transform) 
-            child.gameObject.SetActive(false);
         merchantUI.gameObject.SetActive(false);
         StateManager.instance.UnpauseGame();
         itemSelectNum = -1;

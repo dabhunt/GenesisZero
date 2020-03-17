@@ -15,7 +15,6 @@ public class RightClick : MonoBehaviour
     {
         if (eventData.button == PointerEventData.InputButton.Right)
         {
-            Debug.Log("removing stacks...");
             RemoveStack();
         }
 
@@ -24,6 +23,8 @@ public class RightClick : MonoBehaviour
     {
         SkillObject s = GetComponent<SkillUIElement>().Skill;
         sManager.RemoveSkill(s);
-        sManager.SpawnMod(player.transform.position, s.name);
+        GameObject mod = sManager.SpawnMod(player.transform.position, s.name);
+        //destroy the mod after 3 seconds to prevent abuse
+        mod.AddComponent<DestroyAfterXTime>().time = 3;
     }
 }

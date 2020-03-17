@@ -43,7 +43,7 @@ public class SkillPickup : MonoBehaviour
         if (Input.GetKeyDown(KeyCode.F))
         {
             //if the player presses F within range, it will be pulled towards them
-            if (Vector3.Distance(player.transform.position, transform.position) <= pickupDist && player.GetSkillManager().GetModAmount() < player.GetSkillManager().GetModLimit())
+            if (Vector3.Distance(player.transform.position, transform.position) <= pickupDist )
             {
                 pressed = true;
             }
@@ -53,15 +53,24 @@ public class SkillPickup : MonoBehaviour
             }
         }
         //if the player has no more room for new modifiers, tell them
-        if (player.GetSkillManager().GetModAmount() >= player.GetSkillManager().GetModLimit())
-            GetComponent<InteractPopup>().SetText("Mod Limit Reached. Drop Unwanted Modifiers w/ Right Click");
-        //if this skill is an ability, and the player has no room for new abilities change the text
-        if (player.GetSkillManager().GetAbilityAmount() > 1 && skill.IsAbility)
-            GetComponent<InteractPopup>().SetText("Press [F] to Replace Ability 1");
-        if (player.GetSkillManager().HasSkill(skill.name) == true && skill.IsAbility)
-        { //if the ability is a duplicate, change the text to say you can't pick it up
-            GetComponent<InteractPopup>().SetText("Duplicate Abilities cannot be picked up");
-            pressed = false;
+        if (!skill.IsAbility)
+        {
+            if (player.GetSkillManager().GetModAmount() >= player.GetSkillManager().GetModLimit())
+            {
+                GetComponent<InteractPopup>().SetText("Mod Limit Reached. Drop Unwanted Modifiers w/ Right Click");
+                pressed = false;
+            }
+        }
+        else
+        {
+            //if this skill is an ability, and the player has no room for new abilities change the text
+            if (player.GetSkillManager().GetAbilityAmount() > 1)
+                GetComponent<InteractPopup>().SetText("Press [F] to Replace Ability 1");
+            if (player.GetSkillManager().HasSkill(skill.name) == true)
+            { //if the ability is a duplicate, change the text to say you can't pick it up
+                GetComponent<InteractPopup>().SetText("Duplicate Abilities cannot be picked up");
+                pressed = false;
+            }
         }
     }
     private void FixedUpdate()
@@ -80,7 +89,6 @@ public class SkillPickup : MonoBehaviour
             Destroy(gameObject);
         }
     }
-
     private void OnTriggerStay(Collider other)
     {
         if (pressed)

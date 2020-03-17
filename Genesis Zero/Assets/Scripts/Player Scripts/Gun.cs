@@ -27,7 +27,7 @@ public class Gun : MonoBehaviour
     [Header("6. Hardware Exploit")]
     //in seconds
     public float stunDuration = .4f;
-    public float exploitCoolDelay = .6f;
+    public float stunIncreasePerStack = .2f;
     public Color stunBulletColor;
     //only reduces it's own, not others by .1
     public float reductionPerStack = .1f;
@@ -79,12 +79,8 @@ public class Gun : MonoBehaviour
 	    	//changeblastradius, the more of the skill you have the bigger it is.
 	    	expShot.ModifyBlastRadius(amount* blastRadiusBonusPerStack);
         }
-        //apply generic modifications
-        instance = ModifyProjectile(instance);
-        bool inheritCrit = true;
-        //if it's a crit before being initialized, that means a mod is calculating crit manually
-        if (instance.GetComponent<Hitbox>().Critical)
-            inheritCrit = false;
+        //means that instantiate hitbox will not calculate crit on it's own
+        bool inheritCrit = false;
         instance.transform.Rotate(Vector3.forward,Random.Range(-spreadAngle, spreadAngle),Space.World);
        instance.GetComponent<Hitbox>().InitializeHitbox(player.GetDamage().GetValue(), player, inheritCrit);
         //add 1 to stacks, because Compound X applies like a secondary stack of Atom splitter
@@ -105,13 +101,9 @@ public class Gun : MonoBehaviour
                         spreadAngle *= -1;
                     float angle = spreadAngle + minSpread*(spreadAngle*spreadMultiplier)*(s+1);
                     if (!right) { angle *= -1;}
-                    //extra bullets have an individual chance to crit, and thus apply the pyrotechnics AOE
+                    //extra bullets have an individual chance to crit, and thus can apply the pyrotechnics AOE seperate
                     GameObject extraBullet = (GameObject)Instantiate(GetProjectile(), spawnpoint, instance.transform.rotation);
                     Hitbox hit = extraBullet.GetComponent<Hitbox>();
-                    inheritCrit = true;
-                    //if it's a crit before being initialized, that means a mod is calculating crit manually and that initializeHit should not do it
-                    if (hit.Critical)
-                        inheritCrit = false;
                     extraBullet.transform.Rotate(Vector3.forward, angle, Space.World);
                     //extraBullet.GetComponent<Hitbox>().MaxHits += 2;
                     hit.InitializeHitbox(player.GetDamage().GetValue(), player, inheritCrit);
@@ -124,55 +116,37 @@ public class Gun : MonoBehaviour
     {
         UpdateCrosshairBloom();
     }
+    //All generic bullet effects should go inside this function, including Crit proc / different projectiles being returned 
     public GameObject GetProjectile()
     {
+        GameObject projectile = basicProjectile;
         float bDmg = 0;
+        Hitbox hit = projectile.GetComponent<Hitbox>();
         if (Random.Range(0, 100) < player.GetCritChance().GetValue() * 100)
         {//Any effects that need to apply due to crit should go here
             //apply a burn to crits if you have ignition bullets
+            hit.Critical = true;
+            hit.Damage = player.GetDamage().GetValue();
             bDmg = burnDamagePerStack * player.GetSkillStack("Ignition Bullets");
+            if (bDmg > 0)
+                hit.Burn = new Vector2(3, bDmg);
+            //apply AOE on crit if you have it
             if (player.GetSkillStack("PyroTechnics") > 0)
             {
-                Hitbox hit = explosiveProjectile.GetComponent<Hitbox>();
-                hit.Damage = player.GetDamage().GetValue();
-                hit.Burn = new Vector2(3, bDmg);
-                hit.Critical = true;
-                return explosiveProjectile;
+                
+                projectile = explosiveProjectile;
             }
-        }
-        if (bDmg > 0)
-            basicProjectile.GetComponent<Hitbox>().Burn = new Vector2(3, bDmg);
-        return basicProjectile;
-    }
-    //any effects that should apply to all bullets after they have been instantiated go here, such as knockback increasers for all bullets
-    // effects put here will also apply to special bullets
-    public GameObject ModifyProjectile(GameObject bullet)
-    {	
-    	Hitbox hit = bullet.GetComponent<Hitbox>();
-    	//adds knockbackforce, burndamage, & piercing equal to the bullet equal to the amount of stacks the player has
-    	hit.Knockbackforce += knockBackPerStack * player.GetSkillStack("Knockback");
-        hit.MaxHits += piercesPerStack * player.GetSkillStack("Piercing Bullets");
-        float bDmg = burnDamagePerStack * player.GetSkillStack("Ignition Bullets");
-        hit.Burn = new Vector2(burnTime, bDmg);
-        float totalCoolDelay = 0;
-        int exploitStacks = player.GetSkillStack("Hardware Exploit");
-        if (player.HasSkill("Hardware Exploit"))
-        {
-            //get the reduction amount, multiply by the amount of stacks
-            float reduction = player.GetSkillStack("Hardware Exploit") * reductionPerStack;
-            float delay = exploitCoolDelay - reduction;
-            totalCoolDelay += exploitCoolDelay;
-            //if heat is at 0, apply the stun
-            if (overheat.GetHeat() <= overheat.GetHeatAddedPerShot())
+            //apply stun on crit if you have it
+            int exploitStacks = player.GetSkillStack("Hardware Exploit");
+            if (exploitStacks > 0)
             {
-                bullet =VFXManager.instance.ChangeColor(bullet, stunBulletColor);
-                hit.StunTime = stunDuration;
+                projectile = VFXManager.instance.ChangeColor(projectile, stunBulletColor);
+                hit.StunTime = stunDuration + (1 - exploitStacks) * stunIncreasePerStack;
             }
-           
+            //apply Knockback on crit if you have it
+            hit.Knockbackforce += knockBackPerStack * player.GetSkillStack("Knockback");
         }
-        //modifycooldelay needs a multiplier, so 1 + whatever delays there are
-        overheat.ModifyCoolDelay(1+totalCoolDelay);
-        return bullet;
+        return projectile;
     }
     private void UpdateCrosshairBloom()
     {

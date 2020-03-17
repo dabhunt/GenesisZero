@@ -224,6 +224,7 @@ public class AbilityCasting : MonoBehaviour
 
     public void ReduceCooldowns(float seconds)
     {
+        print("reducing cooldowns by " + seconds);
         AbilityCooldown1 -= seconds;
         AbilityCooldown2 -= seconds;
     }
