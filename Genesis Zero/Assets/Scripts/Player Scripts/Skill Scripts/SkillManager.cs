@@ -32,7 +32,7 @@ public class SkillManager
     private List<SkillObject> abilities;
 
     // Lower the number, lower the chance. Determined by this order (0 - 100)
-    private int goldchance = 5; 
+    private int goldchance = 10; 
     private int bluechance = 40; // Realistically its bluechance - goldchance in code
     // No white chance becuase it is the default if the other two do not go through
 

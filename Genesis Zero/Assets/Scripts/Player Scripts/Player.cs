@@ -110,7 +110,7 @@ public class Player : Pawn
     }
     public void SetMaxCapsuleAmount(float amount)
     {
-        Mathf.Clamp(amount, 4, 6);
+        amount = Mathf.Clamp(amount, 4, 6);
         MaxEssence += GetFullCapsuleAmount();
         MaxCapsules = amount;
     }
@@ -122,7 +122,7 @@ public class Player : Pawn
     public void SetEssence(float amount)
     {
         float num = amount;
-        Mathf.Clamp(num, 0, MaxEssence);
+        num = Mathf.Clamp(num, 0, MaxEssence);
         GetEssence().SetValue(num);
     }
 

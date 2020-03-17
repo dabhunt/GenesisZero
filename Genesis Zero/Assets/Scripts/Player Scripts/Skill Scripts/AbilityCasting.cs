@@ -222,6 +222,12 @@ public class AbilityCasting : MonoBehaviour
         AbilityCooldown2 = 0;
     }
 
+    public void ReduceCooldowns(float seconds)
+    {
+        AbilityCooldown1 -= seconds;
+        AbilityCooldown2 -= seconds;
+    }
+
 
     public void SwapAbilityCooldowns()
     {

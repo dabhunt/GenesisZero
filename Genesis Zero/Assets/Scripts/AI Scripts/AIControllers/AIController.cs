@@ -30,6 +30,7 @@ public class AIController : Pawn
 
     protected float stateTime = 0.0f; // Duration of current state
     private bool stunnedLastFrame = false;
+    private bool stunImmune = false;
     public AIStateEvent StateChangeEvent; // Invoked whenever the state is changed and passes in the new state to called methods
 
     protected ObjectTracker tracker;
@@ -63,7 +64,10 @@ public class AIController : Pawn
             tracker.Target = Target;
         }
     }
-
+    private void StunImmuneEnd()
+    {
+        stunImmune = false;
+    }
     new protected void FixedUpdate()
     {
         base.FixedUpdate();
@@ -79,11 +83,14 @@ public class AIController : Pawn
         //if AI was stunned last frame, but not this frame, change state to AIState.Follow
         if (stunnedLastFrame == true && !IsStunned())
         {
+            //make the AI immune to stuns for 1.5 seconds
+            Invoke("StunImmuneEnd", 1.5f);
             ChangeState(AIState.Follow);
             stunnedLastFrame = false;
         }
         if (IsStunned())
         {
+            stunImmune = true;
             ChangeState(AIState.Idle);
             stunnedLastFrame = true;
         }

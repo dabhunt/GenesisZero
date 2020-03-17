@@ -45,7 +45,7 @@ public class Hitbox : MonoBehaviour
     public string hitEffectVFX = "VFX_BulletSparks";
     public float VFX_ScaleReduction = 15f;
     private List<GameObject> hittargets = new List<GameObject>();
-
+    private Player player;
     private Vector3 lastposition;
     private Vector3 spawnposition;
 
@@ -67,6 +67,8 @@ public class Hitbox : MonoBehaviour
     void Start()
     {
         //colliders.Clear();
+        GameObject temp = GameObject.FindGameObjectWithTag("Player");
+        player = temp.GetComponent<Player>();
         state = State.Active;
         if (GetComponent<Collider>() == null)
         {
@@ -221,6 +223,19 @@ public class Hitbox : MonoBehaviour
                 }
                 else if (special && bp.damagemultipler > 1)
                 {
+                    if (player != null)
+                    {
+                        float stacks = player.GetSkillManager().GetSkillStack("Mental Rush");
+                        if (stacks > 0)
+                        {
+                            float seconds = 0;
+                            if (stacks == 1) //1 second if 1 stack
+                                seconds = 1;
+                            else
+                                seconds = .5f + .5f * stacks; // increase by .5 seconds for additional stacks past 1
+                            player.GetComponent<AbilityCasting>().ReduceCooldowns(seconds);
+                        }
+                    }
                     emit.GetComponent<DamageNumber>().SetColor(Color.red);
                 }
                 else if (special && bp.damagemultipler < 1)
@@ -254,7 +269,7 @@ public class Hitbox : MonoBehaviour
 
     /**
      * IMPORTANT FUNCTION, if hitbox is spawned from instantiate, this function should be called to initalize the hitbox with a source
-     * If no source is set, offensive stats like critchance will not be applied to the hitbox. Returns true, if the bitbox crits
+     * If no source is set, offensive stats like critchance will not be applied to the hitbox. Returns true, if the hitbox crits
      */
     public bool InitializeHitbox(float damage, Pawn source)
     {
@@ -262,6 +277,20 @@ public class Hitbox : MonoBehaviour
         this.Source = source;
         spawnposition = source.transform.position;
         if (Random.Range(0, 100) < Source.GetCritChance().GetValue() * 100)
+        {
+            Critical = true;
+            return true;
+        }
+        return false;
+    }
+    //this overload provides the option to initialize without inheriting crit,
+    //which is useful for certain mods that are crit dependant and need to initialize a different bullet depending on if something crits
+    public bool InitializeHitbox(float damage, Pawn source, bool inheritCrit)
+    {
+        this.Damage = damage;
+        this.Source = source;
+        spawnposition = source.transform.position;
+        if (inheritCrit && Random.Range(0, 100) < Source.GetCritChance().GetValue() * 100)
         {
             Critical = true;
             return true;

@@ -12,7 +12,7 @@ public class Hurtbox : MonoBehaviour
 {
 
     public List<Collider> colliders;
-
+    private Player player;
     private void Awake()
     {
 
@@ -23,6 +23,8 @@ public class Hurtbox : MonoBehaviour
     {
         colliders.Clear();
         AddCollliders(transform, colliders);
+        GameObject temp = GameObject.FindGameObjectWithTag("Player");
+        player = temp.GetComponent<Player>();
     }
     public void AddCollliders(Transform currentparent, List<Collider> colliders)
     {

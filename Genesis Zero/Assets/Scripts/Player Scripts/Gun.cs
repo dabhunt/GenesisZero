@@ -8,7 +8,7 @@ public class Gun : MonoBehaviour
     public Transform firePoint;
     public GameObject basicProjectile;
     [Header("Bullet Modifiers")]
-    [Header("1. Explosive Shot")]
+    [Header("1. PyroTechnics")]
     public GameObject explosiveProjectile;
     //extra seconds the player has to wait before
     public float explosiveCoolDelay = .5f;
@@ -75,14 +75,18 @@ public class Gun : MonoBehaviour
         expShot = instance.GetComponent<ExplosiveShot>();
         if (expShot != null)
         {
-        	int amount = player.GetSkillStack("Explosive Shot");
+        	int amount = player.GetSkillStack("PyroTechnics");
 	    	//changeblastradius, the more of the skill you have the bigger it is.
 	    	expShot.ModifyBlastRadius(amount* blastRadiusBonusPerStack);
         }
         //apply generic modifications
         instance = ModifyProjectile(instance);
+        bool inheritCrit = true;
+        //if it's a crit before being initialized, that means a mod is calculating crit manually
+        if (instance.GetComponent<Hitbox>().Critical)
+            inheritCrit = false;
         instance.transform.Rotate(Vector3.forward,Random.Range(-spreadAngle, spreadAngle),Space.World);
-        instance.GetComponent<Hitbox>().InitializeHitbox(player.GetDamage().GetValue(), player);
+       instance.GetComponent<Hitbox>().InitializeHitbox(player.GetDamage().GetValue(), player, inheritCrit);
         //add 1 to stacks, because Compound X applies like a secondary stack of Atom splitter
         int stacks = player.GetSkillStack("Compound X") + 1;
         bool right = controller.IsAimingRight();
@@ -96,17 +100,21 @@ public class Gun : MonoBehaviour
                 {
                     //if it's divisible by 2, then reverse the value of the min offset to go below the gun instead of above
                     heatFromExtraBullets++;
+                    //multiply by -1 to alternate placing extra bullets on top vs underneath cursor
                     if ((i + 1) % 2 == 0)
-                    {
                         spreadAngle *= -1;
-                    }
                     float angle = spreadAngle + minSpread*(spreadAngle*spreadMultiplier)*(s+1);
                     if (!right) { angle *= -1;}
+                    //extra bullets have an individual chance to crit, and thus apply the pyrotechnics AOE
                     GameObject extraBullet = (GameObject)Instantiate(GetProjectile(), spawnpoint, instance.transform.rotation);
+                    Hitbox hit = extraBullet.GetComponent<Hitbox>();
+                    inheritCrit = true;
+                    //if it's a crit before being initialized, that means a mod is calculating crit manually and that initializeHit should not do it
+                    if (hit.Critical)
+                        inheritCrit = false;
                     extraBullet.transform.Rotate(Vector3.forward, angle, Space.World);
-                    extraBullet.GetComponent<Hitbox>().MaxHits += 2;
-                    extraBullet.GetComponent<Hitbox>().InitializeHitbox(player.GetDamage().GetValue(), player);
-                    
+                    //extraBullet.GetComponent<Hitbox>().MaxHits += 2;
+                    hit.InitializeHitbox(player.GetDamage().GetValue(), player, inheritCrit);
                 }
             }
             overheat.ModifyHeatPerShot(heatFromExtraBullets*AS_heatMulti);
@@ -118,19 +126,18 @@ public class Gun : MonoBehaviour
     }
     public GameObject GetProjectile()
     {
-    	//only fire an explosive shot if the player has 0 heat
-    	//to balance this the cooldelay is increased to 1.5x the base cool delay
-    	//this will be true on the first shot and only on the first shot
-    	if (overheat.GetHeat() <= overheat.GetHeatAddedPerShot())
-    	{
-            
-            if (player.HasSkill("Explosive Shot"))
-            {
+        if (player.HasSkill("PyroTechnics"))
+        {
+            //manually calculate crit for this mod, to find out if it should be instantiated
+            if (Random.Range(0, 100) < player.GetCritChance().GetValue() * 100)
+            {//crit!, meaning this bullet will also become an AOE explosive
                 Hitbox hit = explosiveProjectile.GetComponent<Hitbox>();
                 hit.Damage = player.GetDamage().GetValue();
+                hit.Critical = true;
                 return explosiveProjectile;
-    	    }
+            }
     	}
+    
         /*
     	else if()
         {
@@ -151,8 +158,6 @@ public class Gun : MonoBehaviour
         float bDmg = burnDamagePerStack * player.GetSkillStack("Ignition Bullets");
         hit.Burn = new Vector2(burnTime, bDmg);
         float totalCoolDelay = 0;
-        if (player.HasSkill("Explosive Shot"))
-            totalCoolDelay = explosiveCoolDelay;
         int exploitStacks = player.GetSkillStack("Hardware Exploit");
         if (player.HasSkill("Hardware Exploit"))
         {

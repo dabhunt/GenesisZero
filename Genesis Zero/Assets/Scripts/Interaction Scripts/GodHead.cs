@@ -165,7 +165,13 @@ public class GodHead : MonoBehaviour
 
     private void InitializeUI()
     {
+        //destroy all popups when entering the interface
         GetComponent<InteractPopup>().DestroyPopUp();
+        GameObject[] pickups = GameObject.FindGameObjectsWithTag("Pickups");
+        for (int i = 0; i < pickups.Length; i++)
+        {
+            pickups[i].GetComponent<InteractPopup>().DestroyPopUp();
+        }
         Destroy(GetComponent<InteractPopup>());
         sacUI = (RectTransform) canvasRef.transform.Find("SacrificeUI");
         sacModObjs = sacUI.gameObject.transform.Find("SacMods").gameObject;
