@@ -69,7 +69,6 @@ public class Statistic
     {
         Mathf.Clamp(value, 0, GetMaxValue());
         AddValue(value - this.currentamount);
-
     }
 
     /**
@@ -95,7 +94,7 @@ public class Statistic
      */
     public void AddMaxValue(float value)
     {
-        SetMaxValue(GetMaxValue() + value);
+        SetMaxValue(GetBaseValue() + value);
     }
 
     /**
