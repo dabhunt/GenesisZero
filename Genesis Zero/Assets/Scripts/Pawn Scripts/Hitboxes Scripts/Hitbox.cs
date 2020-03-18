@@ -47,7 +47,6 @@ public class Hitbox : MonoBehaviour
     private List<GameObject> hittargets = new List<GameObject>();
     private Vector3 lastposition;
     private Vector3 spawnposition;
-    private UniqueEffects uniqueEffects;
 
     private void Awake()
     {
@@ -61,15 +60,10 @@ public class Hitbox : MonoBehaviour
             spawnposition = transform.position;
         }
     }
-
-
     // Start is called before the first frame update
     void Start()
     {
         //colliders.Clear();
-        GameObject temp = GameObject.FindGameObjectWithTag("Player");
-        uniqueEffects = temp.GetComponent<Player>().GetComponent<UniqueEffects>();
-
         state = State.Active;
         if (GetComponent<Collider>() == null)
         {
@@ -98,7 +92,11 @@ public class Hitbox : MonoBehaviour
             }
         }
     }
-
+    private UniqueEffects GetUniqueEffects()
+    {
+        GameObject temp = GameObject.FindGameObjectWithTag("Player");
+        return temp.GetComponent<Player>().GetComponent<UniqueEffects>();
+    }
     public void AddCollliders(Transform currentparent, List<Collider> colliders)
     {
         Transform[] children = GetComponentsInChildren<Transform>();
@@ -224,7 +222,7 @@ public class Hitbox : MonoBehaviour
                 }
                 else if (special && bp.damagemultipler > 1)
                 {
-                    uniqueEffects.WeakPointHit();
+                    GetUniqueEffects().WeakPointHit();
                     emit.GetComponent<DamageNumber>().SetColor(Color.red);
                 }
                 else if (special && bp.damagemultipler < 1)
@@ -279,10 +277,13 @@ public class Hitbox : MonoBehaviour
         this.Damage = damage;
         this.Source = source;
         spawnposition = source.transform.position;
-        if (inheritCrit && Random.Range(0, 100) < Source.GetCritChance().GetValue() * 100)
+        if (inheritCrit)
         {
-            Critical = true;
-            return true;
+            if ((Random.Range(0, 100) < Source.GetCritChance().GetValue() * 100))
+            {
+                Critical = true;
+                return true;
+            }
         }
         return false;
     }

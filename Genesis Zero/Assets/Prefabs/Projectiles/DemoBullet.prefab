@@ -130,7 +130,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 1e7773cfab260d141aad2bd82731dee2, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  Damage: 20
+  Damage: 10
   Critical: 0
   HurtsAllies: 0
   HurtsEnemies: 1
@@ -168,8 +168,6 @@ MonoBehaviour:
   maxDropVelocity: 0
   EssencePrefab: {fileID: 3175629662073271086, guid: ddc3274a97a8ffc41bb3097e97f19942,
     type: 3}
-  ModifierPrefab: {fileID: 2493648811206171248, guid: ac8b05e93bf88fa488c9b7e45be8fac0,
-    type: 3}
 --- !u!135 &-5625754253452083393
 SphereCollider:
   m_ObjectHideFlags: 0
@@ -196,6 +194,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   Detachment: {fileID: 7504852634243103965}
+  DestroyAfterXTime: 3
 --- !u!1001 &257866411982093011
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -277,6 +276,26 @@ PrefabInstance:
         type: 3}
       propertyPath: InitialModule.startColor.maxGradient.atime0
       value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 2795826534407635404, guid: a713eb8a398a53240a65604f5eddb06f,
+        type: 3}
+      propertyPath: InitialModule.startColor.minMaxState
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 2795826534407635404, guid: a713eb8a398a53240a65604f5eddb06f,
+        type: 3}
+      propertyPath: InitialModule.startColor.maxColor.r
+      value: 0.3726415
+      objectReference: {fileID: 0}
+    - target: {fileID: 2795826534407635404, guid: a713eb8a398a53240a65604f5eddb06f,
+        type: 3}
+      propertyPath: InitialModule.startColor.maxColor.g
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 2795826534407635404, guid: a713eb8a398a53240a65604f5eddb06f,
+        type: 3}
+      propertyPath: InitialModule.startColor.maxColor.b
+      value: 0.97162896
       objectReference: {fileID: 0}
     - target: {fileID: 3274657888610707814, guid: a713eb8a398a53240a65604f5eddb06f,
         type: 3}
