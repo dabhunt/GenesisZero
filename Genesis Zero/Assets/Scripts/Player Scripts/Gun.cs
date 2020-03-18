@@ -7,6 +7,7 @@ public class Gun : MonoBehaviour
     [Header("Base Gun Settings")]
     public Transform firePoint;
     public GameObject basicProjectile;
+    public Color CritBulletColor = new Color(1, 1, .46f);
     [Header("Bullet Modifiers")]
     [Header("1. AOE on crit (pyrotechnics)")]
     public GameObject explosiveProjectile;
@@ -149,6 +150,7 @@ public class Gun : MonoBehaviour
             //apply a burn to crits if you have ignition bullets
             hit.Critical = true;
             hit.Damage = player.GetDamage().GetValue();
+            projectile = VFXManager.instance.ChangeColor(projectile, CritBulletColor);
             float burnDmg = burnDamagePerStack * player.GetSkillStack("Ignition Bullets");
             if (burnDmg > 0)
                 hit.Burn = new Vector2(3, burnDmg);
