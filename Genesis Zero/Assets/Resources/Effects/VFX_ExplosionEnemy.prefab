@@ -26,11 +26,11 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1658866359418953794}
   m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
-  m_LocalPosition: {x: -0.641, y: 0, z: 0}
+  m_LocalPosition: {x: -0.64100003, y: 0.31999993, z: -0.4000004}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children: []
-  m_Father: {fileID: 6072446942886710392}
-  m_RootOrder: 1
+  m_Father: {fileID: 5231427343384543981}
+  m_RootOrder: 2
   m_LocalEulerAnglesHint: {x: -90, y: 0, z: 0}
 --- !u!198 &5844819256284791668
 ParticleSystem:
@@ -4823,6 +4823,7 @@ GameObject:
   - component: {fileID: 8619921272131381243}
   - component: {fileID: 2772280647366421133}
   - component: {fileID: 42412067843963436}
+  - component: {fileID: 2039709857574610742}
   m_Layer: 0
   m_Name: MainSmoke
   m_TagString: Untagged
@@ -4838,11 +4839,11 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 2593799563136752854}
   m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
-  m_LocalPosition: {x: -0.641, y: 0, z: 0}
+  m_LocalPosition: {x: -0.64100003, y: 0.31999993, z: -0.4000004}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children: []
-  m_Father: {fileID: 6072446942886710392}
-  m_RootOrder: 0
+  m_Father: {fileID: 5231427343384543981}
+  m_RootOrder: 1
   m_LocalEulerAnglesHint: {x: -90, y: 0, z: 0}
 --- !u!198 &2772280647366421133
 ParticleSystem:
@@ -9624,6 +9625,21 @@ ParticleSystemRenderer:
   m_Mesh2: {fileID: 0}
   m_Mesh3: {fileID: 0}
   m_MaskInteraction: 0
+--- !u!114 &2039709857574610742
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2593799563136752854}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: fb0e6cb48f0b97a4280741f982b0df39, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  delay: 0
+  emitter: {fileID: 0}
+  duration: 0
 --- !u!1 &2705115600481968448
 GameObject:
   m_ObjectHideFlags: 0
@@ -9649,13 +9665,13 @@ Transform:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 2705115600481968448}
-  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
+  m_LocalPosition: {x: 0, y: 0.31999993, z: -0.40000036}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children:
   - {fileID: 7342362972161002238}
-  m_Father: {fileID: 6072446942886710392}
-  m_RootOrder: 2
+  m_Father: {fileID: 5231427343384543981}
+  m_RootOrder: 0
   m_LocalEulerAnglesHint: {x: -90, y: 0, z: 0}
 --- !u!198 &3302912666274376457
 ParticleSystem:
@@ -19200,6 +19216,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 5231427343384543981}
+  - component: {fileID: 6530769314067521757}
   m_Layer: 0
   m_Name: VFX_ExplosionEnemy
   m_TagString: Untagged
@@ -19218,10 +19235,28 @@ Transform:
   m_LocalPosition: {x: 0, y: 3.23, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children:
+  - {fileID: 1679163572400111289}
+  - {fileID: 8619921272131381243}
+  - {fileID: 7933805093008444315}
   - {fileID: 6072446942886710392}
   m_Father: {fileID: 0}
   m_RootOrder: 0
   m_LocalEulerAnglesHint: {x: 0, y: -90, z: 0}
+--- !u!114 &6530769314067521757
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 5511386940544976186}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: fb0e6cb48f0b97a4280741f982b0df39, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  delay: 0
+  emitter: {fileID: 0}
+  duration: 0
 --- !u!1 &5985677736080843040
 GameObject:
   m_ObjectHideFlags: 0
@@ -19248,10 +19283,7 @@ Transform:
   m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
   m_LocalPosition: {x: 0, y: 0.32, z: -0.40000024}
   m_LocalScale: {x: 1, y: 1, z: 1}
-  m_Children:
-  - {fileID: 8619921272131381243}
-  - {fileID: 7933805093008444315}
-  - {fileID: 1679163572400111289}
+  m_Children: []
   m_Father: {fileID: 5231427343384543981}
-  m_RootOrder: 0
+  m_RootOrder: 3
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}

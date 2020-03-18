@@ -8,13 +8,13 @@ public class Gun : MonoBehaviour
     public Transform firePoint;
     public GameObject basicProjectile;
     [Header("Bullet Modifiers")]
-    [Header("1. PyroTechnics")]
+    [Header("1. AOE on crit (pyrotechnics)")]
     public GameObject explosiveProjectile;
     //extra seconds the player has to wait before
     public float explosiveCoolDelay = .5f;
     public float blastRadiusBonusPerStack = .7f;
     // each additional duplicate of this mod gives you .7f bigger blast radius
-    [Header("2. Knockback")]
+    [Header("2. Knockback on crit")]
     public float knockBackPerStack = 1.5f;
     [Header("3. Peripheral Bullet")]
     public float minSpread = 10f;
@@ -22,7 +22,7 @@ public class Gun : MonoBehaviour
     [Header("4. Peircing Bullets")]
     public int piercesPerStack = 1;
     [Header("5. Ignition Bullets")]
-    public float burnDamagePerStack = 2f;
+    public float burnDamagePerStack = 4f;
     public float burnTime = 3f;
     [Header("6. Hardware Exploit")]
     //in seconds
@@ -71,7 +71,10 @@ public class Gun : MonoBehaviour
         spreadAngle = overheat.ShootBloom();
         //print("spreadAngle: "+spreadAngle);
         Vector3 spawnpoint = new Vector3(firePoint.transform.position.x, firePoint.transform.position.y, 0);
-        GameObject instance = (GameObject) Instantiate(GetProjectile(), spawnpoint, firePoint.transform.rotation);
+        //instantiate the players next bullet, passing in the crit variable to decide what type of bullet
+        bool crit = Crit();
+        GameObject instance = (GameObject) Instantiate(GetProjectile(crit), spawnpoint, firePoint.transform.rotation);
+        instance = ApplyModifiers(instance,crit);
         expShot = instance.GetComponent<ExplosiveShot>();
         if (expShot != null)
         {
@@ -102,7 +105,9 @@ public class Gun : MonoBehaviour
                     float angle = spreadAngle + minSpread*(spreadAngle*spreadMultiplier)*(s+1);
                     if (!right) { angle *= -1;}
                     //extra bullets have an individual chance to crit, and thus can apply the pyrotechnics AOE seperate
-                    GameObject extraBullet = (GameObject)Instantiate(GetProjectile(), spawnpoint, instance.transform.rotation);
+                    bool extraCrit = Crit();
+                    GameObject extraBullet = (GameObject)Instantiate(GetProjectile(extraCrit), spawnpoint, instance.transform.rotation);
+                    extraBullet = ApplyModifiers(extraBullet,extraCrit);
                     Hitbox hit = extraBullet.GetComponent<Hitbox>();
                     extraBullet.transform.Rotate(Vector3.forward, angle, Space.World);
                     //extraBullet.GetComponent<Hitbox>().MaxHits += 2;
@@ -116,26 +121,37 @@ public class Gun : MonoBehaviour
     {
         UpdateCrosshairBloom();
     }
+    //calling this determines if the shot will be a crit ahead of time
+    private bool Crit()
+    {
+        if (Random.Range(0, 100) < player.GetCritChance().GetValue() * 100)
+        {
+            return true;
+        }
+        return false;
+    }
     //All generic bullet effects should go inside this function, including Crit proc / different projectiles being returned 
-    public GameObject GetProjectile()
+    public GameObject GetProjectile(bool crit)
     {
         GameObject projectile = basicProjectile;
-        float bDmg = 0;
+        if (crit)
+        {
+            if (player.GetSkillStack("PyroTechnics") > 0)
+                return explosiveProjectile;
+        }
+        return projectile;
+    }
+    public GameObject ApplyModifiers(GameObject projectile,bool crit)
+    {
         Hitbox hit = projectile.GetComponent<Hitbox>();
-        if (Random.Range(0, 100) < player.GetCritChance().GetValue() * 100)
+        if (crit)
         {//Any effects that need to apply due to crit should go here
             //apply a burn to crits if you have ignition bullets
             hit.Critical = true;
             hit.Damage = player.GetDamage().GetValue();
-            bDmg = burnDamagePerStack * player.GetSkillStack("Ignition Bullets");
-            if (bDmg > 0)
-                hit.Burn = new Vector2(3, bDmg);
-            //apply AOE on crit if you have it
-            if (player.GetSkillStack("PyroTechnics") > 0)
-            {
-                
-                projectile = explosiveProjectile;
-            }
+            float burnDmg = burnDamagePerStack * player.GetSkillStack("Ignition Bullets");
+            if (burnDmg > 0)
+                hit.Burn = new Vector2(3, burnDmg);
             //apply stun on crit if you have it
             int exploitStacks = player.GetSkillStack("Hardware Exploit");
             if (exploitStacks > 0)

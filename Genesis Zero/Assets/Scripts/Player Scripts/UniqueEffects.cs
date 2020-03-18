@@ -51,13 +51,12 @@ public class UniqueEffects : MonoBehaviour
         float stacks = player.GetSkillManager().GetSkillStack("Adrenaline Rush");
         if (stacks > 0)
         {
-
-            float seconds = 0;
-            if (stacks == 1) //1 second if 1 stack
-                seconds = coolReductionSingleStack;
-            else
-                seconds = Math.Abs(coolReductionSingleStack-coolReductionPerStack) + coolReductionPerStack * (stacks-1); // increase by .5 seconds for additional stacks past 1
-            player.GetComponent<AbilityCasting>().ReduceCooldowns(seconds);
+            //float seconds = 0;
+            //if (stacks == 1) //1 second if 1 stack
+            //    seconds = coolReductionSingleStack;
+            //else
+            //    seconds = Math.Abs(coolReductionSingleStack-coolReductionPerStack) + coolReductionPerStack * (stacks-1); // increase by .5 seconds for additional stacks past 1
+            player.GetComponent<AbilityCasting>().ReduceCooldowns(stacks);
         }
         //other Modifier effects can be put inside this function
     }
