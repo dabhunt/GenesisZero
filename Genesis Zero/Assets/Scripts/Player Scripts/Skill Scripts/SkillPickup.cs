@@ -13,6 +13,7 @@ public class SkillPickup : MonoBehaviour
     private float speedvar = 4f;
     private GameObject target;
     private Player player;
+    private bool dropped = false;
     // Start is called before the first frame update
     void Start()
     {
@@ -39,7 +40,12 @@ public class SkillPickup : MonoBehaviour
 
     }
     private void Update()
-    {  
+    {
+        //if the player dropped the skill using right click
+        if (dropped)
+        {
+            return;
+        }
         if (Input.GetKeyDown(KeyCode.F))
         {
             //if the player presses F within range, it will be pulled towards them
@@ -124,6 +130,10 @@ public class SkillPickup : MonoBehaviour
 
             }
         }
+    }
+    public void SetDropped(bool boo)
+    {
+        dropped = boo;
     }
 
 }

@@ -69,7 +69,6 @@ public class Statistic
     {
         Mathf.Clamp(value, 0, GetMaxValue());
         AddValue(value - this.currentamount);
-
     }
 
     /**
@@ -95,7 +94,7 @@ public class Statistic
      */
     public void AddMaxValue(float value)
     {
-        SetMaxValue(GetMaxValue() + value);
+        SetMaxValue(GetBaseValue() + value);
     }
 
     /**
@@ -225,7 +224,7 @@ public class Statistic
 
             foreach(Bonus bonus in exhaustedbonuses)
             {
-                RecalculateBonuses(bonusamounts, bonus);
+                b += RecalculateBonuses(bonusamounts, bonus);
             }
 
 
@@ -269,7 +268,7 @@ public class Statistic
             }
             foreach (Bonus bonus in exhaustedmultipliers)
             {
-                RecalculateBonuses(exhaustedmultipliers, bonus);
+                multi += RecalculateBonuses(exhaustedmultipliers, bonus);
             }
 
             if (multi != multiplier)
@@ -287,9 +286,10 @@ public class Statistic
     /**
      * Places any unused bonuses to the other bonues and then removes the bonues from the list
      */
-    private void RecalculateBonuses(List<Bonus> bonuses, Bonus bonus)
+    private float RecalculateBonuses(List<Bonus> bonuses, Bonus bonus)
     {
         float value = bonus.GetValue();
+        float filledamount = 0;
 
         foreach (Bonus b in bonuses)
         {
@@ -305,20 +305,21 @@ public class Statistic
                     {
                         b.SetValue(bmaxvalue);
                         value -= diff;
+                        filledamount += diff;
                     }
                     else
                     {
                         b.SetValue(bvalue + value);
                         value = 0;
                         bonuses.Remove(bonus);
-                        return;
+                        return filledamount;
                     }
                 }
 
                 if (value <= 0)
                 {
                     bonuses.Remove(bonus);
-                    return;
+                    return filledamount;
                 }
             }         
         }
@@ -332,17 +333,22 @@ public class Statistic
         {
             if (value >= sdiff)
             {
-                SetValue(smaxvalue);
+                currentamount = GetBaseValue();
+                filledamount += sdiff;
             }
             else
             {
-                SetValue(svalue + value);
+                currentamount += value;
+                filledamount += value;
             }
         }
+
         if (bonus != null)
         {
             bonuses.Remove(bonus);
         }
+
+        return filledamount;
     }
     /**
      * Object type that contains data on a timed bonus. If the time is reduced to zero, it should be removed
