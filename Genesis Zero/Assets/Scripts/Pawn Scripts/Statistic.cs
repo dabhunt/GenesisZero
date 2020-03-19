@@ -135,6 +135,15 @@ public class Statistic
         SetMaxValue(maxamount * factor);
     }
 
+
+    /**
+     * Gets the ratio of the value and maxvalue
+     */
+     public float GetRatio()
+    {
+        return GetValue() / GetMaxValue();
+    }
+
     //---------------------------------------- BONUSES ---------------------------------------------------------//
 
     private Vector2 FillDifference(float value, float max, float fill)

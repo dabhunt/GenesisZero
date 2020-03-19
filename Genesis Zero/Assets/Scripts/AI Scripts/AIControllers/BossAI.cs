@@ -1,6 +1,7 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.UI;
 
 /**
  * Kenny Doan
@@ -26,6 +27,9 @@ public class BossAI : AIController
     public float TriggerRadius;
     public float TimeBeforeFight;
     private bool initiated;
+
+    public GameObject Healthbar;
+    private GameObject healthbar;
     protected void Awake()
     {
         zdepth = transform.position.z;
@@ -41,7 +45,16 @@ public class BossAI : AIController
     {
         base.Update();
         if (GetDistanceToTarget() < TriggerRadius) { initiated = true; }
-        if (initiated && TimeBeforeFight > 0) { TimeBeforeFight -= Time.deltaTime; }
+        if (initiated && TimeBeforeFight > 0)
+        {
+            TimeBeforeFight -= Time.deltaTime;
+            if (TimeBeforeFight < 0)
+            {
+                GameObject canvas = GameObject.FindGameObjectWithTag("CanvasUI");
+                healthbar = Instantiate(Healthbar, canvas.transform.position + (Healthbar.GetComponent<RectTransform>().position + new Vector3(0, -135, 0)) / canvas.GetComponent<Canvas>().referencePixelsPerUnit, Quaternion.identity, canvas.transform);
+                TimeBeforeFight = 0;
+            }
+        }
     }
 
     new protected void FixedUpdate()
@@ -75,6 +88,7 @@ public class BossAI : AIController
         // Don't move until fight starts
         if (TimeBeforeFight > 0) { return; }
 
+
         // Move toward target, may move somewhere depending on state
         float speed = GetSpeed().GetValue();
         if (GetDistanceToTarget() - BehaviorProperties.AvoidRadius != 0)
@@ -84,7 +98,15 @@ public class BossAI : AIController
             transform.position = new Vector3(transform.position.x, transform.position.y, zdepth);
         }
 
-
+        //Display Health
+        if (healthbar && initiated)
+        {
+            healthbar.GetComponentInChildren<Slider>().value = GetHealth().GetRatio();
+        }
+        else if (healthbar)
+        {
+            healthbar.SetActive(true);
+        }
     }
 
     /**
@@ -175,6 +197,6 @@ public class BossAI : AIController
     private void OnDrawGizmos()
     {
         Gizmos.color = Color.black;
-        Gizmos.DrawWireSphere(transform.position, TriggerRadius);
+        GizmosExtra.DrawWireCircle(transform.position, Vector3.forward, TriggerRadius);
     }
 }
