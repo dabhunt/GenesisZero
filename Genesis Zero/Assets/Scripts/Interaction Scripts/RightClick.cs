@@ -26,5 +26,7 @@ public class RightClick : MonoBehaviour
         GameObject mod = sManager.SpawnMod(player.transform.position, s.name);
         //destroy the mod after 3 seconds to prevent abuse
         mod.AddComponent<DestroyAfterXTime>().time = 3;
+        mod.GetComponent<SkillPickup>().SetDropped(true);
+        Destroy(mod.GetComponent<InteractPopup>());
     }
 }
