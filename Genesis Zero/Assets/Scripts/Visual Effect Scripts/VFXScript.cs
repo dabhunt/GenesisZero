@@ -32,8 +32,6 @@ public class VFXScript : MonoBehaviour
         }
         played = false;
     }
-
-    // Update is called once per frame
     void Update()
     {
         if (delay <= 0 && played == false)

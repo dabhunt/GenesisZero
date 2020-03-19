@@ -6,6 +6,7 @@ public class DetachOnDestroy : MonoBehaviour
 {
 
     public GameObject Detachment;
+    public float DestroyAfterXTime = 3f;
     // Start is called before the first frame update
     void Start()
     {
@@ -21,5 +22,6 @@ public class DetachOnDestroy : MonoBehaviour
     private void OnDestroy()
     {
         Detachment.transform.parent = null;
+        Destroy(Detachment, DestroyAfterXTime);
     }
 }
