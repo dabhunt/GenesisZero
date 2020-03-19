@@ -22,6 +22,10 @@ public class BossAI : AIController
 
     private float lookAngle = 0;
     private float zdepth;
+
+    public float TriggerRadius;
+    public float TimeBeforeFight;
+    private bool initiated;
     protected void Awake()
     {
         zdepth = transform.position.z;
@@ -33,12 +37,19 @@ public class BossAI : AIController
         base.Start();
     }
 
+    new protected void Update()
+    {
+        base.Update();
+        if (GetDistanceToTarget() < TriggerRadius) { initiated = true; }
+        if (initiated && TimeBeforeFight > 0) { TimeBeforeFight -= Time.deltaTime; }
+    }
+
     new protected void FixedUpdate()
     {
         base.FixedUpdate();
         if (Target == null) { return; }
+        if (initiated == false) { return; }
 
-        //Debug.Log(lookDir);
         if (state == AIState.Follow || state == AIState.Charge || state == AIState.Attack || state == AIState.Cooldown)
         {
             lookDir = Vector3.Slerp(lookDir, targetPosition - transform.position, 5 * Time.fixedDeltaTime); // Rotate to face target
@@ -59,6 +70,10 @@ public class BossAI : AIController
         Vector3 lookoffset = new Vector3(0, 0, lookDir.x > 0 ? -1f : -1f);
         transform.LookAt(lookposition + lookoffset);
         //transform.rotation = Quaternion.LookRotation(Vector3.back, Vector3.up); // USe this for center state
+
+
+        // Don't move until fight starts
+        if (TimeBeforeFight > 0) { return; }
 
         // Move toward target, may move somewhere depending on state
         float speed = GetSpeed().GetValue();
@@ -155,5 +170,11 @@ public class BossAI : AIController
             }
         }
         return min;
+    }
+
+    private void OnDrawGizmos()
+    {
+        Gizmos.color = Color.black;
+        Gizmos.DrawWireSphere(transform.position, TriggerRadius);
     }
 }
