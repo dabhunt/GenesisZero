@@ -625,7 +625,6 @@ public class SkillManager
 
     public bool IsActive()
     {
-
         return true;
     }
     public void SetActive()
@@ -641,7 +640,16 @@ public class SkillManager
         newLimit = Mathf.Clamp(newLimit, 7, ClampModLimit);
         modLimit = (int)newLimit;
     }
-
+    //This function returns a multiplier value, based on how many of that skill the player has
+    // pass in the name of modifier, and how much additional stacks past 1 should be multiplied by, (mainly used for explosion radius right now)
+    public float GetSkillStackAsMultiplier(string skill, float multiPerStack)
+    {
+        int stacks = GetSkillStack(skill);
+        float multi = 1;
+        if (stacks > 1)
+            multi = 1 + (multiPerStack - 1) * (stacks - 1);
+        return multi;
+    }
     public bool GetUpdated()
     {
         return updated;

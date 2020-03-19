@@ -14,8 +14,11 @@ public class UniqueEffects : MonoBehaviour
     public float coolReductionPerStack = .5f;
     public float coolReductionSingleStack = 1;
     [Header("Better Coolant")]
-
     public float coolRatePerStack = 1.1f;
+    [Header("Heat Expulsion")]
+    public float HE_Damage = 20;
+    public float HE_TotalBurnDMG = 21;
+    public float HE_StackMulti = 1.2f;
     [Header("Chemical Accelerant")]
     public float CA_MaxAttackSpeedPerStack = .50f;
     public float CA_MaxCritChancePerStack = .25f;
@@ -53,6 +56,33 @@ public class UniqueEffects : MonoBehaviour
     private void Update()
     {
         StackDecayTimer();
+    }
+    public void OverHeatTrigger()
+    {
+        int HE_stacks = player.GetSkillStack("Heat Expulsion");
+        if (HE_stacks > 0 && overheat.GetHeat() >= overheat.GetMaxHeat())
+        {
+            float multi = player.GetSkillManager().GetSkillStackAsMultiplier("Heat Expulsion", 1.2f);
+            GameObject hitbox = SpawnGameObject("ExpulsionHitbox", transform.position, Quaternion.identity);
+            Hitbox hit = hitbox.GetComponent<Hitbox>();
+            //Sets damage to double player's * stack multiplier of 20% per stack, false means it can't crit
+            if (player == null)
+                print("player is null");
+            if (hitbox == null)
+                print("gameobj is null");
+            if (hit == null)
+                print("hit is null");
+            hitbox.GetComponent<Hitbox>().InitializeHitbox(player.GetDamage().GetValue() * 2f * multi, player, false);
+            hitbox.transform.parent = transform;
+            hit.SetLifeTime(.25f);
+            hit.Burn = new Vector2(3,HE_TotalBurnDMG/3);
+            hit.SetStunTime(1f);
+            hitbox.GetComponent<SphereCollider>().radius = 2*multi;
+            VFXManager.instance.PlayEffect("VFX_HeatExpulsion", hitbox.transform.position, 0, 2* multi);
+            aManager.PlaySoundOneShot("SFX_ExplosionEnemy");
+            overheat.SetHeat(0);
+            print("overheat Explosion!");
+        }
     }
     private void ChemicalAccelerant()
     {
@@ -110,5 +140,10 @@ public class UniqueEffects : MonoBehaviour
     {
         SL_killCount++;
         SL_decay = 0;
+    }
+    private GameObject SpawnGameObject(string name, Vector2 position, Quaternion quat)
+    {
+        GameObject effect = Instantiate(Resources.Load<GameObject>("Hitboxes/" + name), position, quat);
+        return effect;
     }
 }

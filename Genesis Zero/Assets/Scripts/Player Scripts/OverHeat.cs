@@ -35,6 +35,10 @@ public class OverHeat : MonoBehaviour
     {
     	heat += amount;
         heat = Mathf.Clamp(heat, 0, maxHeat);
+        if (heat >= maxHeat) 
+        {
+            GetComponent<UniqueEffects>().OverHeatTrigger();
+        }
     }
     public float ShootBloom()
     {
@@ -67,9 +71,8 @@ public class OverHeat : MonoBehaviour
 	//if heat is more than 66% full, return true
     public bool IsOverheated()
     {
-    	if (heat >= maxHeat*.80f)
+    	if (heat >= maxHeat)
         {
-            print("isoverheated is capping heat running");
     		isOverheated = true;
     	} 
         else
@@ -100,6 +103,10 @@ public class OverHeat : MonoBehaviour
     {
     	delayBeforeCooling = baseDelayBeforeCooling;
     	delayBeforeCooling *= adjustment;
+    }
+    public void SetHeat(float value)
+    {
+        heat = value;
     }
     public float GetHeat()
     {
