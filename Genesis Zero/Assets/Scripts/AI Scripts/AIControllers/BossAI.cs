@@ -10,9 +10,11 @@ public class BossAI : AIController
 {
     public enum State { Headbutt, Firebreath, Pulse, Wild, MovingAway, MovingCloser, Centering }
     protected State bossstate = State.Firebreath; // Current behavior state
+    private bool secondphase;
 
     private Vector3 lookDir = Vector3.up;
     private Vector3 rotDir = Vector3.forward;
+    private Vector3 lookposition;
 
     [Tooltip("Points the boss uses to determine how to do it's attacks")]
     public List<Transform> Waypoints;
@@ -23,6 +25,7 @@ public class BossAI : AIController
     protected void Awake()
     {
         zdepth = transform.position.z;
+        lookposition = transform.position;
     }
 
     new protected void Start()
@@ -50,17 +53,15 @@ public class BossAI : AIController
 
         }
 
-        float speed = GetSpeed().GetValue();
-        Quaternion zrot = Quaternion.LookRotation(Vector3.forward, lookDir);
-        Vector2 dir = targetPosition - transform.position;
-        float angle = Mathf.Atan2(dir.y, dir.x);
-        lookAngle = Mathf.Lerp(lookAngle, angle, .3f);
-        //transform.Rotate(new Vector3(0, 0, lookAngle), Space.Self);
+        // Set where the boss looks at, default player
+        lookposition = Vector3.Lerp(lookposition, Target.position, 3 * Time.fixedDeltaTime);
 
-        Vector3 lookoffset = new Vector3(0,0,lookDir.x > 0 ? -1f : -1f);
-        transform.LookAt(Target.transform.position + lookoffset);
+        Vector3 lookoffset = new Vector3(0, 0, lookDir.x > 0 ? -1f : -1f);
+        transform.LookAt(lookposition + lookoffset);
         //transform.rotation = Quaternion.LookRotation(Vector3.back, Vector3.up); // USe this for center state
 
+        // Move toward target, may move somewhere depending on state
+        float speed = GetSpeed().GetValue();
         if (GetDistanceToTarget() - BehaviorProperties.AvoidRadius != 0)
         {
             float diff = GetDistanceToTarget() - BehaviorProperties.AvoidRadius;
