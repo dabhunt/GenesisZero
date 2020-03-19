@@ -4,7 +4,7 @@ using UnityEngine;
 
 /**
  * Kenny Doan
- * DroneAI is the class representing the boss of the game
+ * BossAI is the class representing the boss of the game
  */
 public class BossAI : AIController
 {
@@ -56,15 +56,10 @@ public class BossAI : AIController
         float angle = Mathf.Atan2(dir.y, dir.x);
         lookAngle = Mathf.Lerp(lookAngle, angle, .3f);
         //transform.Rotate(new Vector3(0, 0, lookAngle), Space.Self);
-        Vector3 lookoffset = new Vector3(0,0,lookDir.x > 0 ? -.5f : -.5f);
+
+        Vector3 lookoffset = new Vector3(0,0,lookDir.x > 0 ? -1f : -1f);
         transform.LookAt(Target.transform.position + lookoffset);
-        //transform.rotation = Quaternion.LookRotation(Vector3.forward, lookDir); // Actual rotation
-
-        rotDir = Quaternion.AngleAxis(25 * Time.fixedDeltaTime, Vector3.up) * rotDir;
-        Quaternion yrot = Quaternion.LookRotation(Vector3.up, rotDir);
-        //transform.Rotate(new Vector3(0, 5 * Time.fixedDeltaTime, 0), Space.Self);
-
-        //transform.rotation = new Quaternion(0, yrot.y, zrot.z, zrot.w);
+        //transform.rotation = Quaternion.LookRotation(Vector3.back, Vector3.up); // USe this for center state
 
         if (GetDistanceToTarget() - BehaviorProperties.AvoidRadius != 0)
         {
