@@ -69,10 +69,11 @@ public class ExplosiveShot : MonoBehaviour
         explosionHit.StunTime = bulletHit.StunTime;
         return explosion;
     }
+    //this is a multiplier based on base amount
     public void ModifyBlastRadius(float adjustment)
     {
     	blastRadius = baseblastRadius;
-    	blastRadius += adjustment;
+        blastRadius *= adjustment;
     	//print("blastRadius in explosiveshot = " + blastRadius);
     }
     public void setInheritOnHitEffects(bool boo)

@@ -31,8 +31,7 @@ public class VFXManager : MonoBehaviour
         distort.enabled.Override(true);
         distort.intensity.Override(1f);
     }
-    // I am very proud of this, I came up with it myself
-    private void RecursiveChildScale(Transform t, float scaleMultiplier)
+    public void RecursiveChildScale(Transform t, float scaleMultiplier)
     {
         foreach (Transform child in t)
         {

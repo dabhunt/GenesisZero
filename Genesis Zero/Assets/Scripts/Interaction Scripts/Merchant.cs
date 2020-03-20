@@ -150,6 +150,7 @@ public class Merchant : MonoBehaviour
         
         //using the already created template gameobject which is correctly positioned, make the rest
         int num = 0;
+        //used to prevent duplicate mods from appearing in the shop
         SkillObject duplicatePrevention = skillManager.GetRandomModByChance();
         foreach (RectTransform child in shopItemsParent.transform)
         {
@@ -218,7 +219,7 @@ public class Merchant : MonoBehaviour
                 //defaults to a "mod" type, since there are 2 or more of these in the shop
                 string name = merchantUI.transform.Find("Name").GetComponent<Text>().text;
                 SkillObject mod = skillManager.GetModFromString(name);
-                skillManager.SpawnMod(player.transform.position, mod.name);
+                skillManager.AddSkill(mod);
                 break;
         }
         //calculate how many essence canisters to subtract from the player

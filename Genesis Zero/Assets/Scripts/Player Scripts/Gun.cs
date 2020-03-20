@@ -13,8 +13,9 @@ public class Gun : MonoBehaviour
     public GameObject explosiveProjectile;
     //extra seconds the player has to wait before
     public float explosiveCoolDelay = .5f;
-    public float blastRadiusBonusPerStack = .7f;
-    // each additional duplicate of this mod gives you .7f bigger blast radius
+    //this bonus is a multiplier, meaning 20% more than base for each additional stack
+    public float blastRadiusBonusPerStack = 1.2f;
+    public float blastRadius = 3f;
     [Header("2. Knockback on crit")]
     public float knockBackPerStack = 1.5f;
     [Header("3. Peripheral Bullet")]
@@ -79,9 +80,10 @@ public class Gun : MonoBehaviour
         expShot = instance.GetComponent<ExplosiveShot>();
         if (expShot != null)
         {
-        	int amount = player.GetSkillStack("PyroTechnics");
-	    	//changeblastradius, the more of the skill you have the bigger it is.
-	    	expShot.ModifyBlastRadius(amount* blastRadiusBonusPerStack);
+            //changeblastradius, the more of the skill you have the bigger it is.
+            // the function returns 1 if you have only 1 of that skill
+            float multi = player.GetSkillManager().GetSkillStackAsMultiplier(("PyroTechnics"), blastRadiusBonusPerStack);
+	    	expShot.ModifyBlastRadius(multi);
         }
         //means that instantiate hitbox will not calculate crit on it's own
         bool inheritCrit = false;
