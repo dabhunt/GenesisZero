@@ -63,7 +63,6 @@ public class AIController : Pawn
             tracker.Target = Target;
         }
     }
-
     new protected void FixedUpdate()
     {
         base.FixedUpdate();

@@ -35,7 +35,7 @@ public class DeactivateDistant : MonoBehaviour
     			firstCheck = false;
     		}
    			for (int i = 0; i < objects.Count; i++){
-   				if (objects[i] != null){
+   				if (objects[i] != null && player != null){
                     //check each objects distance relative to the player transform, if outside the designated distance, it's inactive otherwise it's active.
                     float dist = Vector3.Distance(player.transform.position, objects[i].transform.position);
                     if (objects[i].gameObject.tag == "Enemy")

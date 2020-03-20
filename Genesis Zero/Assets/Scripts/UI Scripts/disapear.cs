@@ -11,6 +11,7 @@ public class disapear : MonoBehaviour
     void Start()
     {
         //Cursor.visible = false;
+        this.gameObject.SetActive(true);
         Invoke("Showtext", 4);
        
     }

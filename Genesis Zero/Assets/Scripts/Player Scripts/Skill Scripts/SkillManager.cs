@@ -19,6 +19,8 @@ public class SkillManager
     private int modamount;
     private string ability1 = "";
     private string ability2 = "";
+    private int modLimit = 8;
+    private int ClampModLimit = 11;
 
     private bool updated;
 
@@ -27,9 +29,10 @@ public class SkillManager
     private List<SkillObject> bluemods; // List of bluemods in the game
     private List<SkillObject> goldmods;  // List of goldmods in the game
     private List<SkillObject> startermods; // List of startermods in the game
+    private List<SkillObject> abilities;
 
     // Lower the number, lower the chance. Determined by this order (0 - 100)
-    private int goldchance = 5; 
+    private int goldchance = 10; 
     private int bluechance = 40; // Realistically its bluechance - goldchance in code
     // No white chance becuase it is the default if the other two do not go through
 
@@ -47,6 +50,7 @@ public class SkillManager
         bluemods = new List<SkillObject>();
         goldmods = new List<SkillObject>();
         startermods = new List<SkillObject>();
+        abilities = new List<SkillObject>();
         InitializeLists();
     }
 
@@ -56,6 +60,8 @@ public class SkillManager
      */
     public void AddSkill(SkillObject skill)
     {
+        if (GetModAmount() >= modLimit)
+            return;
         if (Skills.ContainsKey(skill.name)) // Adds to the stack of skills
         {
             Skills[skill.name] = Skills[skill.name] + 1;
@@ -181,7 +187,7 @@ public class SkillManager
 
     private void InitializeLists()
     {
-        SkillObject[] skills = Resources.LoadAll<SkillObject>("Skills");
+        SkillObject[] skills = Resources.LoadAll<SkillObject>("Skills/Modifiers");
         for (int i = 0; i < skills.Length; i++)
         {
             switch (skills[i].Rarity)
@@ -201,10 +207,17 @@ public class SkillManager
                     break;
             }
         }
+
         SkillObject[] sskills = Resources.LoadAll<SkillObject>("Skills/Starter Mods");
         for (int i = 0; i < sskills.Length; i++)
         {
             startermods.Add(sskills[i]);
+        }
+
+        SkillObject[] abils = Resources.LoadAll<SkillObject>("Skills/Abilities");
+        for (int i = 0; i < abils.Length; i++)
+        {
+            abilities.Add(abils[i]);
         }
     }
 
@@ -220,7 +233,7 @@ public class SkillManager
     [System.Obsolete(" :P Kenny Here, this function is deprecated. Use GetRandomMod() instead ")]
     public SkillObject GetRandomSkill()
     {
-        Object[] skills = Resources.LoadAll("Skills");
+        Object[] skills = Resources.LoadAll<SkillObject>("Skills/Modifiers");
         SkillObject skill = (SkillObject)skills[Random.Range(0, skills.Length)];
         //this fixes the problem of this function also returning abilities
         while (skill.IsAbility)
@@ -231,18 +244,43 @@ public class SkillManager
     }
 
     /**
+    * Returns a random SkillObject that exists in the resources/skills/starter mods folder
+    */
+    public SkillObject GetRandomStarterMod()
+    {
+        SkillObject SM = (SkillObject)startermods[Random.Range(0, startermods.Count)];
+        return SM;
+    }
+
+    /**
+    * Returns random starter mods of specified rarity in the game pool. NOT from player
+    */
+    public List<SkillObject> GetRandomStarterMods(int amount)
+    {
+        List<SkillObject> returnlist = new List<SkillObject>();
+        List<SkillObject> picklist = new List<SkillObject>();
+        picklist.AddRange(startermods);
+
+        // Once the the cases have been determined, random (non-duplicate) mods are picked from the game pool of mods
+        for (int i = 0; i < amount; i++)
+        {
+            int num = Random.Range(0, picklist.Count);
+            returnlist.Add(picklist[num]);
+            picklist.Remove(picklist[num]);
+        }
+        return returnlist;
+    }
+
+    /**
     * Returns a random SkillObject that exists in the resources/skills folder
     * Includes whites, blues, and golds
     */
     public SkillObject GetRandomMod()
     {
-        Object[] skills = Resources.LoadAll("Skills");
+        Object[] skills = Resources.LoadAll<SkillObject>("Skills/Modifiers");
         SkillObject skill = (SkillObject)skills[Random.Range(0, skills.Length)];
         //this fixes the problem of this function also returning abilities
-        while (skill.IsAbility || skill == null)
-        {
-            skill = (SkillObject)skills[Random.Range(0, skills.Length)];
-        }
+        skill = (SkillObject)skills[Random.Range(0, skills.Length)];
         return skill;
     }
 
@@ -269,7 +307,7 @@ public class SkillManager
     }
 
     /**
-    * Returns a random mods incoporating chance
+    * Returns an amount of random mods incoporating chance
     * Includes whites, blues, and golds from the gamep pool. NOT from player
     */
     public List<SkillObject> GetRandomModsByChance(int amount)
@@ -300,9 +338,7 @@ public class SkillManager
     */
     public SkillObject GetRandomAbility()
     {
-        Object[] skills = Resources.LoadAll("Skills/Abilities");
-        SkillObject skill = (SkillObject)skills[Random.Range(0, skills.Length)];
-        //Debug.Log(skill.name);
+        SkillObject skill = (SkillObject)abilities[Random.Range(0, abilities.Count)];
         return skill;
     }
 
@@ -343,7 +379,7 @@ public class SkillManager
         // Once the the cases have been determined, random (non-duplicate) mods are picked from the game pool of mods
         for (int i = 0; i < amount; i++)
         {
-            int num = (int)Random.Range(0, picklist.Count);
+            int num = Random.Range(0, picklist.Count);
             returnlist.Add(picklist[num]);
             picklist.Remove(picklist[num]);
         }
@@ -466,8 +502,7 @@ public class SkillManager
 
     public GameObject SpawnMod(Vector3 position, string name)
     {
-        SkillObject so = (SkillObject)Resources.Load("Skills/" + name);
-        while (so.IsAbility || so == null) { return null; }
+        SkillObject so = Resources.Load<SkillObject>("Skills/Modifiers/" + name);
         GameObject emit = (GameObject)GameObject.Instantiate(Resources.Load("Pickups/ModPickup"), position, Quaternion.identity);
         emit.GetComponent<SkillPickup>().skill = so;
         return emit;
@@ -562,21 +597,13 @@ public class SkillManager
     {
         updated = boolean;
     }
-
-    public SkillObject GetSkillFromString(string name)
+    //returns a skillobject mod when given a string name of a mod
+    public SkillObject GetModFromString(string name)
     {
-        if (Skills.ContainsKey(name))
-        {
-            Object[] skills = Resources.LoadAll("Skills");
-            for (int i = 0; i < skills.Length; i++)
-            {
-                if (skills[i].name == name)
-                {
-                    return (SkillObject)skills[i];
-                }
-            }
-        }
-        return null;
+        Object mod = Resources.Load<SkillObject>("Skills/Modifiers/" + name);
+        if (mod == null)
+            return null;
+        return (SkillObject)mod;
     }
     public Color GetColor(SkillObject sk)
     {
@@ -598,14 +625,31 @@ public class SkillManager
 
     public bool IsActive()
     {
-
         return true;
     }
     public void SetActive()
     {
 
     }
-
+    public int GetModLimit()
+    {
+        return modLimit;
+    }
+    public void SetModLimit(float newLimit)
+    {
+        newLimit = Mathf.Clamp(newLimit, 7, ClampModLimit);
+        modLimit = (int)newLimit;
+    }
+    //This function returns a multiplier value, based on how many of that skill the player has
+    // pass in the name of modifier, and how much additional stacks past 1 should be multiplied by, (mainly used for explosion radius right now)
+    public float GetSkillStackAsMultiplier(string skill, float multiPerStack)
+    {
+        int stacks = GetSkillStack(skill);
+        float multi = 1;
+        if (stacks > 1)
+            multi = 1 + (multiPerStack - 1) * (stacks - 1);
+        return multi;
+    }
     public bool GetUpdated()
     {
         return updated;

@@ -8,6 +8,7 @@ public class GameInputManager : MonoBehaviour
     public static GameInputManager instance;
     private GameInputActions inputActions;
     private InputActionAsset actionAsset;
+    private string activeControlMap;
     private void Awake() 
     {
         if (instance == null)
@@ -36,6 +37,10 @@ public class GameInputManager : MonoBehaviour
     {
         return inputActions;
     }
+    public string GetActiveControlMap()
+    {
+        return activeControlMap;
+    }
 
     //This switches the control map to the one with "name" as its name
     //this function was not working as intended, I disabled it - David
@@ -48,6 +53,7 @@ public class GameInputManager : MonoBehaviour
             if (map.name == name)
             {
                 actionAsset.FindActionMap(map.name).Enable();
+                activeControlMap = map.name;
             }
             else
             {

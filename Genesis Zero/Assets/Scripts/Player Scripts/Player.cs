@@ -6,20 +6,22 @@ public class Player : Pawn
 {
     SkillManager SkillManager;
     public Statistic Essence;
+    public Statistic Keys;
+    private float MaxEssence = 100f;
+    private float MaxKeys = 3f;
+    private float MaxCapsules = 5;
     public float healthPerStack = 4;
 
     private void Awake()
     {
         SkillManager = new SkillManager(this);
     }
-    // Start is called before the first frame update
     new void Start()
     {
         InitializePlayerStats();
         base.Start();
     }
 
-    // Update is called once per frame
     new void Update()
     {
         if (Input.GetKeyDown(KeyCode.Tab))
@@ -63,7 +65,8 @@ public class Player : Pawn
 
     public void InitializePlayerStats()
     {
-        Essence = new Statistic(500); Essence.SetValue(0);
+        Essence = new Statistic(MaxEssence); Essence.SetValue(0);
+        Keys = new Statistic(MaxKeys); Keys.SetValue(0);
     }
 
     public Statistic GetEssence()
@@ -75,11 +78,58 @@ public class Player : Pawn
     {
         return Essence.GetValue();
     }
-
+    public float GetMaxEssenceAmount()
+    {
+        return MaxEssence;
+    }
+    public Statistic GetKeys()
+    {
+        return Keys;
+    }
+    public void SetKeys(float amount)
+    {
+        float num = amount;
+        num = Mathf.Clamp(num, 0, MaxEssence);
+        GetKeys().SetValue(num);
+    }
+    public void AddKeys(int amount)
+    {
+        SetKeys(GetKeysAmount() + amount);
+    }
+    public float GetKeysAmount()
+    {
+        return Keys.GetValue();
+    }
+    public float GetMaxKeysAmount()
+    {
+        return MaxKeys;
+    }
+    public float GetMaxCapsuleAmount()
+    {
+        return MaxCapsules;
+    }
+    //this changes how many capsules the player can store essence in
+    public void SetMaxCapsuleAmount(float amount)
+    {
+        amount = Mathf.Clamp(amount, 4, 6);
+        MaxEssence += GetFullCapsuleAmount();
+        MaxCapsules = amount;
+    }
+    //this refers to how many full canisters of esessence the player has (not how much essence fits in a canister)
+    public int GetFullCapsuleAmount()
+    {
+        int amount = (int)(Essence.GetValue() / GetEssencePerCapsule());
+        return amount;
+    }
+    //this returns how much essence can fit in a single capsule
+    public int GetEssencePerCapsule()
+    {
+        return (int)(MaxEssence / MaxCapsules);
+    }
     public void SetEssence(float amount)
     {
         float num = amount;
-        Mathf.Clamp(num, 0, 500);
+        num = Mathf.Clamp(num, 0, MaxEssence);
         GetEssence().SetValue(num);
     }
 

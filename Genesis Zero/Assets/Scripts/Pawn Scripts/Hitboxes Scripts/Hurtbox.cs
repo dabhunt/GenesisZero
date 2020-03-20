@@ -12,7 +12,7 @@ public class Hurtbox : MonoBehaviour
 {
 
     public List<Collider> colliders;
-
+    private Player player;
     private void Awake()
     {
 

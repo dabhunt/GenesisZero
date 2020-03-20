@@ -127,7 +127,7 @@ public class AbilityCasting : MonoBehaviour
                 CastFireDash();
                 break;
             case "Singularity":
-                InitializeAbility(4, 0, 0, num);
+                InitializeAbility(12, 0, 0, num);
                 CastSingularity();
                 break;
         }
@@ -222,6 +222,13 @@ public class AbilityCasting : MonoBehaviour
         AbilityCooldown2 = 0;
     }
 
+    public void ReduceCooldowns(float seconds)
+    {
+        print("reducing cooldowns by " + seconds);
+        AbilityCooldown1 -= seconds;
+        AbilityCooldown2 -= seconds;
+    }
+
 
     public void SwapAbilityCooldowns()
     {
@@ -304,10 +311,10 @@ public class AbilityCasting : MonoBehaviour
         float damage = U.CalculateDmg();
         hitbox.GetComponent<Hitbox>().InitializeHitbox(damage, player);
     }
-
+    //this won't work after the changes to getmodfromstring 
     private void CastWoundSealant()
     {
-        SkillObject skill = player.GetSkillManager().GetSkillFromString("Wound Sealant");
+        SkillObject skill = player.GetSkillManager().GetModFromString("Wound Sealant");
         player.GetSkillManager().RemoveSkill(skill);
         player.Heal(55);
     }
