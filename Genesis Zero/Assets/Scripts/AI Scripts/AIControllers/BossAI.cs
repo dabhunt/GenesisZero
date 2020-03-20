@@ -12,6 +12,7 @@ public class BossAI : AIController
     public enum State { Headbutt, Firebreath, Pulse, Wild, MovingAway, MovingCloser, Centering }
     protected State bossstate = State.Firebreath; // Current behavior state
     private bool secondphase;
+    private bool animating;
 
     private Vector3 lookDir = Vector3.up;
     private Vector3 rotDir = Vector3.forward;
@@ -53,6 +54,8 @@ public class BossAI : AIController
                 GameObject canvas = GameObject.FindGameObjectWithTag("CanvasUI");
                 healthbar = Instantiate(Healthbar, canvas.transform.position + (Healthbar.GetComponent<RectTransform>().position + new Vector3(0, -135, 0)) / canvas.GetComponent<Canvas>().referencePixelsPerUnit, Quaternion.identity, canvas.transform);
                 TimeBeforeFight = 0;
+                StartCoroutine(Spandout(.5f, Camera.main.fieldOfView, 30));
+                StartCoroutine(CockBack(1.25f, Target.position - transform.position, 1));
             }
         }
     }
@@ -91,7 +94,7 @@ public class BossAI : AIController
 
         // Move toward target, may move somewhere depending on state
         float speed = GetSpeed().GetValue();
-        if (GetDistanceToTarget() - BehaviorProperties.AvoidRadius != 0)
+        if (GetDistanceToTarget() - BehaviorProperties.AvoidRadius != 0 && animating == false)
         {
             float diff = GetDistanceToTarget() - BehaviorProperties.AvoidRadius;
             transform.position = Vector2.MoveTowards(transform.position, Target.position, (5 * diff / GetDistanceToTarget()) * Time.fixedDeltaTime);
@@ -194,9 +197,38 @@ public class BossAI : AIController
         return min;
     }
 
-    private void OnDrawGizmos()
+    IEnumerator Spandout(float time, float start, float target)
+    {
+        for (float f = 0; f <= time; f += Time.fixedDeltaTime)
+        {
+            Camera.main.fieldOfView = start + ((target - start) * f / time);
+            yield return new WaitForSeconds(Time.fixedDeltaTime);
+        }
+    }
+
+    IEnumerator CockBack(float time, Vector3 dir, float distance)
+    {
+        animating = true;
+        Vector3 diff = Vector3.zero;
+        for (float f = 0; f <= time; f += Time.fixedDeltaTime)
+        {
+            //Debug.Log(Mathf.Cos(Mathf.PI * (f / time)));
+            Vector3 vector = (Mathf.Cos(Mathf.PI * (f / time)) * -dir.normalized * distance / (10 * time));
+            Vector3 translation = vector - diff;
+            //diff = vector;
+            transform.position += translation;
+            if (time - f < Time.fixedDeltaTime * 2 && animating == true)
+            {
+                animating = false;
+            }
+            yield return new WaitForSeconds(Time.fixedDeltaTime);
+        }
+    }
+
+    private new void OnDrawGizmos()
     {
         Gizmos.color = Color.black;
         GizmosExtra.DrawWireCircle(transform.position, Vector3.forward, TriggerRadius);
+        base.OnDrawGizmos();
     }
 }
