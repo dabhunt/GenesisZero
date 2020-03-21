@@ -65,14 +65,13 @@ public class Merchant : MonoBehaviour
             {
                 DestroyPopUps();
                 InitializeUI();
+                UpdateSelect(0);
             }
             else 
             {
                 DestroyPopUps();
                 merchantUI.gameObject.SetActive(true);
             }
-                
-            UpdateSelect(0);
         }
     }
 
@@ -98,16 +97,18 @@ public class Merchant : MonoBehaviour
         string desc = selectedShopItem.Description;
         Sprite icon = selectedShopItem.Icon;
         string cost = "x" + selectedShopItem.Cost.ToString();
+        canistersNeeded = selectedShopItem.Cost;
         // if it's a mod, get the mod info instead
         if (selectedShopItem.Type == 0)
         {
             name = gameObjList[num].transform.Find("Name").GetComponent<Text>().text.ToString();
             SkillObject mod = skillManager.GetModFromString(name);
             cost = "x" + (1 + mod.Rarity).ToString();
+            canistersNeeded = 1 + mod.Rarity;
+            print("mod cost = " + cost);
             icon = mod.Icon;
             desc = mod.Description;
         }
-        canistersNeeded = selectedShopItem.Cost;
         merchantUI.transform.Find("Name").gameObject.GetComponent<Text>().text = name;
         merchantUI.transform.Find("Description").gameObject.GetComponent<Text>().text = desc;
         merchantUI.transform.Find("ShownItem").gameObject.GetComponent<Image>().sprite = icon;
@@ -203,8 +204,6 @@ public class Merchant : MonoBehaviour
                 //increase the maximum amount of essence capsules the player can have by 1
                 prevMax = pp.GetMaxCapsuleAmount();
                 pp.SetMaxCapsuleAmount(prevMax+1);
-                canvasRef.transform.Find("EssencePanel").Find("capsule (6)").gameObject.SetActive(true);
-                canvasRef.transform.Find("EssencePanel").Find("bg capsule (6)").gameObject.SetActive(true);
                 break;
             case 5:
                 //increase the maximum amount of mods player can have at one time by 1
@@ -225,7 +224,14 @@ public class Merchant : MonoBehaviour
         //calculate how many essence canisters to subtract from the player
         int essenceCost = player.GetComponent<Player>().GetEssencePerCapsule() * canistersNeeded * -1;
         player.GetComponent<Player>().AddEssence(essenceCost);
-        CloseUI();
+        //set the purchased overlay to active so player is not able to select Item
+        gameObjList[itemSelectNum].transform.Find("PurchasedOverlay").gameObject.SetActive(true);
+        Button purchaseButton = merchantUI.transform.Find("Purchase").gameObject.GetComponent<Button>();
+        purchaseButton.interactable = false;
+        purchaseButton.GetComponentInChildren<Text>().text = "None Left";
+        gameObjList[itemSelectNum].GetComponent<Button>().interactable = false;
+        //update UI, since game is paused must be manually done
+        canvasRef.transform.Find("EssencePanel").gameObject.GetComponent<EssenceFill>().CalculateEssenceUI();
     }
     public void CloseUI()
     {

@@ -204,8 +204,6 @@ public class GodHead : MonoBehaviour
     public void CloseUI()
     {
         isActive = false;
-        foreach (RectTransform child in sacModObjs.transform) 
-            child.gameObject.SetActive(false);
         sacUI.gameObject.SetActive(false);
         StateManager.instance.UnpauseGame();
         modSelectNum = -1;
