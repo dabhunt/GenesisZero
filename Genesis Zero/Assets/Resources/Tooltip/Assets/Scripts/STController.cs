@@ -3,7 +3,6 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
 using TMPro;
-
 public class STController : MonoBehaviour
 {
     public enum TextAlign { Left, Right };
@@ -12,6 +11,7 @@ public class STController : MonoBehaviour
     private TextMeshProUGUI toolTipTextLeft;
     private TextMeshProUGUI toolTipTextRight;
     private RectTransform rect;
+    private Camera cam;
     private int showInFrames = -1;
     private bool showNow = false;
     
@@ -35,11 +35,15 @@ public class STController : MonoBehaviour
         // Hide at the start
         HideTooltip();
     }
-
+    private void Start()
+    {
+        cam = GameObject.FindGameObjectWithTag("MainCamera").GetComponent<Camera>();
+    }
     void Update()
     {
         ResizeToMatchText();
         UpdateShow();
+        //OrientAwayFromEdge();
     }
 
     private void ResizeToMatchText()
@@ -69,8 +73,17 @@ public class STController : MonoBehaviour
         if (showNow)
         {
             rect.anchoredPosition = Input.mousePosition;
+            //if the mouse is in the top 10% of the screen
+            if (Input.mousePosition.y > Screen.height - (Screen.height*.1f))
+            {
+                rect.anchoredPosition = new Vector2(Input.mousePosition.x, Input.mousePosition.y - rect.sizeDelta.y);
+            }
+            //if the mouse is in the rightmost 10% of the screen
+            if (Input.mousePosition.x > Screen.width - (Screen.width * .1f))
+            {
+                rect.anchoredPosition = new Vector2(Input.mousePosition.x - rect.sizeDelta.x, Input.mousePosition.y);
+            }
         }
-
         showInFrames -= 1;
     }
 
@@ -137,4 +150,5 @@ public class STController : MonoBehaviour
         showNow = false;
         rect.anchoredPosition = new Vector2(Screen.currentResolution.width, Screen.currentResolution.height);
     }
+
 }
