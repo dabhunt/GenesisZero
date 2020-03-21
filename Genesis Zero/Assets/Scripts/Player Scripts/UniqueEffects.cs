@@ -27,7 +27,6 @@ public class UniqueEffects : MonoBehaviour
     [Header("Spartan Laser")]
     public float SL_cooldown = 4f;
     public float SL_bonusPerKill = 10f;
-    public float SL_baseDmg = 70f;
     public float SL_maxDmg = 100f;
     public float SL_decayTime = 10f;
     //how many seconds before bonus damage goes away
@@ -130,7 +129,8 @@ public class UniqueEffects : MonoBehaviour
     public float CalculateDmg()
     {
         aManager.PlaySoundOneShot("SFX_AOE");
-        return Mathf.Clamp(SL_baseDmg + player.GetDamage().GetValue() + SL_bonusPerKill * SL_killCount, SL_baseDmg, SL_maxDmg);
+        float AP = player.GetAbilityPower().GetValue();
+        return Mathf.Clamp(AP + SL_bonusPerKill * SL_killCount, AP, SL_maxDmg);
     }
     public int GetKillCount()
     {

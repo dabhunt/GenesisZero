@@ -256,8 +256,9 @@ public class AbilityCasting : MonoBehaviour
         player.GetComponent<PlayerController>().SetVertVel(0);
         player.KnockBackForced(-aimDir + Vector2.up, 25);
         GameObject hitbox = SpawnGameObject("PulseBurstHitbox", CastAtAngle(transform.position, aimDir, 1), Quaternion.identity);
-        hitbox.GetComponent<Hitbox>().InitializeHitbox(GetComponent<Player>().GetDamage().GetValue() / 4, GetComponent<Player>());
+        hitbox.GetComponent<Hitbox>().InitializeHitbox(GetComponent<Player>().GetAbilityPower().GetValue()/2, GetComponent<Player>());
         hitbox.GetComponent<Hitbox>().SetStunTime(1.2f);
+        player.SetInvunerable(.5f);
         hitbox.GetComponent<Hitbox>().SetLifeTime(.1f);
     }
 
@@ -266,7 +267,7 @@ public class AbilityCasting : MonoBehaviour
         player.GetComponent<PlayerController>().SetVertVel(0);
         player.KnockBackForced(aimDir + Vector2.up, 25);
         GameObject hitbox = SpawnGameObject("BurstChargeHitbox", transform.position, Quaternion.identity);
-        hitbox.GetComponent<Hitbox>().InitializeHitbox(GetComponent<Player>().GetDamage().GetValue() / 2, GetComponent<Player>());
+        hitbox.GetComponent<Hitbox>().InitializeHitbox(GetComponent<Player>().GetAbilityPower().GetValue(), GetComponent<Player>());
         hitbox.transform.parent = transform;
         player.SetInvunerable(.5f);
         hitbox.GetComponent<Hitbox>().SetLifeTime(.5f);
@@ -277,7 +278,7 @@ public class AbilityCasting : MonoBehaviour
         player.KnockBackForced(aimDir + Vector2.up, 25);
         player.GetComponent<PlayerController>().NewLayerMask(ignoreEnemiesLayerMask, FD_duration);
         GameObject hitbox = SpawnGameObject("FireDashHitbox", transform.position, Quaternion.identity);
-        hitbox.GetComponent<Hitbox>().InitializeHitbox(GetComponent<Player>().GetDamage().GetValue() / 2, GetComponent<Player>());
+        hitbox.GetComponent<Hitbox>().InitializeHitbox(GetComponent<Player>().GetAbilityPower().GetValue(), GetComponent<Player>());
         hitbox.transform.parent = transform;
         player.SetInvunerable(FD_duration);
         hitbox.GetComponent<Hitbox>().SetLifeTime(FD_duration);
@@ -314,7 +315,7 @@ public class AbilityCasting : MonoBehaviour
     //this won't work after the changes to getmodfromstring 
     private void CastWoundSealant()
     {
-        SkillObject skill = player.GetSkillManager().GetModFromString("Wound Sealant");
+        SkillObject skill = player.GetSkillManager().GetSkillFromString("Wound Sealant");
         player.GetSkillManager().RemoveSkill(skill);
         player.Heal(55);
     }
@@ -350,7 +351,7 @@ public class AbilityCasting : MonoBehaviour
         if (hitbox.GetComponent<EmitOnDestroy>().Emits[0].GetComponent<EmitOnDestroy>().Emits[0] != null)
         {
             GameObject explosion = hitbox.GetComponent<EmitOnDestroy>().Emits[0].GetComponent<EmitOnDestroy>().Emits[0];
-            explosion.GetComponent<Hitbox>().InitializeHitbox(player.GetDamage().GetValue(), player);
+            explosion.GetComponent<Hitbox>().InitializeHitbox(player.GetAbilityPowerAmount()*.8f, player);
         }
     }
 

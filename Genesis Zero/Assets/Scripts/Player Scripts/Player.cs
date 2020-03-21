@@ -7,10 +7,13 @@ public class Player : Pawn
     SkillManager SkillManager;
     public Statistic Essence;
     public Statistic Keys;
+    public Statistic AbilityPower;
+    public float baseAbilityPower = 16;
+    private float EssenceHardCap = 120f;
     private float MaxEssence = 100f;
     private float MaxKeys = 3f;
     private float MaxCapsules = 5;
-    public float healthPerStack = 4;
+    private float healthPerStack = 3;
 
     private void Awake()
     {
@@ -46,6 +49,9 @@ public class Player : Pawn
     public void TriggerEffectOnKill()
     {
         Heal(healthPerStack * GetSkillStack("Vampirism"));
+        int TH_stacks = GetSkillStack("Thrill of the Hunt");
+        //reduce cooldowns by .5 seconds for each stack.
+        GetComponent<AbilityCasting>().ReduceCooldowns(TH_stacks/2);
     }
 
     public bool HasSkill(string name)
@@ -65,15 +71,23 @@ public class Player : Pawn
 
     public void InitializePlayerStats()
     {
-        Essence = new Statistic(MaxEssence); Essence.SetValue(0);
+        Essence = new Statistic(EssenceHardCap); Essence.SetValue(0);
         Keys = new Statistic(MaxKeys); Keys.SetValue(0);
+        AbilityPower = new Statistic(999); Keys.SetValue(baseAbilityPower);
+    }
+    public Statistic GetAbilityPower()
+    {
+        return AbilityPower;
+    }
+    public float GetAbilityPowerAmount()
+    {
+        return AbilityPower.GetValue();
     }
 
     public Statistic GetEssence()
     {
         return Essence;
     }
-
     public float GetEssenceAmount()
     {
         return Essence.GetValue();
@@ -89,7 +103,7 @@ public class Player : Pawn
     public void SetKeys(float amount)
     {
         float num = amount;
-        num = Mathf.Clamp(num, 0, MaxEssence);
+        num = Mathf.Clamp(num, 0, 3);
         GetKeys().SetValue(num);
     }
     public void AddKeys(int amount)
@@ -112,8 +126,11 @@ public class Player : Pawn
     public void SetMaxCapsuleAmount(float amount)
     {
         amount = Mathf.Clamp(amount, 4, 6);
-        MaxEssence += GetFullCapsuleAmount();
+        MaxEssence += GetEssencePerCapsule();
+        print(MaxEssence);
         MaxCapsules = amount;
+        Canvas canvasRef = GameObject.FindGameObjectWithTag("CanvasUI").GetComponent<Canvas>();
+        canvasRef.transform.Find("EssencePanel").gameObject.GetComponent<EssenceFill>().SetCapsuleAmount(amount);
     }
     //this refers to how many full canisters of esessence the player has (not how much essence fits in a canister)
     public int GetFullCapsuleAmount()
