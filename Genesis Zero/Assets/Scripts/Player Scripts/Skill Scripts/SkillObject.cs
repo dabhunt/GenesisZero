@@ -33,4 +33,5 @@ public class SkillObject : ScriptableObject
     public float range;
     public float shield;
     public float weight;
+    public float abilitypower;
 }

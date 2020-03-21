@@ -22,6 +22,8 @@ public class UniqueEffects : MonoBehaviour
     [Header("Chemical Accelerant")]
     public float CA_MaxAttackSpeedPerStack = .50f;
     public float CA_MaxCritChancePerStack = .25f;
+    [Header("Amplified Essence")]
+    public float AE_MaxAPMulti = 3f;
     [Header("Cooling Cell")]
     public float heatReductionPerStack = .9f;
     [Header("Spartan Laser")]
@@ -51,6 +53,7 @@ public class UniqueEffects : MonoBehaviour
         multiplier = Mathf.Pow(coolRatePerStack, player.GetSkillStack("Cooling Cell"));
         overheat.ModifyCoolRate(multiplier);
         ChemicalAccelerant();
+        AmplifiedEssence();
     }
     private void Update()
     {
@@ -126,7 +129,12 @@ public class UniqueEffects : MonoBehaviour
 
         }
     }
-    public float CalculateDmg()
+    public void AmplifiedEssence()
+    {
+        float ratio = player.GetEssenceAmount() / player.GetMaxEssenceAmount();
+        float baseAP = player.GetAbilityPowerAmount();
+    }
+    public float SL_CalculateDmg()
     {
         aManager.PlaySoundOneShot("SFX_AOE");
         float AP = player.GetAbilityPower().GetValue();
