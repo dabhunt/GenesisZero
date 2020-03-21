@@ -7,11 +7,13 @@ public class Player : Pawn
     SkillManager SkillManager;
     public Statistic Essence;
     public Statistic Keys;
-    public float EssenceHardCap = 120f;
+    public Statistic AbilityPower;
+    public float baseAbilityPower = 16;
+    private float EssenceHardCap = 120f;
     private float MaxEssence = 100f;
     private float MaxKeys = 3f;
     private float MaxCapsules = 5;
-    public float healthPerStack = 3;
+    private float healthPerStack = 3;
 
     private void Awake()
     {
@@ -71,13 +73,21 @@ public class Player : Pawn
     {
         Essence = new Statistic(EssenceHardCap); Essence.SetValue(0);
         Keys = new Statistic(MaxKeys); Keys.SetValue(0);
+        AbilityPower = new Statistic(999); Keys.SetValue(baseAbilityPower);
+    }
+    public Statistic GetAbilityPower()
+    {
+        return AbilityPower;
+    }
+    public float GetAbilityPowerAmount()
+    {
+        return AbilityPower.GetValue();
     }
 
     public Statistic GetEssence()
     {
         return Essence;
     }
-
     public float GetEssenceAmount()
     {
         return Essence.GetValue();
@@ -93,7 +103,7 @@ public class Player : Pawn
     public void SetKeys(float amount)
     {
         float num = amount;
-        num = Mathf.Clamp(num, 0, MaxEssence);
+        num = Mathf.Clamp(num, 0, 3);
         GetKeys().SetValue(num);
     }
     public void AddKeys(int amount)

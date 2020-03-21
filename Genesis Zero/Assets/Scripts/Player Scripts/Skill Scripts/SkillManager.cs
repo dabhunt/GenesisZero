@@ -598,12 +598,14 @@ public class SkillManager
         updated = boolean;
     }
     //returns a skillobject mod when given a string name of a mod
-    public SkillObject GetModFromString(string name)
+    public SkillObject GetSkillFromString(string name)
     {
-        Object mod = Resources.Load<SkillObject>("Skills/Modifiers/" + name);
-        if (mod == null)
+        Object skill = Resources.Load<SkillObject>("Skills/Modifiers/" + name);
+        if (skill == null)
+            skill = Resources.Load<SkillObject>("Skills/Abilities/" + name);
+        if (skill == null)
             return null;
-        return (SkillObject)mod;
+        return (SkillObject)skill;
     }
     public Color GetColor(SkillObject sk)
     {

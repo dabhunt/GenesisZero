@@ -102,7 +102,7 @@ public class Merchant : MonoBehaviour
         if (selectedShopItem.Type == 0)
         {
             name = gameObjList[num].transform.Find("Name").GetComponent<Text>().text.ToString();
-            SkillObject mod = skillManager.GetModFromString(name);
+            SkillObject mod = skillManager.GetSkillFromString(name);
             cost = "x" + (1 + mod.Rarity).ToString();
             canistersNeeded = 1 + mod.Rarity;
             print("mod cost = " + cost);
@@ -217,7 +217,7 @@ public class Merchant : MonoBehaviour
             default:
                 //defaults to a "mod" type, since there are 2 or more of these in the shop
                 string name = merchantUI.transform.Find("Name").GetComponent<Text>().text;
-                SkillObject mod = skillManager.GetModFromString(name);
+                SkillObject mod = skillManager.GetSkillFromString(name);
                 skillManager.AddSkill(mod);
                 break;
         }
