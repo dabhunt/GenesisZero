@@ -364,20 +364,22 @@ public class PlayerController : MonoBehaviour
         }
     }
 
-        /* This fuction applies gravity to player
-         * when the player is falling
-         */
-        private void ApplyGravity()
+/* This fuction applies gravity to player
+    * when the player is falling
+    */
+    private void ApplyGravity()
     {
-        float startVel = vertVel;
-        if (isGrounded)
-            return;
-
-        if (!isJumping)
+        if (!isRolling)
         {
-            vertVel -= gravity * fallSpeedMult * Time.fixedDeltaTime;
-            vertVel = Mathf.Clamp(vertVel, -terminalVel, 0);
-            transform.position += Vector3.up * (startVel * Time.fixedDeltaTime + (0.5f * fallSpeedMult * -gravity) * Mathf.Pow(Time.fixedDeltaTime, 2));
+            float startVel = vertVel;
+            if (isGrounded)
+                return;
+            if (!isJumping)
+            {
+                vertVel -= gravity * fallSpeedMult * Time.fixedDeltaTime;
+                vertVel = Mathf.Clamp(vertVel, -terminalVel, 0);
+                transform.position += Vector3.up * (startVel * Time.fixedDeltaTime + (0.5f * fallSpeedMult * -gravity) * Mathf.Pow(Time.fixedDeltaTime, 2));
+            }
         }
     }
 

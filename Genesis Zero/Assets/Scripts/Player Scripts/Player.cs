@@ -23,7 +23,6 @@ public class Player : Pawn
         InitializePlayerStats();
         base.Start();
     }
-
     new void Update()
     {
         foreach (Statistic stat in playerStatistics)
@@ -35,14 +34,12 @@ public class Player : Pawn
             SkillManager.SwapCurrentAbilities();
         }
         base.Update();
-        print(AbilityPower.GetValue());
     }
 
     new void FixedUpdate()
     {
         base.FixedUpdate();
     }
-
     public override float TakeDamage(float amount, Pawn source)
     {
         //Add anything if there is class specific additions to taking damage
@@ -62,17 +59,14 @@ public class Player : Pawn
     {
         return SkillManager.HasSkill(name);
     }
-
     public int GetSkillStack(string name)
     {
         return SkillManager.GetSkillStack(name);
     }
-
     public SkillManager GetSkillManager()
     {
         return SkillManager;
     }
-
     public void InitializePlayerStats()
     {
         playerStatistics = new List<Statistic>();
@@ -135,7 +129,6 @@ public class Player : Pawn
     {
         amount = Mathf.Clamp(amount, 4, 6);
         MaxEssence += GetEssencePerCapsule();
-        print(MaxEssence);
         MaxCapsules = amount;
         Canvas canvasRef = GameObject.FindGameObjectWithTag("CanvasUI").GetComponent<Canvas>();
         canvasRef.transform.Find("EssencePanel").gameObject.GetComponent<EssenceFill>().SetCapsuleAmount(amount);
