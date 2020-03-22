@@ -152,7 +152,7 @@ public class DroneExploderAI : AIController
      */
     protected void CheckWalls()
     {
-        if (!wallCheckCycleInProgress)
+        if (!wallCheckCycleInProgress && gameObject.activeInHierarchy)
         {
             StartCoroutine(WallCheckCycle());
         }
