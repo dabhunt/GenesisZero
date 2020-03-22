@@ -183,8 +183,8 @@ public class SkillManager
         player.GetRange().AddMaxValue(skill.range * multi);
         player.GetShield().AddMaxValue(skill.shield * multi);
         player.GetWeight().AddMaxValue(skill.weight * multi);
+        player.GetAbilityPower().AddMaxValue(skill.abilitypower * multi);
     }
-
     private void InitializeLists()
     {
         SkillObject[] skills = Resources.LoadAll<SkillObject>("Skills/Modifiers");
@@ -598,12 +598,14 @@ public class SkillManager
         updated = boolean;
     }
     //returns a skillobject mod when given a string name of a mod
-    public SkillObject GetModFromString(string name)
+    public SkillObject GetSkillFromString(string name)
     {
-        Object mod = Resources.Load<SkillObject>("Skills/Modifiers/" + name);
-        if (mod == null)
+        Object skill = Resources.Load<SkillObject>("Skills/Modifiers/" + name);
+        if (skill == null)
+            skill = Resources.Load<SkillObject>("Skills/Abilities/" + name);
+        if (skill == null)
             return null;
-        return (SkillObject)mod;
+        return (SkillObject)skill;
     }
     public Color GetColor(SkillObject sk)
     {
@@ -641,7 +643,7 @@ public class SkillManager
         modLimit = (int)newLimit;
     }
     //This function returns a multiplier value, based on how many of that skill the player has
-    // pass in the name of modifier, and how much additional stacks past 1 should be multiplied by, (mainly used for explosion radius right now)
+    // pass in the name of modifier, and how much additional stacks past 1 should be multiplied by, (mainly used for explosion radius increases right now)
     public float GetSkillStackAsMultiplier(string skill, float multiPerStack)
     {
         int stacks = GetSkillStack(skill);

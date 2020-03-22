@@ -22,12 +22,13 @@ public class UniqueEffects : MonoBehaviour
     [Header("Chemical Accelerant")]
     public float CA_MaxAttackSpeedPerStack = .50f;
     public float CA_MaxCritChancePerStack = .25f;
+    [Header("Amplified Essence")]
+    public float AE_MaxAPMulti = 3f;
     [Header("Cooling Cell")]
     public float heatReductionPerStack = .9f;
     [Header("Spartan Laser")]
     public float SL_cooldown = 4f;
     public float SL_bonusPerKill = 10f;
-    public float SL_baseDmg = 70f;
     public float SL_maxDmg = 100f;
     public float SL_decayTime = 10f;
     //how many seconds before bonus damage goes away
@@ -43,7 +44,7 @@ public class UniqueEffects : MonoBehaviour
     {
         player = GetComponent<Player>();
         overheat = GetComponent<OverHeat>();
-        InvokeRepeating("CheckUniques", 1 / checksPerSecond, 1 / checksPerSecond);
+        InvokeRepeating("CheckUniques",0, 1 / checksPerSecond-(Time.deltaTime * 2));
         aManager = FindObjectOfType<AudioManager>();
     }
     public void CheckUniques() {
@@ -52,6 +53,7 @@ public class UniqueEffects : MonoBehaviour
         multiplier = Mathf.Pow(coolRatePerStack, player.GetSkillStack("Cooling Cell"));
         overheat.ModifyCoolRate(multiplier);
         ChemicalAccelerant();
+        AmplifiedEssence();
     }
     private void Update()
     {
@@ -66,12 +68,6 @@ public class UniqueEffects : MonoBehaviour
             GameObject hitbox = SpawnGameObject("ExpulsionHitbox", transform.position, Quaternion.identity);
             Hitbox hit = hitbox.GetComponent<Hitbox>();
             //Sets damage to double player's * stack multiplier of 20% per stack, false means it can't crit
-            if (player == null)
-                print("player is null");
-            if (hitbox == null)
-                print("gameobj is null");
-            if (hit == null)
-                print("hit is null");
             hitbox.GetComponent<Hitbox>().InitializeHitbox(player.GetDamage().GetValue() * 2f * multi, player, false);
             hitbox.transform.parent = transform;
             hit.SetLifeTime(.25f);
@@ -81,7 +77,6 @@ public class UniqueEffects : MonoBehaviour
             VFXManager.instance.PlayEffect("VFX_HeatExpulsion", hitbox.transform.position, 0, 2* multi);
             aManager.PlaySoundOneShot("SFX_ExplosionEnemy");
             overheat.SetHeat(0);
-            print("overheat Explosion!");
         }
     }
     private void ChemicalAccelerant()
@@ -95,8 +90,8 @@ public class UniqueEffects : MonoBehaviour
             currentAttackSpeed = CA_MaxAttackSpeedPerStack * stacks * (heat / 100);
             currentCritChance = CA_MaxCritChancePerStack * stacks * (heat / 100);
             //gives the player an attackspeed boost that lasts until this function is called again (every .5 seconds)
-            player.GetAttackSpeed().AddBonus(currentAttackSpeed, 1 / checksPerSecond);
-            player.GetCritChance().AddBonus(currentCritChance, 1 / checksPerSecond);
+            player.GetAttackSpeed().AddRepeatingBonus(currentAttackSpeed, currentAttackSpeed, 1 / checksPerSecond, "ChemicalAccelerant_AS");
+            player.GetCritChance().AddRepeatingBonus(currentCritChance, currentCritChance,  1 / checksPerSecond, "ChemicalAccelerant_CC");
         }
     }
     public void WeakPointHit()
@@ -120,17 +115,35 @@ public class UniqueEffects : MonoBehaviour
             SL_decay += Time.fixedDeltaTime;
             if (SL_decay > SL_decayTime)
             {
-                print("no kills in 10 seconds, decay resetting to 0..");
                 SL_decay = 0;
                 SL_killCount = 0;
             }
 
         }
     }
-    public float CalculateDmg()
+    public void AmplifiedEssence()
+    {
+        int stacks = player.GetSkillStack("Amplified Essence");
+        if (stacks > 0)
+        {
+            float ratio = player.GetEssenceAmount() / player.GetMaxEssenceAmount();
+            //Sets the players bonus AP proportionate to how much AP they have, up to a cap of x3 bonus
+            float currentAPbonus = (player.GetAbilityPower().GetBaseValue() * 1f) * stacks * ratio;
+            float currentADdebuff = (player.GetDamage().GetBaseValue() * -.5f) * stacks * ratio;
+            player.GetDamage().AddRepeatingBonus(currentADdebuff,0, 1 / checksPerSecond, "AmplifiedEssenceDebuff");
+            
+            player.GetAbilityPower().AddRepeatingBonus(currentAPbonus, currentAPbonus, 1/checksPerSecond, "AmplifiedEssence");
+        }
+        else 
+        {
+            player.GetAbilityPower().EndRepeatingBonus("AmplifiedEssence");
+        }
+    }
+    public float SL_CalculateDmg()
     {
         aManager.PlaySoundOneShot("SFX_AOE");
-        return Mathf.Clamp(SL_baseDmg + player.GetDamage().GetValue() + SL_bonusPerKill * SL_killCount, SL_baseDmg, SL_maxDmg);
+        float AP = player.GetAbilityPower().GetValue();
+        return Mathf.Clamp(AP + SL_bonusPerKill * SL_killCount, AP, SL_maxDmg);
     }
     public int GetKillCount()
     {

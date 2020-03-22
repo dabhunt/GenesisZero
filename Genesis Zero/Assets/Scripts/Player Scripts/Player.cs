@@ -5,12 +5,14 @@ using UnityEngine;
 public class Player : Pawn
 {
     SkillManager SkillManager;
-    public Statistic Essence;
-    public Statistic Keys;
+    public Statistic Essence, Keys, AbilityPower;
+    private List<Statistic> playerStatistics;
+    public float baseAbilityPower = 16;
+    private float EssenceHardCap = 120f;
     private float MaxEssence = 100f;
     private float MaxKeys = 3f;
     private float MaxCapsules = 5;
-    public float healthPerStack = 4;
+    private float healthPerStack = 3;
 
     private void Awake()
     {
@@ -21,9 +23,12 @@ public class Player : Pawn
         InitializePlayerStats();
         base.Start();
     }
-
     new void Update()
     {
+        foreach (Statistic stat in playerStatistics)
+        {
+            stat.UpdateStatistics();
+        }
         if (Input.GetKeyDown(KeyCode.Tab))
         {
             SkillManager.SwapCurrentAbilities();
@@ -35,7 +40,6 @@ public class Player : Pawn
     {
         base.FixedUpdate();
     }
-
     public override float TakeDamage(float amount, Pawn source)
     {
         //Add anything if there is class specific additions to taking damage
@@ -46,34 +50,46 @@ public class Player : Pawn
     public void TriggerEffectOnKill()
     {
         Heal(healthPerStack * GetSkillStack("Vampirism"));
+        int TH_stacks = GetSkillStack("Thrill of the Hunt");
+        //reduce cooldowns by .5 seconds for each stack.
+        GetComponent<AbilityCasting>().ReduceCooldowns(TH_stacks/2);
     }
 
     public bool HasSkill(string name)
     {
         return SkillManager.HasSkill(name);
     }
-
     public int GetSkillStack(string name)
     {
         return SkillManager.GetSkillStack(name);
     }
-
     public SkillManager GetSkillManager()
     {
         return SkillManager;
     }
-
     public void InitializePlayerStats()
     {
-        Essence = new Statistic(MaxEssence); Essence.SetValue(0);
-        Keys = new Statistic(MaxKeys); Keys.SetValue(0);
+        playerStatistics = new List<Statistic>();
+        Essence = new Statistic(EssenceHardCap);
+        Essence.SetValue(0);
+        playerStatistics.Add(Keys = new Statistic(MaxKeys));
+        Keys.SetValue(0);
+        playerStatistics.Add(AbilityPower = new Statistic(16));
+        AbilityPower.SetValue(baseAbilityPower);
+    }
+    public Statistic GetAbilityPower()
+    {
+        return AbilityPower;
+    }
+    public float GetAbilityPowerAmount()
+    {
+        return AbilityPower.GetValue();
     }
 
     public Statistic GetEssence()
     {
         return Essence;
     }
-
     public float GetEssenceAmount()
     {
         return Essence.GetValue();
@@ -89,7 +105,7 @@ public class Player : Pawn
     public void SetKeys(float amount)
     {
         float num = amount;
-        num = Mathf.Clamp(num, 0, MaxEssence);
+        num = Mathf.Clamp(num, 0, 3);
         GetKeys().SetValue(num);
     }
     public void AddKeys(int amount)
@@ -112,8 +128,10 @@ public class Player : Pawn
     public void SetMaxCapsuleAmount(float amount)
     {
         amount = Mathf.Clamp(amount, 4, 6);
-        MaxEssence += GetFullCapsuleAmount();
+        MaxEssence += GetEssencePerCapsule();
         MaxCapsules = amount;
+        Canvas canvasRef = GameObject.FindGameObjectWithTag("CanvasUI").GetComponent<Canvas>();
+        canvasRef.transform.Find("EssencePanel").gameObject.GetComponent<EssenceFill>().SetCapsuleAmount(amount);
     }
     //this refers to how many full canisters of esessence the player has (not how much essence fits in a canister)
     public int GetFullCapsuleAmount()
