@@ -9,30 +9,50 @@ using UnityEngine;
 public class AIChargeWarning : MonoBehaviour
 {
     private AIController controller;
-    private Renderer rend;
+    private SpriteRenderer rend;
     public Vector3 StartScale = Vector3.one;
     public Vector3 EndScale = Vector3.one;
     public bool DisableWhileNotCharging = true;
     private Color endColor;
     private Color startColor;
+    public float FlashTime = 0.5f; //The warning will flash when there is this much time remaining before attacking (during charging)
+    public Color FlashColor = Color.white;
+    public float FlashRate = 40f;
 
     private void Awake()
     {
         controller = GetComponentInParent<AIController>();
-        rend = GetComponent<Renderer>();
-        endColor = rend.material.color;
-        startColor = new Color(0,0,0,0);
+        rend = GetComponentInChildren<SpriteRenderer>();
+        endColor = rend.color;
+        startColor = new Color(endColor.r, endColor.g, endColor.b, 0.0f);
+        if (controller != null)
+        {
+            if (controller.BehaviorProperties != null)
+            {
+                FlashTime = Mathf.Min(FlashTime, controller.BehaviorProperties.AttackChargeTime);
+            }
+        }
     }
 
     private void FixedUpdate()
     {
         if (controller == null) { return; }
+        if (controller.BehaviorProperties == null) { return; }
 
-        transform.localScale = Vector3.Lerp(StartScale, EndScale, controller.GetNormalizedChargeTime());
-        rend.material.color = Color.Lerp(startColor,endColor, controller.GetNormalizedChargeTime());
+        float normTime = CalculateNormalizedTime();
+        transform.localScale = Vector3.Lerp(StartScale, EndScale, normTime);
 
         if (rend != null)
         {
+            if (normTime < 0.99f)
+            {
+                rend.color = Color.Lerp(startColor, endColor, normTime);
+            }
+            else
+            {
+                rend.color = Color.Lerp(FlashColor, endColor, (Mathf.Sin(Time.unscaledTime * FlashRate) + 1.0f) * 0.5f);
+            }
+
             if (controller.GetState() == AIController.AIState.Charge)
             {
                 if (!rend.enabled)
@@ -45,5 +65,17 @@ public class AIChargeWarning : MonoBehaviour
                 rend.enabled = false;
             }
         }
+    }
+
+    private float CalculateNormalizedTime()
+    {
+        if (controller != null)
+        {
+            if (controller.BehaviorProperties != null && controller.GetState() == AIController.AIState.Charge)
+            {
+                return Mathf.Clamp01(controller.GetStateTime() / Mathf.Max(0.001f, controller.BehaviorProperties.AttackChargeTime - FlashTime));
+            }
+        }
+        return 0.0f;
     }
 }

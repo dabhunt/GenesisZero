@@ -11,9 +11,12 @@ public class EnemyHealthDisplay : MonoBehaviour
     //public Image healthBar;
     private bool delayFinished = false;
     private float maxHealth;
+    private float heightOffset = 0.0f;
+
     void Start()
     {
         Invoke("Delayed", .75f);
+        heightOffset = healthBar.transform.localPosition.magnitude;
     }
 
     public void Delayed()
@@ -35,8 +38,10 @@ public class EnemyHealthDisplay : MonoBehaviour
                 healthBar.SetActive(true);
                 //healthBar.transform.position = new Vector3(0, 0, 20);
                 healthBar.transform.localScale = new Vector3((hp / maxHealth) * 1f, .088f, .71f);
-                healthBar.transform.Rotate(new Vector3(0, 0, 0), Space.World);
+                //healthBar.transform.Rotate(new Vector3(0, 0, 0), Space.World);
             }
+            healthBar.transform.position = transform.position + Vector3.up * heightOffset;
+            healthBar.transform.rotation = Quaternion.identity;
         }
       
     }
