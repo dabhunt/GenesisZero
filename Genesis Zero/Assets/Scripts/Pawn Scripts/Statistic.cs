@@ -20,16 +20,10 @@ public class Statistic
     float maxbonuses;
     List<Bonus> exhaustedbonuses;
 
-    List<Bonus> multipliers;   // List of multiplier bonuses to the maxvalue of the stat.
-    float multiplier;
-    List<Bonus> exhaustedmultipliers;
-
     public Statistic(float amount)
     {
         bonusamounts = new List<Bonus>();
-        multipliers = new List<Bonus>();
         exhaustedbonuses = new List<Bonus>();
-        exhaustedmultipliers = new List<Bonus>();
         this.maxamount = amount;
         currentamount = amount;
         currentmaxamount = amount;
@@ -43,7 +37,6 @@ public class Statistic
     public void UpdateStatistics()
     {
         CheckBonuses();
-        CheckMultipliers();
     }
 
     /**
@@ -76,7 +69,7 @@ public class Statistic
      */
     public float GetMaxValue()
     {
-        return (maxamount * multiplier) + maxbonuses;
+        return maxamount + maxbonuses;
     }
 
     /**
@@ -195,12 +188,61 @@ public class Statistic
     }
 
     /**
-     * Only Effects maxvalue
-     */
-    public void AddMultiplier(float value, float time)
+    *  If value is added to the stat and increases the max value as well. With a identifier
+    */
+    public void AddRepeatingBonus(float value, float maxvalue, float time, string id)
     {
-        Bonus b = new Bonus(value, value, time);
-        multipliers.Add(b);
+        Bonus b = new Bonus(value, maxvalue, time, id);
+        if (ContainsBonus(id))
+        {
+            SetRepeatingBonus(b);
+        }
+        else
+        {
+            bonusamounts.Add(b);
+        }
+    }
+
+    /**
+     * Returns true if bonus amounts contains a bonus with the same id.
+     */
+    public bool ContainsBonus(string id)
+    {
+        foreach (Bonus b in bonusamounts)
+        {
+            if (b.GetIdentifier() == id) return true;
+        }
+        return false;
+    }
+
+    /**
+     * Returns true if bonus amounts contains a bonus with the same id.
+     */
+    public void SetRepeatingBonus(Bonus bonus)
+    {
+        foreach (Bonus b in bonusamounts)
+        {
+            if (b.GetIdentifier() == bonus.GetIdentifier())
+            {
+                b.SetMaxValue(bonus.GetMaxValue());
+                b.SetValue(bonus.GetValue());
+                b.SetTime(bonus.GetTime());
+            }
+        }
+    }
+
+    /**
+     * End the repeating bonus if it exists
+     */
+    public void EndRepeatingBonus(string id)
+    {
+        foreach (Bonus b in bonusamounts)
+        {
+            if (b.GetIdentifier() == id)
+            {
+                b.SetTime(0);
+            }
+        }
     }
 
     private void CheckBonuses()
@@ -246,40 +288,6 @@ public class Statistic
         if (mb != maxbonuses)
         {
             maxbonuses = mb;
-        }
-    }
-
-    private void CheckMultipliers()
-    {
-        float multi = 1;
-        if (multipliers.Count > 0)
-        {
-            exhaustedmultipliers.Clear();
-            foreach (Bonus bonus in multipliers)
-            {
-                if (bonus.CheckBonus())
-                {
-                    multi *= bonus.GetValue();
-                }
-                else
-                {
-                    exhaustedmultipliers.Add(bonus);
-                }
-            }
-            foreach (Bonus bonus in exhaustedmultipliers)
-            {
-                multi += RecalculateBonuses(exhaustedmultipliers, bonus);
-            }
-
-            if (multi != multiplier)
-            {
-                multiplier = multi;
-                return;
-            }
-        }
-        if (multi != multiplier)
-        {
-            multiplier = multi;
         }
     }
 
@@ -358,6 +366,7 @@ public class Statistic
         private float value;
         private float maxvalue;
         private float time;
+        private string identifier = "";
 
         public Bonus(float value, float maxvalue, float time)
         {
@@ -365,6 +374,15 @@ public class Statistic
             Mathf.Clamp(value, 0, maxvalue);
             this.maxvalue = maxvalue;
             this.time = time;
+        }
+
+        public Bonus(float value, float maxvalue, float time, string id)
+        {
+            this.value = value;
+            Mathf.Clamp(value, 0, maxvalue);
+            this.maxvalue = maxvalue;
+            this.time = time;
+            identifier = id;
         }
 
         public bool CheckBonus()
@@ -403,6 +421,16 @@ public class Statistic
         {
             Mathf.Clamp(time, 0, Mathf.Infinity);
             this.time = time;
+        }
+
+        public string GetIdentifier()
+        {
+            return identifier;
+        }
+
+        public void SetIdentifier(string id)
+        {
+            identifier = id;
         }
     }
 
