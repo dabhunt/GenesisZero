@@ -50,7 +50,7 @@ public class AIChargeWarning : MonoBehaviour
             }
             else
             {
-                rend.color = Color.Lerp(FlashColor, endColor, Mathf.Sin(Time.unscaledTime * FlashRate));
+                rend.color = Color.Lerp(FlashColor, endColor, (Mathf.Sin(Time.unscaledTime * FlashRate) + 1.0f) * 0.5f);
             }
 
             if (controller.GetState() == AIController.AIState.Charge)
