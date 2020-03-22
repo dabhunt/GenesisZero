@@ -177,7 +177,7 @@ public class AIController : Pawn
             {
                 ChangeState(AIState.Patrol);
             }
-            else if (GetDistanceToTarget() <= BehaviorProperties.AttackRadius && targetVisible)
+            else if (GetDistanceToTarget() <= BehaviorProperties.AttackRadius && targetVisible && (!BehaviorProperties.AttackOnlyWhenGrounded || (BehaviorProperties.AttackOnlyWhenGrounded && isGrounded)))
             {
                 ChangeState(AIState.Charge);
             }
