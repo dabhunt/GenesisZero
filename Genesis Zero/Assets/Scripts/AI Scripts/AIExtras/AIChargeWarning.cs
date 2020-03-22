@@ -24,7 +24,7 @@ public class AIChargeWarning : MonoBehaviour
         controller = GetComponentInParent<AIController>();
         rend = GetComponentInChildren<SpriteRenderer>();
         endColor = rend.color;
-        startColor = new Color(0, 0, 0, 0);
+        startColor = new Color(endColor.r, endColor.g, endColor.b, 0.0f);
         if (controller != null)
         {
             if (controller.BehaviorProperties != null)
