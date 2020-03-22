@@ -4,15 +4,16 @@ using UnityEngine;
 
 public class EnemyOverlayShader : MonoBehaviour
 {
-    // Start is called before the first frame update
+    private float lowHealthCutoff = .33f;
     void Start()
     {
-        
+        gameObject.GetComponent<Renderer>().material.SetFloat("_OnOff", 1);
     }
-
-    // Update is called once per frame
     void Update()
     {
-        gameObject.GetComponent<Renderer>().material.SetFloat("_ColorStrength", 1 - GetComponentInParent<Pawn>().GetHealth().GetValue() / GetComponentInParent<Pawn>().GetHealth().GetMaxValue());
+        float ratio = GetComponentInParent<Pawn>().GetHealth().GetValue() / GetComponentInParent<Pawn>().GetHealth().GetMaxValue();
+        float onOffMulti = -12 * (1 - ratio); 
+        if (ratio < lowHealthCutoff)
+            gameObject.GetComponent<Renderer>().material.SetFloat("_OnOff", onOffMulti);
     }
 }
