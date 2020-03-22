@@ -131,8 +131,20 @@ public class UniqueEffects : MonoBehaviour
     }
     public void AmplifiedEssence()
     {
-        float ratio = player.GetEssenceAmount() / player.GetMaxEssenceAmount();
-        float baseAP = player.GetAbilityPowerAmount();
+        int stacks = player.GetSkillStack("Amplified Essence");
+        if (stacks > 0)
+        {
+            float ratio = player.GetEssenceAmount() / player.GetMaxEssenceAmount();
+            //Sets the players bonus AP proportionate to how much AP they have, up to a cap of x3 bonus
+            float currentAPbonus = (player.GetAbilityPowerAmount() * 1f) * stacks * ratio;
+            float currentADdebuff = (player.GetDamage().GetBaseValue() * -.5f) * stacks * ratio;
+            print("currentAPbonus " + currentAPbonus);
+            //print("currentAD debuff " + currentADdebuff);
+            player.GetAbilityPower().AddBonus(currentAPbonus, checksPerSecond);
+            //debuff the player's damage
+            //player.GetDamage().AddBonus(currentADdebuff,0, 1 / checksPerSecond);
+            print("Damage: " + player.GetDamage().GetValue());
+        }
     }
     public float SL_CalculateDmg()
     {
