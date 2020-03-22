@@ -58,6 +58,7 @@ public class Merchant : MonoBehaviour
             return;
         if (Vector3.Distance(player.transform.position, transform.position) <= activeDistance)
         {
+            FindObjectOfType<AudioManager>().StopAllSounds();
             StateManager.instance.PauseGame();
             GameInputManager.instance.SwitchControlMap("MenuControls");
             isActive = true;
@@ -95,6 +96,8 @@ public class Merchant : MonoBehaviour
         //update description, icon, and name in the display section on the left
         string name = selectedShopItem.VisibleName;
         string desc = selectedShopItem.Description;
+        string rarity = "";
+        Color color = Color.white;
         Sprite icon = selectedShopItem.Icon;
         string cost = "x" + selectedShopItem.Cost.ToString();
         canistersNeeded = selectedShopItem.Cost;
@@ -103,14 +106,17 @@ public class Merchant : MonoBehaviour
         {
             name = gameObjList[num].transform.Find("Name").GetComponent<Text>().text.ToString();
             SkillObject mod = skillManager.GetSkillFromString(name);
+            rarity = " ( " + skillManager.GetRarityString(mod) + " )";
+            color = skillManager.GetColor(mod);
             cost = "x" + (1 + mod.Rarity).ToString();
             canistersNeeded = 1 + mod.Rarity;
-            print("mod cost = " + cost);
             icon = mod.Icon;
             desc = mod.Description;
         }
         merchantUI.transform.Find("Name").gameObject.GetComponent<Text>().text = name;
-        merchantUI.transform.Find("Description").gameObject.GetComponent<Text>().text = desc;
+        merchantUI.transform.Find("Description").gameObject.GetComponent<TextMeshProUGUI>().text = desc;
+        merchantUI.transform.Find("Rarity").gameObject.GetComponent<TextMeshProUGUI>().text = rarity;
+        merchantUI.transform.Find("Rarity").gameObject.GetComponent<TextMeshProUGUI>().color = color;
         merchantUI.transform.Find("ShownItem").gameObject.GetComponent<Image>().sprite = icon;
         merchantUI.transform.Find("Cost").gameObject.GetComponent<Text>().text = cost;
         Button purchaseButton = merchantUI.transform.Find("Purchase").gameObject.GetComponent<Button>();

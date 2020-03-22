@@ -64,7 +64,8 @@ public class UniqueEffects : MonoBehaviour
         int HE_stacks = player.GetSkillStack("Heat Expulsion");
         if (HE_stacks > 0 && overheat.GetHeat() >= overheat.GetMaxHeat())
         {
-            float multi = player.GetSkillManager().GetSkillStackAsMultiplier("Heat Expulsion", 1.2f);
+            //HE_stack multi is 1.2f, which represents a 20% increase in size for each modifier past 1
+            float multi = player.GetSkillManager().GetSkillStackAsMultiplier("Heat Expulsion", HE_StackMulti);
             GameObject hitbox = SpawnGameObject("ExpulsionHitbox", transform.position, Quaternion.identity);
             Hitbox hit = hitbox.GetComponent<Hitbox>();
             //Sets damage to double player's * stack multiplier of 20% per stack, false means it can't crit
@@ -84,7 +85,6 @@ public class UniqueEffects : MonoBehaviour
         int stacks = player.GetSkillStack("Chemical Accelerant");
         if (stacks > 0)
         {
-            //static DOTween.To(currentAttackSpeed, setter, to, float duration);
             float heat = player.GetComponent<OverHeat>().GetHeat();
             //Sets the players bonus attack speed equal to the max value proportionate to how much heat you have, up to the max of 100 heat
             currentAttackSpeed = CA_MaxAttackSpeedPerStack * stacks * (heat / 100);

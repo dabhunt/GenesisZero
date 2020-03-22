@@ -75,7 +75,6 @@ public class StateManager : MonoBehaviour
     public void PauseGame()
     {
         //Pauses Game
-        Debug.Log("Pausing Game");
         isPaused = true;
         Time.timeScale = 0;
     }
@@ -84,7 +83,6 @@ public class StateManager : MonoBehaviour
     public void UnpauseGame()
     {
         //UnPauses Game
-        Debug.Log("UnPausing Game");
         isPaused = false;
         Time.timeScale = TimeScale;
         Time.fixedDeltaTime = 0.02f * TimeScale;

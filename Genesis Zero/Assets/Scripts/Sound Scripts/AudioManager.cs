@@ -429,6 +429,14 @@ public class AudioManager : MonoBehaviour
             return;
         }
     }
+    public void StopAllSounds()
+    {
+        List<Sound>.Enumerator em = Soundlist.GetEnumerator();
+        while (em.MoveNext())
+        {
+            em.Current.source.Stop();
+        }
+    }
 
     public void PlaySoundOneShot(string name)
     {

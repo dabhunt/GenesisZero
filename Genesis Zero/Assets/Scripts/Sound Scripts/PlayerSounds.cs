@@ -11,8 +11,6 @@ public class PlayerSounds : MonoBehaviour
     public string[] gunshot = new string[0];
     public string[] jump = new string[0];
     public string[] land = new string[0];
-
-
     //bool applicationIsQuitting;
     // Start is called before the first frame update
     // Update is called once per frame
@@ -26,20 +24,17 @@ public class PlayerSounds : MonoBehaviour
 	public void Jump()
 	{
         int rng = Random.Range(1, jump.Length);
-        rng --;
-        aManager.PlaySoundOneShot(jump[rng]);
+        aManager.PlaySoundOneShot(jump[rng-1]);
 	}
 	public void GunShot()
 	{
 		int rng = Random.Range(1, gunshot.Length);
-        rng --;
-        aManager.PlaySoundOneShot(gunshot[rng]);
+        aManager.PlaySoundOneShot(gunshot[rng-1]);
 	}
 	public void Land()
 	{
 		int rng = Random.Range(1, land.Length);
-        rng --;
-        aManager.PlaySoundOneShot(land[rng]);
+        aManager.PlaySoundOneShot(land[rng-1]);
 	}
 	public void Walk()
 	{

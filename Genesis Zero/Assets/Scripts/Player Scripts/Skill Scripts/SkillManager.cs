@@ -624,6 +624,23 @@ public class SkillManager
         }
         return color;
     }
+    public string GetRarityString(SkillObject sk)
+    {
+        string rarity;
+        switch (sk.Rarity)
+        {
+            case 2:
+                rarity = "Rare";
+                break;
+            case 3:
+                rarity = "Legendary";
+                break;
+            default:
+                rarity = "Common";
+                break;
+        }
+        return rarity;
+    }
 
     public bool IsActive()
     {
