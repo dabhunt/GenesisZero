@@ -138,12 +138,13 @@ public class UniqueEffects : MonoBehaviour
             //Sets the players bonus AP proportionate to how much AP they have, up to a cap of x3 bonus
             float currentAPbonus = (player.GetAbilityPowerAmount() * 1f) * stacks * ratio;
             float currentADdebuff = (player.GetDamage().GetBaseValue() * -.5f) * stacks * ratio;
-            print("currentAPbonus " + currentAPbonus);
-            //print("currentAD debuff " + currentADdebuff);
-            player.GetAbilityPower().AddBonus(currentAPbonus, checksPerSecond);
-            //debuff the player's damage
             //player.GetDamage().AddBonus(currentADdebuff,0, 1 / checksPerSecond);
-            print("Damage: " + player.GetDamage().GetValue());
+            //print("Damage: " + player.GetDamage().GetValue());
+            player.GetAbilityPower().AddRepeatingBonus(currentAPbonus, currentAPbonus, 1/checksPerSecond, "AmplifiedEssence");
+        }
+        else 
+        {
+            player.GetAbilityPower().EndRepeatingBonus("AmplifiedEssence");
         }
     }
     public float SL_CalculateDmg()
