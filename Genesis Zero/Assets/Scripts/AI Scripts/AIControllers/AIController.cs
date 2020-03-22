@@ -354,7 +354,15 @@ public class AIController : Pawn
         }
         return Vector3.zero;
     }
-    
+
+    /**
+     * Returns the time of the current state
+     */
+    public float GetStateTime()
+    {
+        return stateTime;
+    }
+
     /**
      * Returns the normalized progress of charging before an attack
      */

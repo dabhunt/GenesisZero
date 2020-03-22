@@ -9,30 +9,50 @@ using UnityEngine;
 public class AIChargeWarning : MonoBehaviour
 {
     private AIController controller;
-    private Renderer rend;
+    private SpriteRenderer rend;
     public Vector3 StartScale = Vector3.one;
     public Vector3 EndScale = Vector3.one;
     public bool DisableWhileNotCharging = true;
     private Color endColor;
     private Color startColor;
+    public float FlashTime = 0.5f; //The warning will flash when there is this much time remaining before attacking (during charging)
+    public Color FlashColor = Color.white;
+    public float FlashRate = 40f;
 
     private void Awake()
     {
         controller = GetComponentInParent<AIController>();
-        rend = GetComponentInChildren<Renderer>();
-        endColor = rend.material.color;
+        rend = GetComponentInChildren<SpriteRenderer>();
+        endColor = rend.color;
         startColor = new Color(0, 0, 0, 0);
+        if (controller != null)
+        {
+            if (controller.BehaviorProperties != null)
+            {
+                FlashTime = Mathf.Min(FlashTime, controller.BehaviorProperties.AttackChargeTime);
+            }
+        }
     }
 
     private void FixedUpdate()
     {
         if (controller == null) { return; }
+        if (controller.BehaviorProperties == null) { return; }
 
-        transform.localScale = Vector3.Lerp(StartScale, EndScale, controller.GetNormalizedChargeTime());
+        float normTime = CalculateNormalizedTime();
+        transform.localScale = Vector3.Lerp(StartScale, EndScale, normTime);
 
         if (rend != null)
         {
-            rend.material.color = Color.Lerp(startColor, endColor, controller.GetNormalizedChargeTime());
+            if (normTime < 0.99f)
+            {
+                rend.color = Color.Lerp(startColor, endColor, normTime);
+            }
+            else
+            {
+                rend.color = Color.Lerp(FlashColor, endColor, Mathf.Sin(Time.unscaledTime * FlashRate));
+            }
+
             if (controller.GetState() == AIController.AIState.Charge)
             {
                 if (!rend.enabled)
@@ -45,5 +65,17 @@ public class AIChargeWarning : MonoBehaviour
                 rend.enabled = false;
             }
         }
+    }
+
+    private float CalculateNormalizedTime()
+    {
+        if (controller != null)
+        {
+            if (controller.BehaviorProperties != null && controller.GetState() == AIController.AIState.Charge)
+            {
+                return Mathf.Clamp01(controller.GetStateTime() / Mathf.Max(0.001f, controller.BehaviorProperties.AttackChargeTime - FlashTime));
+            }
+        }
+        return 0.0f;
     }
 }
