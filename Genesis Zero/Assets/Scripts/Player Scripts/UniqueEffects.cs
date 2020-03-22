@@ -22,6 +22,8 @@ public class UniqueEffects : MonoBehaviour
     [Header("Chemical Accelerant")]
     public float CA_MaxAttackSpeedPerStack = .50f;
     public float CA_MaxCritChancePerStack = .25f;
+    [Header("Amplified Essence")]
+    public float AE_MaxAPMulti = 3f;
     [Header("Cooling Cell")]
     public float heatReductionPerStack = .9f;
     [Header("Spartan Laser")]
@@ -51,6 +53,7 @@ public class UniqueEffects : MonoBehaviour
         multiplier = Mathf.Pow(coolRatePerStack, player.GetSkillStack("Cooling Cell"));
         overheat.ModifyCoolRate(multiplier);
         ChemicalAccelerant();
+        AmplifiedEssence();
     }
     private void Update()
     {
@@ -126,7 +129,25 @@ public class UniqueEffects : MonoBehaviour
 
         }
     }
-    public float CalculateDmg()
+    public void AmplifiedEssence()
+    {
+        int stacks = player.GetSkillStack("Amplified Essence");
+        if (stacks > 0)
+        {
+            float ratio = player.GetEssenceAmount() / player.GetMaxEssenceAmount();
+            //Sets the players bonus AP proportionate to how much AP they have, up to a cap of x3 bonus
+            float currentAPbonus = (player.GetAbilityPowerAmount() * 1f) * stacks * ratio;
+            float currentADdebuff = (player.GetDamage().GetBaseValue() * -.5f) * stacks * ratio;
+            //player.GetDamage().AddBonus(currentADdebuff,0, 1 / checksPerSecond);
+            //print("Damage: " + player.GetDamage().GetValue());
+            player.GetAbilityPower().AddRepeatingBonus(currentAPbonus, currentAPbonus, 1/checksPerSecond, "AmplifiedEssence");
+        }
+        else 
+        {
+            player.GetAbilityPower().EndRepeatingBonus("AmplifiedEssence");
+        }
+    }
+    public float SL_CalculateDmg()
     {
         aManager.PlaySoundOneShot("SFX_AOE");
         float AP = player.GetAbilityPower().GetValue();

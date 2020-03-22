@@ -309,7 +309,7 @@ public class AbilityCasting : MonoBehaviour
         UniqueEffects U = GetComponent<UniqueEffects>();
         float scale = Mathf.Pow(scaleMultiPerKill, U.GetKillCount());
         hitbox.transform.localScale = new Vector3(scale, scale, scale);
-        float damage = U.CalculateDmg();
+        float damage = U.SL_CalculateDmg();
         hitbox.GetComponent<Hitbox>().InitializeHitbox(damage, player);
     }
     //this won't work after the changes to getmodfromstring 

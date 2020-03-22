@@ -183,8 +183,8 @@ public class SkillManager
         player.GetRange().AddMaxValue(skill.range * multi);
         player.GetShield().AddMaxValue(skill.shield * multi);
         player.GetWeight().AddMaxValue(skill.weight * multi);
+        player.GetAbilityPower().AddMaxValue(skill.abilitypower * multi);
     }
-
     private void InitializeLists()
     {
         SkillObject[] skills = Resources.LoadAll<SkillObject>("Skills/Modifiers");

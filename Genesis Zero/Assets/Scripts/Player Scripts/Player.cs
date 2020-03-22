@@ -5,9 +5,8 @@ using UnityEngine;
 public class Player : Pawn
 {
     SkillManager SkillManager;
-    public Statistic Essence;
-    public Statistic Keys;
-    public Statistic AbilityPower;
+    public Statistic Essence, Keys, AbilityPower;
+    private List<Statistic> playerStatistics;
     public float baseAbilityPower = 16;
     private float EssenceHardCap = 120f;
     private float MaxEssence = 100f;
@@ -27,11 +26,16 @@ public class Player : Pawn
 
     new void Update()
     {
+        foreach (Statistic stat in playerStatistics)
+        {
+            stat.UpdateStatistics();
+        }
         if (Input.GetKeyDown(KeyCode.Tab))
         {
             SkillManager.SwapCurrentAbilities();
         }
         base.Update();
+        print(AbilityPower.GetValue());
     }
 
     new void FixedUpdate()
@@ -71,9 +75,13 @@ public class Player : Pawn
 
     public void InitializePlayerStats()
     {
-        Essence = new Statistic(EssenceHardCap); Essence.SetValue(0);
-        Keys = new Statistic(MaxKeys); Keys.SetValue(0);
-        AbilityPower = new Statistic(999); Keys.SetValue(baseAbilityPower);
+        playerStatistics = new List<Statistic>();
+        Essence = new Statistic(EssenceHardCap);
+        Essence.SetValue(0);
+        playerStatistics.Add(Keys = new Statistic(MaxKeys));
+        Keys.SetValue(0);
+        playerStatistics.Add(AbilityPower = new Statistic(16));
+        AbilityPower.SetValue(baseAbilityPower);
     }
     public Statistic GetAbilityPower()
     {
