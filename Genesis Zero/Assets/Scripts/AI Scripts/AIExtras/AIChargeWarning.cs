@@ -19,9 +19,9 @@ public class AIChargeWarning : MonoBehaviour
     private void Awake()
     {
         controller = GetComponentInParent<AIController>();
-        rend = GetComponent<Renderer>();
+        rend = GetComponentInChildren<Renderer>();
         endColor = rend.material.color;
-        startColor = new Color(0,0,0,0);
+        startColor = new Color(0, 0, 0, 0);
     }
 
     private void FixedUpdate()
@@ -29,10 +29,10 @@ public class AIChargeWarning : MonoBehaviour
         if (controller == null) { return; }
 
         transform.localScale = Vector3.Lerp(StartScale, EndScale, controller.GetNormalizedChargeTime());
-        rend.material.color = Color.Lerp(startColor,endColor, controller.GetNormalizedChargeTime());
 
         if (rend != null)
         {
+            rend.material.color = Color.Lerp(startColor, endColor, controller.GetNormalizedChargeTime());
             if (controller.GetState() == AIController.AIState.Charge)
             {
                 if (!rend.enabled)
