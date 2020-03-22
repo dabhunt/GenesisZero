@@ -75,7 +75,7 @@ public class SkillDisplay : MonoBehaviour
             if (skills[i].IsAbility == false)
             {
                 GameObject instance = (GameObject)Instantiate(UIElement, (Vector3)transform.position + (Vector3)StartPoint + new Vector3(Seperation.x * col, Seperation.y * row), Quaternion.identity);
-                instance.transform.parent = transform;
+                instance.transform.SetParent(transform);
                 instance.transform.localScale = new Vector3(1, 1, 1);
                 instance.GetComponent<SkillUIElement>().SetIcon(skills[i].Icon);
                 instance.GetComponent<SkillUIElement>().SetColor(SkillManager.GetColor(skills[i]));
@@ -98,7 +98,7 @@ public class SkillDisplay : MonoBehaviour
             else if (skills[i].IsAbility && SkillManager.GetAbility2() && skills[i].name == SkillManager.GetAbility2().name)
             {
                 GameObject abil2 = (GameObject)Instantiate(UIElement, (Vector3)transform.position + (Vector3)Ability2Position, Quaternion.identity);
-                abil2.transform.parent = transform;
+                abil2.transform.SetParent(transform);
                 abil2.transform.localScale = new Vector3(1, 1, 1);
                 abil2.GetComponent<SkillUIElement>().SetIcon(skills[i].Icon);
                 abil2.GetComponent<SkillUIElement>().SetColor(SkillManager.GetColor(skills[i]));

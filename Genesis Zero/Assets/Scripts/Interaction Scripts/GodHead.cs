@@ -20,6 +20,7 @@ public class GodHead : MonoBehaviour
     private GameObject sacModObjs;
     private Canvas canvasRef;
     private SkillManager skillManager;
+    private PlayerSounds sound;
     private List<GameObject> modObjUI;
     //private SkillUIElement skillUIElement;
     private bool isActive = true;
@@ -27,6 +28,7 @@ public class GodHead : MonoBehaviour
     //private bool confirmationWindowOpen = false;
     //change to private later below this point
     private int modSelectNum = -1;
+
     //public List<SkillObject> modSkills;
 
     private void Start()
@@ -35,7 +37,6 @@ public class GodHead : MonoBehaviour
         inputActions = GameInputManager.instance.GetInputActions();
         inputActions.PlayerControls.Interact.performed += ctx => interactInput = ctx.ReadValue<float>();
         inputActions.MenuControls.Move.performed += ctx => moveInput = ctx.ReadValue<Vector2>();
-        
         skillManager = player.GetComponent<Player>().GetSkillManager();
         canvasRef = GameObject.FindGameObjectWithTag("CanvasUI").GetComponent<Canvas>();
         modSelectNum = -1;
@@ -58,6 +59,7 @@ public class GodHead : MonoBehaviour
             return;
         if (Vector3.Distance(player.transform.position, transform.position) <= activeDistance && skillManager.GetModAmount() > 0)
         {
+            FindObjectOfType<AudioManager>().StopAllSounds();
             StateManager.instance.PauseGame();
             GameInputManager.instance.SwitchControlMap("MenuControls");
             isActive = true;

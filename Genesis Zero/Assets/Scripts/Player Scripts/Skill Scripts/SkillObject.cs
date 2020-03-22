@@ -18,6 +18,7 @@ public class SkillObject : ScriptableObject
 
     public bool IsAbility;
     [Tooltip("0 - Ability, 1 - White, 2 - Green, 3 - Gold")]
+    [Range(0,3)]
     public int Rarity = 1;
 
     [Space]

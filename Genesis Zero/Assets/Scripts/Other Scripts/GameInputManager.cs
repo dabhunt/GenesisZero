@@ -46,8 +46,6 @@ public class GameInputManager : MonoBehaviour
     //this function was not working as intended, I disabled it - David
     public void SwitchControlMap(string name)
     {
-        Debug.Log("SwitchingControlMap to " + name);
-
         foreach (var map in actionAsset.actionMaps)
         {
             if (map.name == name)
