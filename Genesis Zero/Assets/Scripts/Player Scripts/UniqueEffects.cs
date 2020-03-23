@@ -24,8 +24,11 @@ public class UniqueEffects : MonoBehaviour
     public float CA_MaxCritChancePerStack = .25f;
     [Header("Amplified Essence")]
     public float AE_MaxAPMulti = 3f;
+    [Header("Superheated Essence")]
+    public float SE_MaxAttackSpeed = 1.5f;
+    public float SE_MaxExtraBloom = .25f;
     [Header("Cooling Cell")]
-    public float heatReductionPerStack = .9f;
+    public float heatReductionPerStack = 1.1f;
     [Header("Spartan Laser")]
     public float SL_cooldown = 4f;
     public float SL_bonusPerKill = 10f;
@@ -48,14 +51,12 @@ public class UniqueEffects : MonoBehaviour
         aManager = FindObjectOfType<AudioManager>();
     }
     public void CheckUniques() {
-        float multiplier = Mathf.Pow(heatReductionPerStack, player.GetSkillStack("Better Coolant"));
-        overheat.ModifyHeatPerShot(multiplier);
-        multiplier = Mathf.Pow(coolRatePerStack, player.GetSkillStack("Cooling Cell"));
-        overheat.ModifyCoolRate(multiplier);
+        HeatReduction();
         ChemicalAccelerant();
         AmplifiedEssence();
         ConcentratedEssence();
         UnstableEssence();
+        SuperHeatedEssence();
     }
     private void Update()
     {
@@ -85,15 +86,7 @@ public class UniqueEffects : MonoBehaviour
     public void WeakPointHit()
     {
         float stacks = player.GetSkillManager().GetSkillStack("Adrenaline Rush");
-        if (stacks > 0)
-        {
-            //float seconds = 0;
-            //if (stacks == 1) //1 second if 1 stack
-            //    seconds = coolReductionSingleStack;
-            //else
-            //    seconds = Math.Abs(coolReductionSingleStack-coolReductionPerStack) + coolReductionPerStack * (stacks-1); // increase by .5 seconds for additional stacks past 1
-            player.GetComponent<AbilityCasting>().ReduceCooldowns(stacks);
-        }
+        player.GetComponent<AbilityCasting>().ReduceCooldowns(stacks);
         //other Modifier effects can be put inside this function
     }
     void StackDecayTimer()
@@ -109,6 +102,17 @@ public class UniqueEffects : MonoBehaviour
 
         }
     }
+    private void HeatReduction()
+    {
+        float reduction = 1 - (Mathf.Pow(heatReductionPerStack, player.GetSkillStack("Better Coolant")));
+        float lessHeat = overheat.GetHeatAddedPerShot().GetBaseValue() * -reduction;
+        overheat.GetHeatAddedPerShot().AddRepeatingBonus(lessHeat, 0, 1 / checksPerSecond, "BetterCoolant");
+        reduction = 1 - Mathf.Pow(coolRatePerStack, player.GetSkillStack("Cooling Cell"));
+        float lessDelay = overheat.GetDelayBeforeCooling().GetBaseValue() * -reduction;
+        overheat.GetDelayBeforeCooling().AddRepeatingBonus(lessDelay, 0, 1 / checksPerSecond, "CoolingCell");
+        print("delaybeforecooling value = "+overheat.GetDelayBeforeCooling().GetValue());
+        print("Heataddedpershot value = "+overheat.GetHeatAddedPerShot().GetValue());
+    }
     //Player deals bonus damage proportionate to how much essence they have, up to a cap of their base damage
     // Player has less attack speed proportionate to how much essence they have, up to a cap of half as much base attack speed
     private void ConcentratedEssence()
@@ -122,6 +126,25 @@ public class UniqueEffects : MonoBehaviour
             float cur_ASdebuff = (player.GetAttackSpeed().GetBaseValue() * -.5f) * stacks * ratio;
             player.GetDamage().AddRepeatingBonus(cur_ADbonus, cur_ADbonus, 1 / checksPerSecond, "ConcentratedEssence");
             player.GetAttackSpeed().AddRepeatingBonus(cur_ASdebuff, 0, 1 / checksPerSecond, "ConcentratedEssenceDebuff");
+        }
+    }
+    //Player gains bonus attack speed proportional to how much heat AND essence the player has
+    private void SuperHeatedEssence()
+    {
+        int stacks = player.GetSkillStack("Superheated Essence");
+        if (stacks > 0)
+        {
+            float ratio = player.GetEssenceAmount() / player.GetMaxEssenceAmount();
+            float heat = player.GetComponent<OverHeat>().GetHeat();
+            //Sets the players bonus attack speed equal to the max value proportionate to how much heat you have, up to the max of 100 heat
+            float multiplier = ratio * stacks * (heat / 100);
+            //Sets the players bonus AP proportionate to how much AP they have, up to a cap of x3 bonus
+            float cur_ASbonus = (player.GetAttackSpeed().GetBaseValue() * SE_MaxAttackSpeed) * multiplier;
+            float cur_bloomDebuff = player.GetOverHeat().GetBloomMultiplier().GetBaseValue() * SE_MaxExtraBloom * multiplier;
+            //float cur_Heatdebuff = (player.GetOverHeat().GetHeatAddedPerShot().GetBaseValue() * .1f) * multiplier;
+            player.GetAttackSpeed().AddRepeatingBonus(cur_ASbonus, cur_ASbonus, 1 / checksPerSecond, "SuperheatedEssence");
+            player.GetOverHeat().GetBloomMultiplier().AddRepeatingBonus(cur_bloomDebuff, cur_bloomDebuff, 1 / checksPerSecond, "SuperheatedEssenceDebuff");
+            print("bloomDebuff " + cur_bloomDebuff);
         }
     }
     //Player deals bonus damage proportionate to how much essence they have, up to a cap of their base damage x2 (x3 total including base AD)

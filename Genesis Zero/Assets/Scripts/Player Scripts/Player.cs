@@ -150,7 +150,10 @@ public class Player : Pawn
         num = Mathf.Clamp(num, 0, MaxEssence);
         GetEssence().SetValue(num);
     }
-
+    public OverHeat GetOverHeat()
+    {
+        return GetComponent<OverHeat>();
+    }
     public void AddEssence(int amount)
     {
         SetEssence(GetEssenceAmount() + amount);
