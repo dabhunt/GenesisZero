@@ -86,6 +86,7 @@ public class AbilityCasting : MonoBehaviour
 
     private void CastAbility(string name, int num)
     {
+        GetComponent<UniqueEffects>().AbilityTrigger();
         switch (name)
         {
             case "Pulse Burst":
@@ -131,6 +132,7 @@ public class AbilityCasting : MonoBehaviour
                 CastSingularity();
                 break;
         }
+        GetComponent<UniqueEffects>().AfterAbilityTrigger();
     }
 
     private bool CanCastAbility1()
