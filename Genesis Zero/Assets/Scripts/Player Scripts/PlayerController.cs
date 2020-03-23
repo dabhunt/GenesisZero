@@ -37,7 +37,8 @@ public class PlayerController : MonoBehaviour
     public float airControlMult = 0.5f;
     public float airSpeedMult = 0.85f;
     public float slopeRayDistMult = 1.25f;
-
+    public float fallSpeedWhileRolling = 1.05f;
+    private float resetfallSpeed = 1.45f;
     [Header("Canvas")]
     public Canvas canvasRef;
 
@@ -96,11 +97,6 @@ public class PlayerController : MonoBehaviour
     private LayerMask defaultLayerMask;
     
 
-    private void Awake()
-    {
-        
-    }
-
     private void Start()
     {
         inputActions = GameInputManager.instance.GetInputActions();
@@ -110,6 +106,7 @@ public class PlayerController : MonoBehaviour
         inputActions.PlayerControls.Fire.performed += ctx => fireInput = ctx.ReadValue<float>();
         inputActions.PlayerControls.Interact.performed += ctx => interactInput = ctx.ReadValue<float>();
         defaultLayerMask = immoveables;
+        resetfallSpeed = fallSpeedMult;
         sound = FindObjectOfType<AudioManager>().GetComponent<PlayerSounds>();
         animator = GetComponent<Animator>();
         gun = GetComponent<Gun>();
@@ -369,17 +366,22 @@ public class PlayerController : MonoBehaviour
     */
     private void ApplyGravity()
     {
-        if (!isRolling)
+        float startVel = vertVel;
+        if (isGrounded)
+            return;
+        if (isRolling)
         {
-            float startVel = vertVel;
-            if (isGrounded)
-                return;
-            if (!isJumping)
-            {
-                vertVel -= gravity * fallSpeedMult * Time.fixedDeltaTime;
-                vertVel = Mathf.Clamp(vertVel, -terminalVel, 0);
-                transform.position += Vector3.up * (startVel * Time.fixedDeltaTime + (0.5f * fallSpeedMult * -gravity) * Mathf.Pow(Time.fixedDeltaTime, 2));
-            }
+            fallSpeedMult = fallSpeedWhileRolling;
+        }
+        else 
+        {
+            fallSpeedMult = resetfallSpeed;
+        }
+        if (!isJumping)
+        {
+            vertVel -= gravity * fallSpeedMult * Time.fixedDeltaTime;
+            vertVel = Mathf.Clamp(vertVel, -terminalVel, 0);
+            transform.position += Vector3.up * (startVel * Time.fixedDeltaTime + (0.5f * fallSpeedMult * -gravity) * Mathf.Pow(Time.fixedDeltaTime, 2));
         }
     }
 

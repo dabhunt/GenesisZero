@@ -120,13 +120,23 @@ public class Merchant : MonoBehaviour
         merchantUI.transform.Find("ShownItem").gameObject.GetComponent<Image>().sprite = icon;
         merchantUI.transform.Find("Cost").gameObject.GetComponent<Text>().text = cost;
         Button purchaseButton = merchantUI.transform.Find("Purchase").gameObject.GetComponent<Button>();
-        if (canistersNeeded > player.GetComponent<Player>().GetFullCapsuleAmount())
+        Player pScript = player.GetComponent<Player>();
+        int modAmount = pScript.GetSkillManager().GetModAmount();
+        int modLimit = pScript.GetSkillManager().GetModLimit();
+        //if player doesn't have enough essence to make purchase
+        if (canistersNeeded > pScript.GetFullCapsuleAmount())
         {
             purchaseButton.interactable = false;
             purchaseButton.GetComponentInChildren<Text>().text = "Not Enough Essence";
         }
-        else 
+        //if the player has selected a mod and doesn't have enough room in inventory to purchase it
+        else if (selectedShopItem.Type == 0 && (modAmount >= modLimit))
         {
+            purchaseButton.interactable = false;
+            purchaseButton.GetComponentInChildren<Text>().text = "Mod Limit Reached";
+        }
+        else
+        {//if none of the above are true, the player is allowed to purchase the item
             purchaseButton.interactable = true;
             purchaseButton.GetComponentInChildren<Text>().text = "Purchase Item";
         }
@@ -137,7 +147,8 @@ public class Merchant : MonoBehaviour
         GameObject[] pickups = GameObject.FindGameObjectsWithTag("Pickups");
         for (int i = 0; i < pickups.Length; i++)
         {
-            pickups[i].GetComponent<InteractPopup>().DestroyPopUp();
+            if (pickups[i].GetComponent<InteractPopup>() != null)
+                pickups[i].GetComponent<InteractPopup>().DestroyPopUp();
         }
     }
     private void InitializeUI()
@@ -182,7 +193,12 @@ public class Merchant : MonoBehaviour
                 child.transform.Find("Name").GetComponent<Text>().text = shopObjList[num].VisibleName;
                 child.transform.Find("Cost").GetComponent<Text>().text = "x" + shopObjList[num].Cost.ToString();
             }
-;           gameObjList.Add(child.gameObject);
+            if (child.gameObject.GetComponent<Button>())
+            {
+                child.gameObject.GetComponent<Button>().interactable = true;
+                child.transform.Find("PurchasedOverlay").gameObject.SetActive(false);
+            } 
+            gameObjList.Add(child.gameObject);
             num++;
         }
         merchantUI.gameObject.SetActive(true);

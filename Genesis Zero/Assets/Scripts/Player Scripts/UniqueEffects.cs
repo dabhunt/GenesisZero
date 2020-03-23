@@ -7,7 +7,7 @@ public class UniqueEffects : MonoBehaviour
 {
     //this script contains non bullet related unique effects of modifiers outside the data structure of stats
     //if this is 2, it checks twice per second
-    public float checksPerSecond = 2f;
+    public float checksPerSecond = 4f;
     //these are all done in multipliers, not in flat amounts
     // 1.1 = 10% increase, .9f = 10% reduction
     [Header("Adrenaline Rush")]
@@ -54,6 +54,8 @@ public class UniqueEffects : MonoBehaviour
         overheat.ModifyCoolRate(multiplier);
         ChemicalAccelerant();
         AmplifiedEssence();
+        ConcentratedEssence();
+        UnstableEssence();
     }
     private void Update()
     {
@@ -78,20 +80,6 @@ public class UniqueEffects : MonoBehaviour
             VFXManager.instance.PlayEffect("VFX_HeatExpulsion", hitbox.transform.position, 0, 2* multi);
             aManager.PlaySoundOneShot("SFX_ExplosionEnemy");
             overheat.SetHeat(0);
-        }
-    }
-    private void ChemicalAccelerant()
-    {
-        int stacks = player.GetSkillStack("Chemical Accelerant");
-        if (stacks > 0)
-        {
-            float heat = player.GetComponent<OverHeat>().GetHeat();
-            //Sets the players bonus attack speed equal to the max value proportionate to how much heat you have, up to the max of 100 heat
-            currentAttackSpeed = CA_MaxAttackSpeedPerStack * stacks * (heat / 100);
-            currentCritChance = CA_MaxCritChancePerStack * stacks * (heat / 100);
-            //gives the player an attackspeed boost that lasts until this function is called again (every .5 seconds)
-            player.GetAttackSpeed().AddRepeatingBonus(currentAttackSpeed, currentAttackSpeed, 1 / checksPerSecond, "ChemicalAccelerant_AS");
-            player.GetCritChance().AddRepeatingBonus(currentCritChance, currentCritChance,  1 / checksPerSecond, "ChemicalAccelerant_CC");
         }
     }
     public void WeakPointHit()
@@ -121,7 +109,37 @@ public class UniqueEffects : MonoBehaviour
 
         }
     }
-    public void AmplifiedEssence()
+    //Player deals bonus damage proportionate to how much essence they have, up to a cap of their base damage
+    // Player has less attack speed proportionate to how much essence they have, up to a cap of half as much base attack speed
+    private void ConcentratedEssence()
+    {
+        int stacks = player.GetSkillStack("Concentrated Essence");
+        if (stacks > 0)
+        {
+            float ratio = player.GetEssenceAmount() / player.GetMaxEssenceAmount();
+            //Sets the players bonus AP proportionate to how much AP they have, up to a cap of x3 bonus
+            float cur_ADbonus = (player.GetDamage().GetBaseValue() * 1f) * stacks * ratio;
+            float cur_ASdebuff = (player.GetAttackSpeed().GetBaseValue() * -.5f) * stacks * ratio;
+            player.GetDamage().AddRepeatingBonus(cur_ADbonus, cur_ADbonus, 1 / checksPerSecond, "ConcentratedEssence");
+            player.GetAttackSpeed().AddRepeatingBonus(cur_ASdebuff, 0, 1 / checksPerSecond, "ConcentratedEssenceDebuff");
+        }
+    }
+    //Player deals bonus damage proportionate to how much essence they have, up to a cap of their base damage x2 (x3 total including base AD)
+    // Player receives extra damage, proporitionate to how much essence they have, up to a cap of double damage received
+    private void UnstableEssence()
+    {
+        int stacks = player.GetSkillStack("Unstable Essence");
+        if (stacks > 0)
+        {
+            float ratio = player.GetEssenceAmount() / player.GetMaxEssenceAmount();
+            float cur_ADbonus = (player.GetDamage().GetBaseValue() * 2f) * stacks * ratio;
+            float cur_DmgReductionDebuff = (-1f) * stacks * ratio;
+            player.GetDamage().AddRepeatingBonus(cur_ADbonus, cur_ADbonus, 1 / checksPerSecond, "UnstableEssence");
+            player.GetDamageReduction().AddRepeatingBonus(cur_DmgReductionDebuff, 0, 1 / checksPerSecond, "UnstableEssenceDebuff");
+        }
+    }
+    //Player abilities deal bonus damage proportionate to how much essence they have, up to a cap of their base AP damage
+    private void AmplifiedEssence()
     {
         int stacks = player.GetSkillStack("Amplified Essence");
         if (stacks > 0)
@@ -129,14 +147,21 @@ public class UniqueEffects : MonoBehaviour
             float ratio = player.GetEssenceAmount() / player.GetMaxEssenceAmount();
             //Sets the players bonus AP proportionate to how much AP they have, up to a cap of x3 bonus
             float currentAPbonus = (player.GetAbilityPower().GetBaseValue() * 1f) * stacks * ratio;
-            float currentADdebuff = (player.GetDamage().GetBaseValue() * -.5f) * stacks * ratio;
-            player.GetDamage().AddRepeatingBonus(currentADdebuff,0, 1 / checksPerSecond, "AmplifiedEssenceDebuff");
-            
             player.GetAbilityPower().AddRepeatingBonus(currentAPbonus, currentAPbonus, 1/checksPerSecond, "AmplifiedEssence");
         }
-        else 
+    }
+    private void ChemicalAccelerant()
+    {
+        int stacks = player.GetSkillStack("Chemical Accelerant");
+        if (stacks > 0)
         {
-            player.GetAbilityPower().EndRepeatingBonus("AmplifiedEssence");
+            float heat = player.GetComponent<OverHeat>().GetHeat();
+            //Sets the players bonus attack speed equal to the max value proportionate to how much heat you have, up to the max of 100 heat
+            currentAttackSpeed = CA_MaxAttackSpeedPerStack * stacks * (heat / 100);
+            currentCritChance = CA_MaxCritChancePerStack * stacks * (heat / 100);
+            //gives the player an attackspeed boost that lasts until this function is called again (every .25 seconds)
+            player.GetAttackSpeed().AddRepeatingBonus(currentAttackSpeed, currentAttackSpeed, 1 / checksPerSecond, "ChemicalAccelerant_AS");
+            player.GetCritChance().AddRepeatingBonus(currentCritChance, currentCritChance, 1 / checksPerSecond, "ChemicalAccelerant_CC");
         }
     }
     public float SL_CalculateDmg()
