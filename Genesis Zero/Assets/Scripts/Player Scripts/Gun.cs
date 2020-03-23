@@ -34,7 +34,7 @@ public class Gun : MonoBehaviour
     //only reduces it's own, not others by .1
     public float reductionPerStack = .1f;
     [Header("Atom Splitter (Multishot)")]
-    public float AS_heatMulti = .6f;
+    public float AS_heatMulti = .7f;
 
 
     [Header("Crosshair Spread")]
@@ -95,13 +95,13 @@ public class Gun : MonoBehaviour
         //if you have just atom splitter, it will spawn 1 bullet above and below your gun based on minSpread value
         if (ac.IsAbilityActive("Atom Splitter"))
         {
-            float heatFromExtraBullets = 0; 
+            float ExtraBullets = 0; 
             for (int s = 0; s < stacks; s++)
             {
                 for (int i = 0; i < 2; i++)
                 {
                     //if it's divisible by 2, then reverse the value of the min offset to go below the gun instead of above
-                    heatFromExtraBullets++;
+                    ExtraBullets++;
                     //multiply by -1 to alternate placing extra bullets on top vs underneath cursor
                     if ((i + 1) % 2 == 0)
                         spreadAngle *= -1;
@@ -117,7 +117,10 @@ public class Gun : MonoBehaviour
                     hit.InitializeHitbox(player.GetDamage().GetValue(), player, inheritCrit);
                 }
             }
-            overheat.ModifyHeatPerShot(heatFromExtraBullets*AS_heatMulti);
+            //adds extra heat for each of extra bullets fired
+            float heatPerExtraBullets = ExtraBullets * AS_heatMulti * overheat.GetHeatAddedPerShot().GetValue();
+            overheat.Increment(heatPerExtraBullets);
+            overheat.GetDelayBeforeCooling().AddRepeatingBonus(.25f, .25f, .5f, "ExtraBulletCoolDelay");
         }
     }
     private void FixedUpdate() 
