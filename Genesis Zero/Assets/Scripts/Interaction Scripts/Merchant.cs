@@ -151,7 +151,7 @@ public class Merchant : MonoBehaviour
                 pickups[i].GetComponent<InteractPopup>().DestroyPopUp();
         }
     }
-    private void InitializeUI()
+    public void InitializeUI()
     {
         firstInteraction = false;
         //Destroy the "Press F to interact popup"
@@ -261,5 +261,9 @@ public class Merchant : MonoBehaviour
         StateManager.instance.UnpauseGame();
         itemSelectNum = -1;
         GameInputManager.instance.SwitchControlMap("PlayerControls");
+    }
+    public bool GetWindowOpen()
+    {
+        return merchantUI.gameObject.activeSelf;
     }
 }

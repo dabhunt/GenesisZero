@@ -10,10 +10,10 @@ public class OverHeat : MonoBehaviour
     public float baseHeatAddedPerShot = 3.3f;
     public float baseCoolRatePerSecond = 38f;
     public float baseDelayBeforeCooling = .5f;
-
-    [Header("probably don't change these")]
-    public float ticksPerSecond = 20f;
-	public float maxHeat = 100f;
+    [Header("Broken Cooling Cell")]
+    public float BC_minHeat = 20;
+    private float ticksPerSecond = 20f;
+	private float maxHeat = 100f;
     //private floats
     private List<Statistic> heatStatistics;
 	private Statistic bloomMultiplier;
@@ -29,6 +29,15 @@ public class OverHeat : MonoBehaviour
         InitializeOverheatStats();
         InvokeRepeating("Timer", 1/ticksPerSecond , 1/ticksPerSecond); 
 	    coolRatePerSecond = baseCoolRatePerSecond;
+    }
+    private void LateUpdate()
+    {
+        float stacks = GetComponent<Player>().GetSkillStack("Broken Cooling Cell");
+        float minHeat = stacks * BC_minHeat;
+        if (heat < minHeat)
+        {
+            heat = minHeat;
+        }
     }
     public void InitializeOverheatStats()
     {

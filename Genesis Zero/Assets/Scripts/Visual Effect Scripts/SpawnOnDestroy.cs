@@ -82,8 +82,6 @@ public class SpawnOnDestroy : MonoBehaviour
                     SkillManager sk = player.GetSkillManager();
                     SkillObject mod = sk.GetRandomModByChance();
                     GameObject modObj = sk.SpawnMod(transform.position, mod.name);
-                    //change the color of the mod to the color based on rarity
-                    VFXManager.instance.ChangeColor(modObj, sk.GetColor(mod));
                 }
              
             }

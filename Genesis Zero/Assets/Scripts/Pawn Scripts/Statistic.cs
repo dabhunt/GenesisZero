@@ -256,7 +256,7 @@ public class Statistic
         }
     }
 
-    private void CheckBonuses()
+    public void CheckBonuses()
     {
         float b = 0;
         float mb = 0;

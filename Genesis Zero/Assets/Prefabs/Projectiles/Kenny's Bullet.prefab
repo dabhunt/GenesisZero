@@ -16,7 +16,7 @@ GameObject:
   - component: {fileID: 7323713832238595723}
   - component: {fileID: 7237362000396769751}
   - component: {fileID: 4204024712769973434}
-  m_Layer: 0
+  m_Layer: 12
   m_Name: Kenny's Bullet
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -34,7 +34,7 @@ Transform:
   m_LocalPosition: {x: 0, y: 0, z: 0}
   m_LocalScale: {x: 0.16, y: 0.16, z: 0.16}
   m_Children:
-  - {fileID: 9129500003363780806}
+  - {fileID: 7959513571446249318}
   - {fileID: 3500592279723788074}
   m_Father: {fileID: 0}
   m_RootOrder: 0
@@ -138,9 +138,13 @@ MonoBehaviour:
   MaxHits: 1
   Knockbackforce: 25
   DirectionalKnockback: 1
+  StunTime: 0
+  LifeTime: 99
   Burn: {x: 0, y: 0}
   Collider: {fileID: 7237362000396769751}
   Source: {fileID: 0}
+  hitEffectVFX: VFX_BulletSparks
+  VFX_ScaleReduction: 15
 --- !u!135 &7237362000396769751
 SphereCollider:
   m_ObjectHideFlags: 0
@@ -176,7 +180,6 @@ MonoBehaviour:
   minDropVelocity: 0
   maxDropVelocity: 0
   EssencePrefab: {fileID: 0}
-  ModifierPrefab: {fileID: 0}
 --- !u!1 &7504852634243103965
 GameObject:
   m_ObjectHideFlags: 0
@@ -187,7 +190,7 @@ GameObject:
   m_Component:
   - component: {fileID: 3500592279723788074}
   - component: {fileID: 8407928777640946929}
-  m_Layer: 0
+  m_Layer: 12
   m_Name: Trail
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -326,6 +329,21 @@ PrefabInstance:
       propertyPath: m_Name
       value: vfx_Bullet
       objectReference: {fileID: 0}
+    - target: {fileID: 1730577980857766470, guid: a713eb8a398a53240a65604f5eddb06f,
+        type: 3}
+      propertyPath: m_Layer
+      value: 12
+      objectReference: {fileID: 0}
+    - target: {fileID: 3804900522277660329, guid: a713eb8a398a53240a65604f5eddb06f,
+        type: 3}
+      propertyPath: m_Layer
+      value: 12
+      objectReference: {fileID: 0}
+    - target: {fileID: 4000203397524795105, guid: a713eb8a398a53240a65604f5eddb06f,
+        type: 3}
+      propertyPath: m_Layer
+      value: 12
+      objectReference: {fileID: 0}
     - target: {fileID: 4446824634872678086, guid: a713eb8a398a53240a65604f5eddb06f,
         type: 3}
       propertyPath: m_LocalPosition.x
@@ -381,11 +399,16 @@ PrefabInstance:
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0
       objectReference: {fileID: 0}
+    - target: {fileID: 7760466971208222222, guid: a713eb8a398a53240a65604f5eddb06f,
+        type: 3}
+      propertyPath: m_Layer
+      value: 12
+      objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: a713eb8a398a53240a65604f5eddb06f, type: 3}
---- !u!4 &9129500003363780806 stripped
+--- !u!4 &7959513571446249318 stripped
 Transform:
-  m_CorrespondingSourceObject: {fileID: 4446824634872678086, guid: a713eb8a398a53240a65604f5eddb06f,
+  m_CorrespondingSourceObject: {fileID: 3274657888610707814, guid: a713eb8a398a53240a65604f5eddb06f,
     type: 3}
   m_PrefabInstance: {fileID: 4829042510462860800}
   m_PrefabAsset: {fileID: 0}
