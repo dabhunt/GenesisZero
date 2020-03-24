@@ -59,6 +59,12 @@ public class StateManager : MonoBehaviour
         {
             player.SetEssence(player.GetMaxEssenceAmount());
         }
+        if (Input.GetKey(KeyCode.PageUp))
+        {
+            Merchant closestMerchant = GetComponent<InteractInterface>().ClosestInteractable().GetComponent<Merchant>();
+            if (closestMerchant != null && closestMerchant.GetWindowOpen())
+                GetComponent<InteractInterface>().ClosestInteractable().GetComponent<Merchant>().InitializeUI();
+        }
         if (Input.GetKey(KeyCode.Backspace)) 
         {
             restart.RestartScene();
@@ -76,7 +82,7 @@ public class StateManager : MonoBehaviour
     {
         //Pauses Game
         isPaused = true;
-        Time.timeScale = 0;
+        Time.timeScale = 0.02f;
     }
 
     //This unpauses game

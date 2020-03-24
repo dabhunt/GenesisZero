@@ -38,6 +38,7 @@ public class PlayerController : MonoBehaviour
     public float airSpeedMult = 0.85f;
     public float slopeRayDistMult = 1.25f;
     public float fallSpeedWhileRolling = 1.05f;
+    public float fallSpeedWhileDashing = .9f;
     private float resetfallSpeed = 1.45f;
     [Header("Canvas")]
     public Canvas canvasRef;
@@ -88,6 +89,7 @@ public class PlayerController : MonoBehaviour
     private bool isGrounded;
     private bool isJumping;
     private bool isRolling;
+    private bool isDashing;
     private bool isFacingRight = true;
     private bool isAimingRight;
 
@@ -147,6 +149,8 @@ public class PlayerController : MonoBehaviour
      */
     private void Move()
     {
+        if (StateManager.instance.IsPaused())
+            return;
         float multiplier = isGrounded ? 1 : airControlMult;
         float startVel = Mathf.Abs(currentSpeed);
         Vector3 distXhair = worldXhair.transform.position - transform.position;
@@ -273,7 +277,7 @@ public class PlayerController : MonoBehaviour
         }
     }
 
-    /* This function is used to update the jump cylce and its behavior
+    /* This function is used to update the jump cycle and its behavior
      */
     private void UpdateJump()
     {
@@ -370,10 +374,10 @@ public class PlayerController : MonoBehaviour
         if (isGrounded)
             return;
         if (isRolling)
-        {
             fallSpeedMult = fallSpeedWhileRolling;
-        }
-        else 
+        if (isDashing)
+            fallSpeedMult = fallSpeedWhileDashing;
+        if (!isDashing && !isRolling)
         {
             fallSpeedMult = resetfallSpeed;
         }
@@ -637,7 +641,23 @@ public class PlayerController : MonoBehaviour
     {
         vertVel = vel;
     }
-
+    public void Dash(float duration)
+    {
+        isDashing = true;
+        //if fall speed unspecified, default to the roll fall speed
+        fallSpeedWhileDashing = fallSpeedWhileRolling;
+        Invoke("StopDash", duration);
+    }
+    public void Dash(float duration, float fallSpeed)
+    {
+        isDashing = true;
+        fallSpeedWhileDashing = fallSpeed;
+        Invoke("StopDash", duration);
+    }
+    public void StopDash()
+    {
+        isDashing = false;
+    }
     private void LogDebug()
     {
         //Debug.Log(movementInput);

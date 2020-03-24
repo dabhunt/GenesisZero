@@ -55,7 +55,9 @@ public class UniqueEffects : MonoBehaviour
     {
         player = GetComponent<Player>();
         overheat = GetComponent<OverHeat>();
-        InvokeRepeating("CheckUniques",0, 1 / checksPerSecond-(Time.deltaTime * 2));
+        float repeatRate = 1 / checksPerSecond - (Time.deltaTime * 2);
+        if (repeatRate > 0.01f)
+            InvokeRepeating("CheckUniques",0, repeatRate);
         aManager = FindObjectOfType<AudioManager>();
     }
     public void CheckUniques() {
