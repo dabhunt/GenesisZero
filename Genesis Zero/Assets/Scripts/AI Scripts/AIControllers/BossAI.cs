@@ -9,7 +9,7 @@ using UnityEngine.UI;
  */
 public class BossAI : AIController
 {
-    public enum State { Headbutt, Firebreath, Pulse, Wild, MovingAway, MovingCloser, Centering, Cooling, Repositioning }
+    public enum State { Headbutt, Firebreath, Pulse, Wild, MovingAway, MovingCloser, Centering, Cooling, Repositioning, Setting }
     protected State bossstate = State.MovingAway; // Current behavior state
     private bool secondphase;
     private bool animating;
@@ -20,6 +20,7 @@ public class BossAI : AIController
     private Vector3 lookDir = Vector3.up;
     private Vector3 rotDir = Vector3.forward;
     private Vector3 lookposition;
+    private Vector3 LastPosition;
 
     [Tooltip("Points the boss uses to determine how to do it's attacks")]
     public List<Transform> Waypoints;
@@ -31,13 +32,19 @@ public class BossAI : AIController
     public float TriggerRadius;
     public float TimeBeforeFight;
     private bool initiated;
+    private int Heat;
 
     public GameObject Healthbar;
     private GameObject healthbar;
+    private float HealthLoss;
+    private float TotalHealth;
+    private float LastHealth;   //The amount of health the boss had before taking damage;
+
     protected void Awake()
     {
         zdepth = transform.position.z;
         lookposition = transform.position;
+        LastPosition = transform.position;
     }
 
     new protected void Start()
@@ -45,6 +52,8 @@ public class BossAI : AIController
         base.Start();
         looktarget = Target;
         movetarget = Target;
+        TotalHealth = GetHealth().GetValue();
+        LastHealth = TotalHealth;
     }
 
     new protected void Update()
@@ -123,12 +132,13 @@ public class BossAI : AIController
             else if (bossstate == State.Repositioning)
             {
                 GetComponent<SphereCollider>().isTrigger = true;
-                transform.position = Vector2.MoveTowards(transform.position, movetarget.position, speed * (Vector2.Distance(transform.position, movetarget.position) / 20) * Time.fixedDeltaTime);
+                transform.position = Vector2.MoveTowards(transform.position, movetarget.position, speed * (Vector2.Distance(transform.position, movetarget.position) / 10) * Time.fixedDeltaTime);
+                if (Vector2.Distance(movetarget.position, transform.position) < 2) { chargetime = Time.fixedDeltaTime / 2; }
             }
             else if (bossstate == State.Centering)
             {
                 GetComponent<SphereCollider>().isTrigger = true;
-                transform.position = Vector2.MoveTowards(transform.position, movetarget.position, speed * (Vector2.Distance(transform.position, movetarget.position) / 15) * Time.fixedDeltaTime);
+                transform.position = Vector2.MoveTowards(transform.position, movetarget.position, speed * (Vector2.Distance(transform.position, movetarget.position) / 5) * Time.fixedDeltaTime);
             }
             else if (bossstate == State.Cooling)
             {
@@ -136,7 +146,9 @@ public class BossAI : AIController
                 transform.position = Vector2.MoveTowards(transform.position, movetarget.position, speed * (Vector2.Distance(transform.position, movetarget.position) / 10) * Time.fixedDeltaTime);
             }
 
-            transform.position = new Vector3(transform.position.x, transform.position.y, zdepth);
+            Vector3 finalposition = Vector3.Lerp(LastPosition, new Vector3(transform.position.x, transform.position.y, zdepth), .3f);
+            LastPosition = finalposition;
+            transform.position = finalposition;
         }
 
 
@@ -153,80 +165,116 @@ public class BossAI : AIController
 
     public void CheckActions()
     {
+        int action = 0;     // By Default;
+
+        if (LastHealth != GetHealth().GetValue())
+        {
+            HealthLoss += LastHealth - GetHealth().GetValue();
+            LastHealth = GetHealth().GetValue();
+        }
+
+        if (HealthLoss >= 500)
+        {
+            action = 1;
+            bossstate = State.Setting;
+            chargetime = Time.fixedDeltaTime / 2;
+            HealthLoss = 0;
+            //Debug.Log("Center");
+        }
+        else if (Heat >= 5)
+        {
+            action = 2;
+            bossstate = State.Setting;
+            chargetime = Time.fixedDeltaTime / 2;
+            Heat = 0;
+            // Debug.Log("Cooling");
+        }
+
         if (chargetime > 0)
         {
             chargetime -= Time.fixedDeltaTime;
 
             if (chargetime <= 0)
             {
-                // Do an action based on a set up state.
-                if (bossstate == State.Repositioning)
-                {
-                    movetarget = Target;    // Reset movetarget back to default target (player)
-
-                    float attack = (int)Random.Range(0, 2);
-                    if (attack == 0)
-                    {
-                        SetBossstate(State.Headbutt, 3);
-                    }
-                    else
-                    {
-                        SetBossstate(State.Firebreath, 3);
-                    }
-
-                    GetComponent<SphereCollider>().isTrigger = false;
-                    return;
-                }
-                else if (bossstate == State.Centering)
-                {
-                    movetarget = Target;    // Reset movetarget back to default target (player)
-
-                    GetComponent<SphereCollider>().isTrigger = false;
-                    SetBossstate(State.Pulse, 1);
-                    return;
-                }
-                else if (bossstate == State.Cooling)
-                {
-                    movetarget = Target;    // Reset movetarget back to default target (player)
-
-                    float move = (int)Random.Range(0, 2);
-                    if (move == 0)
-                    {
-                        SetBossstate(State.MovingAway, 2);
-                    }
-                    else
-                    {
-                        SetBossstate(State.MovingCloser, 2);
-                    }
-                    return;
-                }
-
-                // Do an action after a non-setup action.
-                float action = (int)Random.Range(0, 3);
-                switch (action)
-                {
-                    case 0:
-                        SetBossstate(State.Repositioning, 2);
-                        movetarget = GetClosestWaypoint();
-                        break;
-                    case 1:
-                        SetBossstate(State.Centering, 2);
-                        movetarget = Center;
-                        break;
-                    case 2:
-                        SetBossstate(State.Cooling, 3);
-                        //CockBack(3, transform.position + new Vector3(0, -3, 0), 2);
-                        movetarget = transform;
-                        break;
-                    default:
-                        SetBossstate(bossstate = State.Repositioning, 3);
-                        break;
-                }
+                ChooseAction(action, false);
             }
         }
-        else
+
+    }
+
+    public void ChooseAction(int action, bool bypass)
+    {
+        // Do an action based on a set up state.
+
+        if (bossstate == State.Repositioning)
         {
-            chargetime = 1; // In case something happens
+            movetarget = Target;    // Reset movetarget back to default target (player)
+
+            float attack = (int)Random.Range(0, 3);
+            if (attack == 0)
+            {
+                SetBossstate(State.Headbutt, 3);
+            }
+            else if (attack == 1)
+            {
+                SetBossstate(State.Firebreath, 3);
+            }
+            else
+            {
+                SetBossstate(State.Pulse, 2);
+            }
+
+
+            ++Heat;
+            GetComponent<SphereCollider>().isTrigger = false;
+            return;
+        }
+        else if (bossstate == State.Centering)
+        {
+            movetarget = Target;    // Reset movetarget back to default target (player)
+
+            GetComponent<SphereCollider>().isTrigger = false;
+            SetBossstate(State.Pulse, 1);
+            return;
+        }
+        else if (bossstate == State.Cooling)
+        {
+            movetarget = Target;    // Reset movetarget back to default target (player)
+
+            float move = (int)Random.Range(0, 2);
+            if (move == 0)
+            {
+                SetBossstate(State.MovingAway, 3);
+            }
+            else
+            {
+                SetBossstate(State.MovingCloser, 3);
+            }
+            return;
+        }
+
+
+        // Do an action after a non-setup action.
+        //float action = (int)Random.Range(0, 3);
+        switch (action)
+        {
+            case 0:
+                //Debug.Log("Repos");
+                SetBossstate(State.Repositioning, 2);
+                movetarget = GetClosestWaypoint();
+                break;
+            case 1:
+                SetBossstate(State.Centering, 1);
+                movetarget = Center;
+                break;
+            case 2:
+                SetBossstate(State.Cooling, 1);
+                movetarget = transform;
+                break;
+            default:
+                SetBossstate(State.Repositioning, 2);
+                movetarget = GetClosestWaypoint();
+                break;
         }
     }
 
