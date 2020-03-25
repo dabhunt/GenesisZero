@@ -9,7 +9,7 @@ public class SkillPickup : MonoBehaviour
     private bool added;
     private bool isMod;
     private bool pressed;
-    private float pickupDist = 4f;
+    private float pickupDist = 2.5f;
     private float speedvar = 4f;
     private GameObject target;
     private Player player;
@@ -52,10 +52,6 @@ public class SkillPickup : MonoBehaviour
             if (Vector3.Distance(player.transform.position, transform.position) <= pickupDist )
             {
                 pressed = true;
-            }
-            else
-            {
-                GetComponent<InteractPopup>().DestroyPopUp();
             }
         }
         //if the player has no more room for new modifiers, tell them

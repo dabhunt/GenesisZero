@@ -52,12 +52,18 @@ public class StateManager : MonoBehaviour
         //temporary input usage for demo tomorrow
         if (Input.GetKey(KeyCode.Backslash))
         {
-            string skillStr = player.GetSkillManager().GetRandomModByChance().name;
+            string skillStr = player.GetSkillManager().GetRandomMod().name;
             player.GetSkillManager().SpawnMod(new Vector3(player.transform.position.x+2, player.transform.position.y+5, 0), skillStr);
         }
         if (Input.GetKey(KeyCode.Home))
         {
             player.SetEssence(player.GetMaxEssenceAmount());
+        }
+        if (Input.GetKey(KeyCode.PageUp))
+        {
+            Merchant closestMerchant = GetComponent<InteractInterface>().ClosestInteractable().GetComponent<Merchant>();
+            if (closestMerchant != null && closestMerchant.GetWindowOpen())
+                GetComponent<InteractInterface>().ClosestInteractable().GetComponent<Merchant>().InitializeUI();
         }
         if (Input.GetKey(KeyCode.Backspace)) 
         {
@@ -76,7 +82,7 @@ public class StateManager : MonoBehaviour
     {
         //Pauses Game
         isPaused = true;
-        Time.timeScale = 0;
+        Time.timeScale = 0.02f;
     }
 
     //This unpauses game

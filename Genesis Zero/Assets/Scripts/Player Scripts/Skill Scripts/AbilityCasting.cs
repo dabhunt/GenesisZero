@@ -24,6 +24,7 @@ public class AbilityCasting : MonoBehaviour
     [Header("FireDash")]
     public LayerMask ignoreEnemiesLayerMask;
     public float FD_duration = .5f;
+    public float FD_gravityReplacement = .9f;
     private float AbilityCasttime1;
     private float AbilityCooldown1;
     private float TotalAbilityCasttime1;
@@ -86,6 +87,7 @@ public class AbilityCasting : MonoBehaviour
 
     private void CastAbility(string name, int num)
     {
+        GetComponent<UniqueEffects>().AbilityTrigger();
         switch (name)
         {
             case "Pulse Burst":
@@ -131,6 +133,7 @@ public class AbilityCasting : MonoBehaviour
                 CastSingularity();
                 break;
         }
+        GetComponent<UniqueEffects>().AfterAbilityTrigger();
     }
 
     private bool CanCastAbility1()
@@ -224,7 +227,6 @@ public class AbilityCasting : MonoBehaviour
 
     public void ReduceCooldowns(float seconds)
     {
-        print("reducing cooldowns by " + seconds);
         AbilityCooldown1 -= seconds;
         AbilityCooldown2 -= seconds;
     }
@@ -269,8 +271,9 @@ public class AbilityCasting : MonoBehaviour
         GameObject hitbox = SpawnGameObject("BurstChargeHitbox", transform.position, Quaternion.identity);
         hitbox.GetComponent<Hitbox>().InitializeHitbox(GetComponent<Player>().GetAbilityPower().GetValue(), GetComponent<Player>());
         hitbox.transform.parent = transform;
-        player.SetInvunerable(.5f);
-        hitbox.GetComponent<Hitbox>().SetLifeTime(.5f);
+        player.SetInvunerable(.6f);
+        player.GetComponent<PlayerController>().Dash(.6f,FD_gravityReplacement);
+        hitbox.GetComponent<Hitbox>().SetLifeTime(.6f);
     }
     private void CastFireDash()
     {
@@ -281,6 +284,7 @@ public class AbilityCasting : MonoBehaviour
         hitbox.GetComponent<Hitbox>().InitializeHitbox(GetComponent<Player>().GetAbilityPower().GetValue(), GetComponent<Player>());
         hitbox.transform.parent = transform;
         player.SetInvunerable(FD_duration);
+        player.GetComponent<PlayerController>().Dash(FD_duration+.1f,FD_gravityReplacement);
         hitbox.GetComponent<Hitbox>().SetLifeTime(FD_duration);
     }
     private void CastOverdrive(int num)
