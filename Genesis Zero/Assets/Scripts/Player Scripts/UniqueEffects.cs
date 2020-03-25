@@ -7,7 +7,7 @@ public class UniqueEffects : MonoBehaviour
 {
     //this script contains non bullet related unique effects of modifiers outside the data structure of stats
     //if this is 2, it checks twice per second
-    public float checksPerSecond = 2f;
+    public float checksPerSecond = 4f;
     //these are all done in multipliers, not in flat amounts
     // 1.1 = 10% increase, .9f = 10% reduction
     [Header("Adrenaline Rush")]
@@ -15,6 +15,9 @@ public class UniqueEffects : MonoBehaviour
     public float coolReductionSingleStack = 1;
     [Header("Better Coolant")]
     public float coolRatePerStack = 1.1f;
+    [Header("Boiling Point")]
+    public float BP_MaxExtraHeat = .35f;
+    public float BP_MaxExtraDMG = .35f;
     [Header("Heat Expulsion")]
     public float HE_Damage = 20;
     public float HE_TotalBurnDMG = 21;
@@ -24,8 +27,16 @@ public class UniqueEffects : MonoBehaviour
     public float CA_MaxCritChancePerStack = .25f;
     [Header("Amplified Essence")]
     public float AE_MaxAPMulti = 3f;
+    [Header("Superheated Essence")]
+    public float SE_MaxAttackSpeed = 1f;
+    public float SE_MaxExtraBloom = .35f;
+    [Header("Thermite Core")]
+    public float TC_MaxAttackSpeed = 1f;
+    public float TC_MaxExtraBloom = .35f;
+    [Header("Heat Sink")]
+    public float HS_APBonus = 1.5f;
     [Header("Cooling Cell")]
-    public float heatReductionPerStack = .9f;
+    public float heatReductionPerStack = 1.1f;
     [Header("Spartan Laser")]
     public float SL_cooldown = 4f;
     public float SL_bonusPerKill = 10f;
@@ -44,20 +55,27 @@ public class UniqueEffects : MonoBehaviour
     {
         player = GetComponent<Player>();
         overheat = GetComponent<OverHeat>();
-        InvokeRepeating("CheckUniques",0, 1 / checksPerSecond-(Time.deltaTime * 2));
+        float repeatRate = 1 / checksPerSecond - (Time.deltaTime * 2);
+        if (repeatRate > 0.01f)
+            InvokeRepeating("CheckUniques",0, repeatRate);
         aManager = FindObjectOfType<AudioManager>();
     }
     public void CheckUniques() {
-        float multiplier = Mathf.Pow(heatReductionPerStack, player.GetSkillStack("Better Coolant"));
-        overheat.ModifyHeatPerShot(multiplier);
-        multiplier = Mathf.Pow(coolRatePerStack, player.GetSkillStack("Cooling Cell"));
-        overheat.ModifyCoolRate(multiplier);
+        //Generic Triggers based on repeated checks
+        HeatReduction();
+        HalfHeatTrigger();
+        //specific Mod effects
         ChemicalAccelerant();
         AmplifiedEssence();
+        ConcentratedEssence();
+        UnstableEssence();
+        SuperHeatedEssence();
+        ThermiteCore();
     }
     private void Update()
     {
         StackDecayTimer();
+
     }
     public void OverHeatTrigger()
     {
@@ -80,32 +98,39 @@ public class UniqueEffects : MonoBehaviour
             overheat.SetHeat(0);
         }
     }
-    private void ChemicalAccelerant()
+    //while above 50% heat, the player does this
+    public void HalfHeatTrigger()
     {
-        int stacks = player.GetSkillStack("Chemical Accelerant");
-        if (stacks > 0)
+        float stacks = player.GetSkillStack("Heat Sink");
+        float heat = overheat.GetHeat();
+        if (stacks > 0 && heat >= 50)
         {
-            float heat = player.GetComponent<OverHeat>().GetHeat();
-            //Sets the players bonus attack speed equal to the max value proportionate to how much heat you have, up to the max of 100 heat
-            currentAttackSpeed = CA_MaxAttackSpeedPerStack * stacks * (heat / 100);
-            currentCritChance = CA_MaxCritChancePerStack * stacks * (heat / 100);
-            //gives the player an attackspeed boost that lasts until this function is called again (every .5 seconds)
-            player.GetAttackSpeed().AddRepeatingBonus(currentAttackSpeed, currentAttackSpeed, 1 / checksPerSecond, "ChemicalAccelerant_AS");
-            player.GetCritChance().AddRepeatingBonus(currentCritChance, currentCritChance,  1 / checksPerSecond, "ChemicalAccelerant_CC");
+            float bonusAP = player.GetAbilityPower().GetBaseValue() * HS_APBonus * (heat / 100);
+            player.GetAbilityPower().AddRepeatingBonus(bonusAP,bonusAP, .8f,"HeatSink_AP");
+            player.GetAbilityPower().CheckBonuses();
+        }
+    }
+
+    public void AbilityTrigger()
+    {
+
+    }
+    //this is done after the ability so that heat vent shield isn't useless
+    public void AfterAbilityTrigger()
+    {
+        float stacks = player.GetSkillStack("Heat Sink");
+        float heat = overheat.GetHeat();
+        if (stacks > 0 && heat >= 50)
+        {
+            player.GetAbilityPower().EndRepeatingBonus("HeatSink_AP");
+            player.GetAbilityPower().CheckBonuses();
+            overheat.SetHeat(0);
         }
     }
     public void WeakPointHit()
     {
         float stacks = player.GetSkillManager().GetSkillStack("Adrenaline Rush");
-        if (stacks > 0)
-        {
-            //float seconds = 0;
-            //if (stacks == 1) //1 second if 1 stack
-            //    seconds = coolReductionSingleStack;
-            //else
-            //    seconds = Math.Abs(coolReductionSingleStack-coolReductionPerStack) + coolReductionPerStack * (stacks-1); // increase by .5 seconds for additional stacks past 1
-            player.GetComponent<AbilityCasting>().ReduceCooldowns(stacks);
-        }
+        player.GetComponent<AbilityCasting>().ReduceCooldowns(stacks);
         //other Modifier effects can be put inside this function
     }
     void StackDecayTimer()
@@ -121,7 +146,77 @@ public class UniqueEffects : MonoBehaviour
 
         }
     }
-    public void AmplifiedEssence()
+    private void HeatReduction()
+    {
+        float reduction = 1 - (Mathf.Pow(heatReductionPerStack, player.GetSkillStack("Better Coolant")));
+        float lessHeat = overheat.GetHeatAddedPerShot().GetBaseValue() * -reduction;
+        overheat.GetHeatAddedPerShot().AddRepeatingBonus(lessHeat, 0, 1 / checksPerSecond, "BetterCoolant");
+        reduction = 1 - Mathf.Pow(coolRatePerStack, player.GetSkillStack("Cooling Cell"));
+        float lessDelay = overheat.GetDelayBeforeCooling().GetBaseValue() * -reduction;
+        overheat.GetDelayBeforeCooling().AddRepeatingBonus(lessDelay, 0, 1 / checksPerSecond, "CoolingCell");
+    }
+    //Player deals bonus damage proportionate to how much essence they have, up to a cap of their base damage
+    // Player has less attack speed proportionate to how much essence they have, up to a cap of half as much base attack speed
+    private void ConcentratedEssence()
+    {
+        int stacks = player.GetSkillStack("Concentrated Essence");
+        if (stacks > 0)
+        {
+            float ratio = player.GetEssenceAmount() / player.GetMaxEssenceAmount();
+            //Sets the players bonus AP proportionate to how much AP they have, up to a cap of x3 bonus
+            float cur_ADbonus = (player.GetDamage().GetBaseValue() * 1f) * stacks * ratio;
+            float cur_ASdebuff = (player.GetAttackSpeed().GetBaseValue() * -.5f) * stacks * ratio;
+            player.GetDamage().AddRepeatingBonus(cur_ADbonus, cur_ADbonus, 1 / checksPerSecond, "ConcentratedEssence_DMG");
+            player.GetAttackSpeed().AddRepeatingBonus(cur_ASdebuff, 0, 1 / checksPerSecond, "ConcentratedEssence_AS");
+        }
+    }
+    //Player gains bonus attack speed proportional to how much heat AND essence the player has
+    private void SuperHeatedEssence()
+    {
+        int stacks = player.GetSkillStack("Superheated Essence");
+        if (stacks > 0)
+        {
+            float ratio = player.GetEssenceAmount() / player.GetMaxEssenceAmount();
+            float heat = player.GetComponent<OverHeat>().GetHeat();
+            //Sets the players bonus attack speed equal to the max value proportionate to how much heat you have, up to the max of 100 heat
+            float multiplier = ratio * stacks * (heat / 100);
+            float cur_ASbonus = (player.GetAttackSpeed().GetBaseValue() * SE_MaxAttackSpeed) * multiplier;
+            float cur_bloomDebuff = player.GetOverHeat().GetBloomMultiplier().GetBaseValue() * SE_MaxExtraBloom * multiplier;
+            player.GetAttackSpeed().AddRepeatingBonus(cur_ASbonus, cur_ASbonus, 1 / checksPerSecond, "SuperheatedEssence_AS");
+            player.GetOverHeat().GetBloomMultiplier().AddRepeatingBonus(cur_bloomDebuff, cur_bloomDebuff, 1 / checksPerSecond, "SuperheatedEssence_Bloom");
+        }
+    }
+    //Player gains bonus attack speed and loses accuracy proportional to how much heat the player has
+    private void ThermiteCore()
+    {
+        int stacks = player.GetSkillStack("Thermite Core");
+        if (stacks > 0)
+        {
+            float heat = player.GetComponent<OverHeat>().GetHeat();
+            //Sets the players bonus attack speed equal to the max value proportionate to how much heat you have, up to the max of 100 heat
+            float multiplier = stacks * (heat / 100);
+            float cur_ASbonus = (player.GetAttackSpeed().GetBaseValue() * TC_MaxAttackSpeed) * multiplier;
+            float cur_bloomDebuff = player.GetOverHeat().GetBloomMultiplier().GetBaseValue() * TC_MaxExtraBloom * multiplier;
+            player.GetAttackSpeed().AddRepeatingBonus(cur_ASbonus, cur_ASbonus, 1 / checksPerSecond, "ThermiteCore_AS");
+            player.GetOverHeat().GetBloomMultiplier().AddRepeatingBonus(cur_bloomDebuff, cur_bloomDebuff, 1 / checksPerSecond, "ThermiteCore_Bloom");
+        }
+    }
+    //Player deals bonus damage proportionate to how much essence they have, up to a cap of their base damage x2 (x3 total including base AD)
+    // Player receives extra damage, proporitionate to how much essence they have, up to a cap of double damage received
+    private void UnstableEssence()
+    {
+        int stacks = player.GetSkillStack("Unstable Essence");
+        if (stacks > 0)
+        {
+            float ratio = player.GetEssenceAmount() / player.GetMaxEssenceAmount();
+            float cur_ADbonus = (player.GetDamage().GetBaseValue() * 2f) * stacks * ratio;
+            float cur_DmgReductionDebuff = (-1f) * stacks * ratio;
+            player.GetDamage().AddRepeatingBonus(cur_ADbonus, cur_ADbonus, 1 / checksPerSecond, "UnstableEssence_DMG");
+            player.GetDamageReduction().AddRepeatingBonus(cur_DmgReductionDebuff, 0, 1 / checksPerSecond, "UnstableEssence_Debuff");
+        }
+    }
+    //Player abilities deal bonus damage proportionate to how much essence they have, up to a cap of their base AP damage
+    private void AmplifiedEssence()
     {
         int stacks = player.GetSkillStack("Amplified Essence");
         if (stacks > 0)
@@ -129,14 +224,36 @@ public class UniqueEffects : MonoBehaviour
             float ratio = player.GetEssenceAmount() / player.GetMaxEssenceAmount();
             //Sets the players bonus AP proportionate to how much AP they have, up to a cap of x3 bonus
             float currentAPbonus = (player.GetAbilityPower().GetBaseValue() * 1f) * stacks * ratio;
-            float currentADdebuff = (player.GetDamage().GetBaseValue() * -.5f) * stacks * ratio;
-            player.GetDamage().AddRepeatingBonus(currentADdebuff,0, 1 / checksPerSecond, "AmplifiedEssenceDebuff");
-            
             player.GetAbilityPower().AddRepeatingBonus(currentAPbonus, currentAPbonus, 1/checksPerSecond, "AmplifiedEssence");
         }
-        else 
+    }
+    private void ChemicalAccelerant()
+    {
+        int stacks = player.GetSkillStack("Chemical Accelerant");
+        if (stacks > 0)
         {
-            player.GetAbilityPower().EndRepeatingBonus("AmplifiedEssence");
+            float heat = player.GetComponent<OverHeat>().GetHeat();
+            //Sets the players bonus attack speed equal to the max value proportionate to how much heat you have, up to the max of 100 heat
+            currentAttackSpeed = CA_MaxAttackSpeedPerStack * stacks * (heat / 100);
+            currentCritChance = CA_MaxCritChancePerStack * stacks * (heat / 100);
+            //gives the player an attackspeed boost that lasts until this function is called again (every .25 seconds)
+            player.GetAttackSpeed().AddRepeatingBonus(currentAttackSpeed, currentAttackSpeed, 1 / checksPerSecond, "ChemicalAccelerant_AS");
+            player.GetCritChance().AddRepeatingBonus(currentCritChance, currentCritChance, 1 / checksPerSecond, "ChemicalAccelerant_CC");
+        }
+    }
+    //Bullets deal bonus damage, based on how much heat you have, up to a cap of 35% more damage
+    //Player has a constant 35% more heat per shot fired.
+    private void BoilingPoint()
+    {
+        int stacks = player.GetSkillStack("Boiling Point");
+        if (stacks > 0)
+        {
+            float heat = player.GetComponent<OverHeat>().GetHeat();
+            //Sets the players bonus attack speed equal to the max value proportionate to how much heat you have, up to the max of 100 heat
+            float currentDamage = BP_MaxExtraDMG * stacks * (heat / 100);
+            float moreHeat = BP_MaxExtraHeat* overheat.GetHeatAddedPerShot().GetBaseValue() * stacks;
+            overheat.GetHeatAddedPerShot().AddRepeatingBonus(moreHeat, 0, 1 / checksPerSecond, "BoilingPoint_HeatPerShot");
+            player.GetDamage().AddRepeatingBonus(currentDamage, currentAttackSpeed, 1 / checksPerSecond, "BoilingPoint_DMG");
         }
     }
     public float SL_CalculateDmg()

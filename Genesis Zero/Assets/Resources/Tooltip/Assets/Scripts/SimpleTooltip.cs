@@ -70,8 +70,6 @@ public class SimpleTooltip : MonoBehaviour, IPointerEnterHandler, IPointerExitHa
 
     private void OnMouseExit()
     {
-        if (isUIObject)
-            return;
         HideTooltip();
     }
 

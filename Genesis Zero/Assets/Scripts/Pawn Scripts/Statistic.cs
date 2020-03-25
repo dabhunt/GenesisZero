@@ -201,6 +201,8 @@ public class Statistic
     */
     public void AddRepeatingBonus(float value, float maxvalue, float time, string id)
     {
+        if (value == 0)
+            return;
         Bonus b = new Bonus(value, maxvalue, time, id);
         if (ContainsBonus(id))
         {
@@ -254,7 +256,7 @@ public class Statistic
         }
     }
 
-    private void CheckBonuses()
+    public void CheckBonuses()
     {
         float b = 0;
         float mb = 0;

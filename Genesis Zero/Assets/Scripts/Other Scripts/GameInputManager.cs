@@ -43,7 +43,6 @@ public class GameInputManager : MonoBehaviour
     }
 
     //This switches the control map to the one with "name" as its name
-    //this function was not working as intended, I disabled it - David
     public void SwitchControlMap(string name)
     {
         foreach (var map in actionAsset.actionMaps)
