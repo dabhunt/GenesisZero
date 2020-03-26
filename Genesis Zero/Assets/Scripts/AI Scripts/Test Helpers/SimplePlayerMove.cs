@@ -21,14 +21,14 @@ public class SimplePlayerMove : Pawn
 
     new private void FixedUpdate()
     {
-        float moveInput = (Input.GetKey(KeyCode.RightArrow) ? 1.0f : 0.0f) - (Input.GetKey(KeyCode.LeftArrow) ? 1.0f : 0.0f);
+        float moveInput = (Input.GetKey(KeyCode.RightArrow) || Input.GetKey(KeyCode.D) ? 1.0f : 0.0f) - (Input.GetKey(KeyCode.LeftArrow) || Input.GetKey(KeyCode.A) ? 1.0f : 0.0f);
 
         frb.Accelerate(Vector3.right * (moveInput * MoveSpeed - frb.GetVelocity().x) * MoveAcceleration);
     }
 
     new private void Update()
     {
-        if (Input.GetKeyDown(KeyCode.UpArrow))
+        if (Input.GetKeyDown(KeyCode.UpArrow) || Input.GetKeyDown(KeyCode.W))
         {
             frb.AddVelocity(Vector3.up * JumpSpeed);
         }
