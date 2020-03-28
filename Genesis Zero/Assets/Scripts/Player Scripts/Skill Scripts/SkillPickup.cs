@@ -98,6 +98,8 @@ public class SkillPickup : MonoBehaviour
     }
     private void OnTriggerStay(Collider other)
     {
+        if (added)
+            return;
         if (pressed)
         {
             if (other.GetComponentInParent<Player>() || other.GetComponent<Player>())
@@ -137,7 +139,7 @@ public class SkillPickup : MonoBehaviour
         {
             ModConverter mc = other.GetComponent<ModConverter>();
             mc.AddMod(skill);
-            Destroy(gameObject);
+            added = true;
         }
     }
     public void SetDropped(bool boo)
