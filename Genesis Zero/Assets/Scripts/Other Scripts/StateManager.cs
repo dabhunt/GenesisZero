@@ -60,7 +60,7 @@ public class StateManager : MonoBehaviour
             }
         }
         //temporary cheat codes to get mods
-        if (Input.GetKeyDown(KeyCode.Backslash))
+        if (Input.GetKey(KeyCode.Backslash))
         {
             string skillStr = player.GetSkillManager().GetRandomMod().name;
             player.GetSkillManager().SpawnMod(new Vector3(player.transform.position.x+2, player.transform.position.y+5, 0), skillStr);

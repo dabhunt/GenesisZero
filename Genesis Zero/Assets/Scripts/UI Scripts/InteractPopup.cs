@@ -12,7 +12,7 @@ public class InteractPopup : MonoBehaviour
     public float checksPerSecond = 4f;
     public float activeDistance = 1.5f;
     public float scaleSize = .5f;
-    public string poptext = "Press [F] to interact";
+    public string PopText = "Press [F] to interact";
     private Canvas canvasRef;
     private bool interactable = true;
     private Player player;
@@ -51,7 +51,7 @@ public class InteractPopup : MonoBehaviour
     {
         Vector2 screenPos = CalcScreenPos();
         popup = (GameObject)GameObject.Instantiate(Resources.Load("UI/InteractPopup"), screenPos, Quaternion.identity);
-        popup.GetComponentInChildren<Text>().text = poptext;
+        popup.GetComponentInChildren<Text>().text = PopText;
         SetScreenPos(screenPos);
     }
     private Vector2 CalcScreenPos()
@@ -68,7 +68,7 @@ public class InteractPopup : MonoBehaviour
         //popup.transform.parent = canvasRef.transform;
         popup.transform.SetParent(canvasRef.transform);
         popup.transform.localPosition = new Vector3(popup.transform.localPosition.x, popup.transform.localPosition.y, .1f);
-        popup.transform.localScale = new Vector3(scaleSize,scaleSize,scaleSize);
+        popup.transform.localScale = new Vector3(scaleSize, scaleSize, scaleSize);
         popup.GetComponent<RectTransform>().anchoredPosition = screenPos;
     }
     private void Update()
@@ -85,10 +85,13 @@ public class InteractPopup : MonoBehaviour
         if (popup != null)
             Destroy(popup);
     }
-    public void SetText(string poptext)
+    public void SetText(string newtext)
     {
         if (popup != null)
-            popup.GetComponentInChildren<Text>().text = poptext;
+        {
+            popup.GetComponentInChildren<Text>().text = newtext;
+            PopText = newtext;
+        }       
     }
     private void OnDestroy()
     {

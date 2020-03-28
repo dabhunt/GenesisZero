@@ -9,7 +9,7 @@ public class SkillPickup : MonoBehaviour
     private bool added;
     private bool isMod;
     private bool pressed;
-    private float pickupDist = 2.5f;
+    private float pickupDist = 4f;
     private float speedvar = 4f;
     private GameObject target;
     private Player player;
@@ -44,6 +44,7 @@ public class SkillPickup : MonoBehaviour
         //if the player dropped the skill using right click
         if (dropped)
         {
+            target = GetComponent<InteractInterface>().ClosestInteractable();
             return;
         }
         if (Input.GetKeyDown(KeyCode.F))
@@ -77,14 +78,18 @@ public class SkillPickup : MonoBehaviour
     }
     private void FixedUpdate()
     {
-        if (target != null && pressed){
-            // Force pull for pickup
-            if (GetComponentInChildren<Floating>() != null)
-                Destroy(GetComponentInChildren<Floating>());
-            speedvar *= 1.1f;
-            Vector3 tVec = new Vector3(target.transform.position.x, target.transform.position.y + .9f, 0);
-            transform.LookAt(tVec);
-            this.transform.position = Vector3.MoveTowards(this.transform.position, tVec, speedvar * Time.deltaTime);
+        if (target != null)
+        {
+            //if player is the target, pressed must also be true, if the target is ScrapConverter, it flies there regardless
+            if ((target.GetComponent<Player>() != null && pressed ) || (target.GetComponent<Player>() == null && target.GetComponent<ModConverter>().isActive))
+            {  // Force pull for pickup
+                if (GetComponentInChildren<Floating>() != null)
+                    Destroy(GetComponentInChildren<Floating>());
+                speedvar *= 1.09f;
+                Vector3 tVec = new Vector3(target.transform.position.x, target.transform.position.y + .9f, 0);
+                transform.LookAt(tVec);
+                this.transform.position = Vector3.MoveTowards(this.transform.position, tVec, speedvar * Time.deltaTime);
+            }
         }
         if (added == true)
         {
@@ -125,6 +130,14 @@ public class SkillPickup : MonoBehaviour
                 }
 
             }
+
+        }
+        //this section of code deals with what the mod should do once it reaches a ScrapConverter
+        if (other.GetComponent<ModConverter>())
+        {
+            ModConverter mc = other.GetComponent<ModConverter>();
+            mc.AddMod(skill);
+            Destroy(gameObject);
         }
     }
     public void SetDropped(bool boo)

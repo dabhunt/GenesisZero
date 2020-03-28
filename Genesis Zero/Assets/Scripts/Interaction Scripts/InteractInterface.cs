@@ -6,9 +6,9 @@ using UnityEngine.UI;
 
 public class InteractInterface : MonoBehaviour
 {
-    private bool selectionMade = false;
     private string type;
     private GameObject closest;
+    private float minProximity = 7f;
     //returns the closest object in the game with the tag "Interactable"
     public GameObject ClosestInteractable()
     {
@@ -25,6 +25,8 @@ public class InteractInterface : MonoBehaviour
                 closest = objArray[i];
             }
         }
+        if (shortest >= minProximity)
+            return null;
         return closest;
     }
     // button sends the int value of the selected UI obj as a string, this gets sent to godhead script as updateselect + the mod slot
