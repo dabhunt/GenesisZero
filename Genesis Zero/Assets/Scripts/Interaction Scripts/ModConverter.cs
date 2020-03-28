@@ -47,11 +47,11 @@ public class ModConverter : MonoBehaviour
         List<SkillObject> mod = new List<SkillObject>();
         if (value >= 6)
             mod = sk.GetRandomGolds(1);
-        if (value >= 2)
+        else if (value >= 2)
             mod = sk.GetRandomGreens(1);
         //randomly rolls a mod by chance, giving the player the chance to potentially receive a better mod
         SkillObject newMod = sk.GetRandomModByChance();
-        if (mod[0].Rarity > newMod.Rarity)
+        if (value >= 2 && mod[0].Rarity > newMod.Rarity)
             newMod = mod[0]; //if the mod is better replace it, otherwise it stays the same
         modList.Clear();
         //deactivate Scrap Converter
