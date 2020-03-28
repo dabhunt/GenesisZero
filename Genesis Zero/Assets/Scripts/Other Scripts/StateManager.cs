@@ -11,7 +11,9 @@ public class StateManager : MonoBehaviour
     private float TimeScale = 1;
     private float Timer = 0;
     private bool isPaused;
-    private Restart restart;
+    public Restart restart;
+    public GameObject canvas;
+    public GameObject pauseMenu;
 
 
     private void Awake()
@@ -30,9 +32,8 @@ public class StateManager : MonoBehaviour
         player = temp.GetComponent<Player>();
         temp = GameObject.FindWithTag("StateManager");
         restart = temp.GetComponent<Restart>();
-        
+        canvas = GameObject.FindWithTag("CanvasUI");
     }
-
     private void Update()
     {
         if (Timer >= 0)
@@ -41,31 +42,40 @@ public class StateManager : MonoBehaviour
             if (Timer < 0)
             {
                 ChangeTimeScale(1, 0);
-                
             }
         }
         //temporary input usage for demo tomorrow
-        if (Input.GetKey(KeyCode.Escape))
-        {
-            Application.Quit();
+        if (Input.GetKeyDown(KeyCode.Escape))
+        {   
+            pauseMenu = canvas.transform.Find("PauseMenu").gameObject;
+            if (pauseMenu.activeSelf)
+            {
+                pauseMenu.SetActive(false);
+                UnpauseGame();
+            }
+            else
+            {
+                pauseMenu.SetActive(true);
+                PauseGame();
+            }
         }
-        //temporary input usage for demo tomorrow
-        if (Input.GetKey(KeyCode.Backslash))
+        //temporary cheat codes to get mods
+        if (Input.GetKeyDown(KeyCode.Backslash))
         {
             string skillStr = player.GetSkillManager().GetRandomMod().name;
             player.GetSkillManager().SpawnMod(new Vector3(player.transform.position.x+2, player.transform.position.y+5, 0), skillStr);
         }
-        if (Input.GetKey(KeyCode.Home))
+        if (Input.GetKeyDown(KeyCode.Home))
         {
             player.SetEssence(player.GetMaxEssenceAmount());
         }
-        if (Input.GetKey(KeyCode.PageUp))
+        if (Input.GetKeyDown(KeyCode.PageUp))
         {
             Merchant closestMerchant = GetComponent<InteractInterface>().ClosestInteractable().GetComponent<Merchant>();
             if (closestMerchant != null && closestMerchant.GetWindowOpen())
                 GetComponent<InteractInterface>().ClosestInteractable().GetComponent<Merchant>().InitializeUI();
         }
-        if (Input.GetKey(KeyCode.Backspace)) 
+        if (Input.GetKeyDown(KeyCode.Backspace)) 
         {
             restart.RestartScene();
         }
@@ -82,7 +92,8 @@ public class StateManager : MonoBehaviour
     {
         //Pauses Game
         isPaused = true;
-        Time.timeScale = 0.02f;
+        Time.timeScale = 0f;
+
     }
 
     //This unpauses game
@@ -92,12 +103,12 @@ public class StateManager : MonoBehaviour
         isPaused = false;
         Time.timeScale = TimeScale;
         Time.fixedDeltaTime = 0.02f * TimeScale;
+        pauseMenu.SetActive(false);
     }
     public bool IsPaused()
     {
         return isPaused;
     }
-
     public void ChangeTimeScale(float timescale, float time)
     {
         TimeScale = timescale;

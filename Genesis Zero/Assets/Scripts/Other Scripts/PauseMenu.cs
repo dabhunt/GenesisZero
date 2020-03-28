@@ -4,13 +4,20 @@ using UnityEngine;
 
 public class PauseMenu : MonoBehaviour
 {
-    private void OnEnable()
+    public void QuitButton()
     {
-
+        Application.Quit();
     }
-
-    private void OnDisable()
+    public void MenuButton()
     {
-        
+        //statemanager.
+    }
+    public void RestartButton()
+    {
+        StateManager.instance.restart.RestartScene();
+    }
+    public void ContinueButton()
+    {
+        StateManager.instance.UnpauseGame();
     }
 }
