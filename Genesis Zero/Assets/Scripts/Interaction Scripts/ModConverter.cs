@@ -6,7 +6,6 @@ public class ModConverter : MonoBehaviour
 {
     private List<SkillObject> modList;
     private SkillManager sk;
-    private float speedvar = 4f;
     private GameObject player;
     public bool isActive = true;
     /* This script controls what happens when the player interacts with the mod converter, and the math behind what mod you get in return
@@ -24,7 +23,7 @@ public class ModConverter : MonoBehaviour
     //When you press the Interact button, the Merchant/Machine determines what random Mod to give you
     private void Update()
     {
-        if (!isActive)
+        if (!isActive || player == null)
             return;
         if (Vector3.Distance(player.transform.position, gameObject.transform.position) <= 5)
         {

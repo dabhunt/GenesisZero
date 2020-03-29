@@ -210,6 +210,7 @@ public class Hitbox : MonoBehaviour
 
                 float phealth = p.GetHealth().GetValue();
                 float damagetaken = p.TakeDamage(finaldamage, Source);
+                GetUniqueEffects().DamageGivenTrigger();
                 if (damagetaken >= phealth)
                     if (killDelegate != null) killDelegate();
 
