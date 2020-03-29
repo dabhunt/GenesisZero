@@ -164,7 +164,8 @@ public class GodHead : MonoBehaviour
         GameObject[] pickups = GameObject.FindGameObjectsWithTag("Pickups");
         for (int i = 0; i < pickups.Length; i++)
         {
-            pickups[i].GetComponent<InteractPopup>().DestroyPopUp();
+            if (pickups[i].GetComponent<InteractPopup>() != null)
+                pickups[i].GetComponent<InteractPopup>().DestroyPopUp();
         }
         Destroy(GetComponent<InteractPopup>());
         sacUI = (RectTransform) canvasRef.transform.Find("SacrificeUI");

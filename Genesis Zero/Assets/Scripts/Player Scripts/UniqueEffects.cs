@@ -151,7 +151,6 @@ public class UniqueEffects : MonoBehaviour
     }
     public void EnterCombatMusic()
     {
-        print("Enter combat playing");
         //AudioManager.instance.FadeOutTrack("Ambient", 5);
         AudioManager.instance.FadeInTrack("CombatMusic", 15);
     }

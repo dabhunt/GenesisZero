@@ -103,7 +103,8 @@ public class StateManager : MonoBehaviour
         isPaused = false;
         Time.timeScale = TimeScale;
         Time.fixedDeltaTime = 0.02f * TimeScale;
-        pauseMenu.SetActive(false);
+        if (pauseMenu != null)
+            pauseMenu.SetActive(false);
     }
     public bool IsPaused()
     {

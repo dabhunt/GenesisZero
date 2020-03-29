@@ -38,7 +38,7 @@ public class AudioManager : MonoBehaviour
 
     void Start()
     {
-        
+        SetVolumeMusic(0);
     }
 
     // Update is called once per frame
@@ -151,7 +151,7 @@ public class AudioManager : MonoBehaviour
         s.source = gameObject.AddComponent<AudioSource>();
         s.source.name = name;
         s.source.clip = loadedSound;
-        s.source.volume = 1;
+        s.source.volume = setVolumeMusic;
         s.source.pitch = 1;
         s.source.loop = false;
         s.playOnAwake = true;
@@ -228,7 +228,7 @@ public class AudioManager : MonoBehaviour
         {
             //track.source.volume += speed;
             AdjustVolumeMusic(speed);
-            print("setvolmusic var: " + setVolumeMusic);
+            //print("setvolmusic var: " + setVolumeMusic);
             yield return new WaitForSeconds(0.1f);
         }
         StopCoroutine("FadeIn");
@@ -243,7 +243,7 @@ public class AudioManager : MonoBehaviour
         if (track == null || track.source.isPlaying == false)
         {
             //resetVolume = true;
-            print("reset vol on fadein");
+           // print("reset vol on fadein");
         }
         // if it's not playing, play the track on the fade in
         StartCoroutine(FadeIn(name, seconds, resetVolume));
