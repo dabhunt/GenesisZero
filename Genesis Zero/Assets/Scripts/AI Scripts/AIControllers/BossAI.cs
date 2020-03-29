@@ -39,6 +39,8 @@ public class BossAI : AIController
     private float HealthLoss;
     private float TotalHealth;
     private float LastHealth;   //The amount of health the boss had before taking damage;
+    public GameObject Indicator;
+    private List<GameObject> indicators;
 
     protected void Awake()
     {
@@ -54,6 +56,7 @@ public class BossAI : AIController
         movetarget = Target;
         TotalHealth = GetHealth().GetValue();
         LastHealth = TotalHealth;
+        indicators = new List<GameObject>();
     }
 
     new protected void Update()
@@ -161,6 +164,22 @@ public class BossAI : AIController
         {
             healthbar.SetActive(true);
         }
+
+        //Update Indicators
+        for (int i = 0; i < indicators.Count; ++i)
+        {
+            if (indicators[i] == null)
+            {
+                indicators.Remove(indicators[i]);
+                --i;
+            }
+            else
+            {
+                indicators[i].GetComponent<BossIndicator>().SetOrigin(transform.position);
+
+            }
+        }
+
     }
 
     public void CheckActions()
@@ -214,14 +233,17 @@ public class BossAI : AIController
             if (attack == 0)
             {
                 SetBossstate(State.Headbutt, 3);
+                SpawnIndicator(transform.position, new Vector2(16, 6), lookDir, new Color(1, 0, 0, .1f), Vector2.zero, false, true, 3);
             }
             else if (attack == 1)
             {
                 SetBossstate(State.Firebreath, 3);
+                SpawnIndicator(transform.position, new Vector2(16, 4), lookDir, new Color(1, 0, 0, .1f), Vector2.zero, false, true, 3);
             }
             else
             {
                 SetBossstate(State.Pulse, 2);
+                SpawnIndicator(transform.position, new Vector2(18, 18), lookDir, new Color(1, 0, 0, .1f), Vector2.zero, true, false, 2);
             }
 
 
@@ -382,6 +404,24 @@ public class BossAI : AIController
             }
             yield return new WaitForSeconds(Time.fixedDeltaTime);
         }
+    }
+
+    public void SpawnIndicator(Vector2 position, Vector2 size, Vector2 dir, Color color, Vector2 offset, bool centered, bool square, float time)
+    {
+        GameObject instance = (GameObject)Instantiate(Indicator, position, Indicator.transform.rotation);
+        instance.GetComponent<BossIndicator>().SetIndicator(position, size, dir, color, centered);
+        instance.GetComponent<BossIndicator>().SetOffset(offset);
+        instance.GetComponent<BossIndicator>().SetCentered(centered);
+        if (square)
+        {
+            instance.GetComponent<BossIndicator>().SetSquare();
+        }
+        else
+        {
+            instance.GetComponent<BossIndicator>().SetCircle();
+        }
+        Destroy(instance, time);
+        indicators.Add(instance);
     }
 
     private new void OnDrawGizmos()
