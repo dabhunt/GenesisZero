@@ -45,6 +45,8 @@ public class UniqueEffects : MonoBehaviour
     //how many seconds before bonus damage goes away
     private float SL_decay;
     private int SL_killCount;
+    //time in seconds before music starts to fade out after combat
+    private float MusicDecay = 10;
     private float currentAttackSpeed = 0;
     private float currentCritChance = 0;
     private AudioManager aManager;
@@ -71,11 +73,20 @@ public class UniqueEffects : MonoBehaviour
         UnstableEssence();
         SuperHeatedEssence();
         ThermiteCore();
+        MusicTimer();
     }
     private void Update()
     {
         StackDecayTimer();
 
+    }
+    private void MusicTimer()
+    {
+        MusicDecay -= 1 / checksPerSecond;
+        if (MusicDecay < 0)
+        {
+            ExitCombatMusic();
+        }
     }
     public void OverHeatTrigger()
     {
@@ -133,6 +144,21 @@ public class UniqueEffects : MonoBehaviour
         player.GetComponent<AbilityCasting>().ReduceCooldowns(stacks);
         //other Modifier effects can be put inside this function
     }
+    public void DamageGivenTrigger()
+    {
+        MusicDecay = 10;
+        EnterCombatMusic();
+    }
+    public void EnterCombatMusic()
+    {
+        //AudioManager.instance.FadeOutTrack("Ambient", 5);
+        AudioManager.instance.FadeInTrack("CombatMusic", 15);
+    }
+    public void ExitCombatMusic()
+    {
+        AudioManager.instance.FadeOutTrack("CombatMusic", 20);
+        //AudioManager.instance.FadeInTrack("Ambient", 5);
+    }
     void StackDecayTimer()
     {
         if (SL_killCount > 0)
@@ -143,7 +169,6 @@ public class UniqueEffects : MonoBehaviour
                 SL_decay = 0;
                 SL_killCount = 0;
             }
-
         }
     }
     private void HeatReduction()

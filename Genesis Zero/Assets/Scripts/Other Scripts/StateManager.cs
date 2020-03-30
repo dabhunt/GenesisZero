@@ -33,6 +33,7 @@ public class StateManager : MonoBehaviour
         temp = GameObject.FindWithTag("StateManager");
         restart = temp.GetComponent<Restart>();
         canvas = GameObject.FindWithTag("CanvasUI");
+        pauseMenu = canvas.transform.Find("PauseMenu").gameObject;
     }
     private void Update()
     {
@@ -47,7 +48,6 @@ public class StateManager : MonoBehaviour
         //temporary input usage for demo tomorrow
         if (Input.GetKeyDown(KeyCode.Escape))
         {   
-            pauseMenu = canvas.transform.Find("PauseMenu").gameObject;
             if (pauseMenu.activeSelf)
             {
                 pauseMenu.SetActive(false);
@@ -103,7 +103,8 @@ public class StateManager : MonoBehaviour
         isPaused = false;
         Time.timeScale = TimeScale;
         Time.fixedDeltaTime = 0.02f * TimeScale;
-        pauseMenu.SetActive(false);
+        if (pauseMenu != null)
+            pauseMenu.SetActive(false);
     }
     public bool IsPaused()
     {

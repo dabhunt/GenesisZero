@@ -6,7 +6,6 @@ public class ModConverter : MonoBehaviour
 {
     private List<SkillObject> modList;
     private SkillManager sk;
-    private float speedvar = 4f;
     private GameObject player;
     public bool isActive = true;
     /* This script controls what happens when the player interacts with the mod converter, and the math behind what mod you get in return
@@ -24,7 +23,7 @@ public class ModConverter : MonoBehaviour
     //When you press the Interact button, the Merchant/Machine determines what random Mod to give you
     private void Update()
     {
-        if (!isActive)
+        if (!isActive || player == null)
             return;
         if (Vector3.Distance(player.transform.position, gameObject.transform.position) <= 5)
         {
@@ -47,11 +46,11 @@ public class ModConverter : MonoBehaviour
         List<SkillObject> mod = new List<SkillObject>();
         if (value >= 6)
             mod = sk.GetRandomGolds(1);
-        if (value >= 2)
+        else if (value >= 2)
             mod = sk.GetRandomGreens(1);
         //randomly rolls a mod by chance, giving the player the chance to potentially receive a better mod
         SkillObject newMod = sk.GetRandomModByChance();
-        if (mod[0].Rarity > newMod.Rarity)
+        if (value >= 2 && mod[0].Rarity > newMod.Rarity)
             newMod = mod[0]; //if the mod is better replace it, otherwise it stays the same
         modList.Clear();
         //deactivate Scrap Converter
