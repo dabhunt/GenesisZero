@@ -13,6 +13,7 @@ public class AudioManager : MonoBehaviour
 
     private float setVolumeMaster;
     private float setVolumeMusic;
+    private float setVolumeAmbient;
     private float setVolumeSound;
     private double startTime;
 
@@ -28,7 +29,8 @@ public class AudioManager : MonoBehaviour
         }
 
         setVolumeMaster = AudioListener.volume;
-        setVolumeMusic = 1.0f;
+        setVolumeMusic = 0f;
+        setVolumeAmbient = 1.1f;
         setVolumeSound = 1.0f;
         startTime = AudioSettings.dspTime;
 
@@ -36,7 +38,7 @@ public class AudioManager : MonoBehaviour
 
     void Start()
     {
-
+        SetVolumeMusic(0);
     }
 
     // Update is called once per frame
@@ -137,17 +139,19 @@ public class AudioManager : MonoBehaviour
         }
     }
 
-    public void PlayTrack (string name)
+    public Sound PlayTrack (string name)
     {
        // bool active = false;
         AudioClip loadedSound = (AudioClip)Resources.Load("Sounds/" + name, typeof(AudioClip));
+        if (loadedSound == null)
+            return null;
         Sound s = new Sound();
 
         s.name = name;
         s.source = gameObject.AddComponent<AudioSource>();
         s.source.name = name;
         s.source.clip = loadedSound;
-        s.source.volume = 1;
+        s.source.volume = setVolumeMusic;
         s.source.pitch = 1;
         s.source.loop = false;
         s.playOnAwake = true;
@@ -161,7 +165,6 @@ public class AudioManager : MonoBehaviour
 
             s.source.PlayScheduled(startTime);
             startTime += duration;
-            Debug.LogWarning("Duration: " + startTime);
             Debug.LogWarning("End of playlist, adding: " + name);
         }
         else
@@ -172,9 +175,9 @@ public class AudioManager : MonoBehaviour
                 s.source.Play();
                 startTime += duration;
             }
-            Debug.LogWarning("Duration: " + startTime);
             Debug.LogWarning("Playlist empty, adding: " + name);
         }
+        return s;
     }
 
     public void StopTrack(string name)
@@ -198,12 +201,77 @@ public class AudioManager : MonoBehaviour
             return;
         }
     }
+    //takes the name of the track, and the time in seconds to fade in
 
+    private IEnumerator FadeOut(string name, float time)
+    {
+        //Sound track = FindTrack(name);
+        //if (track == null)
+        //    yield break;
+        float seconds = 1 / time;
+        float speed = seconds/ 10;
+        while (setVolumeMusic > 0)
+        {
+            AdjustVolumeMusic(-speed);
+            yield return new WaitForSeconds(0.1f);
+        }
+        StopCoroutine("FadeOut");
+    }
+    private IEnumerator FadeIn(string name, float time, bool ResetVol)
+    {
+        //Sound track = FindTrack(name);
+        float seconds = 1 / time;
+        float speed = seconds / 10;
+        if (ResetVol)
+            SetVolumeMusic(0);
+        while (setVolumeMusic < 1)
+        {
+            //track.source.volume += speed;
+            AdjustVolumeMusic(speed);
+            //print("setvolmusic var: " + setVolumeMusic);
+            yield return new WaitForSeconds(0.1f);
+        }
+        StopCoroutine("FadeIn");
+    }
+    //takes the name of the track, and the time in seconds to fade in
+    public void FadeInTrack(string name, float seconds) 
+    {
+        Sound track = FindTrack(name);
+        bool resetVolume = false;
+        //isplaying keeps returning false
+        track = PlayTrack("Music/" + name);
+        if (track == null || track.source.isPlaying == false)
+        {
+            //resetVolume = true;
+           // print("reset vol on fadein");
+        }
+        // if it's not playing, play the track on the fade in
+        StartCoroutine(FadeIn(name, seconds, resetVolume));
+    }
+    public void FadeOutTrack(string name, float seconds)
+    {
+        StartCoroutine(FadeOut(name, seconds));
+    }
+    private Sound FindTrack(string name)
+    {
+        List<Sound>.Enumerator em = Playlist.GetEnumerator();
+        bool found = false;
+        while (em.MoveNext() && !found)
+        {
+            if (em.Current.name == name)
+            {
+                found = true;
+                return em.Current;
+            }
+        }
+        //display error if not found
+        Debug.LogWarning("Audio: '" + name + "' not found!");
+        return null;
+    }
     public void PauseTrack(string name)
     {
         List<Sound>.Enumerator em = Playlist.GetEnumerator();
         bool found = false;
-
         while (em.MoveNext() && !found)
         {
             if (em.Current.name == name)
