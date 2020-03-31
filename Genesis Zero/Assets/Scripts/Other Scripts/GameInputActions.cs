@@ -737,9 +737,4 @@ public class @GameInputActions : IInputActionCollection, IDisposable
         void OnUnpause(InputAction.CallbackContext context);
         void OnMove(InputAction.CallbackContext context);
     }
-
-    public InputActionAsset GetInputActionAsset()
-    {
-        return asset;
-    }
 }
