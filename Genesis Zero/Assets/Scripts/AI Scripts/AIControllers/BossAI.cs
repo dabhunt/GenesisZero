@@ -9,14 +9,18 @@ using UnityEngine.UI;
  */
 public class BossAI : AIController
 {
-    public enum State { Headbutt, Firebreath, Pulse, Wild, MovingAway, MovingCloser, Centering }
-    protected State bossstate = State.Firebreath; // Current behavior state
+    public enum State { Headbutt, Firebreath, Pulse, Wild, MovingAway, MovingCloser, Centering, Cooling, Repositioning, Setting }
+    protected State bossstate = State.MovingAway; // Current behavior state
     private bool secondphase;
     private bool animating;
+    private float chargetime = 1;   // Once it hits zero, boss performs a action based on conditions.
+    private Transform looktarget;   // Where the boss looks to
+    private Transform movetarget;   // Where the boss moves to or away
 
     private Vector3 lookDir = Vector3.up;
     private Vector3 rotDir = Vector3.forward;
     private Vector3 lookposition;
+    private Vector3 LastPosition;
 
     [Tooltip("Points the boss uses to determine how to do it's attacks")]
     public List<Transform> Waypoints;
@@ -28,18 +32,31 @@ public class BossAI : AIController
     public float TriggerRadius;
     public float TimeBeforeFight;
     private bool initiated;
+    private int Heat;
 
     public GameObject Healthbar;
     private GameObject healthbar;
+    private float HealthLoss;
+    private float TotalHealth;
+    private float LastHealth;   //The amount of health the boss had before taking damage;
+    public GameObject Indicator;
+    private List<GameObject> indicators;
+
     protected void Awake()
     {
         zdepth = transform.position.z;
         lookposition = transform.position;
+        LastPosition = transform.position;
     }
 
     new protected void Start()
     {
         base.Start();
+        looktarget = Target;
+        movetarget = Target;
+        TotalHealth = GetHealth().GetValue();
+        LastHealth = TotalHealth;
+        indicators = new List<GameObject>();
     }
 
     new protected void Update()
@@ -66,9 +83,11 @@ public class BossAI : AIController
         if (Target == null) { return; }
         if (initiated == false) { return; }
 
+        CheckActions(); // Checks and updates what actions the boss should do
+
         if (state == AIState.Follow || state == AIState.Charge || state == AIState.Attack || state == AIState.Cooldown)
         {
-            lookDir = Vector3.Slerp(lookDir, targetPosition - transform.position, 5 * Time.fixedDeltaTime); // Rotate to face target
+            lookDir = Vector3.Slerp(lookDir, looktarget.position - transform.position, 5 * Time.fixedDeltaTime); // Rotate to face target
         }
         else if (state == AIState.Patrol)
         {
@@ -81,11 +100,18 @@ public class BossAI : AIController
         }
 
         // Set where the boss looks at, default player
-        lookposition = Vector3.Lerp(lookposition, Target.position, 3 * Time.fixedDeltaTime);
+        lookposition = Vector3.Lerp(lookposition, looktarget.position, 3 * Time.fixedDeltaTime);
 
-        Vector3 lookoffset = new Vector3(0, 0, lookDir.x > 0 ? -1f : -1f);
-        transform.LookAt(lookposition + lookoffset);
-        //transform.rotation = Quaternion.LookRotation(Vector3.back, Vector3.up); // USe this for center state
+        if (bossstate == State.Centering || bossstate == State.Pulse)
+        {
+            transform.rotation = Quaternion.Slerp(transform.rotation, Quaternion.LookRotation(Vector3.back, Vector3.up), 2 * Time.fixedDeltaTime);
+            lookposition = transform.position + transform.forward;
+        }
+        else
+        {
+            Vector3 lookoffset = new Vector3(0, 0, lookDir.x > 0 ? -1f : -1f);
+            transform.LookAt(lookposition + lookoffset);
+        }
 
 
         // Don't move until fight starts
@@ -93,13 +119,41 @@ public class BossAI : AIController
 
 
         // Move toward target, may move somewhere depending on state
-        float speed = GetSpeed().GetValue();
-        if (GetDistanceToTarget() - BehaviorProperties.AvoidRadius != 0 && animating == false)
+        float speed = GetSpeed().GetValue() * 5;
+        if (animating == false)
         {
-            float diff = GetDistanceToTarget() - BehaviorProperties.AvoidRadius;
-            transform.position = Vector2.MoveTowards(transform.position, Target.position, (5 * diff / GetDistanceToTarget()) * Time.fixedDeltaTime);
-            transform.position = new Vector3(transform.position.x, transform.position.y, zdepth);
+            if (bossstate == State.MovingCloser && GetDistanceToTarget() - BehaviorProperties.AvoidRadius != 0)
+            {
+                float diff = GetDistanceToTarget() - BehaviorProperties.AvoidRadius;
+                transform.position = Vector2.MoveTowards(transform.position, movetarget.position, (speed * diff / GetDistanceToTarget()) * Time.fixedDeltaTime);
+            }
+            else if (bossstate == State.MovingAway && GetDistanceToTarget() < 30)
+            {
+                float diff = GetDistanceToTarget() - 20;
+                transform.position = Vector2.MoveTowards(transform.position, movetarget.position, (speed * diff / GetDistanceToTarget()) / 10 * Time.fixedDeltaTime);
+            }
+            else if (bossstate == State.Repositioning)
+            {
+                GetComponent<SphereCollider>().isTrigger = true;
+                transform.position = Vector2.MoveTowards(transform.position, movetarget.position, speed * (Vector2.Distance(transform.position, movetarget.position) / 10) * Time.fixedDeltaTime);
+                if (Vector2.Distance(movetarget.position, transform.position) < 2) { chargetime = Time.fixedDeltaTime / 2; }
+            }
+            else if (bossstate == State.Centering)
+            {
+                GetComponent<SphereCollider>().isTrigger = true;
+                transform.position = Vector2.MoveTowards(transform.position, movetarget.position, speed * (Vector2.Distance(transform.position, movetarget.position) / 5) * Time.fixedDeltaTime);
+            }
+            else if (bossstate == State.Cooling)
+            {
+                // Expose weakpoints
+                transform.position = Vector2.MoveTowards(transform.position, movetarget.position, speed * (Vector2.Distance(transform.position, movetarget.position) / 10) * Time.fixedDeltaTime);
+            }
+
+            Vector3 finalposition = Vector3.Lerp(LastPosition, new Vector3(transform.position.x, transform.position.y, zdepth), .3f);
+            LastPosition = finalposition;
+            transform.position = finalposition;
         }
+
 
         //Display Health
         if (healthbar && initiated)
@@ -110,55 +164,176 @@ public class BossAI : AIController
         {
             healthbar.SetActive(true);
         }
+
+        //Update Indicators
+        for (int i = 0; i < indicators.Count; ++i)
+        {
+            if (indicators[i] == null)
+            {
+                indicators.Remove(indicators[i]);
+                --i;
+            }
+            else
+            {
+                indicators[i].GetComponent<BossIndicator>().SetOrigin(transform.position);
+
+            }
+        }
+
     }
 
-    /**
-     * Checks for closeness to walls in order to avoid them
-     */
-    protected void CheckWalls()
+    public void CheckActions()
     {
-        if (!wallCheckCycleInProgress)
+        int action = 0;     // By Default;
+
+        if (LastHealth != GetHealth().GetValue())
         {
-            StartCoroutine(WallCheckCycle());
+            HealthLoss += LastHealth - GetHealth().GetValue();
+            LastHealth = GetHealth().GetValue();
+        }
+
+        if (HealthLoss >= 500)
+        {
+            action = 1;
+            bossstate = State.Setting;
+            chargetime = Time.fixedDeltaTime / 2;
+            HealthLoss = 0;
+            //Debug.Log("Center");
+        }
+        else if (Heat >= 5)
+        {
+            action = 2;
+            bossstate = State.Setting;
+            chargetime = Time.fixedDeltaTime / 2;
+            Heat = 0;
+            // Debug.Log("Cooling");
+        }
+
+        if (chargetime > 0)
+        {
+            chargetime -= Time.fixedDeltaTime;
+
+            if (chargetime <= 0)
+            {
+                ChooseAction(action, false);
+            }
+        }
+
+    }
+
+    public void ChooseAction(int action, bool bypass)
+    {
+        // Do an action based on a set up state.
+
+        if (bossstate == State.Repositioning)
+        {
+            movetarget = Target;    // Reset movetarget back to default target (player)
+
+            float attack = (int)Random.Range(0, 3);
+            if (attack == 0)
+            {
+                SetBossstate(State.Headbutt, 3);
+                SpawnIndicator(transform.position, new Vector2(16, 6), lookDir, new Color(1, 0, 0, .1f), Vector2.zero, false, true, 3);
+            }
+            else if (attack == 1)
+            {
+                SetBossstate(State.Firebreath, 3);
+                SpawnIndicator(transform.position, new Vector2(16, 4), lookDir, new Color(1, 0, 0, .1f), Vector2.zero, false, true, 3);
+            }
+            else
+            {
+                SetBossstate(State.Pulse, 2);
+                SpawnIndicator(transform.position, new Vector2(18, 18), lookDir, new Color(1, 0, 0, .1f), Vector2.zero, true, false, 2);
+            }
+
+
+            ++Heat;
+            GetComponent<SphereCollider>().isTrigger = false;
+            return;
+        }
+        else if (bossstate == State.Centering)
+        {
+            movetarget = Target;    // Reset movetarget back to default target (player)
+
+            GetComponent<SphereCollider>().isTrigger = false;
+            SetBossstate(State.Pulse, 1);
+            return;
+        }
+        else if (bossstate == State.Cooling)
+        {
+            movetarget = Target;    // Reset movetarget back to default target (player)
+
+            float move = (int)Random.Range(0, 2);
+            if (move == 0)
+            {
+                SetBossstate(State.MovingAway, 3);
+            }
+            else
+            {
+                SetBossstate(State.MovingCloser, 3);
+            }
+            return;
+        }
+
+
+        // Do an action after a non-setup action.
+        //float action = (int)Random.Range(0, 3);
+        switch (action)
+        {
+            case 0:
+                //Debug.Log("Repos");
+                SetBossstate(State.Repositioning, 2);
+                movetarget = GetClosestWaypoint();
+                break;
+            case 1:
+                SetBossstate(State.Centering, 1);
+                movetarget = Center;
+                break;
+            case 2:
+                SetBossstate(State.Cooling, 1);
+                movetarget = transform;
+                break;
+            default:
+                SetBossstate(State.Repositioning, 2);
+                movetarget = GetClosestWaypoint();
+                break;
         }
     }
 
-    [Header("Wall Checking")]
-    public int WallCheckCasts = 6;
-    public float WallCheckDistance = 1.0f;
-    public LayerMask WallMask;
-    private bool wallCheckCycleInProgress = false;
-    protected bool isCloseToWall = false;
-    protected Vector3 wallPoint = Vector3.zero;
-    public float WallAvoidForce = 10f;
-
-    IEnumerator WallCheckCycle()
+    public void SetBossstate(State state, float time)
     {
-        wallCheckCycleInProgress = true;
-        float castAngle = 2.0f / WallCheckCasts * Mathf.PI;
-        float curAngle = 0.0f;
-        Vector3 castDir = Vector3.zero;
-        for (int i = 0; i < WallCheckCasts; i++)
+        bossstate = state;
+        chargetime = time;
+    }
+
+    public Transform GetNearestVisibleWaypoint()
+    {
+        if (!EmptyWaypoints()) return transform;
+
+        Transform min = Waypoints[0];
+        float mindist = Vector2.Distance(min.position, Target.position);
+
+        RaycastHit hit;
+        SphereCollider col = GetComponent<SphereCollider>();
+
+        foreach (Transform t in Waypoints)
         {
-            castDir = new Vector3(Mathf.Sin(curAngle), Mathf.Cos(curAngle), 0.0f);
-            RaycastHit hit = new RaycastHit();
-            isCloseToWall = Physics.Raycast(transform.position, castDir, out hit, WallCheckDistance, WallMask, QueryTriggerInteraction.Ignore);
-            wallPoint = isCloseToWall ? hit.point : Vector3.zero;
-            //Debug.DrawRay(transform.position, castDir * WallCheckDistance);
-            curAngle += castAngle;
-            yield return new WaitForFixedUpdate();
+            bool hitdetect = Physics.SphereCast(t.position, col.radius / 2, Target.position - t.position, out hit, 30);
+
+            float currdist = Vector2.Distance(t.position, Target.position);
+            if (currdist < mindist && hitdetect && hit.collider.GetComponentInParent<Player>())
+            {
+                min = t;
+                mindist = currdist;
+            }
         }
-        wallCheckCycleInProgress = false;
+        return min;
     }
 
     // Returns waypoint furthest away from target
     public Transform GetFurthestWaypoint()
     {
-        if (Waypoints != null)
-        {
-            Debug.LogWarning("Waypoints not initialized for boss");
-            return transform;
-        }
+        if (!EmptyWaypoints()) return transform;
 
         Transform max = Waypoints[0];
         float maxdist = Vector2.Distance(max.position, Target.position);
@@ -177,11 +352,7 @@ public class BossAI : AIController
     // Returns waypoint closest to the target
     public Transform GetClosestWaypoint()
     {
-        if (Waypoints != null)
-        {
-            Debug.LogWarning("Waypoints not initialized for boss");
-            return transform;
-        }
+        if (!EmptyWaypoints()) return transform;
 
         Transform min = Waypoints[0];
         float mindist = Vector2.Distance(min.position, Target.position);
@@ -195,6 +366,16 @@ public class BossAI : AIController
             }
         }
         return min;
+    }
+
+    public bool EmptyWaypoints()
+    {
+        if (Waypoints != null)
+        {
+            Debug.LogWarning("Waypoints not initialized for boss");
+            return true;
+        }
+        return false;
     }
 
     IEnumerator Spandout(float time, float start, float target)
@@ -223,6 +404,24 @@ public class BossAI : AIController
             }
             yield return new WaitForSeconds(Time.fixedDeltaTime);
         }
+    }
+
+    public void SpawnIndicator(Vector2 position, Vector2 size, Vector2 dir, Color color, Vector2 offset, bool centered, bool square, float time)
+    {
+        GameObject instance = (GameObject)Instantiate(Indicator, position, Indicator.transform.rotation);
+        instance.GetComponent<BossIndicator>().SetIndicator(position, size, dir, color, centered);
+        instance.GetComponent<BossIndicator>().SetOffset(offset);
+        instance.GetComponent<BossIndicator>().SetCentered(centered);
+        if (square)
+        {
+            instance.GetComponent<BossIndicator>().SetSquare();
+        }
+        else
+        {
+            instance.GetComponent<BossIndicator>().SetCircle();
+        }
+        Destroy(instance, time);
+        indicators.Add(instance);
     }
 
     private new void OnDrawGizmos()
