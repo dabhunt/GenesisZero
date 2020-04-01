@@ -6,7 +6,7 @@ using UnityEngine;
 public class Dialogue
 {
     //public string name;
-
+    public Queue<string> charIcons;
     public Queue<string> sentences;
     public Queue<string> durations;
 }

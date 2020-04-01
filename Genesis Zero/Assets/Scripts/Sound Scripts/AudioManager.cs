@@ -13,6 +13,7 @@ public class AudioManager : MonoBehaviour
 
     private float setVolumeMaster;
     private float setVolumeMusic;
+    private float maxVolumeMusic;
     private float setVolumeAmbient;
     private float setVolumeSound;
     private double startTime;
@@ -30,7 +31,8 @@ public class AudioManager : MonoBehaviour
 
         setVolumeMaster = AudioListener.volume;
         setVolumeMusic = 0f;
-        setVolumeAmbient = 1.1f;
+        maxVolumeMusic = .25f;
+        setVolumeAmbient = 1.4f;
         setVolumeSound = 1.0f;
         startTime = AudioSettings.dspTime;
 
@@ -224,7 +226,7 @@ public class AudioManager : MonoBehaviour
         float speed = seconds / 10;
         if (ResetVol)
             SetVolumeMusic(0);
-        while (setVolumeMusic < 1)
+        while (setVolumeMusic < maxVolumeMusic)
         {
             //track.source.volume += speed;
             AdjustVolumeMusic(speed);
