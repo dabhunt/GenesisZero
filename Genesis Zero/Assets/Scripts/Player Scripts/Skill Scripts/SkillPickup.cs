@@ -44,7 +44,7 @@ public class SkillPickup : MonoBehaviour
         //if the player dropped the skill using right click
         if (dropped)
         {
-            target = GetComponent<InteractInterface>().ClosestInteractable();
+          
             return;
         }
         if (Input.GetKeyDown(KeyCode.F))
@@ -81,7 +81,12 @@ public class SkillPickup : MonoBehaviour
         if (target != null)
         {
             //if player is the target, pressed must also be true, if the target is ScrapConverter, it flies there regardless
-            if ((target.GetComponent<Player>() != null && pressed ) || (target.GetComponent<Player>() == null && target.GetComponent<ModConverter>().isActive))
+            bool targetIsPlayer = true;
+            if (target.GetComponent<Player>() == null)
+                targetIsPlayer = false;
+            if (dropped)
+                target = GetComponent<InteractInterface>().ClosestInteractable();
+            if ((targetIsPlayer && pressed) || (!targetIsPlayer && target.GetComponent<ModConverter>().isActive))
             {  // Force pull for pickup
                 if (GetComponentInChildren<Floating>() != null)
                     Destroy(GetComponentInChildren<Floating>());
