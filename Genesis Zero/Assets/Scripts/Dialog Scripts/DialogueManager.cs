@@ -142,18 +142,13 @@ public class DialogueManager : MonoBehaviour
         //names in this folder HAVE to match the .txt file names of characters in order to load
         charIcon.ToUpper();
         Sprite spr = Resources.Load<Sprite>("Dialogue/CharacterIcons/" + charIcon);
-        //Sprite spr = null;
-        //print("spr.name: " + spr.name);
         if (spr != null)
         {
             charImage.sprite = spr;
         }
-        
-        print("charicon: " + charIcon);
         if (spr != null)
         {
             charImage.sprite = spr;
-            print("spr is not null");
         }
         foreach (char letter in sentence.ToCharArray())
         {
