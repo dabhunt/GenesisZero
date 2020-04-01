@@ -148,6 +148,13 @@ public class DialogueManager : MonoBehaviour
         {
             charImage.sprite = spr;
         }
+        
+        print("charicon: " + charIcon);
+        if (spr != null)
+        {
+            charImage.sprite = spr;
+            print("spr is not null");
+        }
         foreach (char letter in sentence.ToCharArray())
         {
             dialogueText.text += letter;
