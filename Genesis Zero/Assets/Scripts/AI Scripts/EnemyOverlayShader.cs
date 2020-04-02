@@ -7,13 +7,25 @@ public class EnemyOverlayShader : MonoBehaviour
     private float lowHealthCutoff = .33f;
     void Start()
     {
-        gameObject.GetComponent<Renderer>().material.SetFloat("_OnOff", 1);
+        gameObject.GetComponent<Renderer>().material.SetFloat("_OnOff",0);
+        gameObject.GetComponent<Renderer>().material.SetFloat("_LowHP",0);
+        gameObject.GetComponent<Renderer>().material.SetFloat("_DissolveEffect", 0);
     }
     void Update()
     {
         float ratio = GetComponentInParent<Pawn>().GetHealth().GetValue() / GetComponentInParent<Pawn>().GetHealth().GetMaxValue();
-        float onOffMulti = -12 * (1 - ratio); 
+        float onOffMulti = -12 * (1 - ratio);
         if (ratio < lowHealthCutoff)
+        {
+            print("lowhealth runs");
             gameObject.GetComponent<Renderer>().material.SetFloat("_OnOff", onOffMulti);
+            gameObject.GetComponent<Renderer>().material.SetFloat("_LowHP", .15f);
+        }
+        if (ratio <= 0)
+        {
+            print("Dissolve effect applied");
+            gameObject.GetComponent<Renderer>().material.SetFloat("_DissolveEffect", 1);
+        }
+            
     }
 }

@@ -131,10 +131,6 @@ public class Pawn : MonoBehaviour
 
         if (GetHealth().GetValue() <= 0)
         {
-            if (!GetComponent<Player>() && gameObject.tag == "Enemy")
-            {
-                GameObject.FindGameObjectWithTag("Player").GetComponent<Player>().TriggerEffectOnKill();
-            }
             Die();
         }
     }
@@ -408,6 +404,10 @@ public class Pawn : MonoBehaviour
     {
         if (!Dying)
         {
+            if (!GetComponent<Player>() && gameObject.tag == "Enemy")
+            {
+                GameObject.FindGameObjectWithTag("Player").GetComponent<Player>().TriggerEffectOnKill();
+            }
             StartCoroutine(DeathSequence());
         }
     }
@@ -415,7 +415,14 @@ public class Pawn : MonoBehaviour
     private IEnumerator DeathSequence()
     {
         Dying = true;
+        stunned.SetTime(999f);
+        if (GetComponent<Hurtbox>() != null)
+            Destroy(GetComponent<Hurtbox>());
+        if (GetComponentInChildren<Hurtbox>() != null)
+            Destroy(GetComponentInChildren<Hurtbox>());
+        gameObject.layer = LayerMask.NameToLayer("Default");
         yield return new WaitForSeconds(Stats.deathDuration);
+        print("Destroying.. death duration = "+Stats.deathDuration);
         Destroy(this.gameObject);
     }
 
