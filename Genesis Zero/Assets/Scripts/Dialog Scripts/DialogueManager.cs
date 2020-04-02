@@ -31,7 +31,7 @@ public class DialogueManager : MonoBehaviour
             Destroy(gameObject);
             return;
         }
-        DontDestroyOnLoad(gameObject);
+        //DontDestroyOnLoad(gameObject);
 
     }
     // Start is called before the first frame update
@@ -56,48 +56,52 @@ public class DialogueManager : MonoBehaviour
          * (optional) fourth label = voice clip if available
          * assumptions: first 3 labels always exist, fourth label may not exist,
          * */
+        
+
 
         string path = "Assets/Resources/Dialogue/";
         path += filePath + ".txt";
-        StreamReader reader = new StreamReader(path);
-
-        int count = 0;
-        string line;
-        dialogue.charIcons = new Queue<string>();
-        dialogue.sentences = new Queue<string>();
-        dialogue.durations = new Queue<string>();
-
-        /*string text = reader.ReadToEnd();
-        string[] lines = text.Split(';','\n');
-        foreach(string s in lines)
+        //StreamReader reader = new StreamReader(path);
+        using (StreamReader reader = new StreamReader(path))
         {
-            if (IsNumeric(s))
-            {
-                Debug.Log(s + " is a valid number");
-            }
-            else if(s.Contains("_"))
-            {
-                Debug.Log(s + " is an audio label");
-            }
-            else
-            {
-                Debug.Log(s);
-            }
+            int count = 0;
+            string line;
+            dialogue.charIcons = new Queue<string>();
+            dialogue.sentences = new Queue<string>();
+            dialogue.durations = new Queue<string>();
 
-        }*/
+            /*string text = reader.ReadToEnd();
+            string[] lines = text.Split(';','\n');
+            foreach(string s in lines)
+            {
+                if (IsNumeric(s))
+                {
+                    Debug.Log(s + " is a valid number");
+                }
+                else if(s.Contains("_"))
+                {
+                    Debug.Log(s + " is an audio label");
+                }
+                else
+                {
+                    Debug.Log(s);
+                }
 
-        while ((line = reader.ReadLine()) != null)
-        {
-            string[] output = line.Split(';');
-            dialogue.charIcons.Enqueue(output[0]);
-            dialogue.sentences.Enqueue(output[1]);
-            dialogue.durations.Enqueue(output[2]);
-            count++;
-            if (output.Length > 3)
-                AudioManager.instance.PlaySound(output[3]);
-            //Debug.Log(output[2]);
+            }*/
+
+            while ((line = reader.ReadLine()) != null)
+            {
+                string[] output = line.Split(';');
+                dialogue.charIcons.Enqueue(output[0]);
+                dialogue.sentences.Enqueue(output[1]);
+                dialogue.durations.Enqueue(output[2]);
+                count++;
+                if (output.Length > 3)
+                    AudioManager.instance.PlaySound(output[3]);
+                //Debug.Log(output[2]);
+            }
+            //reader.Close();
         }
-        reader.Close();
         instance.StartDialogue(dialogue);
     }
 

@@ -10,6 +10,7 @@ GameObject:
   m_Component:
   - component: {fileID: 6979027268991551798}
   - component: {fileID: 1006860593726510182}
+  - component: {fileID: 4754638615081859116}
   m_Layer: 0
   m_Name: DialogueManager
   m_TagString: Untagged
@@ -46,6 +47,18 @@ MonoBehaviour:
   dialogueText: {fileID: 0}
   charImage: {fileID: 0}
   parent: {fileID: 0}
+--- !u!114 &4754638615081859116
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1481965072029859053}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: e4f774eda6a21f6469082dfb9360d10c, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
 --- !u!1 &2727501474454769957
 GameObject:
   m_ObjectHideFlags: 0
@@ -57,7 +70,6 @@ GameObject:
   - component: {fileID: 9110160039940593664}
   - component: {fileID: 1652978568609072770}
   - component: {fileID: 245649731347677012}
-  - component: {fileID: 161558526280699212}
   m_Layer: 0
   m_Name: EventSystem
   m_TagString: EventSystem
@@ -113,19 +125,6 @@ MonoBehaviour:
   m_InputActionsPerSecond: 10
   m_RepeatDelay: 0.5
   m_ForceModuleActive: 0
---- !u!114 &161558526280699212
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 2727501474454769957}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 3524625eb9072704f88d35bb7df5a6ab, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  exitingScene: 0
 --- !u!1 &4837747957038062061
 GameObject:
   m_ObjectHideFlags: 0
@@ -171,9 +170,9 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   maxBuildingWidth: 5
-  minBuildingWidth: 2
-  maxBuildingTileCount: 35
-  minBuildingTileCount: 22
+  minBuildingWidth: 3
+  maxBuildingTileCount: 22
+  minBuildingTileCount: 18
   numberOfBuildings: 4
   minOffset: 0
   maxOffset: 0
@@ -214,13 +213,14 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: bb5e8a19e8540b949856d4f0a857e7de, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  deactivateDist: 30
-  updatesPerSecond: 1.7
+  deactivateDist: 35
+  updatesPerSecond: 2.5
   enemyDistOffset: 5
   tags:
   - Enemy
   - PCGTile
   - Props
+  - Pickups
 --- !u!1 &8825409176370879083
 GameObject:
   m_ObjectHideFlags: 0
@@ -278,7 +278,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 37c88511ec7b94b4fbd41a39b2c38797, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  MasterMusicVolume: 0.2
+  MasterMusicVolume: 0.05
   MasterSoundVolume: 0
 --- !u!114 &8825409176370879079
 MonoBehaviour:
@@ -325,6 +325,7 @@ GameObject:
   - component: {fileID: 8825409176775595400}
   - component: {fileID: 8825409176775595398}
   - component: {fileID: 1276976417}
+  - component: {fileID: 8825409176611496721}
   m_Layer: 0
   m_Name: StateManager
   m_TagString: StateManager
@@ -374,6 +375,18 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   exitingScene: 0
+--- !u!114 &8825409176611496721
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 8825409176775595401}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: e4f774eda6a21f6469082dfb9360d10c, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
 --- !u!1 &8825409177366176566
 GameObject:
   m_ObjectHideFlags: 0
@@ -526,7 +539,19 @@ MonoBehaviour:
     m_ActionId: d34c41c0-3e49-4d96-8e5e-2de4da6a116c
     m_ActionName: PlayerControls/Roll[/Keyboard/leftShift]
   - m_PersistentCalls:
-      m_Calls: []
+      m_Calls:
+      - m_Target: {fileID: 8769293556786596254, guid: 50cbbdc141985834fbf9aceb73894fd7,
+          type: 3}
+        m_MethodName: Interact
+        m_Mode: 0
+        m_Arguments:
+          m_ObjectArgument: {fileID: 0}
+          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
+          m_IntArgument: 0
+          m_FloatArgument: 0
+          m_StringArgument: 
+          m_BoolArgument: 0
+        m_CallState: 2
     m_ActionId: 37cdc43c-1b80-4a86-9c7c-e7179db50e60
     m_ActionName: PlayerControls/Interact[/Keyboard/e]
   - m_PersistentCalls:
