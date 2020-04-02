@@ -43,6 +43,7 @@ public class DialogueManager : MonoBehaviour
         interactions = new int[3];
         instance.EndDialogue();
         instance.TriggerDialogue("StartDialogue");
+        StateManager.instance.PauseGame();
     }
 
     public void TriggerDialogue(string filePath)
@@ -176,6 +177,7 @@ public class DialogueManager : MonoBehaviour
     private void EndDialogue()
     {
         InvokeAfterDialogue(currentType);
+        StateManager.instance.UnpauseGame();
         parent.SetActive(false);
     }
     public void InvokeAfterDialogue(int type)
@@ -188,7 +190,7 @@ public class DialogueManager : MonoBehaviour
                 GetComponent<InteractInterface>().ClosestInteractable().GetComponent<Merchant>().AfterDialogue();
                 break;
             case 1: //GodHead interaction trigger
-                //GetComponent<InteractInterface>().ClosestInteractable().GetComponent<GodHead>().AfterDialogue();
+                GetComponent<InteractInterface>().ClosestInteractable().GetComponent<GodHead>().AfterDialogue();
                 break;
             case 2: //Snakeboss interaction trigger
                 break;

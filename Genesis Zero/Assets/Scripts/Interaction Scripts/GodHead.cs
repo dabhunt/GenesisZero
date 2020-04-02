@@ -52,25 +52,46 @@ public class GodHead : MonoBehaviour
     public void Interact()
     {
         if (!isActive)
-        {
             return;
-        }
+        //prevent player from activating multiple times
+        if (StateManager.instance.IsPaused())
+            return;
         if (GameInputManager.instance.GetActiveControlMap() == "MenuControls")
             return;
         if (Vector3.Distance(player.transform.position, transform.position) <= activeDistance && skillManager.GetModAmount() > 0)
         {
+            int interactions = DialogueManager.instance.GetInteractAmount(0);
+            //if player has interacted with a merchant less than twice, show extended dialogue
+            if (interactions <= 1)
+            {
+                //reads the 0_ and 1_Merchant files
+                DialogueManager.instance.TriggerDialogue(interactions + "_FallenGod");
+            }
+            else //if player has interacted twice, don't show dialogue text just go straight into UI
+            {
+                //DialogueManager.instance.TriggerDialogue("Default_Merchant");
+                AfterDialogue();
+            }
+            DialogueManager.instance.SetInteractionAfterDialogue(1);
+            //incrementInteract takes an int representing type, which is 0 for merchant type interaction and adds 1.
+            DialogueManager.instance.IncrementInteract(1);
             FindObjectOfType<AudioManager>().StopAllSounds();
             StateManager.instance.PauseGame();
-            GameInputManager.instance.SwitchControlMap("MenuControls");
-            isActive = true;
-            InitializeUI();
         }
         else
         {
             GetComponent<InteractPopup>().SetText("This Interaction requires at least one Modifier.");
         }
     }
-
+    public void AfterDialogue()
+    {
+        FindObjectOfType<AudioManager>().StopAllSounds();
+        GameInputManager.instance.SwitchControlMap("MenuControls");
+        isActive = true;
+        InitializeUI();
+        UpdateSelect(0);
+        //sacUI.gameObject.SetActive(true);   
+    }
     public void Select(InputAction.CallbackContext ctx)
     {
         if (ctx.performed)

@@ -55,7 +55,7 @@ public class Merchant : MonoBehaviour
     {
         if (!isActive)
             return;
-        //switch control map, and prevent player from activating multiple times
+        //prevent player from activating multiple times
         if (StateManager.instance.IsPaused())
             return;
         if (Vector3.Distance(player.transform.position, transform.position) <= activeDistance)
@@ -74,6 +74,7 @@ public class Merchant : MonoBehaviour
             DialogueManager.instance.SetInteractionAfterDialogue(0);
             //incrementInteract takes an int representing type, which is 0 for merchant and adds 1.
             DialogueManager.instance.IncrementInteract(0);
+            FindObjectOfType<AudioManager>().StopAllSounds();
             StateManager.instance.PauseGame();
         }
     }
