@@ -22,5 +22,5 @@ public class StatObject : ScriptableObject
     public float range = 1;
     public float shield;
     public float weight = 10;
-
+    public float deathDuration = 3;
 }

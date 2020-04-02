@@ -20,7 +20,7 @@ public class Pawn : MonoBehaviour
     private float burntime, burndamage, burntick; //burndamage is damage per second
     private float slowtime, knockbackforce;
     private Vector3 knockbackvector;
-    private bool Initialized, ForcedKnockBack;
+    private bool Initialized, ForcedKnockBack, Dying;
 
     protected void Start()
     {
@@ -135,7 +135,7 @@ public class Pawn : MonoBehaviour
             {
                 GameObject.FindGameObjectWithTag("Player").GetComponent<Player>().TriggerEffectOnKill();
             }
-            Destroy(this.gameObject);
+            Die();
         }
     }
 
@@ -403,6 +403,20 @@ public class Pawn : MonoBehaviour
         stunned = new Status(0); statuses.Add(stunned);
         burning = new Status(0); statuses.Add(burning);
         slowed = new Status(0); statuses.Add(slowed);
+    }
+    private void Die()
+    {
+        if (!Dying)
+        {
+            StartCoroutine(DeathSequence());
+        }
+    }
+
+    private IEnumerator DeathSequence()
+    {
+        Dying = true;
+        yield return new WaitForSeconds(Stats.deathDuration);
+        Destroy(this.gameObject);
     }
 
 }
