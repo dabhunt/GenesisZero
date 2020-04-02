@@ -14,6 +14,9 @@ public class GunMaterial: MonoBehaviour
     void Update()
     {
         float ratio = overheat.GetHeat() / overheat.GetMaxHeat();
-        gameObject.GetComponent<Renderer>().material.SetFloat("_HeatControl", ratio);
+        if (ratio >= .5)
+        {
+            gameObject.GetComponent<Renderer>().material.SetFloat("_HeatControl", (ratio) - .5f);
+        } else { gameObject.GetComponent<Renderer>().material.SetFloat("_HeatControl", 0); }
     }
 }
