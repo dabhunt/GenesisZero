@@ -17,13 +17,11 @@ public class EnemyOverlayShader : MonoBehaviour
         float onOffMulti = -12 * (1 - ratio);
         if (ratio < lowHealthCutoff)
         {
-            print("lowhealth runs");
             gameObject.GetComponent<Renderer>().material.SetFloat("_OnOff", onOffMulti);
             gameObject.GetComponent<Renderer>().material.SetFloat("_LowHP", .15f);
         }
         if (ratio <= 0)
         {
-            print("Dissolve effect applied");
             gameObject.GetComponent<Renderer>().material.SetFloat("_DissolveEffect", 1);
         }
             
