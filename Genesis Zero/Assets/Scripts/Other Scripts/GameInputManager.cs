@@ -58,4 +58,17 @@ public class GameInputManager : MonoBehaviour
             }
         }
     }
+    //determines what input map. returns true, given the string name of an input map 
+    //still does not seem to work properly
+    public bool IsControlMapEnabled(string name) 
+    {
+        foreach (var map in actionAsset.actionMaps)
+        {
+            if (map.name == name)
+            {
+                return actionAsset.FindActionMap(map.name).enabled;
+            }
+        }
+        return false;
+    }
 }

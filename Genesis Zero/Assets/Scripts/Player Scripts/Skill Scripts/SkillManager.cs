@@ -489,8 +489,6 @@ public class SkillManager
     {
         return GetRandomModsFromPlayer(amount, 3);
     }
-
-
     public GameObject SpawnAbility(Vector3 position, string name)
     {
         SkillObject so = (SkillObject)Resources.Load("Skills/Abilities/" + name);
@@ -681,7 +679,10 @@ public class SkillManager
     {
         return AddedSkill;
     }
-
+    public List<SkillObject> GetAllAbilities()
+    {
+        return abilities;
+    }
     public void SetAddedSkill(SkillObject so)
     {
         AddedSkill = so;

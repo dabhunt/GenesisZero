@@ -25,6 +25,7 @@ public class Merchant : MonoBehaviour
     private bool isActive = true;
     private int canistersNeeded = 0;
     private bool firstInteraction = true;
+    private int interactionCount = 0;
     //private bool confirmationWindowOpen = false;
     //change to private later below this point
     private int itemSelectNum = -1;
@@ -54,25 +55,45 @@ public class Merchant : MonoBehaviour
     {
         if (!isActive)
             return;
-        if (GameInputManager.instance.GetActiveControlMap() == "MenuControls")
+        //prevent player from activating multiple times
+        if (StateManager.instance.IsPaused())
             return;
         if (Vector3.Distance(player.transform.position, transform.position) <= activeDistance)
         {
+            int interactions = DialogueManager.instance.GetInteractAmount(0);
+            //if player has interacted with a merchant less than twice, show extended dialogue
+            if (interactions <= 1)
+            {
+                //reads the 0_ and 1_Merchant files
+                DialogueManager.instance.TriggerDialogue(interactions + "_Merchant");
+            }
+            else // otherwise, play only one line of dialogue
+            {
+                DialogueManager.instance.TriggerDialogue("Default_Merchant");
+            }
+            DialogueManager.instance.SetInteractionAfterDialogue(0);
+            //incrementInteract takes an int representing type, which is 0 for merchant and adds 1.
+            DialogueManager.instance.IncrementInteract(0);
             FindObjectOfType<AudioManager>().StopAllSounds();
             StateManager.instance.PauseGame();
-            GameInputManager.instance.SwitchControlMap("MenuControls");
-            isActive = true;
-            if (firstInteraction)
-            {
-                DestroyPopUps();
-                InitializeUI();
-                UpdateSelect(0);
-            }
-            else 
-            {
-                DestroyPopUps();
-                merchantUI.gameObject.SetActive(true);
-            }
+        }
+    }
+    public void AfterDialogue()
+    {
+        FindObjectOfType<AudioManager>().StopAllSounds();
+        GameInputManager.instance.SwitchControlMap("MenuControls");
+        isActive = true;
+        if (firstInteraction)
+        {
+            interactionCount++;
+            DestroyPopUps();
+            InitializeUI();
+            UpdateSelect(0);
+        }
+        else
+        {
+            DestroyPopUps();
+            merchantUI.gameObject.SetActive(true);
         }
     }
 

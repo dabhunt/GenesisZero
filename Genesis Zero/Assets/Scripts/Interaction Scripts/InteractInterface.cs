@@ -9,9 +9,12 @@ public class InteractInterface : MonoBehaviour
     private string type;
     private GameObject closest;
     private float minProximity = 7f;
+    private bool canInteract = true;
     //returns the closest object in the game with the tag "Interactable"
     public GameObject ClosestInteractable()
     {
+        if (!canInteract)
+            return null;
         GameObject player = GameObject.FindGameObjectWithTag("Player");
         GameObject[] objArray = GameObject.FindGameObjectsWithTag("Interactable");
         GameObject closest = objArray[0];
@@ -27,6 +30,8 @@ public class InteractInterface : MonoBehaviour
         }
         if (shortest >= minProximity)
             return null;
+        canInteract = false;
+        Invoke("Reset", .2f);
         return closest;
     }
     // button sends the int value of the selected UI obj as a string, this gets sent to godhead script as updateselect + the mod slot
@@ -43,6 +48,10 @@ public class InteractInterface : MonoBehaviour
         {
             closest.GetComponent<Merchant>().UpdateSelect(num);
         }
+    }
+    public void Reset()
+    {
+        canInteract = true;
     }
     //God head functions Accept offer, decline offer
     public void Accept()
