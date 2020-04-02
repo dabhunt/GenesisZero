@@ -42,15 +42,25 @@ public class ModConverter : MonoBehaviour
         {
             value += EvaluateMod(i);
         }
-        //the amount of mods you put in increases the guaranteed lowest rarity you can receive
+        //the amount of mods you put in increases the guaranteed lowest rarity you can receive, and increases how likely you are to get a better mod
         List<SkillObject> mod = new List<SkillObject>();
-        if (value >= 6)
+        if (value >= 8)
             mod = sk.GetRandomGolds(1);
-        else if (value >= 2)
+        else if (value >= 3)
             mod = sk.GetRandomGreens(1);
-        //randomly rolls a mod by chance, giving the player the chance to potentially receive a better mod
         SkillObject newMod = sk.GetRandomModByChance();
-        if (value >= 2 && mod[0].Rarity > newMod.Rarity)
+        //start at 1, so that this only runs at values > 1
+        for (int i = 1; i < value; i++)
+        {
+            SkillObject oldMod = newMod;
+            //for each 'value' roll a new mod by chance, if that mod exceeds the value of the stored mod, replace it
+            newMod = sk.GetRandomModByChance();
+            if (newMod.Rarity > oldMod.Rarity)
+                newMod = oldMod;
+        }
+        //randomly rolls a mod by chance, giving the player the chance to potentially receive a better mod
+        
+        if (value >= 3 && mod[0].Rarity > newMod.Rarity)
             newMod = mod[0]; //if the mod is better replace it, otherwise it stays the same
         modList.Clear();
         //deactivate Scrap Converter
@@ -79,7 +89,7 @@ public class ModConverter : MonoBehaviour
                 value = 2;
                 break;
             case 3: //3 is legendary
-                value = 5;
+                value = 8;
                 break;
             default: //defaults to 1
                 break;

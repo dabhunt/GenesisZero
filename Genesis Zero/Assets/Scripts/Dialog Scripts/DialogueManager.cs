@@ -13,7 +13,7 @@ public class DialogueManager : MonoBehaviour
 
     //public Text nameText;
     public TextMeshProUGUI dialogueText;
-    public Image  charImage;
+    public Image charImage;
     public GameObject parent;
     private Sprite[] iconArray;
     private Queue<string> charIcons;
@@ -92,13 +92,13 @@ public class DialogueManager : MonoBehaviour
             count++;
             if (output.Length > 3)
                 AudioManager.instance.PlaySound(output[3]);
-                //Debug.Log(output[2]);
+            //Debug.Log(output[2]);
         }
         reader.Close();
         instance.StartDialogue(dialogue);
     }
 
-    public void StartDialogue (Dialogue dialogue)
+    public void StartDialogue(Dialogue dialogue)
     {
         //nameText.text = dialogue.name;
         parent.SetActive(true);
@@ -109,7 +109,7 @@ public class DialogueManager : MonoBehaviour
         {
             charIcons.Enqueue(dialogue.charIcons.Dequeue());
         }
-        while (dialogue.sentences.Count > 0) 
+        while (dialogue.sentences.Count > 0)
         {
             sentences.Enqueue(dialogue.sentences.Dequeue());
         }
@@ -161,8 +161,12 @@ public class DialogueManager : MonoBehaviour
             DisplayNextSentence();
         }
     }
-
-    void EndDialogue()
+    public void SkipAll()
+    {
+        //possibly add a check to see if the dialogue is unskippable
+        EndDialogue();
+    }
+    private void EndDialogue()
     {
         parent.SetActive(false);
     }
