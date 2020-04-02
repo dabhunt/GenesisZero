@@ -181,7 +181,8 @@ public class GodHead : MonoBehaviour
     private void InitializeUI()
     {
         //destroy all popups when entering the interface
-        GetComponent<InteractPopup>().DestroyPopUp();
+        if (GetComponent<InteractPopup>() !=null)
+            GetComponent<InteractPopup>().DestroyPopUp();
         GameObject[] pickups = GameObject.FindGameObjectsWithTag("Pickups");
         for (int i = 0; i < pickups.Length; i++)
         {

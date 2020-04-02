@@ -56,53 +56,23 @@ public class DialogueManager : MonoBehaviour
          * (optional) fourth label = voice clip if available
          * assumptions: first 3 labels always exist, fourth label may not exist,
          * */
-        
-
-
-        string path = "Assets/Resources/Dialogue/";
-        path += filePath + ".txt";
-        //StreamReader reader = new StreamReader(path);
-        using (StreamReader reader = new StreamReader(path))
+        TextAsset ta = (TextAsset)Resources.Load("Dialogue/"+filePath);
+        int count = 0;
+        dialogue.charIcons = new Queue<string>();
+        dialogue.sentences = new Queue<string>();
+        dialogue.durations = new Queue<string>();
+        var arrayString = ta.text.Split('\n');
+        foreach (var line in arrayString)
         {
-            int count = 0;
-            string line;
-            dialogue.charIcons = new Queue<string>();
-            dialogue.sentences = new Queue<string>();
-            dialogue.durations = new Queue<string>();
-
-            /*string text = reader.ReadToEnd();
-            string[] lines = text.Split(';','\n');
-            foreach(string s in lines)
-            {
-                if (IsNumeric(s))
-                {
-                    Debug.Log(s + " is a valid number");
-                }
-                else if(s.Contains("_"))
-                {
-                    Debug.Log(s + " is an audio label");
-                }
-                else
-                {
-                    Debug.Log(s);
-                }
-
-            }*/
-
-            while ((line = reader.ReadLine()) != null)
-            {
-                string[] output = line.Split(';');
-                dialogue.charIcons.Enqueue(output[0]);
-                dialogue.sentences.Enqueue(output[1]);
-                dialogue.durations.Enqueue(output[2]);
-                count++;
-                if (output.Length > 3)
-                    AudioManager.instance.PlaySound(output[3]);
-                //Debug.Log(output[2]);
-            }
-            //reader.Close();
+            string[] output = line.Split(';');
+            dialogue.charIcons.Enqueue(output[0]);
+            dialogue.sentences.Enqueue(output[1]);
+            dialogue.durations.Enqueue(output[2]);
+            count++;
+            if (output.Length > 3)
+                AudioManager.instance.PlaySound(output[3]);
         }
-        instance.StartDialogue(dialogue);
+        StartDialogue(dialogue);
     }
 
     public void StartDialogue(Dialogue dialogue)
