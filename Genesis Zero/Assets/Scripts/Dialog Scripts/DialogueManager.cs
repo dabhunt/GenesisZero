@@ -19,7 +19,8 @@ public class DialogueManager : MonoBehaviour
     private Queue<string> charIcons;
     private Queue<string> sentences;
     private Queue<string> durations;
-
+    private int[] interactions;
+    private int currentType = -1;
 
     void Awake()
     {
@@ -39,8 +40,9 @@ public class DialogueManager : MonoBehaviour
         charIcons = new Queue<string>();
         sentences = new Queue<string>();
         durations = new Queue<string>();
+        interactions = new int[3];
         instance.EndDialogue();
-        instance.TriggerDialogue("TestDialog.txt");
+        instance.TriggerDialogue("StartDialogue");
     }
 
     public void TriggerDialogue(string filePath)
@@ -55,7 +57,7 @@ public class DialogueManager : MonoBehaviour
          * */
 
         string path = "Assets/Resources/Dialogue/";
-        path += filePath;
+        path += filePath + ".txt";
         StreamReader reader = new StreamReader(path);
 
         int count = 0;
@@ -117,11 +119,8 @@ public class DialogueManager : MonoBehaviour
         {
             durations.Enqueue(dialogue.durations.Dequeue());
         }
-
         DisplayNextSentence();
     }
-
-
     public void DisplayNextSentence()
     {
         if (sentences.Count == 0)
@@ -153,14 +152,22 @@ public class DialogueManager : MonoBehaviour
         foreach (char letter in sentence.ToCharArray())
         {
             dialogueText.text += letter;
-            yield return new WaitForSeconds(0.03f);
+            yield return StartCoroutine(WaitForRealSeconds(.03f));
         }
         if (float.Parse(dur) != -1)
         {
-            yield return new WaitForSeconds(float.Parse(dur));
+            yield return StartCoroutine(WaitForRealSeconds(float.Parse(dur)));
             DisplayNextSentence();
         }
     }
+      public static IEnumerator WaitForRealSeconds( float delay )
+     {
+         float start = Time.realtimeSinceStartup;
+         while( Time.realtimeSinceStartup < start + delay)
+         {
+             yield return null;
+         }
+     }
     public void SkipAll()
     {
         //possibly add a check to see if the dialogue is unskippable
@@ -168,14 +175,50 @@ public class DialogueManager : MonoBehaviour
     }
     private void EndDialogue()
     {
+        InvokeAfterDialogue(currentType);
         parent.SetActive(false);
     }
-    // Update is called once per frame
+    public void InvokeAfterDialogue(int type)
+    {
+        if (type == -1)
+            return;
+        switch (type) 
+        {
+            case 0: //Merchant interaction trigger
+                GetComponent<InteractInterface>().ClosestInteractable().GetComponent<Merchant>().AfterDialogue();
+                break;
+            case 1: //GodHead interaction trigger
+                //GetComponent<InteractInterface>().ClosestInteractable().GetComponent<GodHead>().AfterDialogue();
+                break;
+            case 2: //Snakeboss interaction trigger
+                break;
+            default:
+                break;
+        }
+        //reset currentType
+        currentType = -1;
+    }
     void Update()
     {
         if (Input.GetKeyDown(KeyCode.F))
         {
             DisplayNextSentence();
         }
+    }
+    //returns the amount of times the player has interacted with a type of game object
+    //0 is merchant, 1 is fallen god, 2 is boss.
+    public int GetInteractAmount(int type)
+    {
+        return interactions[type];
+    }
+    //change currentType so that invokeAfterDialogue plays the right dialogue
+    public void SetInteractionAfterDialogue(int type)
+    {
+        currentType = type;
+    }
+    //adds 1 to interactions of that type of game object
+    public void IncrementInteract(int type)
+    {
+        interactions[type] ++;
     }
 }
