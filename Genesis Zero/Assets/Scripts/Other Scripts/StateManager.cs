@@ -75,6 +75,15 @@ public class StateManager : MonoBehaviour
             if (closestMerchant != null && closestMerchant.GetWindowOpen())
                 GetComponent<InteractInterface>().ClosestInteractable().GetComponent<Merchant>().InitializeUI();
         }
+        if (Input.GetKeyDown(KeyCode.PageDown))
+        {
+            List<SkillObject> list = player.GetSkillManager().GetAllAbilities();
+            for (int i = 0; i < list.Count; i++)
+            {
+                Vector3 newVec = new Vector3(player.transform.position.x + i * 3f, player.transform.position.y + 1, 0); 
+                player.GetSkillManager().SpawnAbility(newVec, list[i].name);
+            }
+        }
         if (Input.GetKeyDown(KeyCode.Backspace)) 
         {
             restart.RestartScene();
@@ -93,7 +102,6 @@ public class StateManager : MonoBehaviour
         //Pauses Game
         isPaused = true;
         Time.timeScale = 0f;
-
     }
 
     //This unpauses game
