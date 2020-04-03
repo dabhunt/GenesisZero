@@ -198,7 +198,7 @@ public class Hitbox : MonoBehaviour
 
                 }
 
-                if (StunTime > 0)
+                if (StunTime > 0 && p.IsStunImmune() == false)
                 {
                     p.GetStunnedStatus().AddTime(StunTime);
                 }
