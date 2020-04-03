@@ -4,8 +4,6 @@ using UnityEngine;
 
 public class EnemyOverlayShader : MonoBehaviour
 {
-    public GameObject Model;
-
     private float lowHealthCutoff = .33f;
     private float delayBeforeDissolving = 1f;
     private bool dissolveComplete = false;
@@ -14,8 +12,6 @@ public class EnemyOverlayShader : MonoBehaviour
         gameObject.GetComponent<Renderer>().material.SetFloat("_OnOff",0);
         gameObject.GetComponent<Renderer>().material.SetFloat("_LowHP",0);
         gameObject.GetComponent<Renderer>().material.SetFloat("_DissolveEffect", 0);
-        gameObject.GetComponent<Renderer>().material.SetFloat("_StartTime", Time.time);
-
     }
     void Update()
     {
@@ -36,16 +32,10 @@ public class EnemyOverlayShader : MonoBehaviour
             }
             else 
             {
-
-                float effectVal = 1;
-                effectVal = effectVal - .1f;
-                gameObject.GetComponent<Renderer>().material.SetFloat("_DissolveEffect", 1);
-                gameObject.GetComponent<Animator>().Play("Death");
-                //Model.GetComponent<Animator>().Play("Death");
+                float effectVal = 1 - Time.deltaTime*2;
+                gameObject.GetComponent<Renderer>().material.SetFloat("_DissolveEffect",effectVal);
                 if (effectVal <= 0)
-                {
                     Destroy(this.gameObject);
-                }
             }
 
         }
