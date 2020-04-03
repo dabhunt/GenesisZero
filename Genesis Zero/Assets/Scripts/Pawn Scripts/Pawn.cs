@@ -16,11 +16,12 @@ public class Pawn : MonoBehaviour
 
     private Status invunerable, stunned, burning, slowed, stunimmune;
     private List<Status> statuses;
-
+    
     private float burntime, burndamage, burntick; //burndamage is damage per second
     private float slowtime, knockbackforce;
+    private float stunImmuneAfterStun = 1.5f;
     private Vector3 knockbackvector;
-    private bool Initialized, ForcedKnockBack, Dying;
+    private bool Initialized, ForcedKnockBack, Dying, StunnedLastFrame;
 
     protected void Start()
     {
@@ -133,7 +134,14 @@ public class Pawn : MonoBehaviour
             speed.AddBonus(-GetSpeed().GetMaxValue() * GetSlowedStatus().GetFactor(), Time.deltaTime);
             slowtime -= Time.deltaTime;
         }
-
+        //gives the pawn stun immunity after being stunned. default value is 1.5 seconds immunity
+        if (StunnedLastFrame == true && !IsStunned())
+        {
+            StunnedLastFrame = false;
+            stunimmune.SetTime(stunImmuneAfterStun);
+        }
+        if (IsStunned() || IsDying())
+            StunnedLastFrame = true;
         if (GetHealth().GetValue() <= 0)
         {
             Die();
@@ -255,7 +263,6 @@ public class Pawn : MonoBehaviour
     {
         return weight;
     }
-
     public bool IsStunned()
     {
         return stunned.IsTrue();
@@ -314,7 +321,11 @@ public class Pawn : MonoBehaviour
             ForcedKnockBack = true;
         }
     }
-
+    //can be used to change the default amount of seconds a pawn is immune to stuns after being stunned. the default is 1.5 seconds
+    public void SetDefaultStunImmune(float val)
+    {
+        stunImmuneAfterStun = val;
+    }
     public void KnockBackForced(Vector3 direction, float force)
     {
         KnockBack(direction, force);
@@ -365,7 +376,10 @@ public class Pawn : MonoBehaviour
     {
         return stunimmune.IsTrue();
     }
-
+    public bool IsDying()
+    {
+        return Dying;
+    }
     public Status GetStunImmuneStatus()
     {
         return stunimmune;
@@ -436,9 +450,8 @@ public class Pawn : MonoBehaviour
             Destroy(GetComponent<Hurtbox>());
         if (GetComponentInChildren<Hurtbox>() != null)
             Destroy(GetComponentInChildren<Hurtbox>());
-        gameObject.layer = LayerMask.NameToLayer("Default");
+        gameObject.transform.position = new Vector3(gameObject.transform.position.x, gameObject.transform.position.y, 1);
         yield return new WaitForSeconds(Stats.deathDuration);
-        print("Destroying.. death duration = "+Stats.deathDuration);
         Destroy(this.gameObject);
     }
 

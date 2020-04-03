@@ -74,14 +74,13 @@ public class AIController : Pawn
             CheckTargetVisibility();
         }
         targetPosition = GetTargetFollowPoint();
-
         //if AI was stunned last frame, but not this frame, change state to AIState.Follow
         if (stunnedLastFrame == true && !IsStunned())
         {
             ChangeState(AIState.Follow);
             stunnedLastFrame = false;
         }
-        if (IsStunned())
+        if (IsStunned() || IsDying())
         {
             ChangeState(AIState.Idle);
             stunnedLastFrame = true;
