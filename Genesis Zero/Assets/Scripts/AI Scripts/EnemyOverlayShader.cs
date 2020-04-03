@@ -26,9 +26,9 @@ public class EnemyOverlayShader : MonoBehaviour
         {
             if (!dissolveComplete)
             {
-                float deathDuration = GetComponentInParent<Pawn>().Stats.deathDuration;
+                //float deathDuration = GetComponentInParent<Pawn>().Stats.deathDuration;
                 gameObject.GetComponent<Renderer>().material.SetFloat("_DissolveEffect", 1);
-                Invoke("FinishDissolve", 1f);
+                Invoke("FinishDissolve", delayBeforeDissolving);
             }
             else 
             {
