@@ -14,7 +14,7 @@ public class Pawn : MonoBehaviour
     private List<Statistic> statistics;
     public StatObject Stats;
 
-    private Status invunerable, stunned, burning, slowed;
+    private Status invunerable, stunned, burning, slowed, stunimmune;
     private List<Status> statuses;
 
     private float burntime, burndamage, burntick; //burndamage is damage per second
@@ -108,6 +108,11 @@ public class Pawn : MonoBehaviour
     protected void Update()
     {
         UpdateStats();
+
+        if (IsStunImmune())
+        {
+            GetStunnedStatus().RemoveTime();
+        }
 
         if (IsBurning() && IsInvunerable() == false)
         {
@@ -355,6 +360,16 @@ public class Pawn : MonoBehaviour
         slowed.SetFactor(factor);
         slowtime = time;
     }
+
+    public bool IsStunImmune()
+    {
+        return stunimmune.IsTrue();
+    }
+
+    public Status GetStunImmuneStatus()
+    {
+        return stunimmune;
+    }
     // ------------------------- ---------------- ------------------------------//
 
     // ------------------------ General Functions ------------------------------//
@@ -399,6 +414,7 @@ public class Pawn : MonoBehaviour
         stunned = new Status(0); statuses.Add(stunned);
         burning = new Status(0); statuses.Add(burning);
         slowed = new Status(0); statuses.Add(slowed);
+        stunimmune = new Status(0); statuses.Add(stunimmune);
     }
     private void Die()
     {
