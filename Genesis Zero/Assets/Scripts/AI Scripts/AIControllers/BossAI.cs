@@ -17,6 +17,9 @@ public class BossAI : AIController
     private Transform looktarget;   // Where the boss looks to
     private Transform movetarget;   // Where the boss moves to or away
 
+    private Vector3 templookposition;   // Where the boss will look at as long as the templooktime is > 0
+    private float templooktime;         // How long the boss will look at the templookposition
+
     private Vector3 lookDir = Vector3.up;
     private Vector3 rotDir = Vector3.forward;
     private Vector3 lookposition;
@@ -85,9 +88,16 @@ public class BossAI : AIController
 
         CheckActions(); // Checks and updates what actions the boss should do
 
+        Vector3 looktargetposition = looktarget.position;
+        if (templooktime > 0)
+        {
+            looktargetposition = templookposition;
+            templooktime -= Time.fixedDeltaTime;
+        }
+
         if (state == AIState.Follow || state == AIState.Charge || state == AIState.Attack || state == AIState.Cooldown)
         {
-            lookDir = Vector3.Slerp(lookDir, looktarget.position - transform.position, 5 * Time.fixedDeltaTime); // Rotate to face target
+            lookDir = Vector3.Slerp(lookDir, looktargetposition - transform.position, 5 * Time.fixedDeltaTime); // Rotate to face target
         }
         else if (state == AIState.Patrol)
         {
@@ -100,7 +110,7 @@ public class BossAI : AIController
         }
 
         // Set where the boss looks at, default player
-        lookposition = Vector3.Lerp(lookposition, looktarget.position, 3 * Time.fixedDeltaTime);
+        lookposition = Vector3.Lerp(lookposition, looktargetposition, 3 * Time.fixedDeltaTime);
 
         if (bossstate == State.Centering || bossstate == State.Pulse)
         {
@@ -230,20 +240,26 @@ public class BossAI : AIController
             movetarget = Target;    // Reset movetarget back to default target (player)
 
             float attack = (int)Random.Range(0, 3);
+            float actiontime = 1;
             if (attack == 0)
             {
-                SetBossstate(State.Headbutt, 3);
-                SpawnIndicator(transform.position, new Vector2(16, 6), lookDir, new Color(1, 0, 0, .1f), Vector2.zero, false, true, 3);
+                actiontime = 3;
+                SetBossstate(State.Headbutt, actiontime);
+                SpawnIndicator(transform.position, new Vector2(16, 6), PredictPath(2), new Color(1, 0, 0, .1f), Vector2.zero, false, true, actiontime);
+                LookAtVectorTemp(PredictPath(2), actiontime);
             }
             else if (attack == 1)
             {
-                SetBossstate(State.Firebreath, 3);
-                SpawnIndicator(transform.position, new Vector2(16, 4), lookDir, new Color(1, 0, 0, .1f), Vector2.zero, false, true, 3);
+                actiontime = 3;
+                SetBossstate(State.Firebreath, actiontime);
+                SpawnIndicator(transform.position, new Vector2(16, 4), PredictPath(2), new Color(1, 0, 0, .1f), Vector2.zero, false, true, actiontime);
+                LookAtVectorTemp(PredictPath(2), actiontime);
             }
             else
             {
-                SetBossstate(State.Pulse, 2);
-                SpawnIndicator(transform.position, new Vector2(18, 18), lookDir, new Color(1, 0, 0, .1f), Vector2.zero, true, false, 2);
+                actiontime = 2;
+                SetBossstate(State.Pulse, actiontime);
+                SpawnIndicator(transform.position, new Vector2(18, 18), lookDir, new Color(1, 0, 0, .1f), Vector2.zero, true, false, actiontime);
             }
 
 
@@ -304,6 +320,12 @@ public class BossAI : AIController
     {
         bossstate = state;
         chargetime = time;
+    }
+
+    public void LookAtVectorTemp(Vector3 position, float time)
+    {
+        templookposition = position;
+        templooktime = time;
     }
 
     public Transform GetNearestVisibleWaypoint()
@@ -376,6 +398,20 @@ public class BossAI : AIController
             return true;
         }
         return false;
+    }
+
+    /**
+     * Returns the possible position of the player's position based on time.
+     */
+    public Vector3 PredictPath(float time)
+    {
+        if (Target.GetComponent<PlayerController>())
+        {
+            PlayerController PC = Target.GetComponent<PlayerController>();
+            Vector3 position = Target.position + (PC.moveVec * time);
+            return position;
+        }
+        return Target.position;
     }
 
     IEnumerator Spandout(float time, float start, float target)
