@@ -436,9 +436,8 @@ public class Pawn : MonoBehaviour
             Destroy(GetComponent<Hurtbox>());
         if (GetComponentInChildren<Hurtbox>() != null)
             Destroy(GetComponentInChildren<Hurtbox>());
-        gameObject.layer = LayerMask.NameToLayer("Default");
+        gameObject.layer = LayerMask.NameToLayer("Allies");
         yield return new WaitForSeconds(Stats.deathDuration);
-        print("Destroying.. death duration = "+Stats.deathDuration);
         Destroy(this.gameObject);
     }
 
