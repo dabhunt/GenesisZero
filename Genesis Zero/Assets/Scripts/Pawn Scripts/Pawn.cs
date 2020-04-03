@@ -255,7 +255,6 @@ public class Pawn : MonoBehaviour
     {
         return weight;
     }
-
     public bool IsStunned()
     {
         return stunned.IsTrue();
