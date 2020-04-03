@@ -69,7 +69,8 @@ public class PlayerController : MonoBehaviour
 
     //Movement Variables
     private RaycastHit groundHitInfo;
-    private Vector3 moveVec = Vector3.right;
+    [HideInInspector]
+    public Vector3 moveVec = Vector3.right;
     private float maxSpeed;
     private float vertVel;
     private float currentSpeed = 0;
