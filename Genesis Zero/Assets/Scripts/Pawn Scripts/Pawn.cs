@@ -20,7 +20,7 @@ public class Pawn : MonoBehaviour
     private float burntime, burndamage, burntick; //burndamage is damage per second
     private float slowtime, knockbackforce;
     private Vector3 knockbackvector;
-    private bool Initialized, ForcedKnockBack;
+    private bool Initialized, ForcedKnockBack, Dying;
 
     protected void Start()
     {
@@ -131,11 +131,7 @@ public class Pawn : MonoBehaviour
 
         if (GetHealth().GetValue() <= 0)
         {
-            if (!GetComponent<Player>() && gameObject.tag == "Enemy")
-            {
-                GameObject.FindGameObjectWithTag("Player").GetComponent<Player>().TriggerEffectOnKill();
-            }
-            Destroy(this.gameObject);
+            Die();
         }
     }
 
@@ -403,6 +399,31 @@ public class Pawn : MonoBehaviour
         stunned = new Status(0); statuses.Add(stunned);
         burning = new Status(0); statuses.Add(burning);
         slowed = new Status(0); statuses.Add(slowed);
+    }
+    private void Die()
+    {
+        if (!Dying)
+        {
+            if (!GetComponent<Player>() && gameObject.tag == "Enemy")
+            {
+                GameObject.FindGameObjectWithTag("Player").GetComponent<Player>().TriggerEffectOnKill();
+            }
+            StartCoroutine(DeathSequence());
+        }
+    }
+
+    private IEnumerator DeathSequence()
+    {
+        Dying = true;
+        stunned.SetTime(999f);
+        if (GetComponent<Hurtbox>() != null)
+            Destroy(GetComponent<Hurtbox>());
+        if (GetComponentInChildren<Hurtbox>() != null)
+            Destroy(GetComponentInChildren<Hurtbox>());
+        gameObject.layer = LayerMask.NameToLayer("Default");
+        yield return new WaitForSeconds(Stats.deathDuration);
+        print("Destroying.. death duration = "+Stats.deathDuration);
+        Destroy(this.gameObject);
     }
 
 }
