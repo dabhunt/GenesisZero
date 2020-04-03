@@ -45,11 +45,15 @@ public class BossAI : AIController
     public GameObject Indicator;
     private List<GameObject> indicators;
 
+    private Vector3 targetmovement;
+    private Vector3 lasttargetposition;
+
     protected void Awake()
     {
         zdepth = transform.position.z;
         lookposition = transform.position;
         LastPosition = transform.position;
+        targetmovement = Vector3.zero;
     }
 
     new protected void Start()
@@ -57,6 +61,7 @@ public class BossAI : AIController
         base.Start();
         looktarget = Target;
         movetarget = Target;
+        lasttargetposition = Target.position;
         TotalHealth = GetHealth().GetValue();
         LastHealth = TotalHealth;
         indicators = new List<GameObject>();
@@ -85,6 +90,10 @@ public class BossAI : AIController
         base.FixedUpdate();
         if (Target == null) { return; }
         if (initiated == false) { return; }
+
+        // Determine the velocity of the target
+        targetmovement = Target.position - lasttargetposition;
+        lasttargetposition = Target.position;
 
         CheckActions(); // Checks and updates what actions the boss should do
 
@@ -245,15 +254,17 @@ public class BossAI : AIController
             {
                 actiontime = 3;
                 SetBossstate(State.Headbutt, actiontime);
-                SpawnIndicator(transform.position, new Vector2(16, 6), PredictPath(2), new Color(1, 0, 0, .1f), Vector2.zero, false, true, actiontime);
-                LookAtVectorTemp(PredictPath(2), actiontime);
+                Vector3 target = PredictPath(1.25f);
+                SpawnIndicator(transform.position, new Vector2(16, 6), target - transform.position, new Color(1, 0, 0, .1f), Vector2.zero, false, true, actiontime);
+                LookAtVectorTemp(target, actiontime);
             }
             else if (attack == 1)
             {
                 actiontime = 3;
                 SetBossstate(State.Firebreath, actiontime);
-                SpawnIndicator(transform.position, new Vector2(16, 4), PredictPath(2), new Color(1, 0, 0, .1f), Vector2.zero, false, true, actiontime);
-                LookAtVectorTemp(PredictPath(2), actiontime);
+                Vector3 target = PredictPath(1.5f);
+                SpawnIndicator(transform.position, new Vector2(24, 4), target - transform.position, new Color(1, 0, 0, .1f), Vector2.zero, false, true, actiontime);
+                LookAtVectorTemp(target, actiontime);
             }
             else
             {
@@ -405,13 +416,8 @@ public class BossAI : AIController
      */
     public Vector3 PredictPath(float time)
     {
-        if (Target.GetComponent<PlayerController>())
-        {
-            PlayerController PC = Target.GetComponent<PlayerController>();
-            Vector3 position = Target.position + (PC.moveVec * time);
-            return position;
-        }
-        return Target.position;
+        Vector3 position = Target.position + (targetmovement * time * (1 / Time.deltaTime));
+        return position;
     }
 
     IEnumerator Spandout(float time, float start, float target)
