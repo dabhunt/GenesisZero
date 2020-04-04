@@ -75,7 +75,9 @@ public class Gun : MonoBehaviour
         Vector3 spawnpoint = new Vector3(firePoint.transform.position.x, firePoint.transform.position.y, 0);
         //instantiate the players next bullet, passing in the crit variable to decide what type of bullet
         bool crit = Crit();
-        GameObject instance = (GameObject) Instantiate(GetProjectile(crit), spawnpoint, firePoint.transform.rotation);
+        GameObject instance = (GameObject) Instantiate(GetProjectile(crit), spawnpoint, Quaternion.identity);
+        //sets the object to look towards where it should be firing
+        instance.transform.LookAt(controller.worldXhair.transform);
         instance = ApplyModifiers(instance,crit);
         expShot = instance.GetComponent<ExplosiveShot>();
         if (expShot != null)

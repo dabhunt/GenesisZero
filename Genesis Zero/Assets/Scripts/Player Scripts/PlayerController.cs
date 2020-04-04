@@ -478,10 +478,11 @@ public class PlayerController : MonoBehaviour
         Vector3 mouseWorldPos = canvasRef.worldCamera.ScreenToWorldPoint(new Vector3(Input.mousePosition.x, Input.mousePosition.y, camZ));
         Vector3 maxBounds = canvasRef.worldCamera.ViewportToWorldPoint(new Vector3(1, 1, camZ));
         Vector3 minBounds = canvasRef.worldCamera.ViewportToWorldPoint(new Vector3(0, 0, camZ));
-        Vector3 worldXhairPos = worldXhair.transform.position;
+        worldXhair.transform.position = new Vector3(worldXhair.transform.position.x, worldXhair.transform.position.y, 0);
+        Vector3 worldXhairPos;
+        worldXhairPos = worldXhair.transform.position;
         Vector2 screenXhairPos;
         Vector3 worldXhairScreenPos;
-
         //Clamp the mouse position to bind worldXhair inside screen when using mouse
         mouseWorldPos.x = Mathf.Clamp(mouseWorldPos.x, minBounds.x, maxBounds.x);
         mouseWorldPos.y = Mathf.Clamp(mouseWorldPos.y, minBounds.y, maxBounds.y);
@@ -504,7 +505,7 @@ public class PlayerController : MonoBehaviour
             if (gamepadAimTime == 0)
                 worldXhair.transform.position = mouseWorldPos;
         }
-
+        worldXhair.transform.position = new Vector3(worldXhair.transform.position.x, worldXhair.transform.position.y, 0);
         //This convert worldXhair position to ScreenPoint then to UI local Point
         // then set it to realXhair, z = 0 here.
         worldXhairScreenPos = canvasRef.worldCamera.WorldToScreenPoint(new Vector3(worldXhair.transform.position.x, worldXhair.transform.position.y, 0));
