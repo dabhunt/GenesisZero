@@ -149,23 +149,23 @@ public class BossAI : AIController
             else if (bossstate == State.MovingAway && GetDistanceToTarget() < 30)
             {
                 float diff = GetDistanceToTarget() - 20;
-                transform.position = Vector2.MoveTowards(transform.position, movetarget.position, (speed * diff / GetDistanceToTarget()) / 10 * Time.fixedDeltaTime);
+                transform.position = Vector2.MoveTowards(transform.position, movetarget.position, (speed * diff / GetDistanceToTarget()) / 5 * Time.fixedDeltaTime);
             }
             else if (bossstate == State.Repositioning)
             {
                 GetComponent<SphereCollider>().isTrigger = true;
-                transform.position = Vector2.MoveTowards(transform.position, movetarget.position, speed * (Vector2.Distance(transform.position, movetarget.position) / 10) * Time.fixedDeltaTime);
+                transform.position = Vector2.MoveTowards(transform.position, movetarget.position, speed * (Vector2.Distance(transform.position, movetarget.position) * Mathf.Clamp(chargetime / 5, .5f, 4)) * Time.fixedDeltaTime);
                 if (Vector2.Distance(movetarget.position, transform.position) < 2) { chargetime = Time.fixedDeltaTime / 2; }
             }
             else if (bossstate == State.Centering)
             {
                 GetComponent<SphereCollider>().isTrigger = true;
-                transform.position = Vector2.MoveTowards(transform.position, movetarget.position, speed * (Vector2.Distance(transform.position, movetarget.position) / 5) * Time.fixedDeltaTime);
+                transform.position = Vector2.MoveTowards(transform.position, movetarget.position, speed * (Vector2.Distance(transform.position, movetarget.position) * Mathf.Clamp(chargetime / 5, .5f, 4)) * Time.fixedDeltaTime);
             }
             else if (bossstate == State.Cooling)
             {
                 // Expose weakpoints
-                transform.position = Vector2.MoveTowards(transform.position, movetarget.position, speed * (Vector2.Distance(transform.position, movetarget.position) / 10) * Time.fixedDeltaTime);
+                transform.position = Vector2.MoveTowards(transform.position, movetarget.position, speed * (Vector2.Distance(transform.position, movetarget.position) * Mathf.Clamp(chargetime / 5, .5f, 4)) * Time.fixedDeltaTime);
             }
 
             Vector3 finalposition = Vector3.Lerp(LastPosition, new Vector3(transform.position.x, transform.position.y, zdepth), .3f);
@@ -249,10 +249,15 @@ public class BossAI : AIController
             movetarget = Target;    // Reset movetarget back to default target (player)
 
             float attack = (int)Random.Range(0, 3);
+            if (GetDistanceToTarget() <= 8)    // Will most likely pulse if player is too close
+            {
+                attack = (int)Random.Range(0, 10) <= 6 ? 2 : attack;
+            }
+
             float actiontime = 1;
             if (attack == 0)
             {
-                actiontime = 3;
+                actiontime = 2;
                 SetBossstate(State.Headbutt, actiontime);
                 Vector3 target = PredictPath(1.25f);
                 SpawnIndicator(transform.position, new Vector2(16, 6), target - transform.position, new Color(1, 0, 0, .1f), Vector2.zero, false, true, actiontime);
@@ -260,9 +265,9 @@ public class BossAI : AIController
             }
             else if (attack == 1)
             {
-                actiontime = 3;
+                actiontime = 1.5f;
                 SetBossstate(State.Firebreath, actiontime);
-                Vector3 target = PredictPath(1.5f);
+                Vector3 target = PredictPath(1f);
                 SpawnIndicator(transform.position, new Vector2(24, 4), target - transform.position, new Color(1, 0, 0, .1f), Vector2.zero, false, true, actiontime);
                 LookAtVectorTemp(target, actiontime);
             }
@@ -308,7 +313,7 @@ public class BossAI : AIController
         switch (action)
         {
             case 0:
-                //Debug.Log("Repos");
+                Debug.Log("Repos");
                 SetBossstate(State.Repositioning, 2);
                 movetarget = GetClosestWaypoint();
                 break;
@@ -451,7 +456,7 @@ public class BossAI : AIController
     public void SpawnIndicator(Vector2 position, Vector2 size, Vector2 dir, Color color, Vector2 offset, bool centered, bool square, float time)
     {
         GameObject instance = (GameObject)Instantiate(Indicator, position, Indicator.transform.rotation);
-        instance.GetComponent<BossIndicator>().SetIndicator(position, size, dir, color, centered);
+        instance.GetComponent<BossIndicator>().SetIndicator(position, size, dir, color, centered, time);
         instance.GetComponent<BossIndicator>().SetOffset(offset);
         instance.GetComponent<BossIndicator>().SetCentered(centered);
         if (square)
