@@ -100,6 +100,7 @@ public class StateManager : MonoBehaviour
     public void PauseGame()
     {
         //Pauses Game
+        FindObjectOfType<AudioManager>().StopAllSounds();
         isPaused = true;
         Time.timeScale = 0f;
     }
@@ -108,6 +109,7 @@ public class StateManager : MonoBehaviour
     public void UnpauseGame()
     {
         //UnPauses Game
+        print("Unpausing game..");
         isPaused = false;
         Time.timeScale = TimeScale;
         Time.fixedDeltaTime = 0.02f * TimeScale;

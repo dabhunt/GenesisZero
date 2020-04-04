@@ -75,7 +75,6 @@ public class GodHead : MonoBehaviour
             DialogueManager.instance.SetInteractionAfterDialogue(1);
             //incrementInteract takes an int representing type, which is 0 for merchant type interaction and adds 1.
             DialogueManager.instance.IncrementInteract(1);
-            FindObjectOfType<AudioManager>().StopAllSounds();
             StateManager.instance.PauseGame();
         }
         else
