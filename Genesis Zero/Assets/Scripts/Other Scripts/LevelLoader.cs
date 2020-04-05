@@ -21,12 +21,12 @@ public class LevelLoader : MonoBehaviour
             return;
         }
     }
-    public void LoadFromMenu(string sceneName)
+    public void LoadScene(string sceneName)
     {
-        StartCoroutine(LoadFromMenuCoRoutine(sceneName));
+        StartCoroutine(LoadSceneCoroutine(sceneName));
     }
 
-    IEnumerator LoadFromMenuCoRoutine (string sceneName)
+    IEnumerator LoadSceneCoroutine(string sceneName)
     {
         AsyncOperation operation = SceneManager.LoadSceneAsync(sceneName);
         loadingScreen.SetActive(true);
