@@ -14,8 +14,6 @@ public class StateManager : MonoBehaviour
     public Restart restart;
     public GameObject canvas;
     public GameObject pauseMenu;
-
-
     private void Awake()
     {
         if (instance == null)
@@ -109,7 +107,6 @@ public class StateManager : MonoBehaviour
     public void UnpauseGame()
     {
         //UnPauses Game
-        print("Unpausing game..");
         isPaused = false;
         Time.timeScale = TimeScale;
         Time.fixedDeltaTime = 0.02f * TimeScale;
@@ -129,5 +126,10 @@ public class StateManager : MonoBehaviour
             Time.timeScale = timescale;
             Time.fixedDeltaTime = 0.02f * TimeScale;
         }
+    }
+
+    public void LoadMenu()
+    {
+        SceneManager.LoadScene("MainMenu", LoadSceneMode.Single);
     }
 }

@@ -44,7 +44,8 @@ public class DialogueManager : MonoBehaviour
         interactions = new int[3];
         instance.EndDialogue();
         instance.TriggerDialogue("StartDialogue");
-        StateManager.instance.PauseGame();
+
+        //StateManager.instance.PauseGame();
     }
 
     public void TriggerDialogue(string name)
@@ -57,6 +58,7 @@ public class DialogueManager : MonoBehaviour
          * (optional) fourth label = voice clip if available
          * assumptions: first 3 labels always exist, fourth label may not exist,
          * */
+        StopAllCoroutines(); //makes sure no other dialogue will mess with new dialogue
         TextAsset ta = (TextAsset)Resources.Load("Dialogue/"+name);
         int count = 0;
         dialogue.charIcons = new Queue<string>();
@@ -75,7 +77,6 @@ public class DialogueManager : MonoBehaviour
         }
         StartDialogue(dialogue);
     }
-
     public void StartDialogue(Dialogue dialogue)
     {
         //nameText.text = dialogue.name;

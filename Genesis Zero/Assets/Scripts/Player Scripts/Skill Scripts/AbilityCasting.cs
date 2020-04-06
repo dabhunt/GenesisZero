@@ -14,10 +14,15 @@ public class AbilityCasting : MonoBehaviour
     public float TS_effectDuration = 3.2f;
     [Header("Multi Shot Ability (Active)")]
     //how long the effect lasts
-    public float MS_ActiveTime;
-    //.4 = 40% more than base attack speed
-    public float MS_AttackSpeedBoost = .4f;
+    public float MS_ActiveTime = 5f;
     public float MS_Cooldown = 8f;
+    [Header("Manic Titan Ability (Active)")]
+    //how long the effect lasts
+    public float MT_ActiveTime = 4;
+    public float MT_Cooldown = 13f;
+    //1 = 100% more attack speed, based on base attack speed
+    public float MT_AttackSpeedBoost = 1f;
+    public float MT_CritBoost = .3f;
     [Header("Spartan Laser")]
     //each successful kill makes the laser 20% larger
     public float scaleMultiPerKill = 1.2f;
@@ -131,6 +136,10 @@ public class AbilityCasting : MonoBehaviour
             case "Singularity":
                 InitializeAbility(12, 0, 0, num);
                 CastSingularity();
+                break;
+            case "Manic Titan":
+                InitializeAbility(MT_Cooldown, 0, MT_ActiveTime, num);
+                CastManicTitan();
                 break;
         }
         GetComponent<UniqueEffects>().AfterAbilityTrigger();
@@ -323,12 +332,16 @@ public class AbilityCasting : MonoBehaviour
         player.GetSkillManager().RemoveSkill(skill);
         player.Heal(55);
     }
+    private void CastManicTitan()
+    {
+        float AS_boost = player.GetAttackSpeed().GetValue() * MT_AttackSpeedBoost;
+        player.GetAttackSpeed().AddBonus(AS_boost, MT_ActiveTime);
+        player.GetCritChance().AddBonus(MT_CritBoost, MT_ActiveTime);
+    }
     private void CastMultiShot()
     {
-        //player.GetAttackSpeed().AddBonus(player.GetAttackSpeed().GetBaseValue() * MS_AttackSpeedBoost, MS_ActiveTime);
-        print("cast multi shot");
+        //Multishot is dealt with in Gun.cs based on isabilityactive
     }
-
     private void CastHeatShield(int num)
     {
         if (GetComponent<OverHeat>().GetHeat() > 0)
