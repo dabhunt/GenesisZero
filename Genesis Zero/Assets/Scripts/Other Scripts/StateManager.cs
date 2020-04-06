@@ -109,7 +109,6 @@ public class StateManager : MonoBehaviour
     public void UnpauseGame()
     {
         //UnPauses Game
-        print("Unpausing game..");
         isPaused = false;
         Time.timeScale = TimeScale;
         Time.fixedDeltaTime = 0.02f * TimeScale;

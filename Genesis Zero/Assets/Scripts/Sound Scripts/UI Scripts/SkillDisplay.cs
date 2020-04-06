@@ -21,7 +21,7 @@ public class SkillDisplay : MonoBehaviour
     [Space]
     public float AbilityScale = .7f;
     public Vector2 PopupPosition;
-    public Canvas canvasRef;
+    private Canvas canvasRef;
 
     public int skillnumber;
     // Start is called before the first frame update

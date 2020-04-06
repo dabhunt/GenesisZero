@@ -5,20 +5,20 @@ using UnityEngine;
 [CreateAssetMenu(menuName = "BUG-E Way Point")]
 public class WayPoint : ScriptableObject
 {
-    public Vector2 Location;
+    public Vector2 Destination;
     public float DurationAtWayPoint = 1f;
     public Vector2 LookLocation;
-    public bool Finished = false;
+    public bool AtLocation = false;
 
     public void SetValues(Vector2 location, float duration, Vector2 look)
     {
-        Location = location;
+        Destination = location;
         DurationAtWayPoint = duration;
         LookLocation = look;
     }
     public void SetValues(Vector2 location, float duration)
     {
-        Location = location;
+        Destination = location;
         DurationAtWayPoint = duration;
     }
 }
