@@ -27,6 +27,14 @@ public class LevelLoader : MonoBehaviour
         StartCoroutine(LoadSceneCoroutine(sceneName));
     }
 
+    public void QuitButton()
+    {
+        Application.Quit();
+        #if UNITY_EDITOR
+        UnityEditor.EditorApplication.isPlaying = false;
+        #endif
+    }
+
     IEnumerator LoadSceneCoroutine(string sceneName)
     {
         operation = SceneManager.LoadSceneAsync(sceneName);
