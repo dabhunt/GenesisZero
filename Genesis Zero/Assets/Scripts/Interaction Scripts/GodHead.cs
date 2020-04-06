@@ -217,7 +217,7 @@ public class GodHead : MonoBehaviour
         {
             //Maybe have a message saying that you got no skills right now
         }
-        headScreenPos = canvasRef.worldCamera.WorldToScreenPoint(new Vector3(player.transform.position.x, player.transform.position.y+1.5f, 0));
+        headScreenPos = canvasRef.worldCamera.WorldToScreenPoint(new Vector3(player.transform.position.x, player.transform.position.y+5.5f, 0));
         RectTransformUtility.ScreenPointToLocalPointInRectangle(canvasRef.transform as RectTransform, headScreenPos, canvasRef.worldCamera, out screenPos);
         sacUI.anchoredPosition = screenPos;
         
