@@ -7,6 +7,9 @@ public class PauseMenu : MonoBehaviour
     public void QuitButton()
     {
         Application.Quit();
+        #if UNITY_EDITOR
+        UnityEditor.EditorApplication.isPlaying = false;
+        #endif
     }
     public void MenuButton()
     {
