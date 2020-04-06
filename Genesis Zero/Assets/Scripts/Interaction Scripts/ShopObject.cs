@@ -17,5 +17,4 @@ public class ShopObject: ScriptableObject
     [Space]
     public float health;
     public float shield;
-
 }

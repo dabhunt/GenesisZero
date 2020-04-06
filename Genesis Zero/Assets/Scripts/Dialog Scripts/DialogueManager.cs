@@ -44,7 +44,8 @@ public class DialogueManager : MonoBehaviour
         interactions = new int[3];
         instance.EndDialogue();
         instance.TriggerDialogue("StartDialogue");
-        StateManager.instance.PauseGame();
+
+        //StateManager.instance.PauseGame();
     }
 
     public void TriggerDialogue(string name)
