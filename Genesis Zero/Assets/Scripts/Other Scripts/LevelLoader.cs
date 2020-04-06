@@ -9,6 +9,7 @@ public class LevelLoader : MonoBehaviour
     public GameObject loadingScreen;
     public Slider loadBar;
     public Text loadPercentage;
+    private AsyncOperation operation;
     public void Awake()
     {
         if (instance == null)
@@ -28,14 +29,32 @@ public class LevelLoader : MonoBehaviour
 
     IEnumerator LoadSceneCoroutine(string sceneName)
     {
-        AsyncOperation operation = SceneManager.LoadSceneAsync(sceneName);
+        operation = SceneManager.LoadSceneAsync(sceneName);
         loadingScreen.SetActive(true);
-        while (!operation.isDone)
+        operation.allowSceneActivation = false;
+        float timeElapsed = 0f;
+        float lerpTarget;
+        float lerpTime;
+        while (loadBar.value < 1f)
         {
-            float progress = Mathf.Clamp01(operation.progress / 0.9f);
-            loadBar.value = progress;
-            loadPercentage.text = progress * 100 + " %";
-            Debug.Log(progress);
+            if (operation.progress < 0.9f)
+            {
+                lerpTarget = 0.9f;
+                lerpTime = 5f;
+            }
+            else
+            {
+                lerpTarget = 1.0f;
+                lerpTime = 1f;
+            }
+            loadBar.value = Mathf.Lerp(0f, lerpTarget, timeElapsed/lerpTime);
+            timeElapsed += Time.fixedDeltaTime;
+            //Debug.Log(operation.progress);
+            loadPercentage.text = loadBar.value.ToString("0.0%");
+            if (loadBar.value == 1f)
+            {
+                operation.allowSceneActivation = true;
+            }
             yield return null;
         }
     }
