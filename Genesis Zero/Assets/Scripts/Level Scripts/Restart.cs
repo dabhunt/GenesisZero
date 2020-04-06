@@ -6,19 +6,19 @@ using UnityEngine.SceneManagement;
 public class Restart : MonoBehaviour
 {
     //private Player player;
-    private GameObject temp;
+    private GameObject player;
     public bool exitingScene;
 
     void Start()
     {
-    	temp = GameObject.FindWithTag("Player");
+    	player = GameObject.FindWithTag("Player");
     	exitingScene = false;
         //player = temp.GetComponent<Player>();
     }
     void Update()
     {
     	//if player is dead, restart the scene
-    	if (temp == null){
+    	if (player == null){
     		RestartScene();
     	} else{
     		exitingScene = false;
