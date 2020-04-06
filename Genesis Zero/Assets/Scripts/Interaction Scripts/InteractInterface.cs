@@ -30,8 +30,6 @@ public class InteractInterface : MonoBehaviour
         }
         if (shortest >= minProximity)
             return null;
-        canInteract = false;
-        Invoke("Reset", .2f);
         return closest;
     }
     // button sends the int value of the selected UI obj as a string, this gets sent to godhead script as updateselect + the mod slot
