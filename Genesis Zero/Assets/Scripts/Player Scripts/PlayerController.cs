@@ -506,6 +506,7 @@ public class PlayerController : MonoBehaviour
                 worldXhair.transform.position = mouseWorldPos;
         }
         */
+        worldXhair.transform.position = mouseWorldPos;
         // checking where the player's aiming
         if (transform.position.x < worldXhair.transform.position.x)
             isAimingRight = true;
