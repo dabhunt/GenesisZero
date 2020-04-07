@@ -488,7 +488,7 @@ public class PlayerController : MonoBehaviour
         //Converts MouseScreen position into localpoint in canvas
         RectTransformUtility.ScreenPointToLocalPointInRectangle(canvasRef.transform as RectTransform, mouseScreenPos, canvasRef.worldCamera, out screenXhairPos);
         screenXhair.anchoredPosition = screenXhairPos;
-
+        mouseWorldPos.z = 0;
         /*
         gamepadAimTime -= Time.fixedDeltaTime;
         gamepadAimTime = Mathf.Max(gamepadAimTime, 0);
