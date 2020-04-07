@@ -478,16 +478,13 @@ public class PlayerController : MonoBehaviour
         Vector3 mouseWorldPos = canvasRef.worldCamera.ScreenToWorldPoint(new Vector3(Input.mousePosition.x, Input.mousePosition.y, camZ));
         Vector3 maxBounds = canvasRef.worldCamera.ViewportToWorldPoint(new Vector3(1, 1, camZ));
         Vector3 minBounds = canvasRef.worldCamera.ViewportToWorldPoint(new Vector3(0, 0, camZ));
-        Vector3 maxScreenBounds = canvasRef.worldCamera.ViewportToScreenPoint(new Vector3(1, 1, 0));
-        Vector3 minScreenBounds = canvasRef.worldCamera.ViewportToScreenPoint(Vector3.zero);
-        Vector3 mouseScreenPos = Input.mousePosition;
         Vector2 screenXhairPos;
 
         //Clamp the mouse position to bind worldXhair inside screen when using mouse
         mouseWorldPos.x = Mathf.Clamp(mouseWorldPos.x, minBounds.x, maxBounds.x);
         mouseWorldPos.y = Mathf.Clamp(mouseWorldPos.y, minBounds.y, maxBounds.y);
-        mouseScreenPos.x = Mathf.Clamp(mouseScreenPos.x, minScreenBounds.x, maxScreenBounds.x);
-        mouseScreenPos.y = Mathf.Clamp(mouseScreenPos.y, minScreenBounds.y, maxScreenBounds.y);
+
+        Vector3 mouseScreenPos = canvasRef.worldCamera.WorldToScreenPoint(mouseWorldPos);
         //Converts MouseScreen position into localpoint in canvas
         RectTransformUtility.ScreenPointToLocalPointInRectangle(canvasRef.transform as RectTransform, mouseScreenPos, canvasRef.worldCamera, out screenXhairPos);
         screenXhair.anchoredPosition = screenXhairPos;
@@ -498,7 +495,7 @@ public class PlayerController : MonoBehaviour
         { 
             //Stops the crosshair from going off screen when using controller
             gamepadAimTime = 30;
-            worldXhair.transform.position = mouseWorldPos;
+            worldXhair.transform.position += mouseWorldPos;
         }
         else
         {
