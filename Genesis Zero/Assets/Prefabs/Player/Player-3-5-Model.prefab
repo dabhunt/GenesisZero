@@ -417,12 +417,15 @@ MonoBehaviour:
   airControlMult: 0.5
   airSpeedMult: 0.85
   slopeRayDistMult: 1.25
+  fallSpeedWhileRolling: 1.05
+  fallSpeedWhileDashing: 0.9
   canvasRef: {fileID: 0}
   gunObject: {fileID: 7227858106059894648}
   worldXhair: {fileID: 5241313394227047371}
   screenXhair: {fileID: 0}
   gamePadSens: 15
   triggerResetTime: 0.25
+  moveVec: {x: 1, y: 0, z: 0}
 --- !u!54 &1711681247181738545
 Rigidbody:
   m_ObjectHideFlags: 0
@@ -455,12 +458,19 @@ MonoBehaviour:
   coolReductionPerStack: 0.5
   coolReductionSingleStack: 1
   coolRatePerStack: 1.1
+  BP_MaxExtraHeat: 0.35
+  BP_MaxExtraDMG: 0.35
   HE_Damage: 20
   HE_TotalBurnDMG: 21
   HE_StackMulti: 1.2
   CA_MaxAttackSpeedPerStack: 0.5
   CA_MaxCritChancePerStack: 0.25
   AE_MaxAPMulti: 3
+  SE_MaxAttackSpeed: 1
+  SE_MaxExtraBloom: 0.35
+  TC_MaxAttackSpeed: 1
+  TC_MaxExtraBloom: 0.35
+  HS_APBonus: 1.5
   heatReductionPerStack: 0.9
   SL_cooldown: 4
   SL_bonusPerKill: 10
@@ -501,8 +511,7 @@ MonoBehaviour:
   baseHeatAddedPerShot: 3.3
   baseCoolRatePerSecond: 38
   baseDelayBeforeCooling: 0.5
-  ticksPerSecond: 20
-  maxHeat: 100
+  BC_minHeat: 20
 --- !u!114 &1711681247181738555
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -518,13 +527,17 @@ MonoBehaviour:
   timeScale: 0.41
   TS_effectDuration: 3.2
   MS_ActiveTime: 7
-  MS_AttackSpeedBoost: 0.3
   MS_Cooldown: 8
+  MT_ActiveTime: 4
+  MT_Cooldown: 13
+  MT_AttackSpeedBoost: 1
+  MT_CritBoost: 0.3
   scaleMultiPerKill: 1.2
   ignoreEnemiesLayerMask:
     serializedVersion: 2
     m_Bits: 0
   FD_duration: 0.5
+  FD_gravityReplacement: 0.9
   AbilityCooldownPanel: {fileID: 0}
 --- !u!1 &1649652645718008470
 GameObject:
@@ -844,6 +857,18 @@ Transform:
   m_Father: {fileID: 1402642764378422194}
   m_RootOrder: 0
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &889583764192199140
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2853843553358479772}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 61258d0939e4b4045a504000e1abb1c3, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
 --- !u!1 &3054494192412576650
 GameObject:
   m_ObjectHideFlags: 0
@@ -2313,6 +2338,12 @@ PrefabInstance:
       objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 0d00941f78f3dcd4cbaee0747de99acd, type: 3}
+--- !u!1 &2853843553358479772 stripped
+GameObject:
+  m_CorrespondingSourceObject: {fileID: 8449717132516337455, guid: 0d00941f78f3dcd4cbaee0747de99acd,
+    type: 3}
+  m_PrefabInstance: {fileID: 5969960431091164851}
+  m_PrefabAsset: {fileID: 0}
 --- !u!4 &1279508619862111119 stripped
 Transform:
   m_CorrespondingSourceObject: {fileID: 4834672672870618428, guid: 0d00941f78f3dcd4cbaee0747de99acd,

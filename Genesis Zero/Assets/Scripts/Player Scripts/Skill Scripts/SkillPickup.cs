@@ -85,7 +85,12 @@ public class SkillPickup : MonoBehaviour
             if (target.GetComponent<Player>() == null)
                 targetIsPlayer = false;
             if (dropped)
+            {
                 target = GetComponent<InteractInterface>().ClosestInteractable();
+                //if target is null, or target is the player
+                if (target == null || target.GetComponent<ModConverter>() == null)
+                    return;
+            }
             if ((targetIsPlayer && pressed) || (!targetIsPlayer && target.GetComponent<ModConverter>().isActive))
             {  // Force pull for pickup
                 if (GetComponentInChildren<Floating>() != null)
