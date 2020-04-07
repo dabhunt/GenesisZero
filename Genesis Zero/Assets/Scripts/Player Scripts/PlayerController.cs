@@ -489,6 +489,7 @@ public class PlayerController : MonoBehaviour
         RectTransformUtility.ScreenPointToLocalPointInRectangle(canvasRef.transform as RectTransform, mouseScreenPos, canvasRef.worldCamera, out screenXhairPos);
         screenXhair.anchoredPosition = screenXhairPos;
 
+        /*
         gamepadAimTime -= Time.fixedDeltaTime;
         gamepadAimTime = Mathf.Max(gamepadAimTime, 0);
         if (aimInputController != Vector2.zero)
@@ -504,7 +505,7 @@ public class PlayerController : MonoBehaviour
             if (gamepadAimTime == 0)
                 worldXhair.transform.position = mouseWorldPos;
         }
-
+        */
         // checking where the player's aiming
         if (transform.position.x < worldXhair.transform.position.x)
             isAimingRight = true;
