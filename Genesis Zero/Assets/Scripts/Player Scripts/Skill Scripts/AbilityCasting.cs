@@ -45,7 +45,7 @@ public class AbilityCasting : MonoBehaviour
     public GameObject AbilityCooldownPanel;
     private AbilityCD ui;
     private Vector2 aimDir;
-    private Vector2 MousePosition;
+    private Vector2 WorldXhair;
     // Start is called before the first frame update
     void Start()
     {
@@ -59,12 +59,8 @@ public class AbilityCasting : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-
-        Vector3 pos = new Vector3(Input.mousePosition.x, Input.mousePosition.y, Mathf.Abs(Camera.main.transform.position.z - transform.position.z));
-        MousePosition = Camera.main.ScreenToWorldPoint(pos);
-        aimDir = GetComponent<PlayerController>().screenXhair.transform.position - transform.position;
+        aimDir = PC.worldXhair.transform.position - transform.position;
         UpdateAbilities();
-
     }
     public void CastAbility1()
     {
@@ -360,7 +356,7 @@ public class AbilityCasting : MonoBehaviour
     {
         GameObject hitbox = SpawnGameObject("Sing_Projectile", CastAtAngle(transform.position, aimDir, .5f), GetComponent<Gun>().firePoint.rotation);
         hitbox.GetComponent<Hitbox>().InitializeHitbox(1, player);
-        hitbox.GetComponent<Projectile>().lifeTime = ((MousePosition - (Vector2)transform.position).magnitude / hitbox.GetComponent<Projectile>().speed);
+        hitbox.GetComponent<Projectile>().lifeTime = ((WorldXhair - (Vector2)transform.position).magnitude / hitbox.GetComponent<Projectile>().speed);
         if (hitbox.GetComponent<EmitOnDestroy>().Emits[0] != null)
         {
             GameObject pull = hitbox.GetComponent<EmitOnDestroy>().Emits[0];
