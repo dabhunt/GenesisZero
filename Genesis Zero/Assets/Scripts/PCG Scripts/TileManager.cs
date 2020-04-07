@@ -10,6 +10,7 @@ public class TileManager : MonoBehaviour
 	public int maxBuildingTileCount = 24;
 	public int minBuildingTileCount = 8;
 	public int numberOfBuildings = 3;
+	public int levelSpacing = 1000;
 	public float minOffset;
 	public float maxOffset;
 	public GameObject[] tilePrefabs;
@@ -24,9 +25,27 @@ public class TileManager : MonoBehaviour
     // Start is called before the first frame update
     private void Start()
     {
+		//Level 1
+		int level = 0;
         for (int i = 0; i < numberOfBuildings; ++i)
 		{
-			generateBuilding(Random.Range(minBuildingWidth, maxBuildingWidth), Random.Range(minBuildingTileCount, maxBuildingTileCount));
+			generateBuilding(Random.Range(minBuildingWidth, maxBuildingWidth), Random.Range(minBuildingTileCount, maxBuildingTileCount), level);
+		}
+		
+		//Level 2
+		++level;
+		currentPos = levelSpacing*level + 22;
+		for (int i = 0; i < numberOfBuildings; ++i)
+		{
+			generateBuilding(Random.Range(minBuildingWidth, maxBuildingWidth), Random.Range(minBuildingTileCount, maxBuildingTileCount), level);
+		}
+		
+		//Level 3
+		++level;
+		currentPos = levelSpacing*level + 22;
+		for (int i = 0; i < numberOfBuildings; ++i)
+		{
+			generateBuilding(Random.Range(minBuildingWidth, maxBuildingWidth), Random.Range(minBuildingTileCount, maxBuildingTileCount), level);
 		}
     }
 
@@ -36,7 +55,7 @@ public class TileManager : MonoBehaviour
         
     }
 	
-	private void generateBuilding(int width, int TileCount)
+	private void generateBuilding(int width, int TileCount, int levelNumber)
 	{
 		//Variables
 		Vector3 spawnVector = new Vector3(1,0,0) * currentPos; //spawnVector for tiles
@@ -73,7 +92,7 @@ public class TileManager : MonoBehaviour
 				}
 				else if (tileRand == 2) //Case 2
 				{
-					//Temporarily disabled due to unintended behavior
+					//Disabled due to unintended behavior
 					//floorWidth -= 2;
 					//shift = floorWidth;
 					//currentPosClone += Random.Range(0.0f, 44.0f)
