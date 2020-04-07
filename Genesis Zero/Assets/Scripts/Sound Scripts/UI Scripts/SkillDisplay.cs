@@ -6,7 +6,7 @@ using UnityEngine.UI;
 /**
  * Kenny Doan
  * Skill Display is a script that displays the Skills the player has in a UI. Each element is displayed
- * and can be moused over for it's description. 
+ * and can be moused over for it's description.
  */
 public class SkillDisplay : MonoBehaviour
 {
@@ -69,7 +69,7 @@ public class SkillDisplay : MonoBehaviour
         skilldisplay.Clear();
         int modnum = 0;
         for (int i = 0; i < skills.Count; i++)
-        {          
+        {
             int col = modnum % MaxColumns;
             int row = modnum / MaxColumns;
 
@@ -125,9 +125,14 @@ public class SkillDisplay : MonoBehaviour
     private void OnDrawGizmos()
     {
         Gizmos.color = Color.gray;
-        Gizmos.DrawWireSphere(transform.position + (Vector3)StartPoint, .1f);
+        Gizmos.DrawWireSphere(transform.position + (Vector3)StartPoint, 25f);
+        Gizmos.DrawWireSphere(transform.position + (Vector3)StartPoint + (Vector3)Seperation, 25f);
+        Gizmos.DrawWireSphere(transform.position + (Vector3)StartPoint + ((Vector3)Seperation * 2), 25f);
+
         Gizmos.color = Color.yellow;
+        //Gizmos.DrawWireSphere(transform.position + (Vector3)Ability1Position, 25f);
+        //Gizmos.DrawWireSphere(transform.position + (Vector3)Ability2Position, 25f);
         Gizmos.color = Color.green;
-        Gizmos.DrawWireCube(transform.position + (Vector3)PopupPosition, new Vector3(3,1,0));
+        Gizmos.DrawWireCube(transform.position + (Vector3)PopupPosition, new Vector3(3, 1, 0));
     }
 }
