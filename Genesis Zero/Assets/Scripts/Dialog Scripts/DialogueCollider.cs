@@ -5,20 +5,24 @@ using UnityEngine;
 public class DialogueCollider : MonoBehaviour
 {
     public string DialogueFileName;
-    public bool BugeFlysOver = false;
+    public bool BugeFlysOver = true;
+    public bool TriggerRepeatedly = false;
     private BUGE buge;
     [Tooltip("0 - Merchant, 1 - Godhead, 2 - AI God Boss, 3 - Terminus Mind")]
     [Range(0, 3)]
     public int type;
     private bool Triggered = false;
+
     private void Start()
     {
        buge =  GameObject.FindGameObjectWithTag("BUG-E").GetComponent<BUGE>();
     }
     private void OnTriggerEnter(Collider other)
     {
-        //if the player has interacted with this type before, return
-        if (DialogueManager.instance.GetInteractAmount(type) > 0)
+        //if BUG-E has already pointed this gameObject out to the player
+        if (!TriggerRepeatedly && Triggered)
+            return;
+        if (DialogueFileName == "")
             return;
         if (other.GetComponent<Player>()) //if it's the player
         {
