@@ -43,7 +43,13 @@ public class BUGE : MonoBehaviour
     {
         if (Input.GetMouseButtonDown(1)) //rightclick to test waypoint system
         {
-            AddWayPoint(playerController.worldXhair.transform.position,1f);
+            //if the mouse is NOT in the top 10% of the screen
+            if (Input.mousePosition.y < Screen.height - (Screen.height * .1f))
+            {
+                ClearWayPoints();
+                AddWayPoint(playerController.worldXhair.transform.position, 1f);
+            }
+            
         }
     }
     void FixedUpdate()
@@ -125,6 +131,10 @@ public class BUGE : MonoBehaviour
         WayPoint newpoint = ScriptableObject.CreateInstance<WayPoint>();
         newpoint.SetValues(V, T);
         animWaypoints.Enqueue(newpoint);
+    }
+    public void ClearWayPoints()
+    {
+        animWaypoints.Clear();
     }
     IEnumerator DequeueAfterSeconds(float seconds)
     {

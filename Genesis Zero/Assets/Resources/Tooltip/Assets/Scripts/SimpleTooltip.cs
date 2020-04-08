@@ -56,7 +56,6 @@ public class SimpleTooltip : MonoBehaviour, IPointerEnterHandler, IPointerExitHa
     {
         if (isUIObject)
             return;
-
         if (eventSystem)
         {
             if (eventSystem.IsPointerOverGameObject())
