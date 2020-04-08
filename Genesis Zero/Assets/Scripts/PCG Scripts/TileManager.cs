@@ -13,6 +13,7 @@ public class TileManager : MonoBehaviour
 	public int levelSpacing = 1000;
 	public float minOffset;
 	public float maxOffset;
+	public string teleporterID = "Teleporter_Mock2";
 	public GameObject[] tilePrefabs;
 	public GameObject[] enemyPrefabs;
 	
@@ -33,6 +34,7 @@ public class TileManager : MonoBehaviour
 		}
 		
 		//Level 2
+		teleporterID = "Teleporter_Mock3";
 		++level;
 		currentPos = levelSpacing*level + 22;
 		for (int i = 0; i < numberOfBuildings; ++i)
@@ -41,6 +43,7 @@ public class TileManager : MonoBehaviour
 		}
 		
 		//Level 3
+		teleporterID = "Teleporter_Mock4";
 		++level;
 		currentPos = levelSpacing*level + 22;
 		for (int i = 0; i < numberOfBuildings; ++i)
@@ -135,7 +138,7 @@ public class TileManager : MonoBehaviour
 			//Spawn Teleporter
 			if (Random.Range(0, 10) == 0)
 			{
-				GameObject exitPortal = GameObject.Find("Teleporter_Mock2");
+				GameObject exitPortal = GameObject.Find(teleporterID);
 				spawnVector.y += 7;
 				spawnVector.x -= 22;
 				spawnVector.z -= 2;
