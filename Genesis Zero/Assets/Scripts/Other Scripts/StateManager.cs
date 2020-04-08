@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.SceneManagement;
+using UnityEngine.UI;
 using UnityEngine.Rendering.PostProcessing;
 
 public class StateManager : MonoBehaviour
@@ -102,6 +103,7 @@ public class StateManager : MonoBehaviour
         FindObjectOfType<AudioManager>().StopAllSounds();
         isPaused = true;
         Time.timeScale = 0f;
+        canvas.transform.Find("BlackUnderUI").GetComponent<Image>().enabled = true;
     }
 
     //This unpauses game
@@ -112,7 +114,10 @@ public class StateManager : MonoBehaviour
         Time.timeScale = TimeScale;
         Time.fixedDeltaTime = 0.02f * TimeScale;
         if (pauseMenu != null)
+        {
+            canvas.transform.Find("BlackUnderUI").GetComponent<Image>().enabled = false;
             pauseMenu.SetActive(false);
+        }
     }
     public bool IsPaused()
     {
