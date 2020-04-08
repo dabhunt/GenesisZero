@@ -18,6 +18,8 @@ public class AIChargeWarning : MonoBehaviour
     public float FlashTime = 0.5f; //The warning will flash when there is this much time remaining before attacking (during charging)
     public Color FlashColor = Color.white;
     public float FlashRate = 40f;
+    public bool AimAtTarget = false;
+    private float localDist = 0.0f;
 
     private void Awake()
     {
@@ -31,6 +33,12 @@ public class AIChargeWarning : MonoBehaviour
             {
                 FlashTime = Mathf.Min(FlashTime, controller.BehaviorProperties.AttackChargeTime);
             }
+            localDist = (controller.Origin - transform.localPosition).magnitude;
+        }
+
+        if (AimAtTarget)
+        {
+            transform.parent = null;
         }
     }
 
@@ -41,6 +49,13 @@ public class AIChargeWarning : MonoBehaviour
 
         float normTime = CalculateNormalizedTime();
         transform.localScale = Vector3.Lerp(StartScale, EndScale, normTime);
+
+        if (AimAtTarget && controller.Target != null)
+        {
+            Vector3 targetDir = (controller.Target.position - controller.GetOrigin()).normalized;
+            transform.position = controller.GetOrigin() + targetDir * localDist;
+            transform.rotation = Quaternion.LookRotation(Vector3.forward, new Vector3(-targetDir.y, targetDir.x, 0.0f));
+        }
 
         if (rend != null)
         {
