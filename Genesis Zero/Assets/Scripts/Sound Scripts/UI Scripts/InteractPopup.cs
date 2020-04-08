@@ -69,6 +69,7 @@ public class InteractPopup : MonoBehaviour
         popup.transform.SetParent(canvasRef.transform);
         popup.transform.localPosition = new Vector3(popup.transform.localPosition.x, popup.transform.localPosition.y, .1f);
         popup.transform.localScale = new Vector3(scaleSize, scaleSize, scaleSize);
+        popup.transform.localRotation = Quaternion.Euler(0, 0, 0);
         popup.GetComponent<RectTransform>().anchoredPosition = screenPos;
     }
     private void Update()

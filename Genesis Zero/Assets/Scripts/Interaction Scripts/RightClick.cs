@@ -1,26 +1,40 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.UI;
 using UnityEngine.EventSystems;
-public class RightClick : MonoBehaviour
+public class RightClick : MonoBehaviour , IPointerEnterHandler, IPointerExitHandler
 {
     private Player player;
     private SkillManager sManager;
+    private bool pointerInside;
+    private Button button;
+    //private EventSystem eventSystem;
     private void Start()
     {
         player = FindObjectOfType<Player>();
         sManager = player.GetSkillManager();
+        button = GetComponent<Button>();
     }
-    public void OnPointerClick(PointerEventData eventData)
+    public void OnPointerEnter(PointerEventData eventData)
     {
-        if (eventData.button == PointerEventData.InputButton.Right)
+        pointerInside = true;
+    }
+    public void OnPointerExit(PointerEventData eventData)
+    {
+        pointerInside = false;
+    }
+    private void Update()
+    {
+        if (Input.GetMouseButtonDown(1))
         {
-            RemoveStack();
+            if (pointerInside)
+                RemoveStack();
         }
-
     }
     public void RemoveStack()
     {
+        GetComponent<SimpleTooltip>().HideTooltip();
         SkillObject s = GetComponent<SkillUIElement>().Skill;
         sManager.RemoveSkill(s);
         GameObject mod = sManager.SpawnMod(player.transform.position, s.name);

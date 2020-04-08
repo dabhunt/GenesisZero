@@ -21,6 +21,7 @@ public class DialogueManager : MonoBehaviour
     private Queue<string> durations;
     private int[] interactions;
     private int currentType = -1;
+    private bool canSkip = true;
 
     void Awake()
     {
@@ -43,10 +44,11 @@ public class DialogueManager : MonoBehaviour
         interactions = new int[3];
         instance.EndDialogue();
         instance.TriggerDialogue("StartDialogue");
-        StateManager.instance.PauseGame();
+
+        //StateManager.instance.PauseGame();
     }
 
-    public void TriggerDialogue(string filePath)
+    public void TriggerDialogue(string name)
     {
         /*
          * read each line and store each entity separated by a ';' or '\n'
@@ -56,7 +58,8 @@ public class DialogueManager : MonoBehaviour
          * (optional) fourth label = voice clip if available
          * assumptions: first 3 labels always exist, fourth label may not exist,
          * */
-        TextAsset ta = (TextAsset)Resources.Load("Dialogue/"+filePath);
+        StopAllCoroutines(); //makes sure no other dialogue will mess with new dialogue
+        TextAsset ta = (TextAsset)Resources.Load("Dialogue/"+name);
         int count = 0;
         dialogue.charIcons = new Queue<string>();
         dialogue.sentences = new Queue<string>();
@@ -74,7 +77,6 @@ public class DialogueManager : MonoBehaviour
         }
         StartDialogue(dialogue);
     }
-
     public void StartDialogue(Dialogue dialogue)
     {
         //nameText.text = dialogue.name;
@@ -94,7 +96,12 @@ public class DialogueManager : MonoBehaviour
         {
             durations.Enqueue(dialogue.durations.Dequeue());
         }
-        DisplayNextSentence();
+        string charIcon = charIcons.Dequeue();
+        string sentence = sentences.Dequeue();
+        string duration = durations.Dequeue();
+        canSkip = false;
+        StartCoroutine(CanSkip(.8f));
+        StartCoroutine(TypeSentence(charIcon, sentence, duration));
     }
     public void DisplayNextSentence()
     {
@@ -135,6 +142,11 @@ public class DialogueManager : MonoBehaviour
             DisplayNextSentence();
         }
     }
+    IEnumerator CanSkip(float delay)
+    {
+        yield return StartCoroutine(WaitForRealSeconds(delay));
+        canSkip = true;
+    }
       public static IEnumerator WaitForRealSeconds( float delay )
      {
          float start = Time.realtimeSinceStartup;
@@ -150,9 +162,15 @@ public class DialogueManager : MonoBehaviour
     }
     private void EndDialogue()
     {
+        //if the type of interaction needs an unpause
+        if (currentType == -1)
+        {
+            StateManager.instance.UnpauseGame();
+        }
         InvokeAfterDialogue(currentType);
-        StateManager.instance.UnpauseGame();
+        StopAllCoroutines();
         parent.SetActive(false);
+        
     }
     public void InvokeAfterDialogue(int type)
     {
@@ -171,14 +189,15 @@ public class DialogueManager : MonoBehaviour
             default:
                 break;
         }
-        //reset currentType
+        //reset currentType to a null type
         currentType = -1;
     }
     void Update()
     {
         if (Input.GetKeyDown(KeyCode.F))
         {
-            DisplayNextSentence();
+            if (canSkip)
+                DisplayNextSentence();
         }
     }
     //returns the amount of times the player has interacted with a type of game object
@@ -196,5 +215,10 @@ public class DialogueManager : MonoBehaviour
     public void IncrementInteract(int type)
     {
         interactions[type] ++;
+    }
+    //prevent player from pressing F to skip
+    public void SetSkip(bool boo)
+    {
+        canSkip = boo;
     }
 }

@@ -14,10 +14,15 @@ public class AbilityCasting : MonoBehaviour
     public float TS_effectDuration = 3.2f;
     [Header("Multi Shot Ability (Active)")]
     //how long the effect lasts
-    public float MS_ActiveTime;
-    //.4 = 40% more than base attack speed
-    public float MS_AttackSpeedBoost = .4f;
+    public float MS_ActiveTime = 5f;
     public float MS_Cooldown = 8f;
+    [Header("Manic Titan Ability (Active)")]
+    //how long the effect lasts
+    public float MT_ActiveTime = 4;
+    public float MT_Cooldown = 13f;
+    //1 = 100% more attack speed, based on base attack speed
+    public float MT_AttackSpeedBoost = 1f;
+    public float MT_CritBoost = .3f;
     [Header("Spartan Laser")]
     //each successful kill makes the laser 20% larger
     public float scaleMultiPerKill = 1.2f;
@@ -40,7 +45,7 @@ public class AbilityCasting : MonoBehaviour
     public GameObject AbilityCooldownPanel;
     private AbilityCD ui;
     private Vector2 aimDir;
-    private Vector2 MousePosition;
+    private Vector2 WorldXhair;
     // Start is called before the first frame update
     void Start()
     {
@@ -54,12 +59,8 @@ public class AbilityCasting : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-
-        Vector3 pos = new Vector3(Input.mousePosition.x, Input.mousePosition.y, Mathf.Abs(Camera.main.transform.position.z - transform.position.z));
-        MousePosition = Camera.main.ScreenToWorldPoint(pos);
-        aimDir = GetComponent<PlayerController>().screenXhair.transform.position - transform.position;
+        aimDir = PC.worldXhair.transform.position - transform.position;
         UpdateAbilities();
-
     }
     public void CastAbility1()
     {
@@ -131,6 +132,10 @@ public class AbilityCasting : MonoBehaviour
             case "Singularity":
                 InitializeAbility(12, 0, 0, num);
                 CastSingularity();
+                break;
+            case "Manic Titan":
+                InitializeAbility(MT_Cooldown, 0, MT_ActiveTime, num);
+                CastManicTitan();
                 break;
         }
         GetComponent<UniqueEffects>().AfterAbilityTrigger();
@@ -323,12 +328,16 @@ public class AbilityCasting : MonoBehaviour
         player.GetSkillManager().RemoveSkill(skill);
         player.Heal(55);
     }
+    private void CastManicTitan()
+    {
+        float AS_boost = player.GetAttackSpeed().GetValue() * MT_AttackSpeedBoost;
+        player.GetAttackSpeed().AddBonus(AS_boost, MT_ActiveTime);
+        player.GetCritChance().AddBonus(MT_CritBoost, MT_ActiveTime);
+    }
     private void CastMultiShot()
     {
-        //player.GetAttackSpeed().AddBonus(player.GetAttackSpeed().GetBaseValue() * MS_AttackSpeedBoost, MS_ActiveTime);
-        print("cast multi shot");
+        //Multishot is dealt with in Gun.cs based on isabilityactive
     }
-
     private void CastHeatShield(int num)
     {
         if (GetComponent<OverHeat>().GetHeat() > 0)
@@ -347,7 +356,7 @@ public class AbilityCasting : MonoBehaviour
     {
         GameObject hitbox = SpawnGameObject("Sing_Projectile", CastAtAngle(transform.position, aimDir, .5f), GetComponent<Gun>().firePoint.rotation);
         hitbox.GetComponent<Hitbox>().InitializeHitbox(1, player);
-        hitbox.GetComponent<Projectile>().lifeTime = ((MousePosition - (Vector2)transform.position).magnitude / hitbox.GetComponent<Projectile>().speed);
+        hitbox.GetComponent<Projectile>().lifeTime = ((WorldXhair - (Vector2)transform.position).magnitude / hitbox.GetComponent<Projectile>().speed);
         if (hitbox.GetComponent<EmitOnDestroy>().Emits[0] != null)
         {
             GameObject pull = hitbox.GetComponent<EmitOnDestroy>().Emits[0];

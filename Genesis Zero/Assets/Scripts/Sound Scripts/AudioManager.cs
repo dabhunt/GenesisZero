@@ -230,7 +230,6 @@ public class AudioManager : MonoBehaviour
         {
             //track.source.volume += speed;
             AdjustVolumeMusic(speed);
-            //print("setvolmusic var: " + setVolumeMusic);
             yield return new WaitForSeconds(0.1f);
         }
         StopCoroutine("FadeIn");

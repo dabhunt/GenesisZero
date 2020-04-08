@@ -6,7 +6,7 @@ using UnityEngine.UI;
 /**
  * Kenny Doan
  * Skill Display is a script that displays the Skills the player has in a UI. Each element is displayed
- * and can be moused over for it's description. 
+ * and can be moused over for it's description.
  */
 public class SkillDisplay : MonoBehaviour
 {
@@ -19,9 +19,9 @@ public class SkillDisplay : MonoBehaviour
     public GameObject UIElement;
     public GameObject PopupElement;
     [Space]
-    public Vector2 Ability1Position;
-    public Vector2 Ability2Position;
+    public float AbilityScale = .7f;
     public Vector2 PopupPosition;
+    private Canvas canvasRef;
 
     public int skillnumber;
     // Start is called before the first frame update
@@ -34,6 +34,7 @@ public class SkillDisplay : MonoBehaviour
         SkillManager = Player.GetSkillManager();
         skillnumber = SkillManager.GetAmount();
         skilldisplay = new List<GameObject>();
+        canvasRef = GameObject.FindGameObjectWithTag("CanvasUI").GetComponent<Canvas>();
     }
 
     // Update is called once per frame
@@ -68,7 +69,7 @@ public class SkillDisplay : MonoBehaviour
         skilldisplay.Clear();
         int modnum = 0;
         for (int i = 0; i < skills.Count; i++)
-        {          
+        {
             int col = modnum % MaxColumns;
             int row = modnum / MaxColumns;
 
@@ -76,7 +77,9 @@ public class SkillDisplay : MonoBehaviour
             {
                 GameObject instance = (GameObject)Instantiate(UIElement, (Vector3)transform.position + (Vector3)StartPoint + new Vector3(Seperation.x * col, Seperation.y * row), Quaternion.identity);
                 instance.transform.SetParent(transform);
+                //instance.GetComponent<RectTransform>().anchoredPosition = (Vector3)transform.position + (Vector3)StartPoint + new Vector3(Seperation.x * col, Seperation.y * row);
                 instance.transform.localScale = new Vector3(1, 1, 1);
+                instance.transform.localRotation = Quaternion.Euler(0, 0, 0);
                 instance.GetComponent<SkillUIElement>().SetIcon(skills[i].Icon);
                 instance.GetComponent<SkillUIElement>().SetColor(SkillManager.GetColor(skills[i]));
                 instance.GetComponent<SkillUIElement>().SetStack(SkillManager.GetSkillStack(skills[i].name));
@@ -87,9 +90,12 @@ public class SkillDisplay : MonoBehaviour
 
             if (skills[i].IsAbility && SkillManager.GetAbility1() && skills[i].name == SkillManager.GetAbility1().name)
             {
-                GameObject abil1 = (GameObject)Instantiate(UIElement, (Vector3)transform.position + (Vector3)Ability1Position, Quaternion.identity);
-                abil1.transform.SetParent(transform);
-                abil1.transform.localScale = new Vector3(1, 1, 1);
+                GameObject abil1 = (GameObject)Instantiate(UIElement, (Vector3)transform.position, Quaternion.identity);
+                GameObject parent = canvasRef.transform.Find("AbilityPanel").Find("CooldownOverlay").Find("Ability1CD").gameObject;
+                abil1.transform.SetParent(parent.transform);
+                abil1.transform.localPosition = new Vector3(0, 0, 0);
+                abil1.transform.localRotation = Quaternion.Euler(0, 0, 0);
+                abil1.transform.localScale = new Vector3(AbilityScale, AbilityScale, AbilityScale);
                 abil1.GetComponent<SkillUIElement>().SetIcon(skills[i].Icon);
                 abil1.GetComponent<SkillUIElement>().SetColor(SkillManager.GetColor(skills[i]));
                 abil1.GetComponent<SimpleTooltip>().infoLeft = skills[i].Description;
@@ -97,9 +103,12 @@ public class SkillDisplay : MonoBehaviour
             }
             else if (skills[i].IsAbility && SkillManager.GetAbility2() && skills[i].name == SkillManager.GetAbility2().name)
             {
-                GameObject abil2 = (GameObject)Instantiate(UIElement, (Vector3)transform.position + (Vector3)Ability2Position, Quaternion.identity);
-                abil2.transform.SetParent(transform);
-                abil2.transform.localScale = new Vector3(1, 1, 1);
+                GameObject abil2 = (GameObject)Instantiate(UIElement, (Vector3)transform.position, Quaternion.identity);
+                GameObject parent = canvasRef.transform.Find("AbilityPanel").Find("CooldownOverlay").Find("Ability2CD").gameObject;
+                abil2.transform.SetParent(parent.transform);
+                abil2.transform.localPosition = new Vector3(0, 0, 0);
+                abil2.transform.localRotation = Quaternion.Euler(0, 0, 0);
+                abil2.transform.localScale = new Vector3(AbilityScale, AbilityScale, AbilityScale);
                 abil2.GetComponent<SkillUIElement>().SetIcon(skills[i].Icon);
                 abil2.GetComponent<SkillUIElement>().SetColor(SkillManager.GetColor(skills[i]));
                 abil2.GetComponent<SimpleTooltip>().infoLeft = skills[i].Description;
@@ -116,11 +125,14 @@ public class SkillDisplay : MonoBehaviour
     private void OnDrawGizmos()
     {
         Gizmos.color = Color.gray;
-        Gizmos.DrawWireSphere(transform.position + (Vector3)StartPoint, .1f);
+        Gizmos.DrawWireSphere(transform.position + (Vector3)StartPoint, 25f);
+        Gizmos.DrawWireSphere(transform.position + (Vector3)StartPoint + (Vector3)Seperation, 25f);
+        Gizmos.DrawWireSphere(transform.position + (Vector3)StartPoint + ((Vector3)Seperation * 2), 25f);
+
         Gizmos.color = Color.yellow;
-        Gizmos.DrawWireSphere(transform.position + (Vector3)Ability1Position, .3f);
-        Gizmos.DrawWireSphere(transform.position + (Vector3)Ability2Position, .3f);
+        //Gizmos.DrawWireSphere(transform.position + (Vector3)Ability1Position, 25f);
+        //Gizmos.DrawWireSphere(transform.position + (Vector3)Ability2Position, 25f);
         Gizmos.color = Color.green;
-        Gizmos.DrawWireCube(transform.position + (Vector3)PopupPosition, new Vector3(3,1,0));
+        Gizmos.DrawWireCube(transform.position + (Vector3)PopupPosition, new Vector3(3, 1, 0));
     }
 }

@@ -75,7 +75,6 @@ public class GodHead : MonoBehaviour
             DialogueManager.instance.SetInteractionAfterDialogue(1);
             //incrementInteract takes an int representing type, which is 0 for merchant type interaction and adds 1.
             DialogueManager.instance.IncrementInteract(1);
-            FindObjectOfType<AudioManager>().StopAllSounds();
             StateManager.instance.PauseGame();
         }
         else
@@ -214,14 +213,9 @@ public class GodHead : MonoBehaviour
                 }
             }
         }
-        else
-        {
-            //Maybe have a message saying that you got no skills right now
-        }
-        headScreenPos = canvasRef.worldCamera.WorldToScreenPoint(new Vector3(player.transform.position.x, player.transform.position.y+1.5f, 0));
+        headScreenPos = canvasRef.worldCamera.WorldToScreenPoint(new Vector3(player.transform.position.x, player.transform.position.y+5f, 0));
         RectTransformUtility.ScreenPointToLocalPointInRectangle(canvasRef.transform as RectTransform, headScreenPos, canvasRef.worldCamera, out screenPos);
         sacUI.anchoredPosition = screenPos;
-        
         //confirmUI.anchoredPosition = screenPos;
         //sets default selection to position 0
         UpdateSelect(0);
