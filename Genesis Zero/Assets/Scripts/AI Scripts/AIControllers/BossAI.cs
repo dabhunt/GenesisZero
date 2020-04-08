@@ -20,7 +20,8 @@ public class BossAI : AIController
     private Vector3 templookposition;   // Where the boss will look at as long as the templooktime is > 0
     private float templooktime;         // How long the boss will look at the templookposition
 
-    private Vector3 lookDir = Vector3.up;
+    [HideInInspector]
+    public Vector3 lookDir = Vector3.up;
     private Vector3 rotDir = Vector3.forward;
     private Vector3 lookposition;
     private Vector3 LastPosition;
@@ -34,7 +35,8 @@ public class BossAI : AIController
 
     public float TriggerRadius;
     public float TimeBeforeFight;
-    private bool initiated;
+    [HideInInspector]
+    public bool initiated, lookingatcamera;
     private int Heat;
 
     public GameObject Healthbar;
@@ -125,11 +127,13 @@ public class BossAI : AIController
         {
             transform.rotation = Quaternion.Slerp(transform.rotation, Quaternion.LookRotation(Vector3.back, Vector3.up), 2 * Time.fixedDeltaTime);
             lookposition = transform.position + transform.forward;
+            lookingatcamera = true;
         }
         else
         {
             Vector3 lookoffset = new Vector3(0, 0, lookDir.x > 0 ? -1f : -1f);
             transform.LookAt(lookposition + lookoffset);
+            lookingatcamera = false;
         }
 
 
