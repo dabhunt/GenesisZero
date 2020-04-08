@@ -14,7 +14,8 @@ public class StartMenu : MonoBehaviour
 
     public void StartButton()
     {
-       //hiding the buttons.
+        //hiding the buttons.
+        canvas.transform.Find("Title").gameObject.SetActive(false);
         canvas.transform.Find("Play").gameObject.SetActive(false);
         canvas.transform.Find("Quit").gameObject.SetActive(false);
         canvas.transform.Find("Options").gameObject.SetActive(false);
