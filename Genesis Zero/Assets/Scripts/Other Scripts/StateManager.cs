@@ -14,6 +14,7 @@ public class StateManager : MonoBehaviour
     public Restart restart;
     public GameObject canvas;
     public GameObject pauseMenu;
+    private AsyncOperation operation;
     private void Awake()
     {
         if (instance == null)
@@ -127,9 +128,23 @@ public class StateManager : MonoBehaviour
             Time.fixedDeltaTime = 0.02f * TimeScale;
         }
     }
-
     public void LoadMenu()
     {
-        SceneManager.LoadScene("MainMenu", LoadSceneMode.Single);
+        StartCoroutine(LoadSceneCoroutine());
+        //SceneManager.LoadScene("MainMenu", LoadSceneMode.Single);
+    }
+
+    IEnumerator LoadSceneCoroutine()
+    {
+        operation = SceneManager.LoadSceneAsync("MainMenu", LoadSceneMode.Single);
+        operation.allowSceneActivation = false;
+        while (!operation.isDone)
+        {
+            if (operation.progress >= 0.9f)
+            {
+                operation.allowSceneActivation = true;
+            }
+            yield return null;
+        }
     }
 }
