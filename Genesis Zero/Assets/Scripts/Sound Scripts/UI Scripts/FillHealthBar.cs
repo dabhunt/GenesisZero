@@ -45,7 +45,7 @@ public class FillHealthBar : MonoBehaviour
             
             fillImage.color = Color.white;
             DOTween.To(() => slider.value, x => slider.value = x, curValue, tweenTime);
-            float pain = (valueLastFrame - curValue) / 25;
+            float pain = (valueLastFrame - curValue) / 15;
             pain = Mathf.Clamp(pain, 0, 1);
             HurtTween(pain);
             Invoke("TweenBack", tweenTime / 2);
@@ -58,7 +58,7 @@ public class FillHealthBar : MonoBehaviour
     public void HurtTween(float hurtAmount)
     {
         DOTween.To(() => fillImage.color, x => fillImage.color = x, lowHPcolor, tweenTime/2);
-        DOTween.To(() => color.a, x => color.a = x, 1, tweenTime/2);
+        DOTween.To(() => color.a, x => color.a = x, hurtAmount, tweenTime/2);
     }
     public void TweenBack()
     {
