@@ -2,6 +2,7 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
+using DG.Tweening;
 public class FillHealthBar : MonoBehaviour
 {
 	public Image fillImage;
@@ -9,13 +10,21 @@ public class FillHealthBar : MonoBehaviour
     public Color fillColor;
     public Color lowHPcolor;
     private Player player;
+    private float valueLastFrame;
+    private float tweenTime = .7f;
+    private GameObject overlay;
+    private Color color;
+    private GameObject canvas;
 
-    void Awake()
+    void Start()
     {
     	//get slider component
         slider = GetComponent<Slider>();
         GameObject temp = GameObject.FindWithTag("Player");
+        canvas = GameObject.FindWithTag("CanvasUI");
         player = temp.GetComponent<Player>();
+        overlay = canvas.transform.Find("VignetteOverlay").gameObject;
+        color = overlay.GetComponent<Image>().color;
     }
     void Update()
     {
@@ -29,22 +38,32 @@ public class FillHealthBar : MonoBehaviour
     	}
     	// uses the player object to get info about player health
     	// fillvalue represents how filled in the healthbar is, from 0 to 100
-        float fillvalue = player.GetHealth().GetValue();
+        float curValue = player.GetHealth().GetValue();
+        
+        if (curValue < valueLastFrame)
+        {
+            
+            fillImage.color = Color.white;
+            DOTween.To(() => slider.value, x => slider.value = x, curValue, tweenTime);
+            float pain = (valueLastFrame - curValue) / 25;
+            pain = Mathf.Clamp(pain, 0, 1);
+            HurtTween(pain);
+            Invoke("TweenBack", tweenTime / 2);
+        }
+        overlay.GetComponent<Image>().color = color;
+        valueLastFrame = curValue;
         //print("fillvalue:"+ fillvalue);
         // if player is at less than 33% of max hp, display a different color red for now
-         if (fillvalue <= slider.maxValue / 3)
-         {
-         	fillImage.color = lowHPcolor;
-         }
-         // if player is at more than 33% of max hp, display a different color  green for now
-         else if (fillvalue > slider.maxValue / 3 )
-         {
-         	fillImage.color = fillColor;
-         }
-        slider.value = fillvalue;
     }
-    // test function to see if damage the player takes is being shown
-    // public void HurtPlayerTest(){
-    // 	player.TakeDamage(5);
-    // }
+    public void HurtTween(float hurtAmount)
+    {
+        DOTween.To(() => fillImage.color, x => fillImage.color = x, lowHPcolor, tweenTime/2);
+        DOTween.To(() => color.a, x => color.a = x, 1, tweenTime/2);
+    }
+    public void TweenBack()
+    {
+        DOTween.To(() => fillImage.color, x => fillImage.color = x, fillColor, tweenTime/2);
+        DOTween.To(() => color.a, x => color.a = x, 0, tweenTime/2);
+    }
+
 }
