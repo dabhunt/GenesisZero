@@ -13,7 +13,6 @@ public class FillHealthBar : MonoBehaviour
     private Player player;
     private float valueLastFrame = 100;
     private float tweenTime = .7f;
-    private float overlayTime = 1.5f;
     private Color color;
     private GameObject canvas;
     private SpriteFade fade;

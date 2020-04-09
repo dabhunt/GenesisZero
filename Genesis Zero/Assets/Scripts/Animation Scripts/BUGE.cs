@@ -103,7 +103,7 @@ public class BUGE : MonoBehaviour
                     
             }
 
-            distance = Vector3.Distance(transform.position, Player.position);
+            distance = Vector3.Distance(transform.position, follow);
             if (distance >= MinDistance && distance < MaxDistance)
             {
                 if (speedvar > Speed)
