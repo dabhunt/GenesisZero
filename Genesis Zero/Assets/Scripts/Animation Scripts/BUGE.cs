@@ -91,22 +91,26 @@ public class BUGE : MonoBehaviour
             {
                 MinDistance = 1f;
                 MaxDistance = 1.7f;
-                if (animWaypoints.Count > 0) { }
                 follow = new Vector3(animWaypoints.Peek().Destination.x, animWaypoints.Peek().Destination.y, 0);
                 distance = Vector3.Distance(transform.position, animWaypoints.Peek().Destination);
                 //if BUG-E is At the waypoint location, then he looks back toward the player
                 if (animWaypoints.Peek().AtLocation)
                     transform.LookAt(Player);
                 else
+                {
                     transform.LookAt(follow);
+                }
+                    
             }
+
+            distance = Vector3.Distance(transform.position, Player.position);
             if (distance >= MinDistance && distance < MaxDistance)
             {
                 if (speedvar > Speed)
                 {
                     speedvar = speedvar * deAccelerationMultiplier;
                 }
-                follow = Player.position;
+                
                 if (animWaypoints.Count > 0 && !animWaypoints.Peek().AtLocation) //dequeue the current waypoint, after the delay, if the waypoint is 
                 {
                     animWaypoints.Peek().AtLocation= true;
@@ -117,8 +121,9 @@ public class BUGE : MonoBehaviour
             else if (distance >= MinDistance)
             {
                 speedvar += acceleration;
-                this.transform.position = Vector3.MoveTowards(this.transform.position, follow, speedvar * Time.deltaTime);
+                //this.transform.position = Vector3.MoveTowards(this.transform.position, follow, speedvar * Time.deltaTime);
             }
+            this.transform.position = Vector3.MoveTowards(this.transform.position, follow, speedvar * Time.deltaTime);
             Vector3 sinPos = this.transform.position;
             sinPos.y += Mathf.Sin(Time.fixedTime * Mathf.PI * sinFrequency) * sin;
             this.transform.position = sinPos;
