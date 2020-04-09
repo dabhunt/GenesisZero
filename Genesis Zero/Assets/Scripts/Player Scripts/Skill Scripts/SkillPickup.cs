@@ -106,7 +106,7 @@ public class SkillPickup : MonoBehaviour
             Destroy(gameObject);
         }
     }
-    private void OnTriggerStay(Collider other)
+    private void OnTriggerEnter(Collider other)
     {
         if (added)
             return;

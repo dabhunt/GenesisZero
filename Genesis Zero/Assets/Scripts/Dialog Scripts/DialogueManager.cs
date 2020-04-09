@@ -60,6 +60,8 @@ public class DialogueManager : MonoBehaviour
          * */
         StopAllCoroutines(); //makes sure no other dialogue will mess with new dialogue
         TextAsset ta = (TextAsset)Resources.Load("Dialogue/"+name);
+        if (ta == null)
+            return;
         int count = 0;
         dialogue.charIcons = new Queue<string>();
         dialogue.sentences = new Queue<string>();
