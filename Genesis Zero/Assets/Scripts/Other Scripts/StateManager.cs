@@ -68,6 +68,7 @@ public class StateManager : MonoBehaviour
         if (Input.GetKeyDown(KeyCode.Home))
         {
             player.SetEssence(player.GetMaxEssenceAmount());
+            player.SetKeys(3);
         }
         if (Input.GetKeyDown(KeyCode.PageUp))
         {

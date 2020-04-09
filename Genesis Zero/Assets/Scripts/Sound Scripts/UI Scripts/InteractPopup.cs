@@ -12,6 +12,7 @@ public class InteractPopup : MonoBehaviour
     public float checksPerSecond = 4f;
     public float activeDistance = 1.5f;
     public float scaleSize = .5f;
+    public float YOffset = 1.5f;
     public string PopText = "Press [F] to interact";
     private Canvas canvasRef;
     private bool interactable = true;
@@ -58,7 +59,7 @@ public class InteractPopup : MonoBehaviour
     {
         Vector2 pos;
         Vector2 headScreenPos;
-        headScreenPos = canvasRef.worldCamera.WorldToScreenPoint(new Vector3(transform.position.x, transform.position.y + 1.5f, 0));
+        headScreenPos = canvasRef.worldCamera.WorldToScreenPoint(new Vector3(transform.position.x, transform.position.y + YOffset, 0));
         RectTransformUtility.ScreenPointToLocalPointInRectangle(canvasRef.transform as RectTransform, headScreenPos, canvasRef.worldCamera, out pos);
         return pos;
     }
