@@ -12,16 +12,14 @@ public class FillHealthBar : MonoBehaviour
 
     private Player player;
     private float valueLastFrame = 100;
-    private float healthbarTime = .7f;
-    private float overlayTime = 1.5f;
+    private float tweenTime = .7f;
     private Color color;
     private GameObject canvas;
-    private Image overlay; // the hurt effect overlay
+    private SpriteFade fade;
     private Color zero; //lowHPcolor but with 0 alpha
     private bool delayedStart = true;
     void Start()
     {
-    	//get slider component
         Invoke("DelayedStart", 4);
     }
     public void DelayedStart()
@@ -33,11 +31,13 @@ public class FillHealthBar : MonoBehaviour
         valueLastFrame = temp.GetComponent<Player>().GetHealth().GetValue();
         canvas = GameObject.FindWithTag("CanvasUI");
         player = temp.GetComponent<Player>();
-        overlay = canvas.transform.Find("VignetteOverlay").gameObject.GetComponent<Image>();
+        fade = canvas.transform.Find("VignetteOverlay").gameObject.GetComponent<SpriteFade>();
     }
     void Update()
     {
         if (delayedStart)
+            return;
+        if (player == null)
             return;
     	if (slider.value <= slider.minValue)
     	{
@@ -54,36 +54,22 @@ public class FillHealthBar : MonoBehaviour
         if (curValue < valueLastFrame && curValue > 0)
         {
             fillImage.color = Color.white;
-            DOTween.To(() => slider.value, x => slider.value = x, curValue, healthbarTime);
+            DOTween.To(() => slider.value, x => slider.value = x, curValue, tweenTime);
             float pain = (valueLastFrame - curValue) / 15;
             pain = Mathf.Clamp(pain, 0, 1);
-            HurtTween(pain);
-            Invoke("TweenBackBar", healthbarTime);
-            Invoke("TweenBackOverlay", overlayTime/2);
+            fade.HurtTween(pain);
+            HurtTween();
+            Invoke("TweenBackBar", tweenTime);
         }
         valueLastFrame = curValue;
-        //print("fillvalue:"+ fillvalue);
-        // if player is at less than 33% of max hp, display a different color red for now
     }
 
-    public void HurtTween(float hurtAmount)
+    public void HurtTween()
     {
-        DOTween.To(() => fillImage.color, x => fillImage.color = x, lowHPcolor, healthbarTime);
-        Color newcolor = new Color(lowHPcolor.r, lowHPcolor.g, lowHPcolor.b, hurtAmount);
-        DOTween.To(() => overlay.color, x => overlay.color = x, newcolor, overlayTime/2);
+        DOTween.To(() => fillImage.color, x => fillImage.color = x, lowHPcolor, tweenTime);
     }
     public void TweenBackBar()
     {
-        DOTween.To(() => fillImage.color, x => fillImage.color = x, fillColor, healthbarTime);
+        DOTween.To(() => fillImage.color, x => fillImage.color = x, fillColor, tweenTime);
     }
-    public void TweenBackOverlay()
-    {
-        DOTween.To(() => overlay.color, x => overlay.color = x, zero, overlayTime);
-    }
-    public void SetAlpha(float alpha)
-    {
-        color = overlay.GetComponent<Image>().color;
-        overlay.GetComponent<Image>().color = new Color(color.r,color.g,color.b,alpha);
-    }
-
 }
