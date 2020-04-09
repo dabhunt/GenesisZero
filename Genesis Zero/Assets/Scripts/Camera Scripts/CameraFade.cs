@@ -21,7 +21,6 @@ public class CameraFade : MonoBehaviour
     }
     public void FadeIn(float seconds)
     {
-        print("runs");
         DOTween.To(() => color.a, x => color.a = x, 0, seconds);
     }
     public void FadeOut(float seconds)
