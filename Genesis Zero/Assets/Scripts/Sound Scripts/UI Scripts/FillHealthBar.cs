@@ -9,8 +9,9 @@ public class FillHealthBar : MonoBehaviour
 	public Slider slider;
     public Color fillColor;
     public Color lowHPcolor;
+
     private Player player;
-    private float valueLastFrame;
+    private float valueLastFrame = 100;
     private float tweenTime = .7f;
     private GameObject overlay;
     private Color color;
@@ -21,10 +22,11 @@ public class FillHealthBar : MonoBehaviour
     	//get slider component
         slider = GetComponent<Slider>();
         GameObject temp = GameObject.FindWithTag("Player");
+        valueLastFrame = temp.GetComponent<Player>().GetHealth().GetValue();
         canvas = GameObject.FindWithTag("CanvasUI");
         player = temp.GetComponent<Player>();
         overlay = canvas.transform.Find("VignetteOverlay").gameObject;
-        color = overlay.GetComponent<Image>().color;
+        Reset();
     }
     void Update()
     {
@@ -42,7 +44,6 @@ public class FillHealthBar : MonoBehaviour
         
         if (curValue < valueLastFrame)
         {
-            
             fillImage.color = Color.white;
             DOTween.To(() => slider.value, x => slider.value = x, curValue, tweenTime);
             float pain = (valueLastFrame - curValue) / 15;
@@ -64,6 +65,10 @@ public class FillHealthBar : MonoBehaviour
     {
         DOTween.To(() => fillImage.color, x => fillImage.color = x, fillColor, tweenTime/2);
         DOTween.To(() => color.a, x => color.a = x, 0, tweenTime/2);
+    }
+    public void Reset()
+    {
+        overlay.GetComponent<Image>().color = new Color(0,0,0,0);
     }
 
 }

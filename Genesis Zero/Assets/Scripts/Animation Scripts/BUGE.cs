@@ -23,10 +23,12 @@ public class BUGE : MonoBehaviour
     private bool prevFacingRight;
     private float curPlayerSpeed;
     private Vector2 follow;
+    private GameObject LookAtObj;
     private float minDistReset;
     private float maxDistReset;
     private Queue<WayPoint> animWaypoints;
     private bool AnimEnabled = false;
+    private bool lookOverride = false;
     void Start()
     {
         animWaypoints = new Queue<WayPoint>();
@@ -44,6 +46,8 @@ public class BUGE : MonoBehaviour
         if (Input.GetMouseButtonDown(1)) //rightclick to test waypoint system
         {
             //if the mouse is NOT in the top 10% of the screen
+            if (lookOverride)
+                return;
             if (Input.mousePosition.y < Screen.height - (Screen.height * .1f))
             {
                 ClearWayPoints();
@@ -74,6 +78,8 @@ public class BUGE : MonoBehaviour
                 prevFacingRight = playerController.IsFacingRight();
                 curPlayerSpeed = playerController.GetCurrentSpeed();
                 transform.LookAt(playerController.worldXhair.transform);
+                if (lookOverride)
+                    transform.LookAt(LookAtObj.transform);
                 //enable this line and delete the above line once Toan changes to UI cursor
                 distance = Vector3.Distance(transform.position, Player.position);
                 follow = new Vector3(Player.position.x - followXoffset, Player.position.y + MinDistance, Player.position.z);
@@ -85,6 +91,7 @@ public class BUGE : MonoBehaviour
             {
                 MinDistance = 1f;
                 MaxDistance = 1.7f;
+                if (animWaypoints.Count > 0) { }
                 follow = new Vector3(animWaypoints.Peek().Destination.x, animWaypoints.Peek().Destination.y, 0);
                 distance = Vector3.Distance(transform.position, animWaypoints.Peek().Destination);
                 //if BUG-E is At the waypoint location, then he looks back toward the player
@@ -92,7 +99,6 @@ public class BUGE : MonoBehaviour
                     transform.LookAt(Player);
                 else
                     transform.LookAt(follow);
-
             }
             if (distance >= MinDistance && distance < MaxDistance)
             {
@@ -136,6 +142,18 @@ public class BUGE : MonoBehaviour
     {
         animWaypoints.Clear();
     }
+    public void LookAt( GameObject lookat, float seconds)
+    {
+        print("lookat running");
+        LookAtObj = lookat;
+        lookOverride = true;
+        Invoke("StopLook", seconds);
+    }
+    private void StopLook()
+    {
+        transform.Find("Arrow").gameObject.SetActive(false);
+        lookOverride = false;
+    }
     IEnumerator DequeueAfterSeconds(float seconds)
     {
         yield return StartCoroutine(WaitForRealSeconds(seconds));
@@ -144,6 +162,7 @@ public class BUGE : MonoBehaviour
             animWaypoints.Dequeue();
         }
     }
+
     //Real seconds are used so that timescale doesn't effect it
     public static IEnumerator WaitForRealSeconds(float delay)
     {
