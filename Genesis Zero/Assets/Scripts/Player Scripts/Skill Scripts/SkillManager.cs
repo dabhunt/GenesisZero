@@ -17,9 +17,10 @@ public class SkillManager
     private int skillamount;
     private int abilityamount;
     private int modamount;
+    private int uniquemodamount;
     private string ability1 = "";
     private string ability2 = "";
-    private int modLimit = 8;
+    private int uniqueModLimit = 8;
     private int ClampModLimit = 11;
 
     private bool updated;
@@ -60,8 +61,7 @@ public class SkillManager
      */
     public void AddSkill(SkillObject skill)
     {
-        if (GetModAmount() >= modLimit)
-            return;
+        
         if (Skills.ContainsKey(skill.name)) // Adds to the stack of skills
         {
             Skills[skill.name] = Skills[skill.name] + 1;
@@ -529,6 +529,10 @@ public class SkillManager
     {
         return modamount;
     }
+    public int GetUniqueModAmount()
+    {
+        return playermods.Count;
+    }
 
     public int GetAbilityAmount()
     {
@@ -651,14 +655,14 @@ public class SkillManager
     {
 
     }
-    public int GetModLimit()
+    public int GetModSlotLimit()
     {
-        return modLimit;
+        return uniqueModLimit;
     }
     public void SetModLimit(float newLimit)
     {
         newLimit = Mathf.Clamp(newLimit, 7, ClampModLimit);
-        modLimit = (int)newLimit;
+        uniqueModLimit = (int)newLimit;
     }
     //This function returns a multiplier value, based on how many of that skill the player has
     // pass in the name of modifier, and how much additional stacks past 1 should be multiplied by, (mainly used for explosion radius increases right now)
