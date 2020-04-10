@@ -96,7 +96,7 @@ public class SkillPickup : MonoBehaviour
                 if (GetComponentInChildren<Floating>() != null)
                     Destroy(GetComponentInChildren<Floating>());
                 speedvar *= 1.09f;
-                Vector3 tVec = new Vector3(target.transform.position.x, target.transform.position.y + .9f, 0);
+                Vector3 tVec = new Vector3(target.transform.position.x, target.transform.position.y + .8f, 0);
                 transform.LookAt(tVec);
                 this.transform.position = Vector3.MoveTowards(this.transform.position, tVec, speedvar * Time.deltaTime);
             }
