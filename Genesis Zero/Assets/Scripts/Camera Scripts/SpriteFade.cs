@@ -39,6 +39,7 @@ public class SpriteFade : MonoBehaviour
     //fades the overlay out over float seconds
     public void FadeOut(float seconds)
     {
+        TweenParams tParms = new TweenParams().SetEase(Ease.InExpo);
         DOTween.To(() => color.a, x => color.a = x, 0, seconds);
     }
     //optional secondary variable, if you want to fade the game out slightly during the gameover state

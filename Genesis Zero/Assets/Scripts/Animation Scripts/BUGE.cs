@@ -51,7 +51,15 @@ public class BUGE : MonoBehaviour
             if (Input.mousePosition.y < Screen.height - (Screen.height * .1f))
             {
                 ClearWayPoints();
-                AddWayPoint(playerController.worldXhair.transform.position, 1f);
+                if (MouseInputUIBlocker.BlockedByUI)
+                {
+                    AddWayPoint(playerController.screenXhair.transform.position, 1f);
+                    print("blocked by UI");
+                }
+                else
+                {
+                    AddWayPoint(playerController.worldXhair.transform.position, 1f);
+                }
             }
             
         }
@@ -137,7 +145,7 @@ public class BUGE : MonoBehaviour
             animWaypoints.Enqueue(newpoint);
         }
     }
-    public void AddWayPoint(Vector2 V, float T)
+    public void AddWayPoint(Vector3 V, float T)
     {
         WayPoint newpoint = ScriptableObject.CreateInstance<WayPoint>();
         newpoint.SetValues(V, T);
