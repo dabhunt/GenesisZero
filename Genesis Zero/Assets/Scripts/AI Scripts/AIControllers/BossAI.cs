@@ -9,7 +9,7 @@ using UnityEngine.UI;
  */
 public class BossAI : AIController
 {
-    public enum State { Headbutt, Firebreath, Pulse, Wild, MovingAway, MovingCloser, Centering, Cooling, Repositioning, Setting }
+    public enum State { Headbutt, Firebreath, Pulse, Wild, MovingAway, MovingCloser, Centering, Cooling, Repositioning, Setting, PerformingAttack }
     protected State bossstate = State.MovingAway; // Current behavior state
     private bool secondphase;
     private bool animating;
@@ -49,6 +49,10 @@ public class BossAI : AIController
 
     private Vector3 targetmovement;
     private Vector3 lasttargetposition;
+
+    public GameObject FireballPrefab;
+    public GameObject HeadbuttPrefab;
+    public GameObject PulsePrefab;
 
     protected void Awake()
     {
@@ -176,7 +180,12 @@ public class BossAI : AIController
             LastPosition = finalposition;
             transform.position = finalposition;
         }
-
+        else
+        {
+            Vector3 finalposition = Vector3.Lerp(LastPosition, new Vector3(transform.position.x, transform.position.y, zdepth), 1);
+            LastPosition = finalposition;
+            transform.position = finalposition;
+        }
 
         //Display Health
         if (healthbar && initiated)
@@ -261,11 +270,12 @@ public class BossAI : AIController
             float actiontime = 1;
             if (attack == 0)
             {
-                actiontime = 2;
+                actiontime = 2f;
                 SetBossstate(State.Headbutt, actiontime);
                 Vector3 target = PredictPath(1.25f);
-                SpawnIndicator(transform.position, new Vector2(16, 6), target - transform.position, new Color(1, 0, 0, .1f), Vector2.zero, false, true, actiontime);
+                SpawnIndicator(transform.position, new Vector2(16, 6), target - transform.position, new Color(1, 0, 0, .1f), Vector2.zero, false, true, actiontime - .35f);
                 LookAtVectorTemp(target, actiontime);
+                StartCoroutine(MoveTo(transform.position + ((target - transform.position).normalized * 16), actiontime - 1.65f, actiontime - .35f));
             }
             else if (attack == 1)
             {
@@ -274,17 +284,19 @@ public class BossAI : AIController
                 Vector3 target = PredictPath(1f);
                 SpawnIndicator(transform.position, new Vector2(24, 4), target - transform.position, new Color(1, 0, 0, .1f), Vector2.zero, false, true, actiontime);
                 LookAtVectorTemp(target, actiontime);
+                Invoke("SpitFireball", actiontime);
+                GetComponent<SphereCollider>().isTrigger = false;
             }
             else
             {
                 actiontime = 2;
                 SetBossstate(State.Pulse, actiontime);
                 SpawnIndicator(transform.position, new Vector2(18, 18), lookDir, new Color(1, 0, 0, .1f), Vector2.zero, true, false, actiontime);
+                GetComponent<SphereCollider>().isTrigger = false;
             }
 
 
             ++Heat;
-            GetComponent<SphereCollider>().isTrigger = false;
             return;
         }
         else if (bossstate == State.Centering)
@@ -457,6 +469,38 @@ public class BossAI : AIController
         }
     }
 
+    IEnumerator MoveTo(Vector3 targetposition, float time, float delay)
+    {
+        yield return new WaitForSeconds(delay);
+
+        animating = true;
+        float totaltime = time;
+        float distance = Vector2.Distance(transform.position, targetPosition);
+        float speed = distance / totaltime;
+        for (float f = 0; f <= time; f += Time.fixedDeltaTime)
+        {
+            GetComponent<SphereCollider>().isTrigger = true;
+            transform.position = Vector2.MoveTowards(transform.position, targetposition, speed * Time.fixedDeltaTime);
+            if (time - f < Time.fixedDeltaTime * 2 && animating == true)
+            {
+                GetComponent<SphereCollider>().isTrigger = false;
+                animating = false;
+            }
+            yield return new WaitForSeconds(Time.fixedDeltaTime);
+        }
+    }
+
+    IEnumerator SpawnPrefab(GameObject prefab, Vector3 position,Quaternion direction, float delay)
+    {
+        yield return new WaitForSeconds(delay);
+        GameObject hitbox = Instantiate(prefab, position, direction);
+    }
+
+    void SpitFireball()
+    {
+        GameObject hitbox = Instantiate(FireballPrefab, transform.position, transform.rotation);
+    }
+
     public void SpawnIndicator(Vector2 position, Vector2 size, Vector2 dir, Color color, Vector2 offset, bool centered, bool square, float time)
     {
         GameObject instance = (GameObject)Instantiate(Indicator, position, Indicator.transform.rotation);
@@ -473,6 +517,12 @@ public class BossAI : AIController
         }
         Destroy(instance, time);
         indicators.Add(instance);
+    }
+
+    private Vector2 CastAtAngle(Vector2 position, Vector2 direction, float distance)
+    {
+        Vector2 result = position + direction.normalized * distance;
+        return result;
     }
 
     private new void OnDrawGizmos()
