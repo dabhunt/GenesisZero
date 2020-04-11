@@ -150,11 +150,14 @@ public class Merchant : MonoBehaviour
             purchaseButton.interactable = false;
             purchaseButton.GetComponentInChildren<Text>().text = "Not Enough Essence";
         }
-        //if the player has selected a mod and doesn't have enough room in inventory to purchase it
-        else if (selectedShopItem.Type == 0 && (modAmount >= modLimit))
+        //if the player has selected a mod they don't already have, and don't have room for it
+        else if (selectedShopItem.Type == 0 && (skillManager.GetUniqueModAmount() >= skillManager.GetModSlotLimit()))
         {
-            purchaseButton.interactable = false;
-            purchaseButton.GetComponentInChildren<Text>().text = "Mod Limit Reached";
+            if (skillManager.HasSkill(name) == false)
+            {
+                purchaseButton.interactable = false;
+                purchaseButton.GetComponentInChildren<Text>().text = "Mod Limit Reached";
+            }
         }
         else
         {//if none of the above are true, the player is allowed to purchase the item

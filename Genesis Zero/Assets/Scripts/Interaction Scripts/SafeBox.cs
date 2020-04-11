@@ -7,6 +7,7 @@ public class SafeBox : MonoBehaviour
     private List<SkillObject> modList;
     private SkillManager sk;
     private GameObject player;
+    private Animator animator;
     Player playerScript;
     public bool isActive = true;
     /* This script controls what happens when the player interacts with the mod converter, and the math behind what mod you get in return
@@ -20,6 +21,7 @@ public class SafeBox : MonoBehaviour
         player = GameObject.FindGameObjectWithTag("Player");
         playerScript = player.GetComponent<Player>();
         sk = playerScript.GetSkillManager();
+        animator = GetComponent<Animator>();
     }
     //When you press the Interact button, the Merchant/Machine determines what random Mod to give you
     private void Update()
@@ -32,10 +34,7 @@ public class SafeBox : MonoBehaviour
             {
                 if (playerScript.GetKeysAmount() >= 1)
                 {
-                    sk.SpawnMod(transform.position + new Vector3(0,1,0) , GetNewMod(4).name);
-                    sk.SpawnMod(transform.position + new Vector3(0, 1, 0), GetNewMod(2).name);
-                    if (Random.value < .5f)
-                        sk.SpawnMod(player.transform.position + new Vector3(0, 1, 0), GetNewMod(1).name);
+                    animator.SetTrigger("OpenTrigger");
                     isActive = false;
                     InteractPopup iPop = GetComponent<InteractPopup>();
                     iPop.DestroyPopUp();
@@ -72,6 +71,13 @@ public class SafeBox : MonoBehaviour
         modList.Clear();
         //deactivate Lock box
         return newMod;
+    }
+    public void AfterAnimation()
+    {
+        sk.SpawnMod(transform.position + new Vector3(0.1f, 3, 0), GetNewMod(4).name);
+        sk.SpawnMod(transform.position + new Vector3(0, 3, 0), GetNewMod(2).name);
+        if (Random.value < .5f)
+            sk.SpawnMod(player.transform.position + new Vector3(-.1f, 3, 0), GetNewMod(1).name);
     }
 }
 
