@@ -127,10 +127,10 @@ public class ShieldEnemyAI : AIController
         {
             targetSpeed = MoveSpeed * 0.1f;
         }
-        else if (state == AIState.Cooldown)
+        /*else if (state == AIState.Cooldown)
         {
             targetSpeed = 0.0f;
-        }
+        }*/
 
         targetSpeed *= GetSpeed().GetValue();
         if ((isGrounded && state != AIState.Attack) || state == AIState.Cooldown)

@@ -375,6 +375,14 @@ public class AIController : Pawn
     }
 
     /**
+     * Returns an array of all enemies within the alert radius
+     */
+    public AIController[] GetNearbyEnemies()
+    {
+        return new AIController[0];
+    }
+
+    /**
      * Draw visual representations of properties
      */
     protected virtual void OnDrawGizmos()
@@ -401,6 +409,8 @@ public class AIController : Pawn
             GizmosExtra.DrawWireCircle(trueOrigin, Vector3.forward, BehaviorProperties.AvoidRadius);
             Gizmos.color = Color.red;
             GizmosExtra.DrawWireCircle(trueOrigin, Vector3.forward, BehaviorProperties.AttackRadius);
+            Gizmos.color = Color.green;
+            GizmosExtra.DrawWireCircle(trueOrigin, Vector3.forward, BehaviorProperties.AlertEnemiesRadius);
         }
     }
 
