@@ -142,8 +142,8 @@ public class Merchant : MonoBehaviour
         merchantUI.transform.Find("Cost").gameObject.GetComponent<Text>().text = cost;
         Button purchaseButton = merchantUI.transform.Find("Purchase").gameObject.GetComponent<Button>();
         Player pScript = player.GetComponent<Player>();
-        int modAmount = pScript.GetSkillManager().GetModAmount();
-        int modLimit = pScript.GetSkillManager().GetModLimit();
+        int modAmount = pScript.GetSkillManager().GetUniqueModAmount();
+        int modLimit = pScript.GetSkillManager().GetModSlotLimit();
         //if player doesn't have enough essence to make purchase
         if (canistersNeeded > pScript.GetFullCapsuleAmount())
         {
@@ -250,7 +250,7 @@ public class Merchant : MonoBehaviour
                 break;
             case 5:
                 //increase the maximum amount of mods player can have at one time by 1
-                prevMax = skillManager.GetModLimit();
+                prevMax = skillManager.GetModSlotLimit();
                 skillManager.SetModLimit(prevMax + 1);
                 break;
             case 6:

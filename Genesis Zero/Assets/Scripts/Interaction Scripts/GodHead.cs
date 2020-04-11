@@ -167,7 +167,10 @@ public class GodHead : MonoBehaviour
         SkillObject ability = skillManager.GetRandomAbility();
         //Guarantee that the player gets an ability they don't currently have
         //Also, this may at some point even keep track of all abilities the player has ever gotten, to ensure maximum variety for the demo
-        while (skillManager.GetAbility1().name == ability.name || skillManager.GetAbility2().name == ability.name)
+        bool checkDuplicates = false;
+        if (skillManager.GetAbilityAmount() > 1)
+            checkDuplicates = true;
+        while (checkDuplicates && (skillManager.GetAbility1().name == ability.name || skillManager.GetAbility2().name == ability.name))
         {
            ability = skillManager.GetRandomAbility();
         }

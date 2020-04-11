@@ -22,6 +22,7 @@ public class EnemyOverlayShader : MonoBehaviour
         float onOffMulti = -12 * (1 - ratio);
         if (ratio < lowHealthCutoff)
         {
+            //VFXManager.instance.PlayEffect("VFX_LoopingSparks", transform.position);
             gameObject.GetComponent<Renderer>().material.SetFloat("_OnOff", onOffMulti);
             gameObject.GetComponent<Renderer>().material.SetFloat("_LowHP", .15f);
         }
