@@ -122,6 +122,8 @@ public class AbilityCasting : MonoBehaviour
                 CastMultiShot();
                 break;
             case "Heat Vent Shield":
+                if (player.GetOverHeat().GetHeat() < 1)
+                    return; //prevent player from using shield at 0 heat, since it does nothing
                 InitializeAbility(8, 0, 4, num);
                 CastHeatShield(num);
                 break;
@@ -285,7 +287,7 @@ public class AbilityCasting : MonoBehaviour
         player.GetComponent<PlayerController>().SetVertVel(0);
         player.KnockBackForced(aimDir + Vector2.up, 25);
         player.GetComponent<PlayerController>().NewLayerMask(ignoreEnemiesLayerMask, FD_duration);
-        GameObject hitbox = SpawnGameObject("FireDashHitbox", transform.position, Quaternion.identity);
+        GameObject hitbox = SpawnGameObject("FireDashHitbox", CastAtAngle(transform.position, aimDir, .5f), GetComponent<Gun>().firePoint.rotation);
         hitbox.GetComponent<Hitbox>().InitializeHitbox(GetComponent<Player>().GetAbilityPower().GetValue(), GetComponent<Player>());
         hitbox.transform.parent = transform;
         player.SetInvunerable(FD_duration);
@@ -326,6 +328,7 @@ public class AbilityCasting : MonoBehaviour
     {
         SkillObject skill = player.GetSkillManager().GetSkillFromString("Wound Sealant");
         player.GetSkillManager().RemoveSkill(skill);
+        VFXManager.instance.PlayEffect("VFX_Health",transform.position);
         player.Heal(55);
     }
     private void CastManicTitan()
