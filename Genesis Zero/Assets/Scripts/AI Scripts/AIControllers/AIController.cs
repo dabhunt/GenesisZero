@@ -13,6 +13,8 @@ public class AIController : Pawn
 
     public enum AIState { Idle, Patrol, Follow, Charge, Attack, Cooldown }
     protected AIState state = AIState.Idle; // Current behavior state
+    protected bool initialized = false;
+
     public float IdlePatrolIntervalMin = 1.0f; // Minimum time interval for switching between idling and patrolling
     public float IdlePatrolIntervalMax = 2.0f; // Maximum time interval for switching between idling and patrolling
     private float idlePatrolIntervalCurrent = 1.0f; // Randomly chosen interval in range
@@ -53,6 +55,18 @@ public class AIController : Pawn
                 SetTarget(playerSearch.transform);
             }
         }
+
+        StartCoroutine(DelayedStart());
+    }
+
+    /**
+     * This is for initialization tasks that need to happen after other scripts have called their Start() functions
+     */
+    protected IEnumerator DelayedStart()
+    {
+        yield return new WaitForFixedUpdate();
+        EnemyManager.AllEnemies.Add(this);
+        initialized = true;
     }
 
     protected virtual void SetTarget(Transform tr)
@@ -66,6 +80,8 @@ public class AIController : Pawn
     new protected void FixedUpdate()
     {
         base.FixedUpdate();
+        if (!initialized) { return; }
+
         UpdateOrigin();
         GroundCheck();
 
