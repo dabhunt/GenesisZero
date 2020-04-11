@@ -145,6 +145,8 @@ public class AIController : Pawn
         {
             alertTrackTime = 0.0f;
         }
+
+        //Debug.Log(GetNearbyEnemies().Length);
     }
 
     /**
@@ -395,7 +397,22 @@ public class AIController : Pawn
      */
     public AIController[] GetNearbyEnemies()
     {
-        return new AIController[0];
+        List<AIController> nearEnemies = new List<AIController>();
+        if (BehaviorProperties != null)
+        {
+            for (int i = 0; i < EnemyManager.AllEnemies.Count; i++)
+            {
+                AIController curEnemy = EnemyManager.AllEnemies[i];
+                if (curEnemy != this && curEnemy.gameObject.activeSelf)
+                {
+                    if ((curEnemy.transform.position - transform.position).sqrMagnitude <= BehaviorProperties.AlertEnemiesRadius * BehaviorProperties.AlertEnemiesRadius)
+                    {
+                        nearEnemies.Add(curEnemy);
+                    }
+                }
+            }
+        }
+        return nearEnemies.ToArray();
     }
 
     /**
