@@ -130,8 +130,6 @@ public class SkillDisplay : MonoBehaviour
         Gizmos.DrawWireSphere(transform.position + (Vector3)StartPoint + ((Vector3)Seperation * 2), 25f);
 
         Gizmos.color = Color.yellow;
-        //Gizmos.DrawWireSphere(transform.position + (Vector3)Ability1Position, 25f);
-        //Gizmos.DrawWireSphere(transform.position + (Vector3)Ability2Position, 25f);
         Gizmos.color = Color.green;
         Gizmos.DrawWireCube(transform.position + (Vector3)PopupPosition, new Vector3(3, 1, 0));
     }
