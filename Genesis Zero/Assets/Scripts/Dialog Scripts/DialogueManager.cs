@@ -22,7 +22,8 @@ public class DialogueManager : MonoBehaviour
     private int[] interactions;
     private int currentType = -1;
     private bool canSkip = true;
-
+    private bool deQueueOnFinish = false;
+    private BUGE buge;
     void Awake()
     {
         if (instance == null)
@@ -44,22 +45,25 @@ public class DialogueManager : MonoBehaviour
         interactions = new int[3];
         instance.EndDialogue();
         instance.TriggerDialogue("StartDialogue");
-
+        buge = GameObject.FindWithTag("BUG-E").GetComponent<BUGE>();
         //StateManager.instance.PauseGame();
     }
-
-    public void TriggerDialogue(string name)
+    //takes the name of the txt file, and a bool of if it should dequeue bug-e waypoints upon completion
+    public void TriggerDialogue(string name, bool pauseGame, bool deQueue)
     {
         /*
-         * read each line and store each entity separated by a ';' or '\n'
-         * first label = character saying the text
-         * second label = text
-         * third label = duration of text (-1 means it will wait until player input to get to the next sentence)
-         * (optional) fourth label = voice clip if available
-         * assumptions: first 3 labels always exist, fourth label may not exist,
-         * */
+        * read each line and store each entity separated by a ';' or '\n'
+        * first label = character saying the text
+        * second label = text
+        * third label = duration of text (-1 means it will wait until player input to get to the next sentence)
+        * (optional) fourth label = voice clip if available
+        * assumptions: first 3 labels always exist, fourth label may not exist,
+        * */
         StopAllCoroutines(); //makes sure no other dialogue will mess with new dialogue
-        TextAsset ta = (TextAsset)Resources.Load("Dialogue/"+name);
+        deQueueOnFinish = deQueue;
+        TextAsset ta = (TextAsset)Resources.Load("Dialogue/" + name);
+        if (ta == null)
+            return;
         int count = 0;
         dialogue.charIcons = new Queue<string>();
         dialogue.sentences = new Queue<string>();
@@ -76,6 +80,14 @@ public class DialogueManager : MonoBehaviour
                 AudioManager.instance.PlaySound(output[3]);
         }
         StartDialogue(dialogue);
+    }
+    public void TriggerDialogue(string name, bool pauseGame)
+    {
+        TriggerDialogue(name, pauseGame, false);
+    }
+    public void TriggerDialogue(string name)
+    {
+        TriggerDialogue(name, false, false);
     }
     public void StartDialogue(Dialogue dialogue)
     {
@@ -166,7 +178,10 @@ public class DialogueManager : MonoBehaviour
         if (currentType == -1)
         {
             StateManager.instance.UnpauseGame();
+
         }
+        if (deQueueOnFinish)
+            buge.DequeueWayPoint();
         InvokeAfterDialogue(currentType);
         StopAllCoroutines();
         parent.SetActive(false);

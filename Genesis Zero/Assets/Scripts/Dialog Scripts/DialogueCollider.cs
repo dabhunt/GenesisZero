@@ -4,7 +4,7 @@ using UnityEngine;
 
 public class DialogueCollider : MonoBehaviour
 {
-    public string DialogueFileName;
+    public string DialogueFileName = "";
     public bool BugeFlysOver = true;
     public bool TriggerRepeatedly = false;
     private BUGE buge;
@@ -22,7 +22,7 @@ public class DialogueCollider : MonoBehaviour
         //if BUG-E has already pointed this gameObject out to the player
         if (!TriggerRepeatedly && Triggered)
             return;
-        if (DialogueFileName == "")
+        if (DialogueFileName == null || DialogueFileName == "")
             return;
         if (other.GetComponent<Player>()) //if it's the player
         {

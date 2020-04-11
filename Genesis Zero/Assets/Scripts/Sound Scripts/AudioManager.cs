@@ -30,7 +30,7 @@ public class AudioManager : MonoBehaviour
         }
 
         setVolumeMaster = AudioListener.volume;
-        setVolumeMusic = 0f;
+        setVolumeMusic = .25f;
         maxVolumeMusic = .25f;
         setVolumeAmbient = 1.4f;
         setVolumeSound = 1.0f;
@@ -40,7 +40,7 @@ public class AudioManager : MonoBehaviour
 
     void Start()
     {
-        SetVolumeMusic(0);
+        SetVolumeMusic(.25f);
     }
 
     // Update is called once per frame
@@ -144,7 +144,7 @@ public class AudioManager : MonoBehaviour
     public Sound PlayTrack (string name)
     {
        // bool active = false;
-        AudioClip loadedSound = (AudioClip)Resources.Load("Sounds/" + name, typeof(AudioClip));
+        AudioClip loadedSound = (AudioClip)Resources.Load("Sounds/Music/" + name, typeof(AudioClip));
         if (loadedSound == null)
             return null;
         Sound s = new Sound();
@@ -177,6 +177,7 @@ public class AudioManager : MonoBehaviour
                 s.source.Play();
                 startTime += duration;
             }
+            s.source.loop = true;
             Debug.LogWarning("Playlist empty, adding: " + name);
         }
         return s;
@@ -240,7 +241,7 @@ public class AudioManager : MonoBehaviour
         Sound track = FindTrack(name);
         bool resetVolume = false;
         //isplaying keeps returning false
-        track = PlayTrack("Music/" + name);
+        track = PlayTrack(name);
         if (track == null || track.source.isPlaying == false)
         {
             //resetVolume = true;

@@ -58,10 +58,15 @@ public class SkillPickup : MonoBehaviour
         //if the player has no more room for new modifiers, tell them
         if (!skill.IsAbility)
         {
-            if (player.GetSkillManager().GetModAmount() >= player.GetSkillManager().GetModLimit())
+
+            if (player.GetSkillManager().GetUniqueModAmount() >= player.GetSkillManager().GetModSlotLimit())
             {
-                GetComponent<InteractPopup>().SetText("Mod Limit Reached. Drop Unwanted Modifiers w/ Right Click");
-                pressed = false;
+                //if the player is at the modlimit, and the player doesn't have one of that type it cannot be picked up
+                if (player.GetSkillManager().HasSkill(skill.name) == false)
+                {
+                    pressed = false;
+                    GetComponent<InteractPopup>().SetText("Unique Mod Limit Reached. Drop Unwanted Modifiers w/ Right Click");
+                }
             }
         }
         else
@@ -96,7 +101,7 @@ public class SkillPickup : MonoBehaviour
                 if (GetComponentInChildren<Floating>() != null)
                     Destroy(GetComponentInChildren<Floating>());
                 speedvar *= 1.09f;
-                Vector3 tVec = new Vector3(target.transform.position.x, target.transform.position.y + .9f, 0);
+                Vector3 tVec = new Vector3(target.transform.position.x, target.transform.position.y + .8f, 0);
                 transform.LookAt(tVec);
                 this.transform.position = Vector3.MoveTowards(this.transform.position, tVec, speedvar * Time.deltaTime);
             }
@@ -106,7 +111,7 @@ public class SkillPickup : MonoBehaviour
             Destroy(gameObject);
         }
     }
-    private void OnTriggerStay(Collider other)
+    private void OnTriggerEnter(Collider other)
     {
         if (added)
             return;
