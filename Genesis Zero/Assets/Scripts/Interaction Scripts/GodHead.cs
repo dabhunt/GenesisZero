@@ -28,7 +28,6 @@ public class GodHead : MonoBehaviour
     //private bool confirmationWindowOpen = false;
     //change to private later below this point
     private int modSelectNum = -1;
-
     //public List<SkillObject> modSkills;
 
     private void Start()

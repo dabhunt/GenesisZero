@@ -32,17 +32,24 @@ public class SafeBox : MonoBehaviour
         {
             if (Input.GetKeyDown(KeyCode.F))
             {
+                InteractPopup iPop = GetComponent<InteractPopup>();
+                if (iPop == null) //if the player has already
+                    transform.Find("LightEffects").gameObject.SetActive(false);
                 if (playerScript.GetKeysAmount() >= 1)
                 {
                     animator.SetTrigger("OpenTrigger");
-                    isActive = false;
-                    InteractPopup iPop = GetComponent<InteractPopup>();
-                    iPop.DestroyPopUp();
-                    Destroy(iPop);
+                    transform.Find("LightEffects").gameObject.SetActive(true);
+                    if (iPop != null)
+                    {
+                        iPop.DestroyPopUp();
+                        Destroy(iPop);
+                    }
                     playerScript.GetKeys().AddValue(-1);
                 }
 
             }
+            if (GetComponent<InteractPopup>() == null)
+                return;
             if (playerScript.GetKeysAmount() < 1)
             {
                 GetComponent<InteractPopup>().SetText("You need a Keycode Cracker to open this");
