@@ -16,12 +16,12 @@ public class Pawn : MonoBehaviour
 
     private Status invunerable, stunned, burning, slowed, stunimmune;
     private List<Status> statuses;
-    
+
     private float burntime, burndamage, burntick; //burndamage is damage per second
     private float slowtime, knockbackforce;
     private float stunImmuneAfterStun = 1.5f;
     private Vector3 knockbackvector;
-    private bool Initialized, ForcedKnockBack, Dying, StunnedLastFrame;
+    private bool Initialized, ForcedKnockBack, Dying, StunnedLastFrame, HasAnimationEventController;
 
     protected void Start()
     {
@@ -43,6 +43,13 @@ public class Pawn : MonoBehaviour
             InitializeStatuses();
 
             Initialized = true;
+
+            PawnAnimationEvents animEvents = GetComponentInChildren<PawnAnimationEvents>(true);
+            if (animEvents != null)
+            {
+                HasAnimationEventController = true;
+                animEvents.SetParentPawn(this);
+            }
         }
     }
 
@@ -152,7 +159,7 @@ public class Pawn : MonoBehaviour
     {
         if (knockbackforce > 0)
         {
-            if(knockbackforce > 6)
+            if (knockbackforce > 6)
             {
                 GetStunnedStatus().AddTime(Time.fixedDeltaTime);
             }
@@ -169,7 +176,7 @@ public class Pawn : MonoBehaviour
                     Vector3 p2 = p1 + Vector3.up * cc.height;
                     colliding = Physics.CapsuleCast(p1, p2, cc.radius, knockbackvector, out hit, translation.magnitude);
                     if (colliding) colliding = !hit.collider.isTrigger;
-                    translation = colliding ? -translation*2f : translation;
+                    translation = colliding ? -translation * 2f : translation;
                 }
                 if (GetComponent<PlayerController>() && colliding == false)
                 {
@@ -177,7 +184,7 @@ public class Pawn : MonoBehaviour
                 }
                 else if (GetComponent<PlayerController>() && colliding == true)
                 {
-                    transform.position -= translation*2;
+                    transform.position -= translation * 2;
                     knockbackforce = 0;
                 }
             }
@@ -430,6 +437,7 @@ public class Pawn : MonoBehaviour
         slowed = new Status(0); statuses.Add(slowed);
         stunimmune = new Status(0); statuses.Add(stunimmune);
     }
+
     private void Die()
     {
         if (!Dying)
@@ -438,7 +446,12 @@ public class Pawn : MonoBehaviour
             {
                 GameObject.FindGameObjectWithTag("Player").GetComponent<Player>().TriggerEffectOnKill();
             }
-            StartCoroutine(DeathSequence());
+
+            //Allow the animator to control when the object is destroyed
+            if (!HasAnimationEventController)
+            {
+                StartCoroutine(DeathSequence());
+            }
         }
     }
 

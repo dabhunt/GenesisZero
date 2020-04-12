@@ -212,7 +212,6 @@ public class ShieldEnemyAI : AIController
             Vector3 lungeDir = (normalizedTargetDir + Vector3.up * Mathf.Abs(Vector3.Dot(normalizedTargetDir, Vector3.right)) * LungeVerticality).normalized;
             //}
             frb.AddVelocity(lungeDir * LungeSpeed);
-            print("jumptoward runs");
             SpawnAttackHitbox();
         }
     }
