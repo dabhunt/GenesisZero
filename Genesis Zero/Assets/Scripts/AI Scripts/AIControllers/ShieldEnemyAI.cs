@@ -212,6 +212,8 @@ public class ShieldEnemyAI : AIController
             Vector3 lungeDir = (normalizedTargetDir + Vector3.up * Mathf.Abs(Vector3.Dot(normalizedTargetDir, Vector3.right)) * LungeVerticality).normalized;
             //}
             frb.AddVelocity(lungeDir * LungeSpeed);
+            print("jumptoward runs");
+            SpawnAttackHitbox();
         }
     }
 
@@ -226,6 +228,8 @@ public class ShieldEnemyAI : AIController
             spawnedHitboxObj.localPosition = AttackHitboxStart;
             spawnedHitboxObj.localRotation = Quaternion.identity;
             Hitbox spawnedHitbox = spawnedHitboxObj.GetComponent<Hitbox>();
+            spawnedHitbox.DirectionalKnockback = true;
+            spawnedHitbox.Knockbackforce = 20f;
             spawnedHitbox.InitializeHitbox(GetDamage().GetValue(), this);
         }
     }
