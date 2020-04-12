@@ -320,7 +320,8 @@ public class AIController : Pawn
      */
     private void CheckTargetVisibility()
     {
-        if (Target != null && BehaviorProperties != null)
+        targetVisible = CheckVisibility(Target);
+        /*if (Target != null && BehaviorProperties != null)
         {
             if (BehaviorProperties.UseLineOfSight)
             {
@@ -347,7 +348,37 @@ public class AIController : Pawn
             targetVisible = true;
             return;
         }
-        targetVisible = false;
+        targetVisible = false;*/
+    }
+
+    protected bool CheckVisibility(Transform other)
+    {
+        if (other != null && BehaviorProperties != null)
+        {
+            if (BehaviorProperties.UseLineOfSight)
+            {
+                Vector3 toTarget = other.position - trueOrigin;
+                RaycastHit[] sightHits = new RaycastHit[BehaviorProperties.MaxSightCastHits];
+                //if (Physics.RaycastNonAlloc(trueOrigin, toTarget.normalized, sightHits, toTarget.magnitude, BehaviorProperties.SightMask, QueryTriggerInteraction.Ignore) > 0)
+                if (Physics.SphereCastNonAlloc(trueOrigin, 0.1f, toTarget.normalized, sightHits, toTarget.magnitude, BehaviorProperties.SightMask, QueryTriggerInteraction.Ignore) > 0)
+                {
+                    for (int i = 0; i < sightHits.Length; i++)
+                    {
+                        RaycastHit curHit = sightHits[i];
+                        if (curHit.collider != null)
+                        {
+                            //Debug.Log(curHit.transform.name);
+                            if (!curHit.transform.IsChildOf(transform) && !curHit.transform.IsChildOf(other))
+                            {
+                                return false;
+                            }
+                        }
+                    }
+                }
+            }
+            return true;
+        }
+        return false;
     }
 
     /**
