@@ -357,6 +357,9 @@ public class AIController : Pawn
         targetVisible = false;*/
     }
 
+    /**
+     * Returns whether the given transform is visible
+     */
     protected bool CheckVisibility(Transform other)
     {
         if (other != null && BehaviorProperties != null)
