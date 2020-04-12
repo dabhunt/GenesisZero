@@ -442,7 +442,7 @@ public class AIController : Pawn
             for (int i = 0; i < EnemyManager.AllEnemies.Count; i++)
             {
                 AIController curEnemy = EnemyManager.AllEnemies[i];
-                if (curEnemy != this && curEnemy.gameObject.activeSelf)
+                if (curEnemy != null && curEnemy != this && curEnemy.gameObject.activeSelf)
                 {
                     if ((curEnemy.transform.position - transform.position).sqrMagnitude <= BehaviorProperties.AlertEnemiesRadius * BehaviorProperties.AlertEnemiesRadius)
                     {
@@ -461,7 +461,7 @@ public class AIController : Pawn
     {
         if (!Application.isPlaying) { UpdateOrigin(); }
 
-        if (targetVisible)
+        if (targetVisible && Target != null)
         {
             Gizmos.color = Color.green;
             Gizmos.DrawLine(trueOrigin, Target.position);
@@ -529,6 +529,14 @@ public class AIController : Pawn
             {
                 nearEnemies[i].AlertAndFollow(target, false);
             }
+        }
+    }
+
+    private void OnDestroy()
+    {
+        if (EnemyManager.AllEnemies.Contains(this))
+        {
+            EnemyManager.AllEnemies.Remove(this);
         }
     }
 }
