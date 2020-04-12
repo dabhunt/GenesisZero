@@ -167,7 +167,10 @@ public class AIController : Pawn
             if ((GetDistanceToTarget() <= BehaviorProperties.DetectRadius && targetVisible) || alertTracking)
             {
                 ChangeState(AIState.Follow);
-                AlertNearbyEnemies(Target);
+                if (!alertTracking)
+                {
+                    AlertNearbyEnemies(Target);
+                }
             }
 
             if (stateTime > idlePatrolIntervalCurrent)
@@ -182,7 +185,10 @@ public class AIController : Pawn
             {
                 idlePatrolIntervalCurrent = Random.Range(IdlePatrolIntervalMin, IdlePatrolIntervalMax);
                 ChangeState(AIState.Follow);
-                AlertNearbyEnemies(Target);
+                if (!alertTracking)
+                {
+                    AlertNearbyEnemies(Target);
+                }
             }
 
             if (stateTime > idlePatrolIntervalCurrent)
