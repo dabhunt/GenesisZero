@@ -510,10 +510,19 @@ public class AIController : Pawn
 
     protected void AlertNearbyEnemies(Transform target)
     {
+        bool onlyNear = false;
+        if (BehaviorProperties != null)
+        {
+            onlyNear = BehaviorProperties.OnlyAlertVisibleEnemies;
+        }
+
         AIController[] nearEnemies = GetNearbyEnemies();
         for (int i = 0; i < nearEnemies.Length; i++)
         {
-            nearEnemies[i].AlertAndFollow(target, false);
+            if (!onlyNear || (onlyNear && CheckVisibility(nearEnemies[i].transform)))
+            {
+                nearEnemies[i].AlertAndFollow(target, false);
+            }
         }
     }
 }
