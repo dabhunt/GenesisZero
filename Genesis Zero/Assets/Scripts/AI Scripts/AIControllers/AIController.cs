@@ -450,12 +450,20 @@ public class AIController : Pawn
     public override float TakeDamage(float amount, Pawn source)
     {
         //Debug.Log("Enemy Damaged");
-        if (source && (state == AIState.Patrol || state == AIState.Idle || alertTracking))
+        if (source != null)
         {
-            alertPoint = source.transform.position;
-            alertTracking = true;
+            AlertAndFollow(source.transform);
         }
         return base.TakeDamage(amount, source);
+    }
+
+    protected void AlertAndFollow(Transform target)
+    {
+        if (target != null && (state == AIState.Patrol || state == AIState.Idle || alertTracking))
+        {
+            alertPoint = target.position;
+            alertTracking = true;
+        }
     }
 }
 
