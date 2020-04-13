@@ -34,7 +34,7 @@ public class ShieldEnemyAI : AIController
     public float groundCheckRadius = 0.5f;
     public Vector3 ForwardEdgeRay;
     //public Vector3 BackEdgeRay;
-    private bool edgeInFront = false;
+    private bool edgeInFront = true;
     public LayerMask groundCheckMask;
 
     [Header("Attack")]
@@ -194,7 +194,7 @@ public class ShieldEnemyAI : AIController
         groundNormal = isGrounded ? hit.normal : Vector3.up;
         Ray forwardRay = new Ray(trueOrigin, new Vector3(ForwardEdgeRay.x * faceDir, ForwardEdgeRay.y, ForwardEdgeRay.z));
         //Ray backRay = new Ray(trueOrigin, new Vector3(BackEdgeRay.x * faceDir, BackEdgeRay.y, BackEdgeRay.z));
-        edgeInFront = Physics.Raycast(forwardRay, ForwardEdgeRay.magnitude, groundCheckMask, QueryTriggerInteraction.Ignore);
+        edgeInFront = ForwardEdgeRay.sqrMagnitude > 0 ? Physics.Raycast(forwardRay, ForwardEdgeRay.magnitude, groundCheckMask, QueryTriggerInteraction.Ignore) : true;
     }
 
     /**
