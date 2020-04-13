@@ -24,7 +24,7 @@ public class MiddleMan : MonoBehaviour
         float xoff = Boss.GetComponent<BossAI>().lookingatcamera == true ? 0 : Boss.GetComponent<BossAI>().lookDir.normalized.x * -maxoffset.x;
         Vector2 localoffset = new Vector2(xoff, (maxoffset.y / 2 * -ratio.y) + Boss.GetComponent<BossAI>().lookDir.normalized.y * -maxoffset.y/2);    // local offset
         currentoffset = Vector2.Lerp(currentoffset, localoffset, Time.deltaTime * 2);
-        transform.position = Boss.transform.position + (Vector3)currentoffset + new Vector3(0, 0, maxoffset.z);
+        transform.position = Boss.transform.position + (Vector3)currentoffset + new Vector3(0, 0, Boss.transform.position.z + maxoffset.z);
     }
 
     void OnDrawGizmos()
