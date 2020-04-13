@@ -123,13 +123,19 @@ public class TileManager : MonoBehaviour
 			spawnVector.x += tileLength;
 			
 			//Spawn Enemy
-			if (Random.Range(0, 1) == 0)
+			if (Random.Range(0, 5) == 0)
 			{
-				GameObject newEnemy = Instantiate(enemyPrefabs[Random.Range(0, enemyPrefabs.Length)]) as GameObject;
+				int i = Random.Range(5, 9);
 				spawnVector.y += 3;
 				spawnVector.x -= 11;
 				spawnVector.z -= 2;
-				newEnemy.transform.position = spawnVector;
+				while (i > 0)
+				{
+					GameObject newEnemy = Instantiate(enemyPrefabs[Random.Range(0, enemyPrefabs.Length)]) as GameObject;
+					newEnemy.transform.position = spawnVector;
+					--i;
+				}
+				
 				spawnVector.y -= 3;
 				spawnVector.x += 11;
 				spawnVector.z += 2;
