@@ -13,6 +13,8 @@ public class AIController : Pawn
 
     public enum AIState { Idle, Patrol, Follow, Charge, Attack, Cooldown }
     protected AIState state = AIState.Idle; // Current behavior state
+    protected bool initialized = false;
+
     public float IdlePatrolIntervalMin = 1.0f; // Minimum time interval for switching between idling and patrolling
     public float IdlePatrolIntervalMax = 2.0f; // Maximum time interval for switching between idling and patrolling
     private float idlePatrolIntervalCurrent = 1.0f; // Randomly chosen interval in range
@@ -53,6 +55,18 @@ public class AIController : Pawn
                 SetTarget(playerSearch.transform);
             }
         }
+
+        StartCoroutine(DelayedStart());
+    }
+
+    /**
+     * This is for initialization tasks that need to happen after other scripts have called their Start() functions
+     */
+    protected IEnumerator DelayedStart()
+    {
+        yield return new WaitForFixedUpdate();
+        EnemyManager.AllEnemies.Add(this);
+        initialized = true;
     }
 
     protected virtual void SetTarget(Transform tr)
@@ -66,6 +80,8 @@ public class AIController : Pawn
     new protected void FixedUpdate()
     {
         base.FixedUpdate();
+        if (!initialized) { return; }
+
         UpdateOrigin();
         GroundCheck();
 
@@ -129,6 +145,8 @@ public class AIController : Pawn
         {
             alertTrackTime = 0.0f;
         }
+
+        //Debug.Log(GetNearbyEnemies().Length);
     }
 
     /**
@@ -149,6 +167,10 @@ public class AIController : Pawn
             if ((GetDistanceToTarget() <= BehaviorProperties.DetectRadius && targetVisible) || alertTracking)
             {
                 ChangeState(AIState.Follow);
+                if (!alertTracking)
+                {
+                    AlertNearbyEnemies(Target);
+                }
             }
 
             if (stateTime > idlePatrolIntervalCurrent)
@@ -163,6 +185,10 @@ public class AIController : Pawn
             {
                 idlePatrolIntervalCurrent = Random.Range(IdlePatrolIntervalMin, IdlePatrolIntervalMax);
                 ChangeState(AIState.Follow);
+                if (!alertTracking)
+                {
+                    AlertNearbyEnemies(Target);
+                }
             }
 
             if (stateTime > idlePatrolIntervalCurrent)
@@ -300,7 +326,8 @@ public class AIController : Pawn
      */
     private void CheckTargetVisibility()
     {
-        if (Target != null && BehaviorProperties != null)
+        targetVisible = CheckVisibility(Target);
+        /*if (Target != null && BehaviorProperties != null)
         {
             if (BehaviorProperties.UseLineOfSight)
             {
@@ -327,7 +354,40 @@ public class AIController : Pawn
             targetVisible = true;
             return;
         }
-        targetVisible = false;
+        targetVisible = false;*/
+    }
+
+    /**
+     * Returns whether the given transform is visible
+     */
+    protected bool CheckVisibility(Transform other)
+    {
+        if (other != null && BehaviorProperties != null)
+        {
+            if (BehaviorProperties.UseLineOfSight)
+            {
+                Vector3 toTarget = other.position - trueOrigin;
+                RaycastHit[] sightHits = new RaycastHit[BehaviorProperties.MaxSightCastHits];
+                //if (Physics.RaycastNonAlloc(trueOrigin, toTarget.normalized, sightHits, toTarget.magnitude, BehaviorProperties.SightMask, QueryTriggerInteraction.Ignore) > 0)
+                if (Physics.SphereCastNonAlloc(trueOrigin, 0.1f, toTarget.normalized, sightHits, toTarget.magnitude, BehaviorProperties.SightMask, QueryTriggerInteraction.Ignore) > 0)
+                {
+                    for (int i = 0; i < sightHits.Length; i++)
+                    {
+                        RaycastHit curHit = sightHits[i];
+                        if (curHit.collider != null)
+                        {
+                            //Debug.Log(curHit.transform.name);
+                            if (!curHit.transform.IsChildOf(transform) && !curHit.transform.IsChildOf(other))
+                            {
+                                return false;
+                            }
+                        }
+                    }
+                }
+            }
+            return true;
+        }
+        return false;
     }
 
     /**
@@ -375,13 +435,36 @@ public class AIController : Pawn
     }
 
     /**
+     * Returns an array of all enemies within the alert radius
+     */
+    public AIController[] GetNearbyEnemies()
+    {
+        List<AIController> nearEnemies = new List<AIController>();
+        if (BehaviorProperties != null)
+        {
+            for (int i = 0; i < EnemyManager.AllEnemies.Count; i++)
+            {
+                AIController curEnemy = EnemyManager.AllEnemies[i];
+                if (curEnemy != null && curEnemy != this && curEnemy.gameObject.activeSelf)
+                {
+                    if ((curEnemy.transform.position - transform.position).sqrMagnitude <= BehaviorProperties.AlertEnemiesRadius * BehaviorProperties.AlertEnemiesRadius)
+                    {
+                        nearEnemies.Add(curEnemy);
+                    }
+                }
+            }
+        }
+        return nearEnemies.ToArray();
+    }
+
+    /**
      * Draw visual representations of properties
      */
     protected virtual void OnDrawGizmos()
     {
         if (!Application.isPlaying) { UpdateOrigin(); }
 
-        if (targetVisible)
+        if (targetVisible && Target != null)
         {
             Gizmos.color = Color.green;
             Gizmos.DrawLine(trueOrigin, Target.position);
@@ -401,18 +484,63 @@ public class AIController : Pawn
             GizmosExtra.DrawWireCircle(trueOrigin, Vector3.forward, BehaviorProperties.AvoidRadius);
             Gizmos.color = Color.red;
             GizmosExtra.DrawWireCircle(trueOrigin, Vector3.forward, BehaviorProperties.AttackRadius);
+            Gizmos.color = Color.green;
+            GizmosExtra.DrawWireCircle(trueOrigin, Vector3.forward, BehaviorProperties.AlertEnemiesRadius);
         }
     }
 
     public override float TakeDamage(float amount, Pawn source)
     {
         //Debug.Log("Enemy Damaged");
-        if (source && (state == AIState.Patrol || state == AIState.Idle || alertTracking))
+        if (source != null)
         {
-            alertPoint = source.transform.position;
-            alertTracking = true;
+            AlertAndFollow(source.transform);
         }
         return base.TakeDamage(amount, source);
+    }
+
+    protected void AlertAndFollow(Transform target)
+    {
+        AlertAndFollow(target, true);
+    }
+
+    protected void AlertAndFollow(Transform target, bool alertOthers)
+    {
+        if (target != null && (state == AIState.Patrol || state == AIState.Idle || alertTracking))
+        {
+            alertPoint = target.position;
+            alertTracking = true;
+            if (alertOthers)
+            {
+                AlertNearbyEnemies(target);
+            }
+        }
+    }
+
+    protected void AlertNearbyEnemies(Transform target)
+    {
+        bool onlyNear = false;
+        if (BehaviorProperties != null)
+        {
+            onlyNear = BehaviorProperties.OnlyAlertVisibleEnemies;
+        }
+
+        AIController[] nearEnemies = GetNearbyEnemies();
+        for (int i = 0; i < nearEnemies.Length; i++)
+        {
+            if (!onlyNear || (onlyNear && CheckVisibility(nearEnemies[i].transform)))
+            {
+                nearEnemies[i].AlertAndFollow(target, false);
+            }
+        }
+    }
+
+    private void OnDestroy()
+    {
+        if (EnemyManager.AllEnemies.Contains(this))
+        {
+            EnemyManager.AllEnemies.Remove(this);
+        }
     }
 }
 

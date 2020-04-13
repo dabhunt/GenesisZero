@@ -47,13 +47,28 @@ VisualEffect:
   m_ResetSeedOnPlay: 1
   m_PropertySheet:
     m_Float:
-      m_Array: []
+      m_Array:
+      - m_Value: 1
+        m_Name: Size
+        m_Overridden: 1
+      - m_Value: 0.2
+        m_Name: LifetimeSquiggles
+        m_Overridden: 1
     m_Vector2f:
       m_Array: []
     m_Vector3f:
       m_Array: []
     m_Vector4f:
-      m_Array: []
+      m_Array:
+      - m_Value: {x: 0, y: 0.2509804, z: 0.07192647, w: 1}
+        m_Name: Color
+        m_Overridden: 1
+      - m_Value: {x: 0.18818302, y: 0.8586043, z: 1.2869291, w: 1}
+        m_Name: Color2
+        m_Overridden: 1
+      - m_Value: {x: 0.70610964, y: 0.48755187, z: 2.126735, w: 1}
+        m_Name: Color3
+        m_Overridden: 1
     m_Uint:
       m_Array: []
     m_Int:
@@ -85,8 +100,7 @@ VFXRenderer:
   m_RayTracingMode: 0
   m_RenderingLayerMask: 1
   m_RendererPriority: 0
-  m_Materials:
-  - {fileID: 0}
+  m_Materials: []
   m_StaticBatchInfo:
     firstSubMesh: 0
     subMeshCount: 0
@@ -4888,7 +4902,7 @@ GameObject:
   - component: {fileID: -8938317265570314118}
   m_Layer: 0
   m_Name: Teleporter_Mock2
-  m_TagString: Untagged
+  m_TagString: Teleporter
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -4900,7 +4914,7 @@ Transform:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 8402454202125708677}
-  m_LocalRotation: {x: -0.7071068, y: 0, z: -0, w: 0.7071067}
+  m_LocalRotation: {x: -0.7069834, y: 0, z: 0, w: 0.7072302}
   m_LocalPosition: {x: 0, y: 0, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children:
@@ -4908,7 +4922,7 @@ Transform:
   - {fileID: 3183624792522939393}
   m_Father: {fileID: 0}
   m_RootOrder: 0
-  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+  m_LocalEulerAnglesHint: {x: -89.98, y: 0, z: 0}
 --- !u!33 &4583499985746208160
 MeshFilter:
   m_ObjectHideFlags: 0
@@ -4967,8 +4981,8 @@ BoxCollider:
   m_IsTrigger: 1
   m_Enabled: 1
   serializedVersion: 2
-  m_Size: {x: 0.023162348, y: 0.022181172, z: 0.03542441}
-  m_Center: {x: 0, y: -0.00049058616, z: 0.016131032}
+  m_Size: {x: 1, y: 1, z: 2}
+  m_Center: {x: 0, y: 0, z: 1}
 --- !u!114 &-8938317265570314118
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -4981,7 +4995,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: a88645ebb0e7a5843ac67de9833297e4, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  destination: {fileID: 0}
   thePlayer: {fileID: 0}
 --- !u!1 &8464685908122019552
 GameObject:

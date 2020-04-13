@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using UnityEngine;
 using System;
+using UnityEngine.EventSystems;
 public class BUGE : MonoBehaviour
 {
     private PlayerController playerController;
@@ -22,11 +23,14 @@ public class BUGE : MonoBehaviour
     private float distance;
     private bool prevFacingRight;
     private float curPlayerSpeed;
-    private Vector2 follow;
+    private Vector3 follow;
+    private GameObject LookAtObj;
     private float minDistReset;
     private float maxDistReset;
     private Queue<WayPoint> animWaypoints;
     private bool AnimEnabled = false;
+    private bool lookOverride = false;
+    private EventSystem eventSystem;
     void Start()
     {
         animWaypoints = new Queue<WayPoint>();
@@ -44,10 +48,25 @@ public class BUGE : MonoBehaviour
         if (Input.GetMouseButtonDown(1)) //rightclick to test waypoint system
         {
             //if the mouse is NOT in the top 10% of the screen
+            if (lookOverride)
+                return;
             if (Input.mousePosition.y < Screen.height - (Screen.height * .1f))
             {
                 ClearWayPoints();
-                AddWayPoint(playerController.worldXhair.transform.position, 1f);
+                if (EventSystem.current.IsPointerOverGameObject())
+                {
+                    AddWayPoint(playerController.screenXhair.transform.position+new Vector3(0,1f,0), -1);
+                    //play UI_Essence txt, don't pause, and dequeue on completion
+                    DialogueManager.instance.TriggerDialogue("UI_Essence", false, true);
+                    LookAtObj = new GameObject();
+                    LookAtObj.transform.position = animWaypoints.Peek().Destination;
+                    LookAt(LookAtObj, 5);
+                    print("blocked by UI: screnXhair.Z " + playerController.screenXhair.transform.position.z);
+                }
+                else
+                {
+                    AddWayPoint(playerController.worldXhair.transform.position, 1f);
+                }
             }
             
         }
@@ -74,6 +93,8 @@ public class BUGE : MonoBehaviour
                 prevFacingRight = playerController.IsFacingRight();
                 curPlayerSpeed = playerController.GetCurrentSpeed();
                 transform.LookAt(playerController.worldXhair.transform);
+                if (lookOverride)
+                    transform.LookAt(LookAtObj.transform);
                 //enable this line and delete the above line once Toan changes to UI cursor
                 distance = Vector3.Distance(transform.position, Player.position);
                 follow = new Vector3(Player.position.x - followXoffset, Player.position.y + MinDistance, Player.position.z);
@@ -85,25 +106,31 @@ public class BUGE : MonoBehaviour
             {
                 MinDistance = 1f;
                 MaxDistance = 1.7f;
-                follow = new Vector3(animWaypoints.Peek().Destination.x, animWaypoints.Peek().Destination.y, 0);
+                follow = new Vector3(animWaypoints.Peek().Destination.x, animWaypoints.Peek().Destination.y, animWaypoints.Peek().Destination.z);
+                
                 distance = Vector3.Distance(transform.position, animWaypoints.Peek().Destination);
                 //if BUG-E is At the waypoint location, then he looks back toward the player
                 if (animWaypoints.Peek().AtLocation)
                     transform.LookAt(Player);
                 else
+                {
                     transform.LookAt(follow);
-
+                }
+                    
             }
+
+            distance = Vector3.Distance(transform.position, follow);
             if (distance >= MinDistance && distance < MaxDistance)
             {
                 if (speedvar > Speed)
                 {
                     speedvar = speedvar * deAccelerationMultiplier;
                 }
-                follow = Player.position;
+                
                 if (animWaypoints.Count > 0 && !animWaypoints.Peek().AtLocation) //dequeue the current waypoint, after the delay, if the waypoint is 
                 {
                     animWaypoints.Peek().AtLocation= true;
+                    //now that BUG-E is at desired location, he stays there based on durationat waypoint
                     StartCoroutine(DequeueAfterSeconds(animWaypoints.Peek().DurationAtWayPoint));
                     speedvar = Speed;
                 } 
@@ -111,8 +138,9 @@ public class BUGE : MonoBehaviour
             else if (distance >= MinDistance)
             {
                 speedvar += acceleration;
-                this.transform.position = Vector3.MoveTowards(this.transform.position, follow, speedvar * Time.deltaTime);
+                //this.transform.position = Vector3.MoveTowards(this.transform.position, follow, speedvar * Time.deltaTime);
             }
+            this.transform.position = Vector3.MoveTowards(this.transform.position, follow, speedvar * Time.deltaTime);
             Vector3 sinPos = this.transform.position;
             sinPos.y += Mathf.Sin(Time.fixedTime * Mathf.PI * sinFrequency) * sin;
             this.transform.position = sinPos;
@@ -126,15 +154,37 @@ public class BUGE : MonoBehaviour
             animWaypoints.Enqueue(newpoint);
         }
     }
-    public void AddWayPoint(Vector2 V, float T)
+    //add a waypoint location that Bug-E will fly over to when this reaches the top of the queue
+    public void AddWayPoint(Vector3 V, float T)
     {
         WayPoint newpoint = ScriptableObject.CreateInstance<WayPoint>();
+        if (T == -1)
+            T = 999;
         newpoint.SetValues(V, T);
         animWaypoints.Enqueue(newpoint);
     }
     public void ClearWayPoints()
     {
         animWaypoints.Clear();
+    }
+    //move to the next waypoint in the queue, if any and return the Waypoint type
+    public WayPoint DequeueWayPoint()
+    {
+        if (animWaypoints.Count > 0)
+            return animWaypoints.Dequeue();
+        else 
+            return null;
+    }
+    public void LookAt( GameObject lookat, float seconds)
+    {
+        LookAtObj = lookat;
+        lookOverride = true;
+        Invoke("StopLook", seconds);
+    }
+    private void StopLook()
+    {
+        transform.Find("Arrow").gameObject.SetActive(false);
+        lookOverride = false;
     }
     IEnumerator DequeueAfterSeconds(float seconds)
     {

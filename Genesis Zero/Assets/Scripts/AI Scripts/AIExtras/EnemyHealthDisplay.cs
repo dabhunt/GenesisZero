@@ -36,7 +36,6 @@ public class EnemyHealthDisplay : MonoBehaviour
             if (hp < maxHealth)
             {
                 healthBar.SetActive(true);
-                //healthBar.transform.position = new Vector3(0, 0, 20);
                 healthBar.transform.localScale = new Vector3((hp / maxHealth) * 1f, .088f, .71f);
                 //healthBar.transform.Rotate(new Vector3(0, 0, 0), Space.World);
             }

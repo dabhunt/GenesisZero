@@ -228,6 +228,7 @@ public class PlayerController : MonoBehaviour
                 currentSpeed = Mathf.Max(currentSpeed, 0);
             }
         }
+        transform.position = new Vector3(transform.position.x, transform.position.y, 0);
     }
 
     /* This function is called in Move()
@@ -476,19 +477,21 @@ public class PlayerController : MonoBehaviour
     {   
         float camZ = Mathf.Abs(canvasRef.worldCamera.transform.position.z - transform.position.z);
         Vector3 mouseWorldPos = canvasRef.worldCamera.ScreenToWorldPoint(new Vector3(Input.mousePosition.x, Input.mousePosition.y, camZ));
+        Vector2 screenXhairPos = new Vector2(Input.mousePosition.x, Input.mousePosition.y);
         Vector3 maxBounds = canvasRef.worldCamera.ViewportToWorldPoint(new Vector3(1, 1, camZ));
         Vector3 minBounds = canvasRef.worldCamera.ViewportToWorldPoint(new Vector3(0, 0, camZ));
-        Vector2 screenXhairPos;
+        //Vector2 maxBounds = canvasRef.worldCamera.ViewportToScreenPoint(new Vector3(1, 1, 0));
+        //Vector2 minBounds = canvasRef.worldCamera.ViewportToScreenPoint(new Vector3(0, 0, 0));
 
+        //screenXhairPos.x = Mathf.Clamp(screenXhairPos.x, minBounds.x, maxBounds.x);
+        //screenXhairPos.x = Mathf.Clamp(screenXhairPos.y, minBounds.y, maxBounds.y);
         //Clamp the mouse position to bind worldXhair inside screen when using mouse
         mouseWorldPos.x = Mathf.Clamp(mouseWorldPos.x, minBounds.x, maxBounds.x);
         mouseWorldPos.y = Mathf.Clamp(mouseWorldPos.y, minBounds.y, maxBounds.y);
-
-        Vector3 mouseScreenPos = canvasRef.worldCamera.WorldToScreenPoint(mouseWorldPos);
-        //Converts MouseScreen position into localpoint in canvas
-        RectTransformUtility.ScreenPointToLocalPointInRectangle(canvasRef.transform as RectTransform, mouseScreenPos, canvasRef.worldCamera, out screenXhairPos);
-        screenXhair.anchoredPosition = screenXhairPos;
         mouseWorldPos.z = 0;
+        screenXhair.position = canvasRef.worldCamera.WorldToScreenPoint(new Vector3(mouseWorldPos.x, mouseWorldPos.y, 0));
+        //worldXhairPos = canvasRef.worldCamera.ScreenToWorldPoint(new Vector3(screenXhairPos.x, screenXhairPos.y, camZ));
+        worldXhair.transform.position = mouseWorldPos;
         /*
         gamepadAimTime -= Time.fixedDeltaTime;
         gamepadAimTime = Mathf.Max(gamepadAimTime, 0);
@@ -506,7 +509,6 @@ public class PlayerController : MonoBehaviour
                 worldXhair.transform.position = mouseWorldPos;
         }
         */
-        worldXhair.transform.position = mouseWorldPos;
         // checking where the player's aiming
         if (transform.position.x < worldXhair.transform.position.x)
             isAimingRight = true;

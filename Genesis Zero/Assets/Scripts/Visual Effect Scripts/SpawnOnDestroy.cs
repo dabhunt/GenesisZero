@@ -30,19 +30,29 @@ public class SpawnOnDestroy : MonoBehaviour
     {
         quitting = false;
         GameObject temp = GameObject.FindWithTag("StateManager");
-         restartScript = temp.GetComponent<Restart>();
+        if (temp != null)
+        {
+            restartScript = temp.GetComponent<Restart>();
+        }
+
         temp = GameObject.FindWithTag("Player");
-        player = temp.GetComponent<Player>();
+        if (temp != null)
+        {
+            player = temp.GetComponent<Player>();
+        }
+
         //populate the list of potential modifier drops
         aManager = FindObjectOfType<AudioManager>();
-        if (vfxScaleMultiplier <= 0){
+        if (vfxScaleMultiplier <= 0)
+        {
             vfxScaleMultiplier = 1;
         }
     }
     private void OnDestroy()
     {
         //if the scene is being restarted or the player quits
-        if (restartScript == null || restartScript.ExitingScene() || quitting){
+        if (restartScript == null || restartScript.ExitingScene() || quitting)
+        {
             return;
         }
         // otherwise play the effect
@@ -53,8 +63,9 @@ public class SpawnOnDestroy : MonoBehaviour
                 //if string is not empty, calls audio manager to play sound based on string
                 // note this only works if audio manager has been told to load the sound at the beginnning of the game
                 int rng = Random.Range(1, sounds.Length);
-                rng --;
-                if (aManager != null){
+                rng--;
+                if (aManager != null)
+                {
                     aManager.PlaySoundOneShot(sounds[rng]);
                 }
             }
@@ -63,7 +74,6 @@ public class SpawnOnDestroy : MonoBehaviour
             {
                 //Calls VFX manager to play desired VFX effect based on string
                 GameObject emit = VFXManager.instance.PlayEffect(vfxName, new Vector3(transform.position.x, transform.position.y, transform.position.z), 0f, vfxScaleMultiplier);
-                
             }
             if (canDrop)
             {
@@ -71,24 +81,22 @@ public class SpawnOnDestroy : MonoBehaviour
                 for (int i = 0; i < amount; i++)
                 {
                     // if essence drop chance exceeds the random value from 0 to 1.0f, it drops
-                    float offset = i / (1.5f+Random.value * 4);
-                    GameObject essence = Instantiate(EssencePrefab, new Vector3(transform.position.x+offset, transform.position.y+ offset, -4), Quaternion.identity);
+                    float offset = i / (1.5f + Random.value * 4);
+                    GameObject essence = Instantiate(EssencePrefab, new Vector3(transform.position.x + offset, transform.position.y + offset, -4), Quaternion.identity);
                     essence = Drop(essence);
                     //Destroy(rb);
                 }
                 // if modifier drop chance exceeds the random value from 0 to 1.0f, it drops
-                if (ModifierDropChance > Random.value)
+                if (ModifierDropChance > Random.value && player != null)
                 {
                     SkillManager sk = player.GetSkillManager();
                     SkillObject mod = sk.GetRandomModByChance();
                     GameObject modObj = sk.SpawnMod(transform.position, mod.name);
                 }
-             
             }
-
         }
-
     }
+
     public GameObject Drop(GameObject obj)
     {
         Rigidbody rb = obj.GetComponent<Rigidbody>();
@@ -97,23 +105,28 @@ public class SpawnOnDestroy : MonoBehaviour
         //random rotation and force applied
         obj.transform.rotation = Random.rotation;
         rb.GetComponent<Rigidbody>().velocity = Random.onUnitSphere * force;
-        return obj;       
+        return obj;
     }
+
     void OnApplicationQuit()
     {
         quitting = true;
         Destroy(this.GetComponent<SpawnOnDestroy>());
         Destroy(gameObject);
     }
-    public void isQuitting(){
+
+    public void isQuitting()
+    {
         quitting = true;
     }
-    public void noDrops(){
+
+    public void noDrops()
+    {
         canDrop = false;
     }
+
     void OnSceneLoaded(Scene scene, LoadSceneMode mode)
     {
         //quitting = true;
     }
-
 }

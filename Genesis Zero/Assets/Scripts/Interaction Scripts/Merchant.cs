@@ -142,19 +142,22 @@ public class Merchant : MonoBehaviour
         merchantUI.transform.Find("Cost").gameObject.GetComponent<Text>().text = cost;
         Button purchaseButton = merchantUI.transform.Find("Purchase").gameObject.GetComponent<Button>();
         Player pScript = player.GetComponent<Player>();
-        int modAmount = pScript.GetSkillManager().GetModAmount();
-        int modLimit = pScript.GetSkillManager().GetModLimit();
+        int modAmount = pScript.GetSkillManager().GetUniqueModAmount();
+        int modLimit = pScript.GetSkillManager().GetModSlotLimit();
         //if player doesn't have enough essence to make purchase
         if (canistersNeeded > pScript.GetFullCapsuleAmount())
         {
             purchaseButton.interactable = false;
             purchaseButton.GetComponentInChildren<Text>().text = "Not Enough Essence";
         }
-        //if the player has selected a mod and doesn't have enough room in inventory to purchase it
-        else if (selectedShopItem.Type == 0 && (modAmount >= modLimit))
+        //if the player has selected a mod they don't already have, and don't have room for it
+        else if (selectedShopItem.Type == 0 && (skillManager.GetUniqueModAmount() >= skillManager.GetModSlotLimit()))
         {
-            purchaseButton.interactable = false;
-            purchaseButton.GetComponentInChildren<Text>().text = "Mod Limit Reached";
+            if (skillManager.HasSkill(name) == false)
+            {
+                purchaseButton.interactable = false;
+                purchaseButton.GetComponentInChildren<Text>().text = "Mod Limit Reached";
+            }
         }
         else
         {//if none of the above are true, the player is allowed to purchase the item
@@ -250,7 +253,7 @@ public class Merchant : MonoBehaviour
                 break;
             case 5:
                 //increase the maximum amount of mods player can have at one time by 1
-                prevMax = skillManager.GetModLimit();
+                prevMax = skillManager.GetModSlotLimit();
                 skillManager.SetModLimit(prevMax + 1);
                 break;
             case 6:
