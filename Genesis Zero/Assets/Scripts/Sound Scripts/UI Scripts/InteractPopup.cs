@@ -57,11 +57,10 @@ public class InteractPopup : MonoBehaviour
     }
     private Vector2 CalcScreenPos()
     {
-        Vector2 pos;
         Vector2 headScreenPos;
-        headScreenPos = canvasRef.worldCamera.WorldToScreenPoint(new Vector3(transform.position.x, transform.position.y + YOffset, 0));
-        RectTransformUtility.ScreenPointToLocalPointInRectangle(canvasRef.transform as RectTransform, headScreenPos, canvasRef.worldCamera, out pos);
-        return pos;
+        headScreenPos = Camera.main.WorldToScreenPoint(new Vector3(transform.position.x, transform.position.y + YOffset, 0));
+        //RectTransformUtility.ScreenPointToLocalPointInRectangle(canvasRef.transform as RectTransform, headScreenPos, canvasRef.worldCamera, out pos);
+        return headScreenPos;
     }
 
     private void SetScreenPos(Vector2 screenPos)
@@ -77,9 +76,10 @@ public class InteractPopup : MonoBehaviour
     {
         if (interactable && popup != null)
         {
-            Vector2 screenPos = CalcScreenPos();
-            popup.transform.localPosition = screenPos;
-            SetScreenPos(screenPos);
+            Vector2 screenPos = Camera.main.WorldToScreenPoint(new Vector3(transform.position.x, transform.position.y + YOffset, 0));
+            //popup.transform.localPosition = screenPos;
+            popup.transform.position = screenPos;
+            //SetScreenPos(screenPos);
         }
     }
     public void DestroyPopUp()
