@@ -60,6 +60,7 @@ public class AbilityCasting : MonoBehaviour
     void Update()
     {
         aimDir = PC.worldXhair.transform.position - transform.position;
+        WorldXhair = PC.worldXhair.transform.position;
         UpdateAbilities();
     }
     public void CastAbility1()

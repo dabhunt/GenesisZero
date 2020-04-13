@@ -228,6 +228,7 @@ public class PlayerController : MonoBehaviour
                 currentSpeed = Mathf.Max(currentSpeed, 0);
             }
         }
+        transform.position = new Vector3(transform.position.x, transform.position.y, 0);
     }
 
     /* This function is called in Move()
