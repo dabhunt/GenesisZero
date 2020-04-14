@@ -54,6 +54,8 @@ public class BossAI : AIController
     public GameObject HeadbuttPrefab;
     public GameObject PulsePrefab;
 
+    public GameObject HeadModel;
+
     protected void Awake()
     {
         zdepth = transform.position.z;
@@ -130,6 +132,7 @@ public class BossAI : AIController
         if (bossstate == State.Centering || bossstate == State.Pulse)
         {
             transform.rotation = Quaternion.Slerp(transform.rotation, Quaternion.LookRotation(Vector3.back, Vector3.up), 2 * Time.fixedDeltaTime);
+            HeadModel.transform.rotation = Quaternion.Slerp(transform.rotation, Quaternion.LookRotation(Vector3.back, Vector3.up), 2 * Time.fixedDeltaTime);
             lookposition = transform.position + transform.forward;
             lookingatcamera = true;
         }
@@ -137,6 +140,8 @@ public class BossAI : AIController
         {
             Vector3 lookoffset = new Vector3(0, 0, lookDir.x > 0 ? -1f : -1f);
             transform.LookAt(lookposition + lookoffset);
+            HeadModel.transform.rotation = Quaternion.Slerp(transform.rotation, Quaternion.LookRotation(Vector3.back, Vector3.up), 2 * Time.fixedDeltaTime);
+            //HeadModel.transform.LookAt(lookposition + lookoffset);
             lookingatcamera = false;
         }
 
