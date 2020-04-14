@@ -98,7 +98,7 @@ public class PlayerController : MonoBehaviour
     private bool walkSoundPlaying = false;
     private PlayerSounds sound;
     private LayerMask defaultLayerMask;
-    
+    private Camera camRef;
 
     private void Start()
     {
@@ -115,6 +115,7 @@ public class PlayerController : MonoBehaviour
         gun = GetComponent<Gun>();
         overheat = GetComponent<OverHeat>();
         player = GetComponent<Player>();
+        camRef = Camera.main;
     }
 
     private void Update()
@@ -476,10 +477,10 @@ public class PlayerController : MonoBehaviour
     private void Aim()
     {   
         //float camZ = Mathf.Abs(canvasRef.worldCamera.transform.position.z - transform.position.z);
-        float camZ = Vector3.Distance(transform.position, Camera.main.transform.position);
-        Vector3 mouseWorldPos = Camera.main.ScreenToWorldPoint(new Vector3(Input.mousePosition.x, Input.mousePosition.y, camZ));
-        Vector3 maxBounds = Camera.main.ViewportToWorldPoint(new Vector3(1, 1, camZ));
-        Vector3 minBounds = Camera.main.ViewportToWorldPoint(new Vector3(0, 0, camZ));
+        float camZ = Vector3.Distance(transform.position, camRef.transform.position);
+        Vector3 mouseWorldPos = camRef.ScreenToWorldPoint(new Vector3(Input.mousePosition.x, Input.mousePosition.y, camZ));
+        Vector3 maxBounds = camRef.ViewportToWorldPoint(new Vector3(1, 1, camZ));
+        Vector3 minBounds = camRef.ViewportToWorldPoint(new Vector3(0, 0, camZ));
         //Clamp the mouse position to bind worldXhair inside screen when using mouse
         mouseWorldPos.x = Mathf.Clamp(mouseWorldPos.x, minBounds.x, maxBounds.x);
         mouseWorldPos.y = Mathf.Clamp(mouseWorldPos.y, minBounds.y, maxBounds.y);

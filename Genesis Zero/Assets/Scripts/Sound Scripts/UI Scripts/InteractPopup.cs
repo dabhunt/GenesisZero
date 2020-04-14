@@ -18,6 +18,7 @@ public class InteractPopup : MonoBehaviour
     private bool interactable = true;
     private Player player;
     private GameObject popup;
+    private Camera camRef;
     //private GameInputActions inputActions;
     void Start()
     {
@@ -26,6 +27,7 @@ public class InteractPopup : MonoBehaviour
         player = temp.GetComponent<Player>();
         canvasRef = GameObject.FindGameObjectWithTag("CanvasUI").GetComponent<Canvas>();
         //inputActions = GameInputManager.instance.GetInputActions();
+        camRef = Camera.main;
         InvokeRepeating("DistanceCheck", 0, checksPerSecond);
     }
     private void DistanceCheck()
@@ -76,7 +78,7 @@ public class InteractPopup : MonoBehaviour
     {
         if (interactable && popup != null)
         {
-            Vector2 screenPos = Camera.main.WorldToScreenPoint(new Vector3(transform.position.x, transform.position.y + YOffset, 0));
+            Vector2 screenPos = camRef.WorldToScreenPoint(new Vector3(transform.position.x, transform.position.y + YOffset, 0));
             //popup.transform.localPosition = screenPos;
             popup.transform.position = screenPos;
             //SetScreenPos(screenPos);

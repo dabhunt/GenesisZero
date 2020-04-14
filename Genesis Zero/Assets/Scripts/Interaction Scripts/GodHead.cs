@@ -28,6 +28,7 @@ public class GodHead : MonoBehaviour
     //private bool confirmationWindowOpen = false;
     //change to private later below this point
     private int modSelectNum = -1;
+    private Camera camRef;
     //public List<SkillObject> modSkills;
 
     private void Start()
@@ -40,6 +41,7 @@ public class GodHead : MonoBehaviour
         canvasRef = GameObject.FindGameObjectWithTag("CanvasUI").GetComponent<Canvas>();
         modSelectNum = -1;
         modObjUI = new List<GameObject>();
+        camRef = Camera.main;
         //confirmUI.gameObject.SetActive(false);
     }
 
@@ -196,7 +198,6 @@ public class GodHead : MonoBehaviour
         sacUI.gameObject.SetActive(true);
         List<SkillObject> modSkills = skillManager.GetRandomModsFromPlayer(3);
         Vector2 screenPos;
-        Vector2 headScreenPos;
 
         if (modSkills.Count > 0)
         {
@@ -215,11 +216,9 @@ public class GodHead : MonoBehaviour
                 }
             }
         }
-        headScreenPos = canvasRef.worldCamera.WorldToScreenPoint(new Vector3(player.transform.position.x, player.transform.position.y+5f, 0));
-        RectTransformUtility.ScreenPointToLocalPointInRectangle(canvasRef.transform as RectTransform, headScreenPos, canvasRef.worldCamera, out screenPos);
-        sacUI.anchoredPosition = screenPos;
-        //confirmUI.anchoredPosition = screenPos;
+        screenPos = camRef.WorldToScreenPoint(new Vector3(player.transform.position.x, player.transform.position.y+5f, 0));
         //sets default selection to position 0
+        sacUI.transform.position = screenPos;
         UpdateSelect(0);
     }
     public void CloseUI()
