@@ -9,6 +9,7 @@ public class DeactivateDistant : MonoBehaviour
     public float deactivateDist = 32f;
     public float updatesPerSecond=1f;
     public float enemyDistOffset = 5f;
+    public float resetEnemyDist;
     //which game tags to check and deactivate if out of range
     public string[] tags = new string[] {"Enemy"};
     private List<GameObject> objects = new List<GameObject>();
@@ -17,11 +18,24 @@ public class DeactivateDistant : MonoBehaviour
     void Start()
     {
        	GameObject temp = GameObject.FindWithTag("Player");
+        resetEnemyDist = enemyDistOffset;
        	player = temp.GetComponent<Player>();
     	InvokeRepeating("Check", 1/updatesPerSecond, 1/updatesPerSecond);
     }
+    private void Update()
+    {
+        if (Input.GetKeyDown(KeyCode.F12))
+        {
+            if (enemyDistOffset == -35)
+                EnableEnemies();
+            else 
+            {
+                DisableEnemies();
+            }
+        }
+    }
     // Check is currently called once a second, but can also be called manually when the player is teleported to prevent visual latency
-  	void Check()
+    void Check()
   	{
     	
     		//find the array of gameobjects associated with that tag
@@ -43,8 +57,6 @@ public class DeactivateDistant : MonoBehaviour
                         //make it so that enemies load in slower than cubbies, preventing them from falling through cubbies that haven't loaded yet
                         dist -= enemyDistOffset;
                     }
-	   				
-	   				
 	   				if (dist > deactivateDist){
 	   					objects[i].SetActive(false);
 	   				}
@@ -53,8 +65,18 @@ public class DeactivateDistant : MonoBehaviour
 	   				}
    				}
     		}
-    
-    	
     	//UpdateArray();
     }
+    public void DisableEnemies()
+    {
+        enemyDistOffset = -35;
+    }
+    public void EnableEnemies()
+    {
+        enemyDistOffset = resetEnemyDist;
+    }
+    //public void SetTagDistance( float newdist)
+    //{
+
+    //}
 }
