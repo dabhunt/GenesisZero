@@ -38,10 +38,10 @@ public class PlayerSounds : MonoBehaviour
 	}
 	public void Walk()
 	{
-        aManager.PlaySound(walk);
+        aManager.PlaySoundlist(walk);
 	}
 	public void StopWalk(){
-		aManager.StopSound(walk);
+		aManager.StopSoundlist(walk);
 	}
 	public void DoubleJump()
 	{
