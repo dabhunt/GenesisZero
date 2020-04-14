@@ -112,7 +112,7 @@ public class SkillPickup : MonoBehaviour
             Destroy(gameObject);
         }
     }
-    private void OnTriggerEnter(Collider other)
+    private void OnTriggerStay(Collider other)
     {
         if (added)
             return;

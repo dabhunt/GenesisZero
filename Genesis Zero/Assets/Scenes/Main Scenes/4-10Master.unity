@@ -2619,7 +2619,7 @@ RectTransform:
   m_RootOrder: 1
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 0}
-  m_AnchorMax: {x: 1, y: 1}
+  m_AnchorMax: {x: 0, y: 0}
   m_AnchoredPosition: {x: 2.2000122, y: -1.4000006}
   m_SizeDelta: {x: 37.99998, y: 14.800001}
   m_Pivot: {x: 0.5, y: 0.5}
@@ -3460,6 +3460,11 @@ PrefabInstance:
       propertyPath: airSpeedMult
       value: 0.75
       objectReference: {fileID: 0}
+    - target: {fileID: 7660217626254256146, guid: 3a23a898f6ab9fe4dbd23959c05c1b64,
+        type: 3}
+      propertyPath: horCastPadding
+      value: 0.35
+      objectReference: {fileID: 0}
     - target: {fileID: 7822332276100496726, guid: 3a23a898f6ab9fe4dbd23959c05c1b64,
         type: 3}
       propertyPath: m_Layer
@@ -4228,7 +4233,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 0
+  m_IsActive: 1
 --- !u!224 &337785568
 RectTransform:
   m_ObjectHideFlags: 0
@@ -5594,15 +5599,15 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 0500f72687d4dde4eb3bb3dec0feb7bf, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  StartPoint: {x: -6.4, y: -0.3}
-  Seperation: {x: 0.67, y: -0.6}
+  StartPoint: {x: -500, y: -15}
+  Seperation: {x: 50, y: 0}
   MaxColumns: 18
   UIElement: {fileID: 207612717963523811, guid: 9bd9efd1c355df746a52e8e8b680b4e3,
     type: 3}
   PopupElement: {fileID: 1267542618}
   AbilityScale: 0.7
   PopupPosition: {x: 0, y: 0}
-  skillnumber: 3
+  skillnumber: 23
 --- !u!114 &437401269
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -7399,7 +7404,7 @@ PrefabInstance:
         type: 3}
       propertyPath: m_Material
       value: 
-      objectReference: {fileID: 2100000, guid: 17303bff91f332640b6ff111a46253d1, type: 2}
+      objectReference: {fileID: 0}
     - target: {fileID: 7423956344164152973, guid: 3b429e428ae48dd4194356c9a596c7b2,
         type: 3}
       propertyPath: m_Name
@@ -8430,7 +8435,7 @@ PrefabInstance:
         type: 3}
       propertyPath: m_Material
       value: 
-      objectReference: {fileID: 2100000, guid: 17303bff91f332640b6ff111a46253d1, type: 2}
+      objectReference: {fileID: 0}
     - target: {fileID: 7423956344164152973, guid: 3b429e428ae48dd4194356c9a596c7b2,
         type: 3}
       propertyPath: m_Name
@@ -11763,7 +11768,7 @@ MonoBehaviour:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1177597386}
-  m_Enabled: 1
+  m_Enabled: 0
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: fe87c0e1cc204ed48ad3b37840f39efc, type: 3}
   m_Name: 
@@ -12312,7 +12317,7 @@ PrefabInstance:
         type: 3}
       propertyPath: m_Material
       value: 
-      objectReference: {fileID: 2100000, guid: 17303bff91f332640b6ff111a46253d1, type: 2}
+      objectReference: {fileID: 0}
     - target: {fileID: 7423956344164152973, guid: 3b429e428ae48dd4194356c9a596c7b2,
         type: 3}
       propertyPath: m_Name
@@ -17351,7 +17356,7 @@ PrefabInstance:
         type: 3}
       propertyPath: m_Material
       value: 
-      objectReference: {fileID: 2100000, guid: 17303bff91f332640b6ff111a46253d1, type: 2}
+      objectReference: {fileID: 0}
     - target: {fileID: 7423956344164152973, guid: 3b429e428ae48dd4194356c9a596c7b2,
         type: 3}
       propertyPath: m_Name
@@ -17799,7 +17804,7 @@ PrefabInstance:
         type: 3}
       propertyPath: m_Material
       value: 
-      objectReference: {fileID: 2100000, guid: 17303bff91f332640b6ff111a46253d1, type: 2}
+      objectReference: {fileID: 0}
     - target: {fileID: 7423956344164152973, guid: 3b429e428ae48dd4194356c9a596c7b2,
         type: 3}
       propertyPath: m_Name
@@ -21858,6 +21863,11 @@ PrefabInstance:
       propertyPath: m_RaycastTarget
       value: 0
       objectReference: {fileID: 0}
+    - target: {fileID: 1195750048959310694, guid: 21b5f8b55fe4f61499393e36cba31363,
+        type: 3}
+      propertyPath: m_Enabled
+      value: 0
+      objectReference: {fileID: 0}
     - target: {fileID: 1195750048959310695, guid: 21b5f8b55fe4f61499393e36cba31363,
         type: 3}
       propertyPath: DefaultShowDuration
@@ -21867,6 +21877,11 @@ PrefabInstance:
         type: 3}
       propertyPath: DefaultTextInactiveDuration
       value: 0.5
+      objectReference: {fileID: 0}
+    - target: {fileID: 1195750049070340394, guid: 21b5f8b55fe4f61499393e36cba31363,
+        type: 3}
+      propertyPath: m_Enabled
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 8397026578199744502, guid: 21b5f8b55fe4f61499393e36cba31363,
         type: 3}
@@ -23733,7 +23748,7 @@ PrefabInstance:
         type: 3}
       propertyPath: m_Material
       value: 
-      objectReference: {fileID: 2100000, guid: 17303bff91f332640b6ff111a46253d1, type: 2}
+      objectReference: {fileID: 0}
     - target: {fileID: 7423956344164152973, guid: 3b429e428ae48dd4194356c9a596c7b2,
         type: 3}
       propertyPath: m_Name
