@@ -13,11 +13,11 @@ using DG.Tweening;
 public class AudioManager : MonoBehaviour
 {
 	// Audio player components.
-	public AudioSource Primary;
-	public AudioSource Secondary;
-	public AudioSource Tertiary;
+	public AudioSource Primary= new AudioSource();
+	public AudioSource Secondary = new AudioSource();
+	public AudioSource Tertiary = new AudioSource();
 	List<Sound> Soundlist = new List<Sound>();
-
+	List<string> SFXNames = new List<string>();
 	private float setVolumeMaster;
 	private float setVolumeDefault;
 	private float setVolumeSound;
@@ -46,7 +46,19 @@ public class AudioManager : MonoBehaviour
 		globalMute = false;
 		soundUpdate = true;
 	}
+	private void Start()
+	{
+		Object[] temp = Resources.LoadAll("Sounds/SFX");
+		for (int i = 0; i < temp.Length; i++)
+		{
+			SFXNames.Add(temp[i].name);
+		}
 
+		//PlayFadeInTrack(1, "Music", "AmbientMusic", true, 5f);
+		instance.SetVolumeAllChannels(1.0f);
+		instance.PlayFadeInTrack(1, "Music", "AmbientMusic", true, 7f);
+		instance.PlayTrack(2, "Music", "CombatMusic", true, true, 0, 1);
+	}
 	// Update is called once per frame
 	void Update()
 	{
@@ -396,17 +408,14 @@ public class AudioManager : MonoBehaviour
 
 	public void PlayTrack(int channel, string type, string name, bool loop, bool awake)
 	{
-		AudioSource temp = ImportAudio(type, name, setVolumeDefault, 0f, 1f, loop, 0f, awake);
-		CopyToChannel(channel, temp);
-		Destroy(temp);
-		if (awake)
-		{
-			PlayChannel(channel);
-		}
+		PlayTrack(channel, type, name, loop, awake, 1,1);
 	}
 
-	public void PlayTrack(int channel, string type, string name, float vol, float pit, bool loop, bool awake)
+	public void PlayTrack(int channel, string type, string name,  bool loop, bool awake, float vol, float pit)
 	{
+		//if the track is already playing, do nothing
+		if (IsPlaying(name) != null)
+			return;
 		AudioSource temp = ImportAudio(type, name, vol, 0f, pit, loop, 0f, awake);
 		CopyToChannel(channel, temp);
 		Destroy(temp);
@@ -445,7 +454,9 @@ public class AudioManager : MonoBehaviour
 	private void PlayClipAtVector(AudioClip audioClip, Vector3 position, float delay, float vol, float pit, bool looping, bool surround)
 	{
 		// Add a new instance for the list of instances
-		GameObject dummyGameObject = new GameObject("One Shot Sound");
+		if (audioClip == null)
+			return;
+		GameObject dummyGameObject = new GameObject(audioClip.name);
 		soundPlayerChilds.Add(dummyGameObject);
 		int currentIndex = soundPlayerChilds.Count - 1;
 
@@ -474,7 +485,9 @@ public class AudioManager : MonoBehaviour
 	private void PlayClipOnObject(AudioClip audioClip, GameObject obj, float delay, float vol, float pit, bool looping)
 	{
 		// Add a new instance for the list of instances
-		GameObject dummyGameObject = new GameObject("Attached Sound");
+		if (audioClip == null)
+			return;
+		GameObject dummyGameObject = new GameObject(audioClip.name);
 		soundPlayerChilds.Add(dummyGameObject);
 		int currentIndex = soundPlayerChilds.Count - 1;
 
@@ -535,61 +548,34 @@ public class AudioManager : MonoBehaviour
 
 	public void PlaySound(string name)
 	{
-		AudioSource temp = ImportAudio("SFX", name, setVolumeSound, 0f, 1f, false, 0f, true);
-
-		if (temp.playOnAwake)
-		{
-			PlayClipAtVector(temp.clip, new Vector3(0, 0, 0), 0, 1, 1, false, false);
-		}
-
-		Destroy(temp);
+		PlaySound(name, 1, 1, false, Vector3.zero, 0f);
 	}
 
 	public void PlaySound(string name, bool loop, float delay)
 	{
-		AudioSource temp = ImportAudio("SFX", name, setVolumeSound, 0f, 1f, loop, 0f, true);
-
-		if (temp.playOnAwake)
-		{
-			PlayClipAtVector(temp.clip, new Vector3(0, 0, 0), delay, 1, 1, loop, false);
-		}
-
-		Destroy(temp);
+		PlaySound(name, 1, 1, loop, Vector3.zero, 0f);
 	}
-
-	public void PlaySound(string name, float vol, float pit, float delay)
+	public void PlaySound(string name, float vol, float pit)
 	{
-		AudioSource temp = ImportAudio("SFX", name, vol, 0f, pit, false, 0f, true);
-
-		if (temp.playOnAwake)
-		{
-			PlayClipAtVector(temp.clip, new Vector3(0, 0, 0), delay, vol, pit, false, false);
-		}
-
-		Destroy(temp);
+		PlaySound(name, vol, pit, false, Vector3.zero, 0f);
 	}
-
-	public void PlaySound(string name, float vol, float pit, bool loop, float delay)
+	public void PlaySound(string name, float vol, float pit, bool loop, Vector3 vector)
 	{
-		AudioSource temp = ImportAudio("SFX", name, vol, 0f, pit, loop, 0f, true);
-
-		if (temp.playOnAwake)
-		{
-			PlayClipAtVector(temp.clip, new Vector3(0, 0, 0), delay, vol, pit, loop, false);
-		}
-
-		Destroy(temp);
+		PlaySound(name, vol, pit, loop, vector, 0f);
 	}
 
 	public void PlaySound(string name, float vol, float pit, bool loop, Vector3 vector, float delay)
 	{
 		AudioSource temp = ImportAudio("SFX", name, vol, 0f, pit, loop, 0f, true);
-
+		if (temp == null)
+		{
+			Debug.LogError("Sound: " + name + "not found!");
+			return;
+		}
 		if (temp.playOnAwake)
 		{
 			PlayClipAtVector(temp.clip, vector, delay, vol, pit, loop, true);
 		}
-
 		Destroy(temp);
 	}
 
@@ -616,129 +602,72 @@ public class AudioManager : MonoBehaviour
 
 		Destroy(temp);
 	}
-
-	//=================
-	// Sound functions
-	//=================
-
-	public void AdjustVolumeSoundlist(float vol)
+	//Takes a string name of the type of sound effect to play, and randomly chooses one to play
+	//example string value would be "Walk" or "Gunshot" , which gets a random SFX_Walk-00 case sensitive
+	//note that if you pass a string value that more than one type of sound has in it's name this will be problematic
+	public void PlayRandomSFXType(string name)
 	{
-		List<Sound>.Enumerator em = Soundlist.GetEnumerator();
-
-		setVolumeSound += vol;
-		while (em.MoveNext())
-		{
-			em.Current.source.volume += vol;
-		}
-	}
-
-	public void SetVolumeSoundlist(float vol)
-	{
-		List<Sound>.Enumerator em = Soundlist.GetEnumerator();
-
-		setVolumeSound = vol;
-		while (em.MoveNext())
-		{
-			em.Current.source.volume = vol;
-		}
-	}
-
-	public void ClearAllSoundlist()
-	{
-		List<Sound>.Enumerator em = Soundlist.GetEnumerator();
-
-		while (em.MoveNext())
-		{
-			Destroy(em.Current.source);
-		}
-		Soundlist.Clear();
-	}
-
-	public void PauseAllSoundlist()
-	{
-		List<Sound>.Enumerator em = Soundlist.GetEnumerator();
-
-		while (em.MoveNext())
-		{
-			em.Current.source.Pause();
-		}
-	}
-
-	public void UnPauseAllSoundlist()
-	{
-		List<Sound>.Enumerator em = Soundlist.GetEnumerator();
-
-		while (em.MoveNext())
-		{
-			em.Current.source.UnPause();
-		}
-	}
-
-	public void PlaySoundlist(string name)
-	{
-		List<Sound>.Enumerator em = Soundlist.GetEnumerator();
 		bool found = false;
-
-		while (em.MoveNext() && !found)
+		List<string> type = new List<string>();
+		for (int i = 0; i < SFXNames.Count; i ++)
 		{
-			if (em.Current.name == name)
+			if (SFXNames[i].Contains(name))
 			{
 				found = true;
-				em.Current.source.Play();
+				//add the string to the list with sounds of this type
+				type.Add(SFXNames[i]);
 			}
 		}
-		if (!found)
+		int rng = Random.Range(0, type.Count - 1);
+		if (found)
 		{
-			Debug.LogWarning("Audio: '" + name + "' not found!");
+			//play random sound of that same name
+			PlaySound(type[rng]);
+		}
+		else
+		{
+			Debug.LogWarning("Audio: " + name + " not found!");
 			return;
 		}
 	}
-
-	public void StopSoundlist(string name)
+	public AudioSource IsPlaying(string name)
 	{
-		List<Sound>.Enumerator em = Soundlist.GetEnumerator();
-		bool found = false;
-
-		while (em.MoveNext() && !found)
+		for (int i = 0; i < soundPlayerChilds.Count; i++)
 		{
-			if (em.Current.name == name)
+			if (soundPlayerChilds[i].GetComponent<AudioSource>().isPlaying && soundPlayerChilds[i].name.Contains(name))
 			{
-				found = true;
-				em.Current.source.Stop();
+				return soundPlayerChilds[i].GetComponent<AudioSource>();
 			}
 		}
-		if (!found)
+		//Debug.Log("Audio: '" + name + "' not currently playing");
+		return null;
+	}
+	public void StopSound(string name)
+	{
+		bool found = false;
+		for (int i = 0; i < soundPlayerChilds.Count; i++)
+		{
+			if (soundPlayerChilds[i].GetComponent<AudioSource>().isPlaying && soundPlayerChilds[i].name.Contains(name))
+			{
+				found = true;
+				soundPlayerChilds[i].GetComponent<AudioSource>().Stop();
+			}
+		}
+		if (found == false)
 		{
 			Debug.LogWarning("Audio: '" + name + "' not found!");
-			return;
 		}
 	}
 	public void StopAllSounds()
 	{
-		List<Sound>.Enumerator em = Soundlist.GetEnumerator();
-		while (em.MoveNext())
+		for (int i = 0; i < soundPlayerChilds.Count; i++)
 		{
-			em.Current.source.Stop();
+			soundPlayerChilds[i].GetComponent<AudioSource>().Stop();
 		}
 	}
 
 	public void PlaySoundOneShot(string name)
 	{
-		List<Sound>.Enumerator em = Soundlist.GetEnumerator();
-		bool found = false;
-
-		while (em.MoveNext() && !found)
-		{
-			if (em.Current.name == name)
-			{
-				found = true;
-				em.Current.source.PlayOneShot(em.Current.source.clip, 1.0f);
-			}
-		}
-		if (!found)
-		{
-			Debug.LogWarning("Audio: " + name + " not found!");
-			return;
-		}
+		PlaySound(name);
 	}
 }

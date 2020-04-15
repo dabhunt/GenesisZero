@@ -151,11 +151,12 @@ public class UniqueEffects : MonoBehaviour
     }
     public void EnterCombatMusic()
     {
-        AudioManager.instance.PlayFadeInTrack(2, "Music", "CombatMusic", true, 15);
+        AudioManager.instance.CrossFadeChannels(1, 5.0f, 2, 9.0f);
+        //AudioManager.instance.CrossFadeChannels(2, "Music", "CombatMusic", true, 15);
     }
     public void ExitCombatMusic()
     {
-        AudioManager.instance.FadeOutChannel(2, 20);
+        AudioManager.instance.CrossFadeChannels(2, 5.0f, 1, 12.0f);
     }
     void StackDecayTimer()
     {

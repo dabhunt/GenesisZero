@@ -173,15 +173,17 @@ public class PlayerController : MonoBehaviour
             //Stop running sound if player not moving
             else if (currentSpeed <= 0)
             {
+                if (walkSoundPlaying == true)
+                    sound.StopWalk();
                 walkSoundPlaying = false;
-                sound.StopWalk();
             }
         }
         else
         {
             //Stop running sound if player's in the air
+            if (walkSoundPlaying == true)
+                sound.StopWalk();
             walkSoundPlaying = false;
-            sound.StopWalk();
         }
 
         if (movementInput.x != 0)

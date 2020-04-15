@@ -14,7 +14,7 @@ public class TestSound : MonoBehaviour
         instance = FindObjectOfType<AudioManager>();
         instance.SetVolumeAllChannels(1.0f);
         instance.PlayTrack(1, "Music", "AmbientMusic", true, true);
-        instance.PlayTrack(2, "Music", "CombatMusic", 0, 1, true, true);
+        instance.PlayTrack(2, "Music", "CombatMusic", true, true,0,1);
     }
 
     // Update is called once per frame
