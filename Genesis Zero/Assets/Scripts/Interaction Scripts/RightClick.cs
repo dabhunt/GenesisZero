@@ -36,6 +36,8 @@ public class RightClick : MonoBehaviour , IPointerEnterHandler, IPointerExitHand
     {
         GetComponent<SimpleTooltip>().HideTooltip();
         SkillObject s = GetComponent<SkillUIElement>().Skill;
+        if (s.IsAbility)
+            return;
         sManager.RemoveSkill(s);
         GameObject mod = sManager.SpawnMod(player.transform.position, s.name);
         //destroy the mod after 3 seconds to prevent abuse

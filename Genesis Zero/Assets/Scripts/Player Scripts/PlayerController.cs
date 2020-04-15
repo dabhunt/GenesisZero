@@ -98,7 +98,7 @@ public class PlayerController : MonoBehaviour
     private bool walkSoundPlaying = false;
     private PlayerSounds sound;
     private LayerMask defaultLayerMask;
-    
+    private Camera camRef;
 
     private void Start()
     {
@@ -115,6 +115,7 @@ public class PlayerController : MonoBehaviour
         gun = GetComponent<Gun>();
         overheat = GetComponent<OverHeat>();
         player = GetComponent<Player>();
+        camRef = Camera.main;
     }
 
     private void Update()
@@ -172,15 +173,17 @@ public class PlayerController : MonoBehaviour
             //Stop running sound if player not moving
             else if (currentSpeed <= 0)
             {
+                if (walkSoundPlaying == true)
+                    sound.StopWalk();
                 walkSoundPlaying = false;
-                sound.StopWalk();
             }
         }
         else
         {
             //Stop running sound if player's in the air
+            if (walkSoundPlaying == true)
+                sound.StopWalk();
             walkSoundPlaying = false;
-            sound.StopWalk();
         }
 
         if (movementInput.x != 0)
@@ -475,39 +478,17 @@ public class PlayerController : MonoBehaviour
      */
     private void Aim()
     {   
-        float camZ = Mathf.Abs(canvasRef.worldCamera.transform.position.z - transform.position.z);
-        Vector3 mouseWorldPos = canvasRef.worldCamera.ScreenToWorldPoint(new Vector3(Input.mousePosition.x, Input.mousePosition.y, camZ));
-        Vector3 maxBounds = canvasRef.worldCamera.ViewportToWorldPoint(new Vector3(1, 1, camZ));
-        Vector3 minBounds = canvasRef.worldCamera.ViewportToWorldPoint(new Vector3(0, 0, camZ));
-        Vector2 screenXhairPos;
-
+        //float camZ = Mathf.Abs(canvasRef.worldCamera.transform.position.z - transform.position.z);
+        float camZ = Vector3.Distance(transform.position, camRef.transform.position);
+        Vector3 mouseWorldPos = camRef.ScreenToWorldPoint(new Vector3(Input.mousePosition.x, Input.mousePosition.y, camZ));
+        Vector3 maxBounds = camRef.ViewportToWorldPoint(new Vector3(1, 1, camZ));
+        Vector3 minBounds = camRef.ViewportToWorldPoint(new Vector3(0, 0, camZ));
         //Clamp the mouse position to bind worldXhair inside screen when using mouse
         mouseWorldPos.x = Mathf.Clamp(mouseWorldPos.x, minBounds.x, maxBounds.x);
         mouseWorldPos.y = Mathf.Clamp(mouseWorldPos.y, minBounds.y, maxBounds.y);
-
-        Vector3 mouseScreenPos = canvasRef.worldCamera.WorldToScreenPoint(mouseWorldPos);
-        //Converts MouseScreen position into localpoint in canvas
-        RectTransformUtility.ScreenPointToLocalPointInRectangle(canvasRef.transform as RectTransform, mouseScreenPos, canvasRef.worldCamera, out screenXhairPos);
-        screenXhair.anchoredPosition = screenXhairPos;
         mouseWorldPos.z = 0;
-        /*
-        gamepadAimTime -= Time.fixedDeltaTime;
-        gamepadAimTime = Mathf.Max(gamepadAimTime, 0);
-        if (aimInputController != Vector2.zero)
-        { 
-            //Stops the crosshair from going off screen when using controller
-            gamepadAimTime = 30;
-            worldXhair.transform.position += mouseWorldPos;
-        }
-        else
-        {
-            if (aimInputMouse != Vector2.zero && gamepadAimTime > 0)
-                gamepadAimTime = 0;
-            if (gamepadAimTime == 0)
-                worldXhair.transform.position = mouseWorldPos;
-        }
-        */
         worldXhair.transform.position = mouseWorldPos;
+        screenXhair.position = new Vector2(Input.mousePosition.x, Input.mousePosition.y);
         // checking where the player's aiming
         if (transform.position.x < worldXhair.transform.position.x)
             isAimingRight = true;
