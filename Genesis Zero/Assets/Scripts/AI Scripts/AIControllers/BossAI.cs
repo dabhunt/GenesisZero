@@ -12,7 +12,8 @@ public class BossAI : AIController
     public enum State { Headbutt, Firebreath, Pulse, Wild, MovingAway, MovingCloser, Centering, Cooling, Repositioning, Setting, PerformingAttack }
     protected State bossstate = State.MovingAway; // Current behavior state
     private bool secondphase;
-    private bool animating;
+    [HideInInspector]
+    public bool animating;
     private float chargetime = 1;   // Once it hits zero, boss performs a action based on conditions.
     private Transform looktarget;   // Where the boss looks to
     private Transform movetarget;   // Where the boss moves to or away
@@ -55,6 +56,7 @@ public class BossAI : AIController
     public GameObject PulsePrefab;
 
     public GameObject HeadModel;
+    public GameObject SnakeBase;
 
     protected void Awake()
     {
@@ -105,10 +107,9 @@ public class BossAI : AIController
 
         CheckActions(); // Checks and updates what actions the boss should do
 
-        Vector3 looktargetposition = looktarget.position;
+        Vector3 looktargetposition = templooktime > 0 ? templookposition: looktarget.position;
         if (templooktime > 0)
         {
-            looktargetposition = templookposition;
             templooktime -= Time.fixedDeltaTime;
         }
 
@@ -217,6 +218,18 @@ public class BossAI : AIController
             }
         }
 
+        if (GetComponent<SphereCollider>().isTrigger == true)
+        {
+            BoxCollider2D Bossroom = GameObject.FindGameObjectWithTag("BossRoom").GetComponent<BoxCollider2D>();
+            if (Bossroom)
+            {
+                if (!Bossroom.bounds.Contains((Vector2)transform.position))
+                {
+                    GetComponent<SphereCollider>().isTrigger = false;
+                    chargetime = Time.deltaTime;
+                }
+            }
+        }
     }
 
     public void CheckActions()
@@ -229,13 +242,13 @@ public class BossAI : AIController
             LastHealth = GetHealth().GetValue();
         }
 
-        if (HealthLoss >= 500)
+        if (HealthLoss >= TotalHealth/2)
         {
             action = 1;
             bossstate = State.Setting;
             chargetime = Time.fixedDeltaTime / 2;
             HealthLoss = 0;
-            //Debug.Log("Center");
+            Debug.Log("Center");
         }
         else if (Heat >= 5)
         {
@@ -243,7 +256,7 @@ public class BossAI : AIController
             bossstate = State.Setting;
             chargetime = Time.fixedDeltaTime / 2;
             Heat = 0;
-            // Debug.Log("Cooling");
+            Debug.Log("Cooling");
         }
 
         if (chargetime > 0)
@@ -273,14 +286,16 @@ public class BossAI : AIController
             }
 
             float actiontime = 1;
+            GetComponent<SphereCollider>().isTrigger = false;
+
             if (attack == 0)
             {
-                actiontime = 2f;
+                actiontime = 2.5f;
                 SetBossstate(State.Headbutt, actiontime);
                 Vector3 target = PredictPath(1.25f);
-                SpawnIndicator(transform.position, new Vector2(16, 6), target - transform.position, new Color(1, 0, 0, .1f), Vector2.zero, false, true, actiontime - .35f);
-                LookAtVectorTemp(target, actiontime);
-                StartCoroutine(MoveTo(transform.position + ((target - transform.position).normalized * 16), actiontime - 1.65f, actiontime - .35f));
+                SpawnIndicator(transform.position, new Vector2(16, 6), target - transform.position, new Color(1, 0, 0, .1f), Vector2.zero, false, true, actiontime - .85f);
+                LookAtVectorTemp(target + (target - transform.position), actiontime);
+                StartCoroutine(MoveTo(transform.position + ((target - transform.position).normalized * 16), actiontime - 2.15f, actiontime - .85f));
             }
             else if (attack == 1)
             {
@@ -290,16 +305,13 @@ public class BossAI : AIController
                 SpawnIndicator(transform.position, new Vector2(24, 4), target - transform.position, new Color(1, 0, 0, .1f), Vector2.zero, false, true, actiontime);
                 LookAtVectorTemp(target, actiontime);
                 Invoke("SpitFireball", actiontime);
-                GetComponent<SphereCollider>().isTrigger = false;
             }
             else
             {
                 actiontime = 2;
                 SetBossstate(State.Pulse, actiontime);
                 SpawnIndicator(transform.position, new Vector2(18, 18), lookDir, new Color(1, 0, 0, .1f), Vector2.zero, true, false, actiontime);
-                GetComponent<SphereCollider>().isTrigger = false;
             }
-
 
             ++Heat;
             return;
@@ -477,22 +489,17 @@ public class BossAI : AIController
     IEnumerator MoveTo(Vector3 targetposition, float time, float delay)
     {
         yield return new WaitForSeconds(delay);
-
+        GetComponent<SphereCollider>().isTrigger = true;
         animating = true;
         float totaltime = time;
         float distance = Vector2.Distance(transform.position, targetPosition);
         float speed = distance / totaltime;
         for (float f = 0; f <= time; f += Time.fixedDeltaTime)
         {
-            GetComponent<SphereCollider>().isTrigger = true;
             transform.position = Vector2.MoveTowards(transform.position, targetposition, speed * Time.fixedDeltaTime);
-            if (time - f < Time.fixedDeltaTime * 2 && animating == true)
-            {
-                GetComponent<SphereCollider>().isTrigger = false;
-                animating = false;
-            }
             yield return new WaitForSeconds(Time.fixedDeltaTime);
         }
+        animating = false;
     }
 
     IEnumerator SpawnPrefab(GameObject prefab, Vector3 position,Quaternion direction, float delay)

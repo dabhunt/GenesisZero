@@ -30,12 +30,12 @@ public class MiddleMan : MonoBehaviour
             xoff = looking ? 0 : Boss.GetComponent<BossAI>().lookDir.normalized.x * -maxoffset.x;
             if (looking)
             {
-                maxoffset.z = Mathf.Lerp(maxoffset.z, originmaxoffset.z + 5, Time.deltaTime * 2);
+                maxoffset.z = Mathf.Lerp(maxoffset.z, originmaxoffset.z + 3, Time.deltaTime * 2);
                 pushedback = true;
             }
             else if (!looking)
             {
-                maxoffset.z = Mathf.Lerp(maxoffset.z, originmaxoffset.z - 5, Time.deltaTime * 2);
+                maxoffset.z = Mathf.Lerp(maxoffset.z, originmaxoffset.z - 3, Time.deltaTime * 2);
                 pushedback = false;
             }
         }
