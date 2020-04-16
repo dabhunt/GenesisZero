@@ -53,8 +53,8 @@ public class Elevator : MonoBehaviour
         // If elevator is moving dont do anyhting
         if (state == 0)
             return;
-
-        GameInputManager.instance.DisablePlayerControls();
+        if (movePlayer)
+            GameInputManager.instance.DisablePlayerControls();
         // If elevator is down then move up
         if (state == -1)
         {
@@ -86,6 +86,7 @@ public class Elevator : MonoBehaviour
             yield return new WaitForFixedUpdate();
         }
         state = direction;
-        GameInputManager.instance.EnablePlayerControls();
+        if (movePlayer)
+            GameInputManager.instance.EnablePlayerControls();
     }
 }
