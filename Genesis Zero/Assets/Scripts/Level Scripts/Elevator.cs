@@ -15,6 +15,7 @@ public class Elevator : MonoBehaviour
     private GameObject player;
     private bool canMove = false;
     private int direction = 0;
+    private bool movePlayer = false;
     private void Start()
     {
         player = GameObject.FindGameObjectWithTag("Player");
@@ -38,7 +39,13 @@ public class Elevator : MonoBehaviour
                 }
             }
             if (canMove)
+            {
+                if (Vector3.Distance(player.transform.position, transform.position) <= activationDistance)
+                    movePlayer = true;
+                else
+                    movePlayer = false;
                 Move();
+            }
         }
     }
     public void Move()
@@ -73,7 +80,8 @@ public class Elevator : MonoBehaviour
         while (t <= mTime)
         {
             transform.position += Vector3.up * direction * speed * Time.fixedDeltaTime;
-            player.transform.position += Vector3.up * direction * speed * Time.fixedDeltaTime;
+            if (movePlayer)
+                player.transform.position += Vector3.up * direction * speed * Time.fixedDeltaTime;
             t += Time.fixedDeltaTime;
             yield return new WaitForFixedUpdate();
         }
