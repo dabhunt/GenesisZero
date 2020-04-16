@@ -24,7 +24,7 @@ public class AudioManager : MonoBehaviour
 	private bool globalMute;
 	private bool soundUpdate;
 	private List<GameObject> soundPlayerChilds = new List<GameObject>();
-
+	private GameObject playerObj;
 	// Singleton instance.
 	public static AudioManager instance = null;
 
@@ -41,13 +41,14 @@ public class AudioManager : MonoBehaviour
 
 		// Hardcoded default values
 		setVolumeMaster = AudioListener.volume;
-		setVolumeDefault = 1.0f;
-		setVolumeSound = 1.0f;
+		setVolumeDefault = 3.0f;
+		setVolumeSound = 3.0f;
 		globalMute = false;
 		soundUpdate = true;
 	}
 	private void Start()
 	{
+		playerObj = GameObject.FindWithTag("Player");
 		Object[] temp = Resources.LoadAll("Sounds/SFX");
 		for (int i = 0; i < temp.Length; i++)
 		{
@@ -55,7 +56,7 @@ public class AudioManager : MonoBehaviour
 		}
 
 		//PlayFadeInTrack(1, "Music", "AmbientMusic", true, 5f);
-		instance.SetVolumeAllChannels(1.0f);
+		instance.SetVolumeAllChannels(.7f);
 		instance.PlayFadeInTrack(1, "Music", "AmbientMusic", true, 7f);
 		instance.PlayTrack(2, "Music", "CombatMusic", true, true, 0, 1);
 	}
@@ -548,16 +549,16 @@ public class AudioManager : MonoBehaviour
 
 	public void PlaySound(string name)
 	{
-		PlaySound(name, 1, 1, false, Vector3.zero, 0f);
+		PlaySound(name, setVolumeSound, 1, false, playerObj.transform.position, 0f);
 	}
 
 	public void PlaySound(string name, bool loop, float delay)
 	{
-		PlaySound(name, 1, 1, loop, Vector3.zero, 0f);
+		PlaySound(name, setVolumeSound, 1, loop, playerObj.transform.position, 0f);
 	}
 	public void PlaySound(string name, float vol, float pit)
 	{
-		PlaySound(name, vol, pit, false, Vector3.zero, 0f);
+		PlaySound(name, vol, pit, false, playerObj.transform.position, 0f);
 	}
 	public void PlaySound(string name, float vol, float pit, bool loop, Vector3 vector)
 	{

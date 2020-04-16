@@ -21,11 +21,13 @@ public class TileManager : MonoBehaviour
 	private float currentPos = 22.0f;
 	private float tileLength = 22.0f;
 	private float tileHeight = 6.5f;
-	
-	
+	private GameObject portalPrefab;
+	private GameObject tempPortal;
     // Start is called before the first frame update
     private void Start()
     {
+		portalPrefab = GameObject.Find(teleporterID);
+		tempPortal = portalPrefab; 
 		//Level 1
 		int level = 0;
         for (int i = 0; i < numberOfBuildings; ++i)
@@ -34,7 +36,6 @@ public class TileManager : MonoBehaviour
 		}
 		
 		//Level 2
-		teleporterID = "Teleporter_Mock3";
 		++level;
 		currentPos = levelSpacing*level + 22;
 		for (int i = 0; i < numberOfBuildings; ++i)
@@ -43,13 +44,14 @@ public class TileManager : MonoBehaviour
 		}
 		
 		//Level 3
-		teleporterID = "Teleporter_Mock4";
 		++level;
 		currentPos = levelSpacing*level + 22;
 		for (int i = 0; i < numberOfBuildings; ++i)
 		{
 			generateBuilding(Random.Range(minBuildingWidth, maxBuildingWidth), Random.Range(minBuildingTileCount, maxBuildingTileCount), level);
 		}
+		//this should be turned on later to disable the prefab gameobject
+		//portalPrefab.SetActive(false);
     }
 
     // Update is called once per frame
@@ -144,14 +146,21 @@ public class TileManager : MonoBehaviour
 			//Spawn Teleporter
 			if (Random.Range(0, 10) == 0)
 			{
-				GameObject exitPortal = GameObject.Find(teleporterID);
-				spawnVector.y += 7;
-				spawnVector.x -= 22;
-				spawnVector.z -= 2;
-				exitPortal.transform.position = spawnVector;
-				spawnVector.y -= 7;
-				spawnVector.x += 22;
-				spawnVector.z += 2;
+				//GameObject exitPortal = Instantiate(portalPrefab) as GameObject;
+				//temp fix until better second pass PCG teleporter system added
+				if (levelNumber == 0)
+				{
+					spawnVector.y += 7;
+					spawnVector.x -= 22;
+					spawnVector.z -= 2;
+					tempPortal.transform.position = spawnVector;
+					//the destination should be the start point of the next level, not 0,0
+					tempPortal.GetComponent<Teleporter>().SetDesination(new Vector2(0, 0));
+					spawnVector.y -= 7;
+					spawnVector.x += 22;
+					spawnVector.z += 2;
+				}
+
 			}
 			
 			//Iterate counting variables
