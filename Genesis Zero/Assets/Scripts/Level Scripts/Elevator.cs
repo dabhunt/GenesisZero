@@ -47,6 +47,7 @@ public class Elevator : MonoBehaviour
         if (state == 0)
             return;
 
+        GameInputManager.instance.DisablePlayerControls();
         // If elevator is down then move up
         if (state == -1)
         {
@@ -72,9 +73,11 @@ public class Elevator : MonoBehaviour
         while (t <= mTime)
         {
             transform.position += Vector3.up * direction * speed * Time.fixedDeltaTime;
+            player.transform.position += Vector3.up * direction * speed * Time.fixedDeltaTime;
             t += Time.fixedDeltaTime;
             yield return new WaitForFixedUpdate();
         }
         state = direction;
+        GameInputManager.instance.EnablePlayerControls();
     }
 }
