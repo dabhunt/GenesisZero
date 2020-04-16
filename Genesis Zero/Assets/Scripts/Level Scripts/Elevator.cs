@@ -9,6 +9,8 @@ public class Elevator : MonoBehaviour
     public float mTime;
     public float mDistance;
     public float activationDistance;
+    public float movePlayerDistance = 2.5f;
+    public bool biDirectional = false;
     [Range(-1, 1)]
     public int iniState;
     private int state; //0: moving, -1: down, 1: up
@@ -16,10 +18,12 @@ public class Elevator : MonoBehaviour
     private bool canMove = false;
     private int direction = 0;
     private bool movePlayer = false;
+    private Animator animator;
     private void Start()
     {
         player = GameObject.FindGameObjectWithTag("Player");
         state = iniState;
+        animator = player.GetComponent<Animator>();
     }
 
     public void Interact(InputAction.CallbackContext ctx)
@@ -40,7 +44,7 @@ public class Elevator : MonoBehaviour
             }
             if (canMove)
             {
-                if (Vector3.Distance(player.transform.position, transform.position) <= activationDistance)
+                if (Vector3.Distance(player.transform.position, transform.position) <= movePlayerDistance)
                     movePlayer = true;
                 else
                     movePlayer = false;
@@ -53,11 +57,12 @@ public class Elevator : MonoBehaviour
         // If elevator is moving dont do anyhting
         if (state == 0)
             return;
-        if (movePlayer)
-            GameInputManager.instance.DisablePlayerControls();
+
         // If elevator is down then move up
         if (state == -1)
         {
+            if (state != iniState && !biDirectional)
+                return;
             state = 0;
             direction = 1;
             StartCoroutine(moveCoroutine());
@@ -65,6 +70,8 @@ public class Elevator : MonoBehaviour
         // If elevator is up then move down
         else if (state == 1)
         {
+            if (state != iniState && !biDirectional)
+                return;
             state = 0;
             direction = -1;
             StartCoroutine(moveCoroutine());
@@ -75,10 +82,11 @@ public class Elevator : MonoBehaviour
     {
         float t = 0;
         float speed = mDistance / mTime;
-        Debug.Log(t);
-        Debug.Log(speed);
+        if (movePlayer)
+            GameInputManager.instance.DisablePlayerControls();
         while (t <= mTime)
         {
+            animator.SetBool("isGrounded", true);
             transform.position += Vector3.up * direction * speed * Time.fixedDeltaTime;
             if (movePlayer)
                 player.transform.position += Vector3.up * direction * speed * Time.fixedDeltaTime;
