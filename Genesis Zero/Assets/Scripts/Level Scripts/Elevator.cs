@@ -6,11 +6,17 @@ public class Elevator : MonoBehaviour
 {
     [Tooltip("List of control buttons")]
     public List<GameObject> buttons;
+    [Tooltip("Amount of time it takes to move mDistance")]
     public float mTime;
+    [Tooltip("Amount of distance to move")]
     public float mDistance;
+    [Tooltip("How far away from button player can activate")]
     public float activationDistance;
+    [Tooltip("Distance from platform to check for player")]
     public float movePlayerDistance = 2.5f;
+    [Tooltip("True if elevator can move up/down")]
     public bool biDirectional = false;
+    [Tooltip("Initial position -1 if it's down, 1 if it's up")]
     [Range(-1, 1)]
     public int iniState;
     private int state; //0: moving, -1: down, 1: up
@@ -19,6 +25,7 @@ public class Elevator : MonoBehaviour
     private int direction = 0;
     private bool movePlayer = false;
     private Animator animator;
+
     private void Start()
     {
         player = GameObject.FindGameObjectWithTag("Player");
@@ -52,6 +59,7 @@ public class Elevator : MonoBehaviour
             }
         }
     }
+
     public void Move()
     {
         // If elevator is moving dont do anyhting
