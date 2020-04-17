@@ -1,6 +1,7 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.Events;
 
 /**
  * Justin Couch
@@ -8,8 +9,14 @@ using UnityEngine;
  */
 public class ProjectileDetector : MonoBehaviour
 {
+    public UnityEvent DetectionEvent;
+
     private void OnTriggerEnter(Collider other)
     {
-        Debug.Log(other.name);
+        Projectile p = other.GetComponentInChildren<Projectile>();
+        if (p != null)
+        {
+            DetectionEvent.Invoke();
+        }
     }
 }
