@@ -9,14 +9,16 @@ using UnityEngine.Events;
  */
 public class ProjectileDetector : MonoBehaviour
 {
-    public UnityEvent DetectionEvent;
+    [System.Serializable]
+    public class PawnEvent : UnityEvent<Pawn> { } // Class for UnityEvents with a Pawn argument
+    public PawnEvent DetectionEvent; // Invoked with a hitbox source passed as the argument
 
     private void OnTriggerEnter(Collider other)
     {
-        Projectile p = other.GetComponentInChildren<Projectile>();
-        if (p != null)
+        Hitbox hb = other.GetComponentInChildren<Hitbox>();
+        if (hb != null)
         {
-            DetectionEvent.Invoke();
+            DetectionEvent.Invoke(hb.Source);
         }
     }
 }

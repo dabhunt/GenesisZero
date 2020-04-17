@@ -503,15 +503,11 @@ public class AIController : Pawn
     }
 
     /**
-     * Search for the player and follow it, if it doesn't exist then do nothing
+     * Alert the enemy and follow the target pawn without alerting nearby enemies
      */
-    public void AlertAndFollow()
+    public void AlertAndFollow(Pawn target)
     {
-        GameObject playerSearch = GameObject.FindGameObjectWithTag("Player");
-        if (playerSearch != null)
-        {
-            AlertAndFollow(playerSearch.transform, false);
-        }
+        AlertAndFollow(target.transform, false);
     }
 
     /**
