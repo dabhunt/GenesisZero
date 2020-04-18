@@ -20,7 +20,7 @@ public class Pawn : MonoBehaviour
     private float burntime, burndamage, burntick; //burndamage is damage per second
     private float slowtime, knockbackforce;
     private float stunImmuneAfterStun = 1.5f;
-    private Vector3 knockbackvector;
+    private Vector3 knockbackvector, lastposition;
     private bool Initialized, ForcedKnockBack, Dying, StunnedLastFrame, HasAnimationEventController;
 
     protected void Start()
@@ -157,6 +157,8 @@ public class Pawn : MonoBehaviour
 
     protected void FixedUpdate()
     {
+        lastposition = transform.position;
+
         if (knockbackforce > 0)
         {
             if (knockbackforce > 6)
@@ -175,8 +177,12 @@ public class Pawn : MonoBehaviour
                     Vector3 p1 = cc.center + Vector3.up * -cc.height / 2;
                     Vector3 p2 = p1 + Vector3.up * cc.height;
                     colliding = Physics.CapsuleCast(p1, p2, cc.radius, knockbackvector, out hit, translation.magnitude);
-                    if (colliding) colliding = !hit.collider.isTrigger;
-                    translation = colliding ? -translation * 2f : translation;
+                    if (colliding)
+                    {
+                        colliding = !hit.collider.isTrigger;
+                        Debug.Log("Shift");
+                    }
+                    translation = colliding ? -translation : translation;
                 }
                 if (GetComponent<PlayerController>() && colliding == false)
                 {
@@ -184,8 +190,7 @@ public class Pawn : MonoBehaviour
                 }
                 else if (GetComponent<PlayerController>() && colliding == true)
                 {
-                    transform.position -= translation * 2;
-                    knockbackforce = 0;
+                    transform.position += translation;
                 }
             }
             if (knockbackforce < 1)
@@ -390,6 +395,11 @@ public class Pawn : MonoBehaviour
     public Status GetStunImmuneStatus()
     {
         return stunimmune;
+    }
+
+    public Vector3 GetLastPosition()
+    {
+        return lastposition;
     }
     // ------------------------- ---------------- ------------------------------//
 
