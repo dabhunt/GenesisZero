@@ -13,7 +13,7 @@ public class BossAI : AIController
     protected State bossstate = State.MovingAway; // Current behavior state
     private bool secondphase;
     [HideInInspector]
-    public bool animating;
+    public bool animating, boxanimating;
     private float chargetime = 1;   // Once it hits zero, boss performs a action based on conditions.
     private Transform looktarget;   // Where the boss looks to
     private Transform movetarget;   // Where the boss moves to or away
@@ -56,8 +56,10 @@ public class BossAI : AIController
     public GameObject PulsePrefab;
 
     public GameObject HeadModel;
-    public GameObject SnakeBase;
 
+    public Animator animator;
+
+    private Vector3 back, foward, up, down;
     protected void Awake()
     {
         zdepth = transform.position.z;
@@ -75,6 +77,7 @@ public class BossAI : AIController
         TotalHealth = GetHealth().GetValue();
         LastHealth = TotalHealth;
         indicators = new List<GameObject>();
+        back = Vector3.back; foward = Vector3.forward; up = Vector3.up; down = Vector3.down;
     }
 
     new protected void Update()
@@ -107,90 +110,98 @@ public class BossAI : AIController
 
         CheckActions(); // Checks and updates what actions the boss should do
 
-        Vector3 looktargetposition = templooktime > 0 ? templookposition: looktarget.position;
-        if (templooktime > 0)
+        if (boxanimating == false)
         {
-            templooktime -= Time.fixedDeltaTime;
-        }
+            animator.gameObject.GetComponent<SnakeBossBase>().EnableIK();
+            if (animating == false)
+            {
+                Vector3 looktargetposition = templooktime > 0 ? templookposition : looktarget.position;
+                if (templooktime > 0)
+                {
+                    templooktime -= Time.fixedDeltaTime;
+                }
 
-        if (state == AIState.Follow || state == AIState.Charge || state == AIState.Attack || state == AIState.Cooldown)
-        {
-            lookDir = Vector3.Slerp(lookDir, looktargetposition - transform.position, 5 * Time.fixedDeltaTime); // Rotate to face target
-        }
-        else if (state == AIState.Patrol)
-        {
-            //For now, patrolling just moves the drone in a circle
-            lookDir = Quaternion.AngleAxis(5 * Time.fixedDeltaTime, Vector3.forward) * lookDir;
-        }
-        else if (state == AIState.Idle) // Stunned
-        {
+                if (state == AIState.Follow || state == AIState.Charge || state == AIState.Attack || state == AIState.Cooldown)
+                {
+                    lookDir = Vector3.Slerp(lookDir, looktargetposition - transform.position, 5 * Time.fixedDeltaTime); // Rotate to face target
+                }
+                else if (state == AIState.Patrol)
+                {
+                    //For now, patrolling just moves the drone in a circle
+                    lookDir = Quaternion.AngleAxis(5 * Time.fixedDeltaTime, Vector3.forward) * lookDir;
+                }
+                else if (state == AIState.Idle) // Stunned
+                {
 
-        }
+                }
 
-        // Set where the boss looks at, default player
-        lookposition = Vector3.Lerp(lookposition, looktargetposition, 3 * Time.fixedDeltaTime);
+                // Set where the boss looks at, default player
+                lookposition = Vector3.Lerp(lookposition, looktargetposition, 3 * Time.fixedDeltaTime);
 
-        if (bossstate == State.Centering || bossstate == State.Pulse)
-        {
-            transform.rotation = Quaternion.Slerp(transform.rotation, Quaternion.LookRotation(Vector3.back, Vector3.up), 2 * Time.fixedDeltaTime);
-            HeadModel.transform.rotation = Quaternion.Slerp(transform.rotation, Quaternion.LookRotation(Vector3.back, Vector3.up), 2 * Time.fixedDeltaTime);
-            lookposition = transform.position + transform.forward;
-            lookingatcamera = true;
+                if (bossstate == State.Centering || bossstate == State.Pulse)
+                {
+                    transform.rotation = Quaternion.Slerp(transform.rotation, Quaternion.LookRotation(back, up), 2 * Time.fixedDeltaTime);
+                    HeadModel.transform.rotation = Quaternion.Slerp(transform.rotation, Quaternion.LookRotation(back, up), 2 * Time.fixedDeltaTime);
+                    lookposition = transform.position + transform.forward;
+                    lookingatcamera = true;
+                }
+                else
+                {
+                    Vector3 lookoffset = new Vector3(0, 0, lookDir.x > 0 ? -1f : -1f);
+                    transform.LookAt(lookposition + lookoffset);
+                    HeadModel.transform.rotation = Quaternion.Slerp(transform.rotation, Quaternion.LookRotation(back, up), 2 * Time.fixedDeltaTime);
+                    //HeadModel.transform.LookAt(lookposition + lookoffset);
+                    lookingatcamera = false;
+                }
+
+
+                // Don't move until fight starts
+                if (TimeBeforeFight > 0) { return; }
+
+
+                // Move toward target, may move somewhere depending on state
+                float speed = GetSpeed().GetValue() * 5;
+                if (bossstate == State.MovingCloser && GetDistanceToTarget() - BehaviorProperties.AvoidRadius != 0)
+                {
+                    float diff = GetDistanceToTarget() - BehaviorProperties.AvoidRadius;
+                    transform.position = Vector2.MoveTowards(transform.position, movetarget.position, (speed * diff / GetDistanceToTarget()) * Time.fixedDeltaTime);
+                }
+                else if (bossstate == State.MovingAway && GetDistanceToTarget() < 30)
+                {
+                    float diff = GetDistanceToTarget() - 20;
+                    transform.position = Vector2.MoveTowards(transform.position, movetarget.position, (speed * diff / GetDistanceToTarget()) / 5 * Time.fixedDeltaTime);
+                }
+                else if (bossstate == State.Repositioning)
+                {
+                    GetComponent<SphereCollider>().isTrigger = true;
+                    transform.position = Vector2.MoveTowards(transform.position, movetarget.position, speed * (Vector2.Distance(transform.position, movetarget.position) * Mathf.Clamp(chargetime / 5, .5f, 4)) * Time.fixedDeltaTime);
+                    if (Vector2.Distance(movetarget.position, transform.position) < 2) { chargetime = Time.fixedDeltaTime / 2; }
+                }
+                else if (bossstate == State.Centering)
+                {
+                    GetComponent<SphereCollider>().isTrigger = true;
+                    transform.position = Vector2.MoveTowards(transform.position, movetarget.position, speed * (Vector2.Distance(transform.position, movetarget.position) * Mathf.Clamp(chargetime / 5, .5f, 4)) * Time.fixedDeltaTime);
+                }
+                else if (bossstate == State.Cooling)
+                {
+                    // Expose weakpoints
+                    transform.position = Vector2.MoveTowards(transform.position, movetarget.position, speed * (Vector2.Distance(transform.position, movetarget.position) * Mathf.Clamp(chargetime / 5, .5f, 4)) * Time.fixedDeltaTime);
+                }
+
+                Vector3 finalposition = Vector3.Lerp(LastPosition, new Vector3(transform.position.x, transform.position.y, zdepth), .3f);
+                LastPosition = finalposition;
+                transform.position = finalposition;
+            }
+            else
+            {
+                Vector3 finalposition = Vector3.Lerp(LastPosition, new Vector3(transform.position.x, transform.position.y, zdepth), 1);
+                LastPosition = finalposition;
+                transform.position = finalposition;
+            }
         }
         else
         {
-            Vector3 lookoffset = new Vector3(0, 0, lookDir.x > 0 ? -1f : -1f);
-            transform.LookAt(lookposition + lookoffset);
-            HeadModel.transform.rotation = Quaternion.Slerp(transform.rotation, Quaternion.LookRotation(Vector3.back, Vector3.up), 2 * Time.fixedDeltaTime);
-            //HeadModel.transform.LookAt(lookposition + lookoffset);
-            lookingatcamera = false;
-        }
-
-
-        // Don't move until fight starts
-        if (TimeBeforeFight > 0) { return; }
-
-
-        // Move toward target, may move somewhere depending on state
-        float speed = GetSpeed().GetValue() * 5;
-        if (animating == false)
-        {
-            if (bossstate == State.MovingCloser && GetDistanceToTarget() - BehaviorProperties.AvoidRadius != 0)
-            {
-                float diff = GetDistanceToTarget() - BehaviorProperties.AvoidRadius;
-                transform.position = Vector2.MoveTowards(transform.position, movetarget.position, (speed * diff / GetDistanceToTarget()) * Time.fixedDeltaTime);
-            }
-            else if (bossstate == State.MovingAway && GetDistanceToTarget() < 30)
-            {
-                float diff = GetDistanceToTarget() - 20;
-                transform.position = Vector2.MoveTowards(transform.position, movetarget.position, (speed * diff / GetDistanceToTarget()) / 5 * Time.fixedDeltaTime);
-            }
-            else if (bossstate == State.Repositioning)
-            {
-                GetComponent<SphereCollider>().isTrigger = true;
-                transform.position = Vector2.MoveTowards(transform.position, movetarget.position, speed * (Vector2.Distance(transform.position, movetarget.position) * Mathf.Clamp(chargetime / 5, .5f, 4)) * Time.fixedDeltaTime);
-                if (Vector2.Distance(movetarget.position, transform.position) < 2) { chargetime = Time.fixedDeltaTime / 2; }
-            }
-            else if (bossstate == State.Centering)
-            {
-                GetComponent<SphereCollider>().isTrigger = true;
-                transform.position = Vector2.MoveTowards(transform.position, movetarget.position, speed * (Vector2.Distance(transform.position, movetarget.position) * Mathf.Clamp(chargetime / 5, .5f, 4)) * Time.fixedDeltaTime);
-            }
-            else if (bossstate == State.Cooling)
-            {
-                // Expose weakpoints
-                transform.position = Vector2.MoveTowards(transform.position, movetarget.position, speed * (Vector2.Distance(transform.position, movetarget.position) * Mathf.Clamp(chargetime / 5, .5f, 4)) * Time.fixedDeltaTime);
-            }
-
-            Vector3 finalposition = Vector3.Lerp(LastPosition, new Vector3(transform.position.x, transform.position.y, zdepth), .3f);
-            LastPosition = finalposition;
-            transform.position = finalposition;
-        }
-        else
-        {
-            Vector3 finalposition = Vector3.Lerp(LastPosition, new Vector3(transform.position.x, transform.position.y, zdepth), 1);
-            LastPosition = finalposition;
-            transform.position = finalposition;
+            animator.gameObject.GetComponent<SnakeBossBase>().DisableIK();
         }
 
         //Display Health
@@ -242,7 +253,7 @@ public class BossAI : AIController
             LastHealth = GetHealth().GetValue();
         }
 
-        if (HealthLoss >= TotalHealth/2)
+        if (HealthLoss >= TotalHealth / 2)
         {
             action = 1;
             bossstate = State.Setting;
@@ -280,7 +291,7 @@ public class BossAI : AIController
             movetarget = Target;    // Reset movetarget back to default target (player)
 
             float attack = (int)Random.Range(0, 3);
-            if (GetDistanceToTarget() <= 8)    // Will most likely pulse if player is too close
+            if (GetDistanceToTarget() <= 6 && MovingAway() == false)    // Will most likely pulse if player is too close
             {
                 attack = (int)Random.Range(0, 10) <= 6 ? 2 : attack;
             }
@@ -290,12 +301,12 @@ public class BossAI : AIController
 
             if (attack == 0)
             {
-                actiontime = 2.5f;
+                actiontime = 2f;
                 SetBossstate(State.Headbutt, actiontime);
                 Vector3 target = PredictPath(1.25f);
-                SpawnIndicator(transform.position, new Vector2(16, 6), target - transform.position, new Color(1, 0, 0, .1f), Vector2.zero, false, true, actiontime - .85f);
-                LookAtVectorTemp(target + (target - transform.position), actiontime);
-                StartCoroutine(MoveTo(transform.position + ((target - transform.position).normalized * 16), actiontime - 2.15f, actiontime - .85f));
+                SpawnIndicator(transform.position, new Vector2(16, 6), target - transform.position, new Color(1, 0, 0, .1f), Vector2.zero, false, true, 1f);
+                LookAtVectorTemp(target + ((target - transform.position).normalized * 20), actiontime);
+                StartCoroutine(MoveTo(transform.position + ((target - transform.position).normalized * 16), .25f, 1f));
             }
             else if (attack == 1)
             {
@@ -454,8 +465,32 @@ public class BossAI : AIController
      */
     public Vector3 PredictPath(float time)
     {
-        Vector3 position = Target.position + (targetmovement * time * (1 / Time.deltaTime));
+        float zspeed = targetmovement.y > 0 ? targetmovement.y - .1f : targetmovement.y + .1f;
+        //Debug.Log("Z:" + zspeed);
+        Vector3 position = Target.position + ((targetmovement * time * (1 / Time.fixedDeltaTime)) * Mathf.Clamp(GetDistanceToTarget() / 20, .1f, 1));
+        position += new Vector3(0, 0, zspeed * 6 * Time.fixedDeltaTime);
         return position;
+    }
+
+    /**
+     * Returns true if the player is moveing away from the boss. Also true if player is realy close
+     */
+    public bool MovingAway()
+    {
+        if (GetDistanceToTarget() < 3)
+        {
+            return true;
+        }
+        else if (Target.position.x - transform.position.x > 0 && targetmovement.x > 0)
+        {
+            return true;
+        }
+        else if (Target.position.x - transform.position.x < 0 && targetmovement.x < 0)
+        {
+            return true;
+        }
+
+        return false;
     }
 
     IEnumerator Spandout(float time, float start, float target)
@@ -502,7 +537,7 @@ public class BossAI : AIController
         animating = false;
     }
 
-    IEnumerator SpawnPrefab(GameObject prefab, Vector3 position,Quaternion direction, float delay)
+    IEnumerator SpawnPrefab(GameObject prefab, Vector3 position, Quaternion direction, float delay)
     {
         yield return new WaitForSeconds(delay);
         GameObject hitbox = Instantiate(prefab, position, direction);
@@ -510,7 +545,9 @@ public class BossAI : AIController
 
     void SpitFireball()
     {
-        GameObject hitbox = Instantiate(FireballPrefab, transform.position, transform.rotation);
+        Vector2 angle = (Vector2)transform.rotation.eulerAngles;
+        Quaternion rot = Quaternion.Euler(angle.x, angle.y, 0);
+        GameObject hitbox = Instantiate(FireballPrefab, transform.position, rot);
     }
 
     public void SpawnIndicator(Vector2 position, Vector2 size, Vector2 dir, Color color, Vector2 offset, bool centered, bool square, float time)
