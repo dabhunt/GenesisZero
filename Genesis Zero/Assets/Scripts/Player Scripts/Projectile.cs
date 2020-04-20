@@ -58,6 +58,7 @@ public class Projectile : MonoBehaviour
     public bool CheckCollisions()
     {
         RaycastHit hit;
+        Vector3 lastposition = transform.position;
         if (GetComponent<SphereCollider>())
         {
             SphereCollider col = GetComponent<SphereCollider>();
@@ -79,6 +80,7 @@ public class Projectile : MonoBehaviour
                         coll = false;
                     }
                 }
+                transform.position = lastposition;
                 return true;
             }
         }
