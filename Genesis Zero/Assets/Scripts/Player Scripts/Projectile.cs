@@ -9,8 +9,10 @@ public class Projectile : MonoBehaviour
     public float speed = 30f;
     public float gravity = 0f;
     public float lifeTime = 1f;
+    [Tooltip("Don't set to true, if the porjectile is already large")]
+    public bool accurate = true;
 
-    public Vector3 direction;
+    private Vector3 direction;
     private Rigidbody rb;
 
     private bool coll;
@@ -58,6 +60,7 @@ public class Projectile : MonoBehaviour
     public bool CheckCollisions()
     {
         RaycastHit hit;
+        Vector3 lastposition = transform.position;
         if (GetComponent<SphereCollider>())
         {
             SphereCollider col = GetComponent<SphereCollider>();
@@ -81,6 +84,11 @@ public class Projectile : MonoBehaviour
                     {
                         coll = false;
                     }
+                }
+
+                if(accurate == false)
+                {
+                    transform.position = lastposition;
                 }
                 return true;
             }
