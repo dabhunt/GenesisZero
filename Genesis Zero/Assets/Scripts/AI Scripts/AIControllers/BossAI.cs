@@ -9,7 +9,7 @@ using UnityEngine.UI;
  */
 public class BossAI : AIController
 {
-    public enum State { Headbutt, Firebreath, Pulse, Wild, MovingAway, MovingCloser, Centering, Cooling, Repositioning, Setting, PerformingAttack }
+    public enum State { Headbutt, Firebreath, Pulse, Wild, MovingAway, MovingCloser, Centering, Cooling, Repositioning, Setting, PerformingAttack, Stunned }
     protected State bossstate = State.MovingAway; // Current behavior state
     private bool secondphase;
     [HideInInspector]
@@ -38,7 +38,9 @@ public class BossAI : AIController
     public float TimeBeforeFight;
     [HideInInspector]
     public bool initiated, lookingatcamera;
-    private int Heat;
+    private int Heat, RepeatingAttack, Attack;
+    private float actiontime = 1;
+    private float chargeuptime = .5f;
 
     public GameObject Healthbar;
     private GameObject healthbar;
@@ -113,52 +115,52 @@ public class BossAI : AIController
         if (boxanimating == false)
         {
             animator.gameObject.GetComponent<SnakeBossBase>().EnableIK();
+            Vector3 looktargetposition = templooktime > 0 ? templookposition : looktarget.position;
+            if (templooktime > 0)
+            {
+                templooktime -= Time.fixedDeltaTime;
+            }
+
+            if (state == AIState.Follow || state == AIState.Charge || state == AIState.Attack || state == AIState.Cooldown)
+            {
+                lookDir = Vector3.Slerp(lookDir, looktargetposition - transform.position, 5 * Time.fixedDeltaTime); // Rotate to face target
+            }
+            else if (state == AIState.Patrol)
+            {
+                //For now, patrolling just moves the drone in a circle
+                lookDir = Quaternion.AngleAxis(5 * Time.fixedDeltaTime, Vector3.forward) * lookDir;
+            }
+            else if (state == AIState.Idle) // Stunned
+            {
+
+            }
+
+            // Set where the boss looks at, default player
+            lookposition = Vector3.Lerp(lookposition, looktargetposition, 3 * Time.fixedDeltaTime);
+
+            if (bossstate == State.Centering || bossstate == State.Pulse)
+            {
+                transform.rotation = Quaternion.Slerp(transform.rotation, Quaternion.LookRotation(back, up), 2 * Time.fixedDeltaTime);
+                HeadModel.transform.rotation = Quaternion.Slerp(transform.rotation, Quaternion.LookRotation(back, up), 2 * Time.fixedDeltaTime);
+                lookposition = transform.position + transform.forward;
+                lookingatcamera = true;
+            }
+            else
+            {
+                Vector3 lookoffset = new Vector3(0, 0, lookDir.x > 0 ? -1f : -1f);
+                transform.LookAt(lookposition + lookoffset);
+                HeadModel.transform.rotation = Quaternion.Slerp(transform.rotation, Quaternion.LookRotation(back, up), 2 * Time.fixedDeltaTime);
+                //HeadModel.transform.LookAt(lookposition + lookoffset);
+                lookingatcamera = false;
+            }
+
+
+            // Don't move until fight starts
+            if (TimeBeforeFight > 0) { return; }
+
+
             if (animating == false)
             {
-                Vector3 looktargetposition = templooktime > 0 ? templookposition : looktarget.position;
-                if (templooktime > 0)
-                {
-                    templooktime -= Time.fixedDeltaTime;
-                }
-
-                if (state == AIState.Follow || state == AIState.Charge || state == AIState.Attack || state == AIState.Cooldown)
-                {
-                    lookDir = Vector3.Slerp(lookDir, looktargetposition - transform.position, 5 * Time.fixedDeltaTime); // Rotate to face target
-                }
-                else if (state == AIState.Patrol)
-                {
-                    //For now, patrolling just moves the drone in a circle
-                    lookDir = Quaternion.AngleAxis(5 * Time.fixedDeltaTime, Vector3.forward) * lookDir;
-                }
-                else if (state == AIState.Idle) // Stunned
-                {
-
-                }
-
-                // Set where the boss looks at, default player
-                lookposition = Vector3.Lerp(lookposition, looktargetposition, 3 * Time.fixedDeltaTime);
-
-                if (bossstate == State.Centering || bossstate == State.Pulse)
-                {
-                    transform.rotation = Quaternion.Slerp(transform.rotation, Quaternion.LookRotation(back, up), 2 * Time.fixedDeltaTime);
-                    HeadModel.transform.rotation = Quaternion.Slerp(transform.rotation, Quaternion.LookRotation(back, up), 2 * Time.fixedDeltaTime);
-                    lookposition = transform.position + transform.forward;
-                    lookingatcamera = true;
-                }
-                else
-                {
-                    Vector3 lookoffset = new Vector3(0, 0, lookDir.x > 0 ? -1f : -1f);
-                    transform.LookAt(lookposition + lookoffset);
-                    HeadModel.transform.rotation = Quaternion.Slerp(transform.rotation, Quaternion.LookRotation(back, up), 2 * Time.fixedDeltaTime);
-                    //HeadModel.transform.LookAt(lookposition + lookoffset);
-                    lookingatcamera = false;
-                }
-
-
-                // Don't move until fight starts
-                if (TimeBeforeFight > 0) { return; }
-
-
                 // Move toward target, may move somewhere depending on state
                 float speed = GetSpeed().GetValue() * 5;
                 if (bossstate == State.MovingCloser && GetDistanceToTarget() - BehaviorProperties.AvoidRadius != 0)
@@ -231,15 +233,27 @@ public class BossAI : AIController
 
         if (GetComponent<SphereCollider>().isTrigger == true)
         {
+            Collider[] hit = Physics.OverlapSphere(transform.position, GetComponent<SphereCollider>().radius/2);
+            foreach (Collider col in hit)
+            {
+                if (col.gameObject.layer == LayerMask.NameToLayer("BossBoundary"))
+                {
+                    Debug.Log("Stunned");
+                    GetComponent<SphereCollider>().isTrigger = false;
+                    SetBossstate(State.Stunned, .5f);
+                }
+            }
+            /**
             BoxCollider2D Bossroom = GameObject.FindGameObjectWithTag("BossRoom").GetComponent<BoxCollider2D>();
             if (Bossroom)
             {
-                if (!Bossroom.bounds.Contains((Vector2)transform.position))
+                if (!Bossroom.bounds.Contains((Vector2)transform.position + (Vector2)(Vector3.forward * GetComponent<SphereCollider>().radius)))
                 {
                     GetComponent<SphereCollider>().isTrigger = false;
                     chargetime = Time.deltaTime;
                 }
             }
+            */
         }
     }
 
@@ -286,45 +300,54 @@ public class BossAI : AIController
     {
         // Do an action based on a set up state.
 
-        if (bossstate == State.Repositioning)
+        if (bossstate == State.Repositioning || RepeatingAttack > 0)
         {
             movetarget = Target;    // Reset movetarget back to default target (player)
 
-            float attack = (int)Random.Range(0, 3);
-            if (GetDistanceToTarget() <= 6 && MovingAway() == false)    // Will most likely pulse if player is too close
+            if (RepeatingAttack <= 0)
             {
-                attack = (int)Random.Range(0, 10) <= 6 ? 2 : attack;
+                Attack = (int)Random.Range(0, 3);
+                if (GetDistanceToTarget() <= 6 && MovingAway() == false)    // Will most likely pulse if player is too close
+                {
+                    Attack = (int)Random.Range(0, 10) <= 6 ? 2 : Attack;
+                }
             }
 
-            float actiontime = 1;
             GetComponent<SphereCollider>().isTrigger = false;
 
-            if (attack == 0)
+            if (Attack == 0)
             {
-                actiontime = 2f;
+                SetRepeatingAttacks(3);
+                actiontime = RepeatingAttack > 0 ? SetAttackTime(1.35f, 1) : SetAttackTime(2, 1);
                 SetBossstate(State.Headbutt, actiontime);
                 Vector3 target = PredictPath(1.25f);
-                SpawnIndicator(transform.position, new Vector2(16, 6), target - transform.position, new Color(1, 0, 0, .1f), Vector2.zero, false, true, 1f);
+                SpawnIndicator(transform.position, new Vector2(16, 6), target - transform.position, new Color(1, 0, 0, .1f), Vector2.zero, false, true, chargeuptime);
                 LookAtVectorTemp(target + ((target - transform.position).normalized * 20), actiontime);
-                StartCoroutine(MoveTo(transform.position + ((target - transform.position).normalized * 16), .25f, 1f));
+                StartCoroutine(MoveTo(transform.position + ((target - transform.position).normalized * 16), .25f, chargeuptime));
             }
-            else if (attack == 1)
+            else if (Attack == 1)
             {
-                actiontime = 1.5f;
+                SetRepeatingAttacks(3);
+                actiontime = RepeatingAttack > 0 ? SetAttackTime(1.2f, 1) : SetAttackTime(1.5f, 1);
                 SetBossstate(State.Firebreath, actiontime);
                 Vector3 target = PredictPath(1f);
-                SpawnIndicator(transform.position, new Vector2(24, 4), target - transform.position, new Color(1, 0, 0, .1f), Vector2.zero, false, true, actiontime);
-                LookAtVectorTemp(target, actiontime);
-                Invoke("SpitFireball", actiontime);
+                SpawnIndicator(transform.position, new Vector2(24, 4), target - transform.position, new Color(1, 0, 0, .1f), Vector2.zero, false, true, actiontime - .1f);
+                LookAtVectorTemp(target, actiontime - .1f);
+                Invoke("SpitFireball", actiontime - .1f);
             }
             else
             {
-                actiontime = 2;
+                SetRepeatingAttacks(0);
+                actiontime = RepeatingAttack > 0 ? SetAttackTime(1.2f, 1) : SetAttackTime(1.2f, 1);
                 SetBossstate(State.Pulse, actiontime);
                 SpawnIndicator(transform.position, new Vector2(18, 18), lookDir, new Color(1, 0, 0, .1f), Vector2.zero, true, false, actiontime);
             }
 
-            ++Heat;
+            if (RepeatingAttack < 0)
+            {
+                ++Heat;
+            }
+
             return;
         }
         else if (bossstate == State.Centering)
@@ -376,10 +399,32 @@ public class BossAI : AIController
         }
     }
 
+    public float SetAttackTime(float actiontime, float chargeuptime)
+    {
+        this.actiontime = actiontime;
+        this.chargetime = chargeuptime;
+        return actiontime;
+    }
+
     public void SetBossstate(State state, float time)
     {
         bossstate = state;
         chargetime = time;
+    }
+
+    /**
+     * Sets repeatingattacks to up to the number specificed
+     */
+    public void SetRepeatingAttacks(int num)
+    {
+        if (RepeatingAttack <= 0)
+        {
+            RepeatingAttack = (int)Random.Range(0, num + 1);
+        }
+        else
+        {
+            --RepeatingAttack;
+        }
     }
 
     public void LookAtVectorTemp(Vector3 position, float time)
@@ -524,6 +569,7 @@ public class BossAI : AIController
     IEnumerator MoveTo(Vector3 targetposition, float time, float delay)
     {
         yield return new WaitForSeconds(delay);
+        Vector3 startposition = transform.position;
         GetComponent<SphereCollider>().isTrigger = true;
         animating = true;
         float totaltime = time;
@@ -531,7 +577,11 @@ public class BossAI : AIController
         float speed = distance / totaltime;
         for (float f = 0; f <= time; f += Time.fixedDeltaTime)
         {
-            transform.position = Vector2.MoveTowards(transform.position, targetposition, speed * Time.fixedDeltaTime);
+            if (bossstate == State.Stunned)
+            {
+                break;
+            }
+            transform.position = Vector3.Lerp(startposition, targetposition, f / time);
             yield return new WaitForSeconds(Time.fixedDeltaTime);
         }
         animating = false;
@@ -541,6 +591,25 @@ public class BossAI : AIController
     {
         yield return new WaitForSeconds(delay);
         GameObject hitbox = Instantiate(prefab, position, direction);
+    }
+
+    void RayCast(Vector2 target, float distance)
+    {
+        RaycastHit hit;
+        BoxCollider2D Bossroom = GameObject.FindGameObjectWithTag("BossRoom").GetComponent<BoxCollider2D>();
+        if (Bossroom.bounds.Contains(target))
+        {
+
+        }
+        if (GetComponent<SphereCollider>())
+        {
+            SphereCollider col = GetComponent<SphereCollider>();
+            bool hitdetect = Physics.SphereCast(transform.position, col.radius, transform.forward, out hit, distance, LayerMask.NameToLayer("BossBoundary"));
+            if (hitdetect && hit.collider != col)
+            {         
+                //return true;
+            }
+        }
     }
 
     void SpitFireball()
