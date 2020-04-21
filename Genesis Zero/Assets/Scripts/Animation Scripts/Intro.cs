@@ -29,6 +29,7 @@ public class Intro : MonoBehaviour
             cardQueue.Enqueue(objs[i]);
         }
         tmp = transform.Find("Text").gameObject.GetComponent<TextMeshProUGUI>();
+        transform.Find("Overlay").GetComponent<Image>().enabled = true;
         NextCard();
     }
     public void NextCard()
