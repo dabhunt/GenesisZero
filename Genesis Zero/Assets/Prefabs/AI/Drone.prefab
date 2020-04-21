@@ -269,8 +269,8 @@ SphereCollider:
   m_IsTrigger: 1
   m_Enabled: 1
   serializedVersion: 2
-  m_Radius: 0.3
-  m_Center: {x: 0, y: 0, z: 0}
+  m_Radius: 0.26127955
+  m_Center: {x: 0, y: 0, z: 0.03872045}
 --- !u!54 &6803382396214001101
 Rigidbody:
   m_ObjectHideFlags: 0
@@ -6102,8 +6102,8 @@ GameObject:
   - component: {fileID: 1692614116}
   - component: {fileID: 6283972142564161067}
   - component: {fileID: 5625797433993196297}
-  - component: {fileID: 869227651630817831}
   - component: {fileID: 8872764030628295620}
+  - component: {fileID: 7102331888743726021}
   m_Layer: 9
   m_Name: Drone
   m_TagString: Enemy
@@ -6272,20 +6272,6 @@ MonoBehaviour:
   - {fileID: 3440290222160884764}
   - {fileID: 3532076496665106494}
   - {fileID: 5733273459591178176}
---- !u!136 &869227651630817831
-CapsuleCollider:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 2000804235349801773}
-  m_Material: {fileID: 13400000, guid: d8637a3e797a152468ab94066c728e5e, type: 2}
-  m_IsTrigger: 0
-  m_Enabled: 1
-  m_Radius: 0.2
-  m_Height: 0.9
-  m_Direction: 1
-  m_Center: {x: 0, y: 0.05, z: 0}
 --- !u!114 &8872764030628295620
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -6299,6 +6285,20 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   healthBar: {fileID: 2346028645265931320}
+--- !u!136 &7102331888743726021
+CapsuleCollider:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2000804235349801773}
+  m_Material: {fileID: 0}
+  m_IsTrigger: 0
+  m_Enabled: 1
+  m_Radius: 0.16
+  m_Height: 0.8673457
+  m_Direction: 1
+  m_Center: {x: 0, y: -0.25874195, z: 0}
 --- !u!1 &2055335320707413171
 GameObject:
   m_ObjectHideFlags: 0

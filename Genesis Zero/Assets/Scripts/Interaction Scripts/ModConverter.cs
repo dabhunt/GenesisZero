@@ -77,7 +77,8 @@ public class ModConverter : MonoBehaviour
         string s = "";
         if (modList.Count > 1)
             s = "s";
-        GetComponent<InteractPopup>().SetText("Press [F] to convert [ "+modList.Count+" ] mod"+s+" into 1 new Mod of the same or better rarity");
+        if (GetComponent<InteractPopup>() != null)
+            GetComponent<InteractPopup>().SetText("Press [F] to convert [ "+modList.Count+" ] mod"+s+" into 1 new Mod of the same or better rarity");
     }
     private float EvaluateMod(int i)
     {

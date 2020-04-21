@@ -16,7 +16,10 @@ public class TileManager : MonoBehaviour
 	public string teleporterID = "Teleporter_Mock2";
 	public GameObject[] tilePrefabs;
 	public GameObject[] enemyPrefabs;
-	
+	[Header("Enemy Spawning")]
+	public Vector2 MinMaxEnemies = new Vector2(3, 5);
+	[Range(0, 1)]
+	public float SpawnChance = .1f;
 	//Private Variables
 	private float currentPos = 22.0f;
 	private float tileLength = 22.0f;
@@ -125,9 +128,9 @@ public class TileManager : MonoBehaviour
 			spawnVector.x += tileLength;
 			
 			//Spawn Enemy
-			if (Random.Range(0, 5) == 0)
+			if (Random.value <= SpawnChance)
 			{
-				int i = Random.Range(5, 9);
+				int i = Random.Range((int)MinMaxEnemies.x, (int)MinMaxEnemies.y);
 				spawnVector.y += 3;
 				spawnVector.x -= 11;
 				spawnVector.z -= 2;
