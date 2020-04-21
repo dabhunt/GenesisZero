@@ -18,6 +18,7 @@ public class Elevator : MonoBehaviour
     public bool biDirectional = false;
     [Tooltip("Initial position -1 if it's down, 1 if it's up")]
     [Range(-1, 1)]
+    
     public int iniState;
     private int state; //0: moving, -1: down, 1: up
     private GameObject player;
