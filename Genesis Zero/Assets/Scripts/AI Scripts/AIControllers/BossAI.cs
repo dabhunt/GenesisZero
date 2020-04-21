@@ -92,9 +92,9 @@ public class BossAI : AIController
             if (TimeBeforeFight < 0)
             {
                 GameObject canvas = GameObject.FindGameObjectWithTag("CanvasUI");
-                healthbar = Instantiate(Healthbar, canvas.transform.position + (Healthbar.GetComponent<RectTransform>().position + new Vector3(0, -135, 0)) / canvas.GetComponent<Canvas>().referencePixelsPerUnit, Quaternion.identity, canvas.transform);
+                healthbar = Instantiate(Healthbar, canvas.transform.position + (Healthbar.GetComponent<RectTransform>().position + new Vector3(0,412,0)), Quaternion.identity, canvas.transform);
                 TimeBeforeFight = 0;
-                StartCoroutine(Spandout(.5f, Camera.main.fieldOfView, 30));
+                Camera.main.GetComponent<BasicCameraZoom>().ChangeFieldOfView(30);
                 StartCoroutine(CockBack(1.25f, Target.position - transform.position, 1));
             }
         }
@@ -536,15 +536,6 @@ public class BossAI : AIController
         }
 
         return false;
-    }
-
-    IEnumerator Spandout(float time, float start, float target)
-    {
-        for (float f = 0; f <= time; f += Time.fixedDeltaTime)
-        {
-            Camera.main.fieldOfView = start + ((target - start) * f / time);
-            yield return new WaitForSeconds(Time.fixedDeltaTime);
-        }
     }
 
     IEnumerator CockBack(float time, Vector3 dir, float distance)
