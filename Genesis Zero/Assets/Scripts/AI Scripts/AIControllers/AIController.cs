@@ -489,6 +489,9 @@ public class AIController : Pawn
         }
     }
 
+    /**
+     * Overrides the base TakeDamage function to also alert the enemy
+     */
     public override float TakeDamage(float amount, Pawn source)
     {
         //Debug.Log("Enemy Damaged");
@@ -499,12 +502,26 @@ public class AIController : Pawn
         return base.TakeDamage(amount, source);
     }
 
-    protected void AlertAndFollow(Transform target)
+    /**
+     * Alert the enemy and follow the target pawn without alerting nearby enemies
+     */
+    public void AlertAndFollow(Pawn target)
+    {
+        AlertAndFollow(target.transform, false);
+    }
+
+    /**
+     * Alert the enemy and follow the target while alerting nearby enemies
+     */
+    public void AlertAndFollow(Transform target)
     {
         AlertAndFollow(target, true);
     }
 
-    protected void AlertAndFollow(Transform target, bool alertOthers)
+    /**
+     * Alert the enemy and follow the target with the option to alert nearby enemies
+     */
+    public void AlertAndFollow(Transform target, bool alertOthers)
     {
         if (target != null && (state == AIState.Patrol || state == AIState.Idle || alertTracking))
         {
@@ -517,7 +534,10 @@ public class AIController : Pawn
         }
     }
 
-    protected void AlertNearbyEnemies(Transform target)
+    /**
+     * Alert nearby enemies and make them follow the target
+     */
+    public void AlertNearbyEnemies(Transform target)
     {
         bool onlyNear = false;
         if (BehaviorProperties != null)
