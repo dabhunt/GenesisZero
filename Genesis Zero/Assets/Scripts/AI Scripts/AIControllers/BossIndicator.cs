@@ -21,8 +21,13 @@ public class BossIndicator : MonoBehaviour
     public Vector2 offset;
     private Vector2 lastoffset;
     public bool Centered;
+    public Color color;
 
     private bool Initialized;
+
+    private float time;
+    private float interval;
+    private bool IsWhite;
 
     private void Awake()
     {
@@ -93,6 +98,31 @@ public class BossIndicator : MonoBehaviour
             offsety = 0;
         }
         image.transform.position = new Vector2(origin.x + offsetx + offset.x, origin.y + offsety + offset.y);
+
+        if (time < .45f)
+        {
+            float rate = Mathf.Clamp((25 - (25 * time)), 0, 9999);
+            if (interval < 0)
+            {
+                IsWhite = !IsWhite;
+                interval = Mathf.Clamp((Time.deltaTime * 60) / rate, .05f, .2f);
+                if (IsWhite)
+                {
+                    image.color = new Color(this.color.r * 2, this.color.g * 2, this.color.b * 2, this.color.a * 2);
+                }
+                else
+                {
+                    image.color = color;
+                }
+                interval -= Time.deltaTime;
+            }
+            else
+            {
+                interval -= Time.deltaTime;
+            }
+        }
+        time -= Time.deltaTime;
+        Mathf.Clamp(time, 0, 9999);
     }
 
     public void SetSize(Vector2 vector)
@@ -108,6 +138,7 @@ public class BossIndicator : MonoBehaviour
 
     public void SetColor(Color color)
     {
+        this.color = color;
         image.color = color;
     }
 
@@ -131,7 +162,7 @@ public class BossIndicator : MonoBehaviour
         image.sprite = Square;
     }
 
-    public void SetIndicator(Vector2 position, Vector2 size, Vector2 dir, Color color, bool centered)
+    public void SetIndicator(Vector2 position, Vector2 size, Vector2 dir, Color color, bool centered, float time)
     {
         SetOrigin(position);
         SetSize(size);
@@ -139,5 +170,6 @@ public class BossIndicator : MonoBehaviour
         SetColor(color);
         SetCentered(centered);
         Initialized = true;
+        this.time = time;
     }
 }

@@ -9,8 +9,10 @@ public class Projectile : MonoBehaviour
     public float speed = 30f;
     public float gravity = 0f;
     public float lifeTime = 1f;
+    [Tooltip("Don't set to true, if the porjectile is already large")]
+    public bool accurate = true;
 
-    public Vector3 direction;
+    private Vector3 direction;
     private Rigidbody rb;
 
     private bool coll;
@@ -58,19 +60,23 @@ public class Projectile : MonoBehaviour
     public bool CheckCollisions()
     {
         RaycastHit hit;
+        Vector3 lastposition = transform.position;
         if (GetComponent<SphereCollider>())
         {
             SphereCollider col = GetComponent<SphereCollider>();
             bool hitdetect = Physics.SphereCast(transform.position, col.radius, transform.forward, out hit, (speed * 1f * Time.fixedDeltaTime));
-            if (hitdetect && hit.collider != col)
+            if (hitdetect && hit.collider != col && (hit.collider.gameObject.GetComponent<BodyPart>() || !hit.collider.isTrigger))
             {
                 Vector3 dir = speed * transform.forward * Time.fixedDeltaTime;
                 dir = dir.normalized * (hit.distance + col.radius * 2);
                 transform.position = hit.point;
                 coll = true;
+                //Debug.Log("Hit" + hit.collider.bounds.Contains(transform.position));
                 if (GetComponent<Hitbox>())
                 {
-                    if (GetComponent<Hitbox>().CheckCollisions(hit.collider))
+                    bool hitt = GetComponent<Hitbox>().CheckCollisions(hit.collider);
+                    //Debug.Log(hitt+"! "+ hit.collider.gameObject + " Layer: "+ LayerMask.LayerToName(hit.collider.gameObject.layer));
+                    if (hitt)
                     {
                         coll = true;
                     }
@@ -78,6 +84,11 @@ public class Projectile : MonoBehaviour
                     {
                         coll = false;
                     }
+                }
+
+                if(accurate == false)
+                {
+                    transform.position = lastposition;
                 }
                 return true;
             }

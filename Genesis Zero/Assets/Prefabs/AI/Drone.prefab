@@ -269,8 +269,8 @@ SphereCollider:
   m_IsTrigger: 1
   m_Enabled: 1
   serializedVersion: 2
-  m_Radius: 0.3
-  m_Center: {x: 0, y: 0, z: 0}
+  m_Radius: 0.26127955
+  m_Center: {x: 0, y: 0, z: 0.03872045}
 --- !u!54 &6803382396214001101
 Rigidbody:
   m_ObjectHideFlags: 0
@@ -6102,8 +6102,8 @@ GameObject:
   - component: {fileID: 1692614116}
   - component: {fileID: 6283972142564161067}
   - component: {fileID: 5625797433993196297}
-  - component: {fileID: 869227651630817831}
   - component: {fileID: 8872764030628295620}
+  - component: {fileID: 7102331888743726021}
   m_Layer: 9
   m_Name: Drone
   m_TagString: Enemy
@@ -6138,6 +6138,7 @@ Transform:
   - {fileID: 8711785209898319216}
   - {fileID: 1298530015805084368}
   - {fileID: 2361266631580481703}
+  - {fileID: 8990004725550498051}
   m_Father: {fileID: 0}
   m_RootOrder: 0
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
@@ -6272,20 +6273,6 @@ MonoBehaviour:
   - {fileID: 3440290222160884764}
   - {fileID: 3532076496665106494}
   - {fileID: 5733273459591178176}
---- !u!136 &869227651630817831
-CapsuleCollider:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 2000804235349801773}
-  m_Material: {fileID: 13400000, guid: d8637a3e797a152468ab94066c728e5e, type: 2}
-  m_IsTrigger: 0
-  m_Enabled: 1
-  m_Radius: 0.2
-  m_Height: 0.9
-  m_Direction: 1
-  m_Center: {x: 0, y: 0.05, z: 0}
 --- !u!114 &8872764030628295620
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -6299,6 +6286,20 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   healthBar: {fileID: 2346028645265931320}
+--- !u!136 &7102331888743726021
+CapsuleCollider:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2000804235349801773}
+  m_Material: {fileID: 0}
+  m_IsTrigger: 0
+  m_Enabled: 1
+  m_Radius: 0.16
+  m_Height: 0.8673457
+  m_Direction: 1
+  m_Center: {x: 0, y: -0.25874195, z: 0}
 --- !u!1 &2055335320707413171
 GameObject:
   m_ObjectHideFlags: 0
@@ -6412,6 +6413,77 @@ MeshRenderer:
   m_SortingLayerID: 0
   m_SortingLayer: 0
   m_SortingOrder: 0
+--- !u!1 &4063132842516136728
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 8990004725550498051}
+  - component: {fileID: 1326714490519229338}
+  - component: {fileID: 3361722930600078527}
+  m_Layer: 0
+  m_Name: ProjectileTrigger
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &8990004725550498051
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 4063132842516136728}
+  m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 0.6666667, y: 0.6666667, z: 0.6666667}
+  m_Children: []
+  m_Father: {fileID: 2000804235349801761}
+  m_RootOrder: 16
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!135 &1326714490519229338
+SphereCollider:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 4063132842516136728}
+  m_Material: {fileID: 0}
+  m_IsTrigger: 1
+  m_Enabled: 1
+  serializedVersion: 2
+  m_Radius: 3
+  m_Center: {x: 0, y: 0, z: 0}
+--- !u!114 &3361722930600078527
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 4063132842516136728}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: ef7eeb0b3fefa17408aa59925d60695f, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  DetectionEvent:
+    m_PersistentCalls:
+      m_Calls:
+      - m_Target: {fileID: 2000804235349801766}
+        m_MethodName: AlertAndFollow
+        m_Mode: 0
+        m_Arguments:
+          m_ObjectArgument: {fileID: 0}
+          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
+          m_IntArgument: 0
+          m_FloatArgument: 0
+          m_StringArgument: 
+          m_BoolArgument: 0
+        m_CallState: 2
 --- !u!1 &4173086586034620113
 GameObject:
   m_ObjectHideFlags: 0
@@ -8847,15 +8919,15 @@ PrefabInstance:
       objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 18d1c83ec65c808428b406c129120d9c, type: 3}
---- !u!4 &1302988580678367016 stripped
-Transform:
-  m_CorrespondingSourceObject: {fileID: 389717844343187056, guid: 18d1c83ec65c808428b406c129120d9c,
-    type: 3}
-  m_PrefabInstance: {fileID: 1692697486903054680}
-  m_PrefabAsset: {fileID: 0}
 --- !u!1 &2346028645265931320 stripped
 GameObject:
   m_CorrespondingSourceObject: {fileID: 4031689214767328608, guid: 18d1c83ec65c808428b406c129120d9c,
+    type: 3}
+  m_PrefabInstance: {fileID: 1692697486903054680}
+  m_PrefabAsset: {fileID: 0}
+--- !u!4 &1302988580678367016 stripped
+Transform:
+  m_CorrespondingSourceObject: {fileID: 389717844343187056, guid: 18d1c83ec65c808428b406c129120d9c,
     type: 3}
   m_PrefabInstance: {fileID: 1692697486903054680}
   m_PrefabAsset: {fileID: 0}
@@ -8933,15 +9005,15 @@ PrefabInstance:
       objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: cb4e24f42efe5ba49994737723cf2862, type: 3}
---- !u!198 &8800958847753626946 stripped
-ParticleSystem:
-  m_CorrespondingSourceObject: {fileID: 4467789114266476379, guid: cb4e24f42efe5ba49994737723cf2862,
-    type: 3}
-  m_PrefabInstance: {fileID: 4909926307168156185}
-  m_PrefabAsset: {fileID: 0}
 --- !u!4 &8194251062688790872 stripped
 Transform:
   m_CorrespondingSourceObject: {fileID: 3860812052871562049, guid: cb4e24f42efe5ba49994737723cf2862,
+    type: 3}
+  m_PrefabInstance: {fileID: 4909926307168156185}
+  m_PrefabAsset: {fileID: 0}
+--- !u!198 &8800958847753626946 stripped
+ParticleSystem:
+  m_CorrespondingSourceObject: {fileID: 4467789114266476379, guid: cb4e24f42efe5ba49994737723cf2862,
     type: 3}
   m_PrefabInstance: {fileID: 4909926307168156185}
   m_PrefabAsset: {fileID: 0}

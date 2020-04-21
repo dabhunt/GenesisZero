@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using UnityEngine;
 
 /**
+ * Justin Couch
  * PawnAnimationEvents is used to allow the animator control the Pawn class
  */
 public class PawnAnimationEvents : MonoBehaviour

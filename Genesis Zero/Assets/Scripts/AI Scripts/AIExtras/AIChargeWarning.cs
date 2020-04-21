@@ -44,7 +44,7 @@ public class AIChargeWarning : MonoBehaviour
 
     private void FixedUpdate()
     {
-        if (controller == null) { return; }
+        if (controller == null) { Destroy(gameObject); }
         if (controller.BehaviorProperties == null) { return; }
 
         float normTime = CalculateNormalizedTime();

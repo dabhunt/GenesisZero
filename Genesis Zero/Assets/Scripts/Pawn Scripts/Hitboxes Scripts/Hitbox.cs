@@ -152,6 +152,7 @@ public class Hitbox : MonoBehaviour
             state = State.Colliding;
         }
 
+        bool hit = false;
         if (state == State.Colliding)
         {
             bool siblingcolliders = false;
@@ -160,7 +161,7 @@ public class Hitbox : MonoBehaviour
                 siblingcolliders = hittargets.Contains(other.transform.root.gameObject);
             }
 
-            if (other != GetComponent<Collider>() && MaxHits > 0 && (other.GetComponentInParent<Hurtbox>() || other.GetComponent<Hurtbox>()) && CanDamage(other) && (other.GetComponentInParent<Pawn>() || other.GetComponent<Pawn>()) && !siblingcolliders)
+            if (other != GetComponent<Collider>() && MaxHits > 0 && (other.GetComponentInParent<Hurtbox>() || other.GetComponent<Hurtbox>()) && CanDamage(other) && (other.GetComponentInParent<Pawn>() || other.GetComponent<Pawn>()) && !siblingcolliders && other.GetComponent<BodyPart>())
             {
                 float finaldamage = Damage;
                 Pawn p = other.GetComponentInParent<Pawn>();
@@ -236,12 +237,17 @@ public class Hitbox : MonoBehaviour
                 }
                
                 hittargets.Add(other.transform.root.gameObject);
+                hit = true;
                 --MaxHits;
             }
             else if (Intangible == false && other != GetComponent<Collider>() && !(other.GetComponentInParent<Hurtbox>() || other.GetComponent<Hurtbox>()) && !siblingcolliders && !other.isTrigger)
             {
                 state = State.Deactive;
                 return true;
+            }
+            else
+            {
+                //Debug.Log((other != GetComponent<Collider>()) + " " + (MaxHits > 0) + " " + (other.GetComponentInParent<Hurtbox>() || other.GetComponent<Hurtbox>()) + " " + CanDamage(other) + " " + (other.GetComponentInParent<Pawn>() || other.GetComponent<Pawn>()) + " " + !siblingcolliders +" "+ other.GetComponent<BodyPart>());
             }
 
 
@@ -250,6 +256,10 @@ public class Hitbox : MonoBehaviour
         if (MaxHits <= 0 && state != State.Deactive)
         {
             state = State.Deactive;
+            return true;
+        }
+        else if (hit)
+        {
             return true;
         }
         return false;

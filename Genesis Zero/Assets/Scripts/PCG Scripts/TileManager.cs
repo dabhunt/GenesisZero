@@ -10,24 +10,51 @@ public class TileManager : MonoBehaviour
 	public int maxBuildingTileCount = 24;
 	public int minBuildingTileCount = 8;
 	public int numberOfBuildings = 3;
+	public int levelSpacing = 1000;
 	public float minOffset;
 	public float maxOffset;
+	public string teleporterID = "Teleporter_Mock2";
 	public GameObject[] tilePrefabs;
 	public GameObject[] enemyPrefabs;
-	
+	[Header("Enemy Spawning")]
+	public Vector2 MinMaxEnemies = new Vector2(3, 5);
+	[Range(0, 1)]
+	public float SpawnChance = .1f;
 	//Private Variables
 	private float currentPos = 22.0f;
 	private float tileLength = 22.0f;
 	private float tileHeight = 6.5f;
-	
-	
+	private GameObject portalPrefab;
+	private GameObject tempPortal;
     // Start is called before the first frame update
     private void Start()
     {
+		portalPrefab = GameObject.Find(teleporterID);
+		tempPortal = portalPrefab; 
+		//Level 1
+		int level = 0;
         for (int i = 0; i < numberOfBuildings; ++i)
 		{
-			generateBuilding(Random.Range(minBuildingWidth, maxBuildingWidth), Random.Range(minBuildingTileCount, maxBuildingTileCount));
+			generateBuilding(Random.Range(minBuildingWidth, maxBuildingWidth), Random.Range(minBuildingTileCount, maxBuildingTileCount), level);
 		}
+		
+		//Level 2
+		++level;
+		currentPos = levelSpacing*level + 22;
+		for (int i = 0; i < numberOfBuildings; ++i)
+		{
+			generateBuilding(Random.Range(minBuildingWidth, maxBuildingWidth), Random.Range(minBuildingTileCount, maxBuildingTileCount), level);
+		}
+		
+		//Level 3
+		++level;
+		currentPos = levelSpacing*level + 22;
+		for (int i = 0; i < numberOfBuildings; ++i)
+		{
+			generateBuilding(Random.Range(minBuildingWidth, maxBuildingWidth), Random.Range(minBuildingTileCount, maxBuildingTileCount), level);
+		}
+		//this should be turned on later to disable the prefab gameobject
+		//portalPrefab.SetActive(false);
     }
 
     // Update is called once per frame
@@ -36,7 +63,7 @@ public class TileManager : MonoBehaviour
         
     }
 	
-	private void generateBuilding(int width, int TileCount)
+	private void generateBuilding(int width, int TileCount, int levelNumber)
 	{
 		//Variables
 		Vector3 spawnVector = new Vector3(1,0,0) * currentPos; //spawnVector for tiles
@@ -73,7 +100,7 @@ public class TileManager : MonoBehaviour
 				}
 				else if (tileRand == 2) //Case 2
 				{
-					//Temporarily disabled due to unintended behavior
+					//Disabled due to unintended behavior
 					//floorWidth -= 2;
 					//shift = floorWidth;
 					//currentPosClone += Random.Range(0.0f, 44.0f)
@@ -101,13 +128,19 @@ public class TileManager : MonoBehaviour
 			spawnVector.x += tileLength;
 			
 			//Spawn Enemy
-			if (Random.Range(0, 1) == 0)
+			if (Random.value <= SpawnChance)
 			{
-				GameObject newEnemy = Instantiate(enemyPrefabs[Random.Range(0, enemyPrefabs.Length)]) as GameObject;
+				int i = Random.Range((int)MinMaxEnemies.x, (int)MinMaxEnemies.y);
 				spawnVector.y += 3;
 				spawnVector.x -= 11;
 				spawnVector.z -= 2;
-				newEnemy.transform.position = spawnVector;
+				while (i > 0)
+				{
+					GameObject newEnemy = Instantiate(enemyPrefabs[Random.Range(0, enemyPrefabs.Length)]) as GameObject;
+					newEnemy.transform.position = spawnVector;
+					--i;
+				}
+				
 				spawnVector.y -= 3;
 				spawnVector.x += 11;
 				spawnVector.z += 2;
@@ -116,14 +149,21 @@ public class TileManager : MonoBehaviour
 			//Spawn Teleporter
 			if (Random.Range(0, 10) == 0)
 			{
-				GameObject exitPortal = GameObject.Find("Teleporter_Mock2");
-				spawnVector.y += 7;
-				spawnVector.x -= 22;
-				spawnVector.z -= 2;
-				exitPortal.transform.position = spawnVector;
-				spawnVector.y -= 7;
-				spawnVector.x += 22;
-				spawnVector.z += 2;
+				//GameObject exitPortal = Instantiate(portalPrefab) as GameObject;
+				//temp fix until better second pass PCG teleporter system added
+				if (levelNumber == 0)
+				{
+					spawnVector.y += 7;
+					spawnVector.x -= 22;
+					spawnVector.z -= 2;
+					tempPortal.transform.position = spawnVector;
+					//the destination should be the start point of the next level, not 0,0
+					tempPortal.GetComponent<Teleporter>().SetDesination(new Vector2(0, 0));
+					spawnVector.y -= 7;
+					spawnVector.x += 22;
+					spawnVector.z += 2;
+				}
+
 			}
 			
 			//Iterate counting variables

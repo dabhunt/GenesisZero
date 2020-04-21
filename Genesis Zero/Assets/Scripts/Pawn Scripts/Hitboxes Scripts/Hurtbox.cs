@@ -13,6 +13,13 @@ public class Hurtbox : MonoBehaviour
 
     public List<Collider> colliders;
     private Player player;
+
+    private List<GameObject> collisions;
+    private float resettime = 1;
+    private int collisioncount;
+
+    private Vector3 normal;
+
     private void Awake()
     {
 
@@ -23,6 +30,7 @@ public class Hurtbox : MonoBehaviour
     {
         colliders.Clear();
         AddCollliders(transform, colliders);
+        collisions = new List<GameObject>();
     }
     public void AddCollliders(Transform currentparent, List<Collider> colliders)
     {
@@ -53,11 +61,18 @@ public class Hurtbox : MonoBehaviour
                 {
                     colliders.Remove(col);
                 }
-
             }
 
         }
         catch { }
+        if (colliders.Count > 0)
+        {
+            resettime -= Time.fixedDeltaTime;
+            if (resettime <= 0)
+            {
+                collisions.Clear();
+            }
+        }
     }
 
     private void OnTriggerEnter(Collider other)
@@ -66,7 +81,7 @@ public class Hurtbox : MonoBehaviour
     }
 
 
-    private void OnCollisionStay(Collision collision)
+    private void OnCollisionEnter(Collision collision)
     {
         Vector2 vel = GetComponent<Rigidbody>().velocity;
         Vector3 avg = Vector3.zero;
@@ -85,9 +100,17 @@ public class Hurtbox : MonoBehaviour
         //Debug.Log("Colliding");
         if (GetComponent<Pawn>() && GetComponent<Pawn>().GetKnockBackForce() > 3 && ((vel.magnitude > 4 && collision.collider.isTrigger == false) || GetComponent<Pawn>().IsForcedKnockBack()))
         {
-            if (GetComponent<Pawn>().IsForcedKnockBack() && Mathf.Abs(angle) < 180)
+            if (GetComponent<Pawn>().IsForcedKnockBack() && Mathf.Abs(angle) < 160 && !collisions.Contains(collision.gameObject) && resettime < Time.fixedDeltaTime)
             {
                 GetComponent<Pawn>().KnockBackForced(-GetComponent<Pawn>().GetKnockBackVector(), GetComponent<Pawn>().GetKnockBackForce() / 2);
+
+                normal = (collision.GetContact(0).normal * 1);
+                //Debug.Log(transform.position +" - "+ GetComponent<Pawn>().GetLastPosition() +" = "+ (-(transform.position - GetComponent<Pawn>().GetLastPosition())));
+                // GetComponent<Pawn>().transform.position += -((transform.position - GetComponent<Pawn>().GetLastPosition()).normalized * (1 + GetComponent<CapsuleCollider>().radius));
+                GetComponent<Pawn>().transform.position += normal;
+
+                collisions.Add(collision.gameObject);
+                resettime = Time.fixedDeltaTime * 1;
                 return;
             }
             else if (Mathf.Abs(angle) < 75)  // if the object hits the other object directly, then they take the damage
@@ -111,7 +134,7 @@ public class Hurtbox : MonoBehaviour
                     collision.gameObject.GetComponent<Rigidbody>().velocity += newVec / 2;
                 }
 
-                GetComponent<Pawn>().SetKnockBackForce(0);
+                //GetComponent<Pawn>().SetKnockBackForce(0);
             }
 
             /**
@@ -123,6 +146,7 @@ public class Hurtbox : MonoBehaviour
                 */
         }
     }
+
 
     [ExecuteInEditMode]
     private void OnDrawGizmosSelected()

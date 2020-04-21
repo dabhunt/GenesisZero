@@ -21,6 +21,7 @@ public class SkillDisplay : MonoBehaviour
     [Space]
     public float AbilityScale = .7f;
     public Vector2 PopupPosition;
+    public bool ModsInMiddle = true;
     private Canvas canvasRef;
 
     public int skillnumber;
@@ -75,8 +76,14 @@ public class SkillDisplay : MonoBehaviour
 
             if (skills[i].IsAbility == false)
             {
-                GameObject instance = (GameObject)Instantiate(UIElement, (Vector3)transform.position + (Vector3)StartPoint + new Vector3(Seperation.x * col, Seperation.y * row), Quaternion.identity);
+                float scaleFactor = canvasRef.scaleFactor;
+                if (ModsInMiddle)
+                    StartPoint.x = -355f;
+                GameObject instance = (GameObject)Instantiate(UIElement, (Vector3)transform.position + (Vector3)StartPoint *scaleFactor + new Vector3(Seperation.x * col * scaleFactor, Seperation.y * row * scaleFactor), Quaternion.identity);
                 instance.transform.SetParent(transform);
+                //RectTransform myRect = instance.GetComponent<RectTransform>();
+                Vector2 finalPosition = new Vector2(instance.transform.position.x, instance.transform.position.y);
+                //myRect.anchoredPosition = finalPosition;
                 //instance.GetComponent<RectTransform>().anchoredPosition = (Vector3)transform.position + (Vector3)StartPoint + new Vector3(Seperation.x * col, Seperation.y * row);
                 instance.transform.localScale = new Vector3(1, 1, 1);
                 instance.transform.localRotation = Quaternion.Euler(0, 0, 0);
