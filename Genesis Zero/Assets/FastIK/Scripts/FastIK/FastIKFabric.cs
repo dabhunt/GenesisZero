@@ -1,6 +1,4 @@
-﻿#if UNITY_EDITOR
-using UnityEditor;
-#endif
+﻿using UnityEditor;
 using UnityEngine;
 
 namespace DitzelGames.FastIK
@@ -8,6 +6,7 @@ namespace DitzelGames.FastIK
     /// <summary>
     /// Fabrik IK Solver
     /// </summary>
+    [ExecuteInEditMode]
     public class FastIKFabric : MonoBehaviour
     {
         /// <summary>
@@ -230,10 +229,10 @@ namespace DitzelGames.FastIK
             else
                 current.rotation = Root.rotation * rotation;
         }
-
+#if (UNITY_EDITOR)
         void OnDrawGizmos()
         {
-#if UNITY_EDITOR
+
             var current = this.transform;
             for (int i = 0; i < ChainLength && current != null && current.parent != null; i++)
             {
@@ -245,6 +244,6 @@ namespace DitzelGames.FastIK
             }
         }
 #endif
-
     }
+
 }
