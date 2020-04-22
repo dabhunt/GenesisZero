@@ -58,7 +58,7 @@ public class PlayerController : MonoBehaviour
     //Component Parts
     private Player player;
     private OverHeat overheat;
-    
+
     //Input variables
     GameInputActions inputActions;
     private Vector2 movementInput;
@@ -158,14 +158,14 @@ public class PlayerController : MonoBehaviour
         Vector3 distXhair = worldXhair.transform.position - transform.position;
 
         maxSpeed = GetComponent<Player>().GetSpeed().GetValue();
-        
+
         CalculateForwardDirection();
         if (isRolling) return;
 
         if (isGrounded)
         {
             //Play running sound if player's moving on the ground
-            if(currentSpeed > 0 && !walkSoundPlaying)
+            if (currentSpeed > 0 && !walkSoundPlaying)
             {
                 walkSoundPlaying = true;
                 sound.Walk();
@@ -251,7 +251,7 @@ public class PlayerController : MonoBehaviour
      * when player press jump button to make player jump
      */
     public void Jump(InputAction.CallbackContext ctx)
-    {   
+    {
         if (ctx.performed)
         {
             if (!inputActions.PlayerControls.enabled) return;
@@ -305,7 +305,7 @@ public class PlayerController : MonoBehaviour
         float startVel = vertVel;
         if (IsBlocked(Vector3.up))
             vertVel = -1;
-        
+
         if (vertVel > 0)
         {
             vertVel -= gravity * Time.fixedDeltaTime;
@@ -330,7 +330,7 @@ public class PlayerController : MonoBehaviour
             isGrounded = true;
             if (Physics.Raycast(transform.position, Vector3.down, out hit, characterHeight * 0.5f, immoveables))
                 if (hit.distance < 1f * characterHeight + vertCastPadding)
-                    transform.position = Vector3.Lerp(transform.position, transform.position + Vector3.up * 1* characterHeight , 5 * Time.fixedDeltaTime);
+                    transform.position = Vector3.Lerp(transform.position, transform.position + Vector3.up * 1 * characterHeight, 5 * Time.fixedDeltaTime);
 
             if (vertVel < 0)
                 vertVel = 0;
@@ -370,16 +370,20 @@ public class PlayerController : MonoBehaviour
         }
     }
 
-/* This fuction applies gravity to player
-    * when the player is falling
-    */
+    /* This fuction applies gravity to player
+        * when the player is falling
+        */
     private void ApplyGravity()
     {
         float startVel = vertVel;
         if (isGrounded)
             return;
         if (isRolling)
-            fallSpeedMult = fallSpeedWhileRolling;
+        {            
+            fallSpeedMult = fallSpeedWhileRolling * 0;
+            vertVel = 0;
+        }
+           
         if (isDashing)
             fallSpeedMult = fallSpeedWhileDashing;
         if (!isDashing && !isRolling)
@@ -409,11 +413,16 @@ public class PlayerController : MonoBehaviour
             {
                 animator.SetTrigger("startRoll");
                 StartCoroutine(ResetTrigger("startRoll", triggerResetTime));
+                // Dash effect
+                VFXManager.instance.PlayEffect("VFX_PlayerDashStart", transform.position);
+                gameObject.GetComponentInChildren<SkinnedMeshRenderer>().enabled = false; //TEMPORARY CHANGE THIS
+                VFXManager.instance.PlayEffectForDuration("VFX_PlayerDashEffect", transform.position, rollDuration).transform.parent = transform;
+
                 //Select roll direction based on crosshair position and input
                 if (movementInput.x != 0)
                     rollDirection = movementInput.x > 0 ? 1 : -1;
                 else
-                    rollDirection =  isAimingRight ? 1 : -1;
+                    rollDirection = isAimingRight ? 1 : -1;
                 isRolling = true;
                 GetComponent<Player>().SetInvunerable(rollDuration);
                 NewLayerMask(rollingLayerMask, rollDuration);
@@ -446,7 +455,7 @@ public class PlayerController : MonoBehaviour
         {
             //interupts roll if it's blocked
             if ((rollDirection > 0 && IsBlocked(Vector3.right)) || (rollDirection < 0 && IsBlocked(Vector3.left)))
-            {   
+            {
                 isRolling = false;
                 animator.SetTrigger("endRoll");
                 StartCoroutine(ResetTrigger("endRoll", triggerResetTime));
@@ -463,6 +472,10 @@ public class PlayerController : MonoBehaviour
             else
             {
                 isRolling = false;
+                //End Effect
+                VFXManager.instance.PlayEffect("VFX_PlayerDashEnd", transform.position);
+                gameObject.GetComponentInChildren<SkinnedMeshRenderer>().enabled = true; //TEMPORARY CHANGE THIS
+
                 animator.SetTrigger("endRoll");
                 StartCoroutine(ResetTrigger("endRoll", triggerResetTime));
                 rollCooldown = rollCooldownDuration;
@@ -477,7 +490,7 @@ public class PlayerController : MonoBehaviour
      * Gun rotates to point at crosshair
      */
     private void Aim()
-    {   
+    {
         //float camZ = Mathf.Abs(canvasRef.worldCamera.transform.position.z - transform.position.z);
         float camZ = Vector3.Distance(transform.position, camRef.transform.position);
         Vector3 mouseWorldPos = camRef.ScreenToWorldPoint(new Vector3(Input.mousePosition.x, Input.mousePosition.y, camZ));
@@ -520,10 +533,10 @@ public class PlayerController : MonoBehaviour
     {
         bool isBlock = false;
         RaycastHit hit;
-        
+
         float radius = (0.5f * characterWidth) - vertCastPadding;
         float maxDist = (0.5f * characterHeight) - radius + vertCastPadding;
-        Vector3 halfY = new Vector3 (0, characterHeight * 0.25f, 0);
+        Vector3 halfY = new Vector3(0, characterHeight * 0.25f, 0);
         Vector3 boxCenter = isRolling ? transform.position - halfY : transform.position;
         float boxHalf = isRolling ? (0.25f * characterHeight) - (0.5f * horCastPadding) : (0.5f * characterHeight) - horCastPadding;
         Vector3 halfExtends = new Vector3(0, boxHalf, 0);
@@ -564,10 +577,10 @@ public class PlayerController : MonoBehaviour
 
     public bool BlockedAll()
     {
-    	if(IsBlocked(Vector3.left)) return true;
-    	if(IsBlocked(Vector3.right)) return true;
-    	if(IsBlocked(Vector3.up)) return true;
-    	return false;
+        if (IsBlocked(Vector3.left)) return true;
+        if (IsBlocked(Vector3.right)) return true;
+        if (IsBlocked(Vector3.up)) return true;
+        return false;
     }
 
     /* This function updates information
@@ -591,7 +604,8 @@ public class PlayerController : MonoBehaviour
         var xSpeed = currentSpeed != 0 ? currentSpeed / maxSpeed : 0;
         return xSpeed;
     }
-    public bool IsFacingRight(){
+    public bool IsFacingRight()
+    {
         return isFacingRight;
     }
     public bool IsAimingRight()
