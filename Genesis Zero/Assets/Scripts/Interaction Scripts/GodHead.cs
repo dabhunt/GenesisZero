@@ -168,14 +168,16 @@ public class GodHead : MonoBehaviour
         SkillObject ability = skillManager.GetRandomAbility();
         //Guarantee that the player gets an ability they don't currently have
         //Also, this may at some point even keep track of all abilities the player has ever gotten, to ensure maximum variety for the demo
-        bool checkDuplicates = false;
-        if (skillManager.GetAbilityAmount() > 1)
-            checkDuplicates = true;
-        while (checkDuplicates && (skillManager.GetAbility1().name == ability.name || skillManager.GetAbility2().name == ability.name))
+        int amount = skillManager.GetAbilityAmount();
+        while (amount > 0 && skillManager.GetAbility1().name == ability.name) 
         {
-           ability = skillManager.GetRandomAbility();
+            ability = skillManager.GetRandomAbility();
         }
-        skillManager.SpawnAbility(spawnPoint, skillManager.GetRandomAbility().name);
+        while ( amount > 1 && (skillManager.GetAbility1().name == ability.name || skillManager.GetAbility2().name == ability.name))
+        {
+            ability = skillManager.GetRandomAbility();
+        }
+        skillManager.SpawnAbility(spawnPoint, ability.name);
         //calculate how many essence canisters to subtract from the player
         int essenceCost = player.GetComponent<Player>().GetEssencePerCapsule() * canistersNeeded * -1;
         player.GetComponent<Player>().AddEssence(essenceCost);
