@@ -20,9 +20,10 @@ public class DialogueCollider : MonoBehaviour
     private void OnTriggerEnter(Collider other)
     {
         //if BUG-E has already pointed this gameObject out to the player
-        if (!TriggerRepeatedly && Triggered)
-            return;
         if (DialogueFileName == null || DialogueFileName == "")
+            return;
+        //if we don't want this dialogue to play more than once, and it has already been played, don't play it
+        if (!TriggerRepeatedly && DialogueManager.instance.GetDialoguePlayedAmount(DialogueFileName) > 0)
             return;
         if (other.GetComponent<Player>()) //if it's the player
         {

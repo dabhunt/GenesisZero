@@ -507,6 +507,8 @@ public class AIController : Pawn
      */
     public void AlertAndFollow(Pawn target)
     {
+        if (target == null)
+            return;
         AlertAndFollow(target.transform, false);
     }
 

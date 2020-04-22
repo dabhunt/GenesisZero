@@ -10,12 +10,12 @@ public class PlayerSounds : MonoBehaviour
     //bool applicationIsQuitting;
     // Start is called before the first frame update
     // Update is called once per frame
-    void Awake()
-    {
-        GameObject temp = GameObject.FindWithTag("Player");
-        PC = temp.GetComponent<PlayerController>();
-        aManager = FindObjectOfType<AudioManager>();
-    }
+	private void Start()
+	{
+		GameObject temp = GameObject.FindWithTag("Player");
+		PC = temp.GetComponent<PlayerController>();
+		aManager = FindObjectOfType<AudioManager>();
+	}
 	public void Jump()
 	{
 		aManager.PlayRandomSFXType("Jump");
