@@ -16,7 +16,6 @@ public class AudioManager : MonoBehaviour
 	public AudioSource Primary;
 	public AudioSource Secondary;
 	public AudioSource Tertiary;
-	List<Sound> Soundlist = new List<Sound>();
 
 	private float setVolumeMaster;
 	private float setVolumeDefault;
@@ -24,6 +23,7 @@ public class AudioManager : MonoBehaviour
 	private bool globalMute;
 	private bool soundUpdate;
 	private List<GameObject> soundPlayerChilds = new List<GameObject>();
+	private List<GameObject> soundPlayerStatics = new List<GameObject>();
 
 	// Singleton instance.
 	public static AudioManager instance = null;
@@ -617,127 +617,236 @@ public class AudioManager : MonoBehaviour
 		Destroy(temp);
 	}
 
-	//=================
-	// Sound functions
-	//=================
+	//==========================================================
+	// Static sound functions
+	// Functions to add sounds to be played later
+	// Should be used sparingly
+	//==========================================================
 
-	public void AdjustVolumeSoundlist(float vol)
+	private void AddStaticSound(string name, AudioClip audioClip, GameObject obj, float vol, float pit)
 	{
-		List<Sound>.Enumerator em = Soundlist.GetEnumerator();
+		// Add a new instance for the list of instances
+		GameObject dummyGameObject = new GameObject(name);
+		soundPlayerStatics.Add(dummyGameObject);
+		int currentIndex = soundPlayerStatics.Count - 1;
 
-		setVolumeSound += vol;
-		while (em.MoveNext())
+		// Add the audio source component
+		soundPlayerStatics[currentIndex].AddComponent<AudioSource>();
+		if (obj != null)
 		{
-			em.Current.source.volume += vol;
+			soundPlayerStatics[currentIndex].transform.parent = obj.transform;
+			soundPlayerStatics[currentIndex].transform.position = obj.transform.position;
 		}
+        else
+        {
+			soundPlayerStatics[currentIndex].transform.position = new Vector3(0, 0, 0);
+		}
+
+		// Get the audio source component created
+		AudioSource audioSource = soundPlayerStatics[currentIndex].GetComponent<AudioSource>();
+
+		// Configure the audio source component
+		audioSource.clip = audioClip;
+		audioSource.volume = vol;
+		audioSource.pitch = pit;
+		audioSource.loop = false;
+		audioSource.panStereo = 0f;
+		audioSource.spatialBlend = 1.0f;
 	}
 
-	public void SetVolumeSoundlist(float vol)
+	private bool CheckForDuplicateStatic(string func, string name)
 	{
-		List<Sound>.Enumerator em = Soundlist.GetEnumerator();
-
-		setVolumeSound = vol;
-		while (em.MoveNext())
-		{
-			em.Current.source.volume = vol;
-		}
-	}
-
-	public void ClearAllSoundlist()
-	{
-		List<Sound>.Enumerator em = Soundlist.GetEnumerator();
-
-		while (em.MoveNext())
-		{
-			Destroy(em.Current.source);
-		}
-		Soundlist.Clear();
-	}
-
-	public void PauseAllSoundlist()
-	{
-		List<Sound>.Enumerator em = Soundlist.GetEnumerator();
-
-		while (em.MoveNext())
-		{
-			em.Current.source.Pause();
-		}
-	}
-
-	public void UnPauseAllSoundlist()
-	{
-		List<Sound>.Enumerator em = Soundlist.GetEnumerator();
-
-		while (em.MoveNext())
-		{
-			em.Current.source.UnPause();
-		}
-	}
-
-	public void PlaySoundlist(string name)
-	{
-		List<Sound>.Enumerator em = Soundlist.GetEnumerator();
+		int i = 0;
 		bool found = false;
 
-		while (em.MoveNext() && !found)
+		if (soundPlayerStatics.Count >= 1)
 		{
-			if (em.Current.name == name)
+			while (i < soundPlayerStatics.Count && !found)
 			{
-				found = true;
-				em.Current.source.Play();
+				if (soundPlayerStatics[i].name == name)
+				{
+					Debug.LogWarning(func + ": " + name + "' already exists!");
+					found = true;
+				}
+				i++;
 			}
 		}
-		if (!found)
+		return found;
+	}
+
+	public void AdjustVolumeStatic(float vol)
+	{
+		setVolumeSound += vol;
+		if (soundPlayerStatics.Count >= 1)
 		{
-			Debug.LogWarning("Audio: '" + name + "' not found!");
+			for (int i = soundPlayerStatics.Count - 1; i >= 0; i--)
+			{
+				soundPlayerStatics[i].GetComponent<AudioSource>().volume += vol;
+			}
+		}
+	}
+
+	public void SetVolumeStatic(float vol)
+	{
+		setVolumeSound = vol;
+		if (soundPlayerStatics.Count >= 1)
+		{
+			for (int i = soundPlayerStatics.Count - 1; i >= 0; i--)
+			{
+				soundPlayerStatics[i].GetComponent<AudioSource>().volume = vol;
+			}
+		}
+	}
+
+	public void ClearAllStatic()
+	{
+		if (soundPlayerStatics.Count >= 1)
+		{
+			for (int i = soundPlayerStatics.Count - 1; i >= 0; i--)
+			{
+				Destroy(soundPlayerStatics[i]);
+				soundPlayerStatics.RemoveAt(i);
+			}
+		}
+	}
+
+	public void PauseAllStatic()
+	{
+		if (soundPlayerStatics.Count >= 1)
+		{
+			for (int i = soundPlayerStatics.Count - 1; i >= 0; i--)
+			{
+				soundPlayerStatics[i].GetComponent<AudioSource>().Pause();
+			}
+		}
+	}
+
+	public void UnPauseAllStatic()
+	{
+		if (soundPlayerStatics.Count >= 1)
+		{
+			for (int i = soundPlayerStatics.Count - 1; i >= 0; i--)
+			{
+				soundPlayerStatics[i].GetComponent<AudioSource>().UnPause();
+			}
+		}
+	}
+
+	public void AddStatic(string name)
+	{
+		if (!CheckForDuplicateStatic("AddStatic", name))
+		{
+			AudioClip loadedSound = (AudioClip)Resources.Load("Sounds/SFX/" + name, typeof(AudioClip));
+			AddStaticSound(name, loadedSound, null, setVolumeSound, 1f);
+		}
+	}
+
+	public void AddStatic(string name, GameObject obj)
+	{
+		if (!CheckForDuplicateStatic("AddStatic", name))
+		{
+			AudioClip loadedSound = (AudioClip)Resources.Load("Sounds/SFX/" + name, typeof(AudioClip));
+			AddStaticSound(name, loadedSound, obj, setVolumeSound, 1f);
+		}
+	}
+
+	public void AddStatic(string name, float vol, float pit)
+	{
+		if(!CheckForDuplicateStatic("AddStatic", name))
+		{
+			AudioClip loadedSound = (AudioClip)Resources.Load("Sounds/SFX/" + name, typeof(AudioClip));
+			AddStaticSound(name, loadedSound, null, vol, pit);
+		}
+	}
+
+	public void AddStatic(string name, GameObject obj, float vol, float pit)
+	{
+		if(!CheckForDuplicateStatic("AddStatic", name))
+		{
+			AudioClip loadedSound = (AudioClip)Resources.Load("Sounds/SFX/" + name, typeof(AudioClip));
+			AddStaticSound(name, loadedSound, obj, vol, pit);
+		}
+	}
+
+	public void PlayStatic(string name)
+	{
+		bool found = false;
+		int i = 0;
+
+		if (soundPlayerStatics.Count >= 1)
+		{
+			while (i < soundPlayerStatics.Count && !found)
+            {
+				if (soundPlayerStatics[i].name == name)
+				{
+					found = true;
+					soundPlayerStatics[i].GetComponent<AudioSource>().Play();
+				}
+				i++;
+			}
+		}
+        else
+		{
+			Debug.LogWarning("PlayStatic: '" + name + "' not found!");
 			return;
 		}
 	}
 
-	public void StopSoundlist(string name)
+	public void StopStatic(string name)
 	{
-		List<Sound>.Enumerator em = Soundlist.GetEnumerator();
 		bool found = false;
+		int i = 0;
 
-		while (em.MoveNext() && !found)
+		if (soundPlayerStatics.Count >= 1)
 		{
-			if (em.Current.name == name)
+			while (i < soundPlayerStatics.Count && !found)
 			{
-				found = true;
-				em.Current.source.Stop();
+				if (soundPlayerStatics[i].name == name)
+				{
+					found = true;
+					soundPlayerStatics[i].GetComponent<AudioSource>().Stop();
+				}
+				i++;
 			}
 		}
-		if (!found)
+		else
 		{
-			Debug.LogWarning("Audio: '" + name + "' not found!");
+			Debug.LogWarning("StopStatic: '" + name + "' not found!");
 			return;
 		}
 	}
 	public void StopAllSounds()
 	{
-		List<Sound>.Enumerator em = Soundlist.GetEnumerator();
-		while (em.MoveNext())
+		if (soundPlayerStatics.Count >= 1)
 		{
-			em.Current.source.Stop();
+			for (int i = soundPlayerStatics.Count - 1; i >= 0; i--)
+			{
+				soundPlayerStatics[i].GetComponent<AudioSource>().Stop();
+			}
 		}
 	}
 
 	public void PlaySoundOneShot(string name)
 	{
-		List<Sound>.Enumerator em = Soundlist.GetEnumerator();
 		bool found = false;
+		int i = 0;
 
-		while (em.MoveNext() && !found)
+		if (soundPlayerStatics.Count >= 1)
 		{
-			if (em.Current.name == name)
+			while (i < soundPlayerStatics.Count && !found)
 			{
-				found = true;
-				em.Current.source.PlayOneShot(em.Current.source.clip, 1.0f);
+				if (soundPlayerStatics[i].name == name)
+				{
+					found = true;
+					AudioSource audio = soundPlayerStatics[i].GetComponent<AudioSource>();
+					audio.PlayOneShot(audio.clip, setVolumeSound);
+				}
+				i++;
 			}
 		}
-		if (!found)
+		else
 		{
-			Debug.LogWarning("Audio: " + name + " not found!");
+			Debug.LogWarning("PlaySoundOneShot: '" + name + "' not found!");
 			return;
 		}
 	}

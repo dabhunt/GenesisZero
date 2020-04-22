@@ -34,7 +34,15 @@ public class TestSound : MonoBehaviour
         }
         if (Input.GetKeyDown(KeyCode.S))
         {
-            instance.PlaySound("SFX_AOE");
+            instance.ClearAllStatic();
+        }
+        if (Input.GetKeyDown(KeyCode.F))
+        {
+            instance.AddStatic("SFX_AOE", TestObject);
+        }
+        if (Input.GetKeyDown(KeyCode.G))
+        {
+            instance.PlayStatic("SFX_AOE");
         }
     }
 }

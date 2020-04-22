@@ -20,7 +20,8 @@ public class PlayerSounds : MonoBehaviour
         GameObject temp = GameObject.FindWithTag("Player");
         PC = temp.GetComponent<PlayerController>();
         aManager = FindObjectOfType<AudioManager>();
-    }
+		aManager.AddStatic(walk);
+	}
 	public void Jump()
 	{
         int rng = Random.Range(1, jump.Length);
@@ -38,10 +39,10 @@ public class PlayerSounds : MonoBehaviour
 	}
 	public void Walk()
 	{
-        aManager.PlaySoundlist(walk);
+        aManager.PlayStatic(walk);
 	}
 	public void StopWalk(){
-		aManager.StopSoundlist(walk);
+		aManager.StopStatic(walk);
 	}
 	public void DoubleJump()
 	{
