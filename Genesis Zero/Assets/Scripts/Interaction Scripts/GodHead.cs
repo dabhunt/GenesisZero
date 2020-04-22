@@ -29,6 +29,7 @@ public class GodHead : MonoBehaviour
     //change to private later below this point
     private int modSelectNum = -1;
     private Camera camRef;
+    public float Yoffset = 3.5f;
     //public List<SkillObject> modSkills;
 
     private void Start()
@@ -218,7 +219,7 @@ public class GodHead : MonoBehaviour
                 }
             }
         }
-        screenPos = camRef.WorldToScreenPoint(new Vector3(player.transform.position.x, player.transform.position.y+5f, 0));
+        screenPos = camRef.WorldToScreenPoint(new Vector3(player.transform.position.x, transform.position.y +Yoffset, 0));
         //sets default selection to position 0
         sacUI.transform.position = screenPos;
         UpdateSelect(0);
