@@ -76,6 +76,19 @@ public class StateManager : MonoBehaviour
             if (closestMerchant != null && closestMerchant.GetWindowOpen())
                 GetComponent<InteractInterface>().ClosestInteractable().GetComponent<Merchant>().InitializeUI();
         }
+        //get to next level instantly
+        if (Input.GetKey(KeyCode.ScrollLock))
+        {
+            int levelNum = TileManager.instance.curlevel;
+            float levelSpacing = TileManager.instance.levelSpacing;
+            float rng = Random.Range(1.0f, 4.0f) / 10;
+            Vector2 destination = new Vector2((levelNum+1) * levelSpacing + levelSpacing * rng, 70f);
+            Vector2 colliderPos = GameObject.FindWithTag("CamCollider").transform.position;
+            GameObject.FindWithTag("CamCollider").transform.position = new Vector2(colliderPos.x + levelSpacing+100, colliderPos.y);
+            GameObject.FindWithTag("Player").transform.position = destination;
+            TileManager.instance.curlevel++;
+
+        }
         if (Input.GetKeyDown(KeyCode.PageDown))
         {
             List<SkillObject> list = player.GetSkillManager().GetAllAbilities();

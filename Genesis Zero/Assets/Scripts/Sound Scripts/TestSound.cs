@@ -12,7 +12,7 @@ public class TestSound : MonoBehaviour
     {
         // FindObjectOfType<AudioManager>() searches for an AudioManager object
         instance = FindObjectOfType<AudioManager>();
-        instance.SetVolumeAllChannels(1.0f);
+        instance.SetVolumeMaster(1.0f);
         instance.PlayTrack(1, "Music", "AmbientMusic", true, true);
         instance.PlayTrack(2, "Music", "CombatMusic", true, true,0,1);
     }
