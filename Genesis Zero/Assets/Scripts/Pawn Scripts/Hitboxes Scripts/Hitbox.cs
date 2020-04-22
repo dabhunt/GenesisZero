@@ -95,7 +95,9 @@ public class Hitbox : MonoBehaviour
     private UniqueEffects GetUniqueEffects()
     {
         GameObject temp = GameObject.FindGameObjectWithTag("Player");
-        return temp.GetComponent<Player>().GetComponent<UniqueEffects>();
+        if (temp != null)
+            return temp.GetComponent<Player>().GetComponent<UniqueEffects>();
+        return null;
     }
     public void AddCollliders(Transform currentparent, List<Collider> colliders)
     {
