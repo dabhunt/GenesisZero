@@ -7,7 +7,8 @@ public class FillHealthBar : MonoBehaviour
 {
 	public Image fillImage;
 	public Slider slider;
-    public Color fillColor;
+    public Color fillColor = new Color(0,1,.9f);
+    public Color gainHPColor = new Color(.25f, .75f, .27f);
     public Color lowHPcolor;
 
     private Player player;
@@ -61,12 +62,22 @@ public class FillHealthBar : MonoBehaviour
             HurtTween();
             Invoke("TweenBackBar", tweenTime);
         }
+        if (curValue > valueLastFrame) 
+        {
+            fillImage.color = Color.white;
+            DOTween.To(() => slider.value, x => slider.value = x, curValue, tweenTime);
+            HealTween();
+            Invoke("TweenBackBar", tweenTime);
+        }
         valueLastFrame = curValue;
     }
-
     public void HurtTween()
     {
         DOTween.To(() => fillImage.color, x => fillImage.color = x, lowHPcolor, tweenTime);
+    }
+    public void HealTween()
+    {
+        DOTween.To(() => fillImage.color, x => fillImage.color = x, gainHPColor, tweenTime);
     }
     public void TweenBackBar()
     {

@@ -19,6 +19,7 @@ public class DialogueManager : MonoBehaviour
     private Queue<string> charIcons;
     private Queue<string> sentences;
     private Queue<string> durations;
+    private Dictionary<string, int> dialoguePlayed; 
     private int[] interactions;
     private int currentType = -1;
     private bool canSkip = true;
@@ -39,6 +40,7 @@ public class DialogueManager : MonoBehaviour
     // Start is called before the first frame update
     void Start()
     {
+        dialoguePlayed = new Dictionary<string, int>();
         charIcons = new Queue<string>();
         sentences = new Queue<string>();
         durations = new Queue<string>();
@@ -79,6 +81,11 @@ public class DialogueManager : MonoBehaviour
             if (output.Length > 3)
                 AudioManager.instance.PlaySound(output[3]);
         }
+        if (dialoguePlayed.ContainsKey(name))
+            dialoguePlayed[name] = dialoguePlayed[name] + 1;
+        else
+            dialoguePlayed.Add(name, 1);
+
         StartDialogue(dialogue);
     }
     public void TriggerDialogue(string name, bool pauseGame)
@@ -220,6 +227,13 @@ public class DialogueManager : MonoBehaviour
     public int GetInteractAmount(int type)
     {
         return interactions[type];
+    }
+    //returns the amount of times that dialoguename has played
+    public int GetDialoguePlayedAmount(string name) 
+    {
+        if (dialoguePlayed.ContainsKey(name)) 
+            return dialoguePlayed[name];
+        return 0;
     }
     //change currentType so that invokeAfterDialogue plays the right dialogue
     public void SetInteractionAfterDialogue(int type)
