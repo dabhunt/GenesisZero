@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using UnityEngine;
 using DG.Tweening;
+using UnityEngine.Audio;
 
 /* 
  * This script create an Audio Manager where all the music and sound effects are generated from
@@ -13,13 +14,15 @@ using DG.Tweening;
 public class AudioManager : MonoBehaviour
 {
 	// Audio player components.
-	public AudioSource Primary= new AudioSource();
-	public AudioSource Secondary = new AudioSource();
-	public AudioSource Tertiary = new AudioSource();
+	public AudioSource Primary;
+	public AudioSource Secondary;
+	public AudioSource Tertiary;
+
+	public AudioMixer mixer;
 	List<Sound> Soundlist = new List<Sound>();
 	List<string> SFXNames = new List<string>();
 	private float setVolumeMaster;
-	private float setVolumeDefault;
+	private float setVolumeMusic;
 	private float setVolumeSound;
 	private bool globalMute;
 	private bool soundUpdate;
@@ -41,7 +44,7 @@ public class AudioManager : MonoBehaviour
 
 		// Hardcoded default values
 		setVolumeMaster = AudioListener.volume;
-		setVolumeDefault = 3.0f;
+		setVolumeMusic = 3.0f;
 		setVolumeSound = 3.0f;
 		globalMute = false;
 		soundUpdate = true;
@@ -54,11 +57,10 @@ public class AudioManager : MonoBehaviour
 		{
 			SFXNames.Add(temp[i].name);
 		}
-
 		//PlayFadeInTrack(1, "Music", "AmbientMusic", true, 5f);
-		instance.SetVolumeAllChannels(.7f);
-		instance.PlayFadeInTrack(1, "Music", "AmbientMusic", true, 7f);
-		instance.PlayTrack(2, "Music", "CombatMusic", true, true, 0, 1);
+		SetVolumeMusic(.7f);
+		PlayFadeInTrack(1, "Music", "AmbientMusic", true, 7f);
+		PlayTrack(2, "Music", "CombatMusic", true, true, 0, 1);
 	}
 	// Update is called once per frame
 	void Update()
@@ -99,7 +101,7 @@ public class AudioManager : MonoBehaviour
 		AudioListener.volume += vol;
 	}
 
-	public void SetVolumeAll(float vol)
+	public void SetVolumeMaster(float vol)
 	{
 		AudioListener.volume = vol;
 	}
@@ -128,15 +130,6 @@ public class AudioManager : MonoBehaviour
 				break;
 		}
 	}
-
-	public void AdjustVolumeAllChannels(float vol)
-	{
-		Primary.volume += vol;
-		Secondary.volume += vol;
-		Tertiary.volume += vol;
-		setVolumeDefault += vol;
-	}
-
 	//--------------------------------------------------
 
 	public void SetVolumeChannel(int channel, float vol)
@@ -158,11 +151,14 @@ public class AudioManager : MonoBehaviour
 		}
 	}
 
-	public void SetVolumeAllChannels(float vol)
+	public void SetVolumeMusic(float vol)
 	{
-		setVolumeDefault = Primary.volume = Secondary.volume = Tertiary.volume = vol;
+		setVolumeMusic = Primary.volume = Secondary.volume = Tertiary.volume = vol;
 	}
-
+	public void SetVolumeSFX(float vol) 
+	{
+		
+	}
 	//--------------------------------------------------
 
 	public void ClearChannel(int channel)
@@ -314,7 +310,7 @@ public class AudioManager : MonoBehaviour
 	public void CrossFadeChannels(int outAudio, float outTime, int inAudio, float inTime)
 	{
 		FadeOutChannel(outAudio, outTime);
-		FadeInChannel(inAudio, setVolumeDefault, inTime);
+		FadeInChannel(inAudio, setVolumeMusic, inTime);
 	}
 
 	public void CrossFadeChannels(int outAudio, float outTime, int inAudio, float inVol, float inTime)
@@ -385,6 +381,7 @@ public class AudioManager : MonoBehaviour
 		AudioSource s = gameObject.AddComponent<AudioSource>();
 
 		AudioClip loadedSound = (AudioClip)Resources.Load("Sounds/" + type + "/" + name, typeof(AudioClip));
+		s.outputAudioMixerGroup = mixer.FindMatchingGroups("Master/SFX")[0];
 		s.clip = loadedSound;
 		s.volume = vol;
 		s.spatialBlend = blend;
@@ -420,7 +417,6 @@ public class AudioManager : MonoBehaviour
 		AudioSource temp = ImportAudio(type, name, vol, 0f, pit, loop, 0f, awake);
 		CopyToChannel(channel, temp);
 		Destroy(temp);
-
 		if (awake)
 		{
 			PlayChannel(channel);
@@ -429,7 +425,7 @@ public class AudioManager : MonoBehaviour
 
 	public void PlayFadeInTrack(int channel, string type, string name, bool loop, float inTime)
 	{
-		AudioSource temp = ImportAudio(type, name, setVolumeDefault, 0f, 1f, loop, 0f, true);
+		AudioSource temp = ImportAudio(type, name, setVolumeMusic, 0f, 1f, loop, 0f, true);
 		CopyToChannel(channel, temp);
 		Destroy(temp);
 
@@ -452,12 +448,12 @@ public class AudioManager : MonoBehaviour
 	//==========================================================
 
 	// Function courtesy of Alan Teruel's workaround code
-	private void PlayClipAtVector(AudioClip audioClip, Vector3 position, float delay, float vol, float pit, bool looping, bool surround)
+	private void PlayClipAtVector(AudioClip clip, Vector3 position, float delay, float vol, float pit, bool looping, bool surround)
 	{
 		// Add a new instance for the list of instances
-		if (audioClip == null)
+		if (clip== null)
 			return;
-		GameObject dummyGameObject = new GameObject(audioClip.name);
+		GameObject dummyGameObject = new GameObject(clip.name);
 		soundPlayerChilds.Add(dummyGameObject);
 		int currentIndex = soundPlayerChilds.Count - 1;
 
@@ -469,7 +465,8 @@ public class AudioManager : MonoBehaviour
 		AudioSource audioSource = soundPlayerChilds[currentIndex].GetComponent<AudioSource>();
 
 		// Configure the audio source component
-		audioSource.clip = audioClip;
+		audioSource.outputAudioMixerGroup = mixer.FindMatchingGroups("Master/SFX")[0];
+		audioSource.clip = clip;
 		audioSource.volume = vol;
 		audioSource.pitch = pit;
 		audioSource.loop = looping;
@@ -564,7 +561,6 @@ public class AudioManager : MonoBehaviour
 	{
 		PlaySound(name, vol, pit, loop, vector, 0f);
 	}
-
 	public void PlaySound(string name, float vol, float pit, bool loop, Vector3 vector, float delay)
 	{
 		AudioSource temp = ImportAudio("SFX", name, vol, 0f, pit, loop, 0f, true);

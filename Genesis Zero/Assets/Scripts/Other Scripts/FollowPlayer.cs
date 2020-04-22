@@ -16,12 +16,13 @@ public class FollowPlayer : MonoBehaviour
     {
 
         playerObj = GameObject.FindGameObjectWithTag("Player");
-
     }
 
     // Update is called once per frame
     void Update()
     {
+        if (playerObj == null)
+            return;
         playerpos = playerObj.transform.position;
         this.transform.position = new Vector3(playerpos.x+Xoffset, playerpos.y+Yoffset, 0+ Zoffset);
     }

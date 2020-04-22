@@ -5,12 +5,13 @@ using UnityEngine;
 public class TileManager : MonoBehaviour
 {
 	//Public Variables (Visible in Inspector)
+	public static TileManager instance;
 	public int maxBuildingWidth = 5;
 	public int minBuildingWidth = 2;
 	public int maxBuildingTileCount = 24;
 	public int minBuildingTileCount = 8;
 	public int numberOfBuildings = 3;
-	public int levelSpacing = 1000;
+	public float levelSpacing = 1000;
 	public float minOffset;
 	public float maxOffset;
 	public string teleporterID = "Teleporter_Mock2";
@@ -26,8 +27,18 @@ public class TileManager : MonoBehaviour
 	private float tileHeight = 6.5f;
 	private GameObject portalPrefab;
 	private GameObject tempPortal;
-    // Start is called before the first frame update
-    private void Start()
+	public int curlevel = 0;
+	private void Awake()
+	{
+		if (instance == null)
+			instance = this;
+		else
+		{
+			Destroy(gameObject);
+			return;
+		}
+	}
+	private void Start()
     {
 		portalPrefab = GameObject.Find(teleporterID);
 		tempPortal = portalPrefab; 
@@ -158,7 +169,8 @@ public class TileManager : MonoBehaviour
 					spawnVector.z -= 2;
 					tempPortal.transform.position = spawnVector;
 					//the destination should be the start point of the next level, not 0,0
-					tempPortal.GetComponent<Teleporter>().SetDesination(new Vector2(0, 0));
+					float rng = Random.Range(1, 4)/10;
+					tempPortal.GetComponent<Teleporter>().SetDesination(new Vector2(levelNumber * levelSpacing + levelSpacing * rng, 70f));
 					spawnVector.y -= 7;
 					spawnVector.x += 22;
 					spawnVector.z += 2;
