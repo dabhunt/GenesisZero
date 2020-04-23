@@ -32,9 +32,5 @@ public class TestSound : MonoBehaviour
         {
             instance.PlayAttachedSound("SFX_AOE", TestObject, 1, 1, false, 0);
         }
-        if (Input.GetKeyDown(KeyCode.S))
-        {
-            instance.PlaySound("SFX_AOE");
-        }
     }
 }

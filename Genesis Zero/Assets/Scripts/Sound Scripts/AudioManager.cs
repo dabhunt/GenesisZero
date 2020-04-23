@@ -106,6 +106,13 @@ public class AudioManager : MonoBehaviour
 		AudioListener.volume = vol;
 	}
 
+	public GameObject getPlayerObj()
+	{
+		if (playerObj == null)
+			playerObj = GameObject.FindWithTag("Player");
+		return playerObj;
+	}
+
 	//=======================
 	// Channel functions
 	//=======================
@@ -485,6 +492,8 @@ public class AudioManager : MonoBehaviour
 		// Add a new instance for the list of instances
 		if (audioClip == null)
 			return;
+		if (obj = null)
+			obj = getPlayerObj();
 		GameObject dummyGameObject = new GameObject(audioClip.name);
 		soundPlayerChilds.Add(dummyGameObject);
 		int currentIndex = soundPlayerChilds.Count - 1;
@@ -546,16 +555,16 @@ public class AudioManager : MonoBehaviour
 
 	public void PlaySound(string name)
 	{
-		PlaySound(name, setVolumeSound, 1, false, playerObj.transform.position, 0f);
+		PlaySound(name, setVolumeSound, 1, false, getPlayerObj().transform.position, 0f);
 	}
 
 	public void PlaySound(string name, bool loop, float delay)
 	{
-		PlaySound(name, setVolumeSound, 1, loop, playerObj.transform.position, 0f);
+		PlaySound(name, setVolumeSound, 1, loop, getPlayerObj().transform.position, 0f);
 	}
 	public void PlaySound(string name, float vol, float pit)
 	{
-		PlaySound(name, vol, pit, false, playerObj.transform.position, 0f);
+		PlaySound(name, vol, pit, false, getPlayerObj().transform.position, 0f);
 	}
 	public void PlaySound(string name, float vol, float pit, bool loop, Vector3 vector)
 	{
@@ -575,17 +584,13 @@ public class AudioManager : MonoBehaviour
 		}
 		Destroy(temp);
 	}
-
+	public void PlayAttachedSound(string name)
+	{
+		PlayAttachedSound(name, null);
+	}
 	public void PlayAttachedSound(string name, GameObject obj)
 	{
-		AudioSource temp = ImportAudio("SFX", name, setVolumeSound, 0f, 1f, false, 0f, true);
-
-		if (temp.playOnAwake)
-		{
-			PlayClipOnObject(temp.clip, obj, 0f, 1f, 1f, false);
-		}
-
-		Destroy(temp);
+		instance.PlayAttachedSound(name, obj, 1, 1, false, 0);
 	}
 
 	public void PlayAttachedSound(string name, GameObject obj, float vol, float pit, bool loop, float delay)
@@ -604,6 +609,14 @@ public class AudioManager : MonoBehaviour
 	//note that if you pass a string value that more than one type of sound has in it's name this will be problematic
 	public void PlayRandomSFXType(string name)
 	{
+		PlayRandomSFXType(name, null);
+	}
+	public void PlayRandomSFXType(string name, GameObject obj)
+	{
+		if (obj == null)
+		{ // playerObj is used if no object is passed in
+			obj = getPlayerObj();
+		}
 		bool found = false;
 		List<string> type = new List<string>();
 		for (int i = 0; i < SFXNames.Count; i ++)
@@ -619,6 +632,7 @@ public class AudioManager : MonoBehaviour
 		if (found)
 		{
 			//play random sound of that same name
+			//PlayAttachedSound(type[rng], obj);
 			PlaySound(type[rng]);
 		}
 		else

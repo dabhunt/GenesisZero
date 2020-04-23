@@ -25,7 +25,7 @@ public class VFXScript : MonoBehaviour
         {
             ps = gameObject.GetComponentInChildren<ParticleSystem>();
         }
-        if (duration != 0)
+        if (ps.isPlaying == false && duration != 0)
         {
             var main = ps.main;
             main.duration = duration;

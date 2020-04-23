@@ -7,13 +7,14 @@ public class PlayerSounds : MonoBehaviour
     // Start is called before the first frame update
     private PlayerController PC;
     private AudioManager aManager;
+	private GameObject playerObj;
     //bool applicationIsQuitting;
     // Start is called before the first frame update
     // Update is called once per frame
 	private void Start()
 	{
-		GameObject temp = GameObject.FindWithTag("Player");
-		PC = temp.GetComponent<PlayerController>();
+		playerObj = GameObject.FindWithTag("Player");
+		PC = playerObj.GetComponent<PlayerController>();
 		aManager = FindObjectOfType<AudioManager>();
 	}
 	public void Jump()

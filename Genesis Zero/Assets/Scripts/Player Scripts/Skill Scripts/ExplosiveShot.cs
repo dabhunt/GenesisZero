@@ -55,7 +55,7 @@ public class ExplosiveShot : MonoBehaviour
             hit.InitializeHitbox(player.GetDamage().GetValue(), player);
             hit.SetLifeTime(.4f);
             GameObject emit = VFXManager.instance.PlayEffect(vfxName, new Vector3(transform.position.x, transform.position.y, transform.position.z), 0f, blastRadius/baseblastRadius);
-            aManager.PlaySoundOneShot(sfxName);
+            aManager.PlaySound(sfxName);
         }
        
     }
