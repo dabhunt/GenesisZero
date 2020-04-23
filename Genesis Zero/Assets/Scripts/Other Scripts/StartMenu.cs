@@ -15,13 +15,39 @@ public class StartMenu : MonoBehaviour
     private GameObject mainMenuScreen;
     private GameObject optionsScreen;
     private GameObject loadingScreen;
+    private TMPro.TMP_Dropdown resDropdown;
+    private List<Resolution> resolutions;
 
     public void Start()
     {
+        List<string> values;
         //Caching some canvas groups
         mainMenuScreen = canvas.transform.Find("MainMenuScreen").gameObject;
         loadingScreen = canvas.transform.Find("LoadingScreen").gameObject;
         optionsScreen = canvas.transform.Find("OptionsScreen").gameObject;
+        resDropdown = optionsScreen.transform.Find("Resolution").GetComponent<TMPro.TMP_Dropdown>();
+
+        //Populating Resolution list
+        Resolution[] options = Screen.resolutions;
+        resolutions = new List<Resolution>(options);
+        values = new List<string>();
+        resolutions.Reverse();
+
+        int index = 0;
+        for (int i = 0; i < resolutions.Count; i++)
+        {
+            if (resolutions[i].refreshRate < 60)
+                continue;
+            values.Add(resolutions[i].width + "x" + resolutions[i].height + " (" + resolutions[i].refreshRate + " hz)");
+            if (resolutions[i].height == Screen.currentResolution.height && resolutions[i].width == Screen.currentResolution.width)
+            {
+                index = i;
+            }
+        }
+        resDropdown.ClearOptions();
+        resDropdown.AddOptions(values);
+        resDropdown.value = index;
+        resDropdown.RefreshShownValue();
     }
 
     //Onclick Event for Start Button
@@ -43,29 +69,48 @@ public class StartMenu : MonoBehaviour
         canvas.transform.Find("OptionsScreen").gameObject.SetActive(true);
     }
 
+    //Onclick event for Quit Button
+    public void QuitButton()
+    {
+        Application.Quit();
+        #if UNITY_EDITOR
+        UnityEditor.EditorApplication.isPlaying = false;
+        #endif
+    }
+
     //Onclick Event for BackButton(options menu)
     public void OptionsBackButton()
     {
         optionsScreen.SetActive(false);
         mainMenuScreen.transform.Find("Buttons").gameObject.SetActive(true);
+        mainMenuScreen.SetActive(true);
     }
 
     //Event to set master volume
     public void SetMasterVolume(float value)
     {
-        AudioManager.instance.mixer.SetFloat("masterVolume", value);
+        if (value >= -40f)
+            AudioManager.instance.mixer.SetFloat("masterVolume", value);
+        else
+            AudioManager.instance.mixer.SetFloat("masterVolume", -80f);
     }
 
     //Event to set sfx volume
     public void SetSFXVolume(float value)
     {
-        AudioManager.instance.mixer.SetFloat("sfxVolume", value);
+        if (value >= -40f)
+            AudioManager.instance.mixer.SetFloat("sfxVolume", value);
+        else
+            AudioManager.instance.mixer.SetFloat("sfxVolume", -80f);
     }
 
     //Event to set music volume
     public void SetMusicVolume(float value)
     {
-        AudioManager.instance.mixer.SetFloat("musicVolume", value);
+        if (value >= -40f)
+            AudioManager.instance.mixer.SetFloat("musicVolume", value);
+        else
+            AudioManager.instance.mixer.SetFloat("musicVolume", -80f);
     }
 
     //Event for toggle mute(master)
@@ -125,13 +170,14 @@ public class StartMenu : MonoBehaviour
         slider.interactable = value;
     }
 
-    //Onclick event for Quit Button
-    public void QuitButton()
+    public void SetFullScreen(bool value)
     {
-        Application.Quit();
-        #if UNITY_EDITOR
-        UnityEditor.EditorApplication.isPlaying = false;
-        #endif
+        Screen.fullScreen = value;
+    }
+    //Event to set Resolution
+    public void SetResolution(int index)
+    {
+        Screen.SetResolution(resolutions[index].width, resolutions[index].height, Screen.fullScreen, resolutions[index].refreshRate);
     }
 
     private void LoadScene()
