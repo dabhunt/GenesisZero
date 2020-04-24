@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-public class FollowPlayer : MonoBehaviour
+public class FollowObject : MonoBehaviour
 {
     // Start is called before the first frame update
    
@@ -10,7 +10,8 @@ public class FollowPlayer : MonoBehaviour
     public float Xoffset;
     public float Zoffset;
 
-    private Vector2 playerpos;
+    public GameObject followObj;
+    private Vector2 pos;
     private GameObject playerObj;
     void Start()
     {
@@ -21,9 +22,15 @@ public class FollowPlayer : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
+        updatePos();
+    }
+    public void updatePos()
+    {
         if (playerObj == null)
             return;
-        playerpos = playerObj.transform.position;
-        this.transform.position = new Vector3(playerpos.x+Xoffset, playerpos.y+Yoffset, 0+ Zoffset);
+        if (followObj == null)
+            followObj = playerObj;
+        pos = followObj.transform.position;
+        this.transform.position = new Vector3(pos.x + Xoffset, pos.y + Yoffset, 0 + Zoffset);
     }
 }

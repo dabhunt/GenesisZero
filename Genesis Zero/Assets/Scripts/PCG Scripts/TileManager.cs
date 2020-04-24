@@ -5,6 +5,8 @@ using UnityEngine;
 public class TileManager : MonoBehaviour
 {
 	//Public Variables (Visible in Inspector)
+	
+	[Header("Tile Spawning")]
 	public static TileManager instance;
 	public int maxBuildingWidth = 5;
 	public int minBuildingWidth = 2;
@@ -14,13 +16,24 @@ public class TileManager : MonoBehaviour
 	public float levelSpacing = 1000;
 	public float minOffset;
 	public float maxOffset;
+	
+	[Header("Interactable Spawning")]
 	public string teleporterID = "Teleporter_Mock2";
+	public float godHeadSpawnChance = .2f;
+	public float chestSpawnChance = .2f;
+	public float merchantSpawnChance = .2f;
+	public float scrapConverterSpawnChance = .2f;
+	
+	[Header("Prefab Containers")]
 	public GameObject[] tilePrefabs;
 	public GameObject[] enemyPrefabs;
+	public GameObject[] interactablePrefabs;
+	
 	[Header("Enemy Spawning")]
 	public Vector2 MinMaxEnemies = new Vector2(3, 5);
 	[Range(0, 1)]
 	public float SpawnChance = .1f;
+	
 	//Private Variables
 	private float currentPos = 22.0f;
 	private float tileLength = 22.0f;
@@ -64,6 +77,32 @@ public class TileManager : MonoBehaviour
 		{
 			generateBuilding(Random.Range(minBuildingWidth, maxBuildingWidth), Random.Range(minBuildingTileCount, maxBuildingTileCount), level);
 		}
+		
+		//Placemat PCG Pass
+		foreach (GameObject mat in GameObject.FindGameObjectsWithTag("Placemat"))
+		{
+			if (mat.name == "GodHeadMat" && Random.value <= godHeadSpawnChance) //Case 1: God Heads
+			{
+				GameObject newGodHead = Instantiate(interactablePrefabs[0]) as GameObject;
+				newGodHead.transform.position = mat.transform.position;
+			}
+			else if (mat.name == "ChestMat" && Random.value <= chestSpawnChance) //Case 2: Chests/Safes
+			{
+				GameObject newChest = Instantiate(interactablePrefabs[1]) as GameObject;
+				newChest.transform.position = mat.transform.position;
+			}
+			else if (mat.name == "MerchantMat" && Random.value <= merchantSpawnChance) //Case 3: Merchants
+			{
+				GameObject newMerchant = Instantiate(interactablePrefabs[2]) as GameObject;
+				newMerchant.transform.position = mat.transform.position;
+			}
+			else if (mat.name == "ScrapMat" && Random.value <= scrapConverterSpawnChance) //Case 4: Scrap Convertors
+			{
+				GameObject newScrap = Instantiate(interactablePrefabs[3]) as GameObject;
+				newScrap.transform.position = mat.transform.position;
+			}
+		}
+		
 		//this should be turned on later to disable the prefab gameobject
 		//portalPrefab.SetActive(false);
     }
