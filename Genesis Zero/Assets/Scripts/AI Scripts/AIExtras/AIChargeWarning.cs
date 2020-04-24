@@ -20,6 +20,7 @@ public class AIChargeWarning : MonoBehaviour
     public float FlashRate = 40f;
     public bool AimAtTarget = false;
     private float localDist = 0.0f;
+    public bool UseAiAim = false;
 
     private void Awake()
     {
@@ -52,7 +53,7 @@ public class AIChargeWarning : MonoBehaviour
 
         if (AimAtTarget && controller.Target != null)
         {
-            Vector3 targetDir = (controller.Target.position - controller.GetOrigin()).normalized;
+            Vector3 targetDir = UseAiAim ? controller.GetAimDirection() : (controller.Target.position - controller.GetOrigin()).normalized;
             transform.position = controller.GetOrigin() + targetDir * localDist;
             transform.rotation = Quaternion.LookRotation(Vector3.forward, new Vector3(-targetDir.y, targetDir.x, 0.0f));
         }

@@ -563,6 +563,18 @@ public class AIController : Pawn
         }
     }
 
+    /**
+     * Returns the aim direction to the target for enemies that shoot
+     */
+    public virtual Vector3 GetAimDirection()
+    {
+        if (Target != null)
+        {
+            return (Target.position - transform.position).normalized;
+        }
+        return Vector3.right;
+    }
+
     private void OnDestroy()
     {
         if (EnemyManager.AllEnemies.Contains(this))
