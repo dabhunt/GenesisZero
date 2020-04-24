@@ -37,6 +37,9 @@ public class DroneExploderAI : AIController
     public ParticleSystem attackParticles;
     public GameObject explosionPrefab;
 
+    [Header("Difficulty")]
+    public DifficultyMultiplier SpeedDifficultyMultiplier;
+
     protected void Awake()
     {
         frb = GetComponent<FakeRigidbody>();
@@ -72,7 +75,7 @@ public class DroneExploderAI : AIController
             patrolDir = Mathf.RoundToInt(Mathf.Sign(Random.value - 0.5f));
         }
 
-        targetSpeed *= GetSpeed().GetValue();
+        targetSpeed *= GetSpeed().GetValue() * SpeedDifficultyMultiplier.GetFactor();
         frb.Accelerate(transform.up * (targetSpeed - frb.GetVelocity().magnitude * Mathf.Clamp01(Vector3.Dot(transform.up, frb.GetVelocity().normalized))) * Acceleration); // Accelerate toward the target
         frb.Accelerate(-transform.right * frb.GetVelocity().magnitude * Vector3.Dot(transform.right, frb.GetVelocity().normalized) * SideDecel); // Deceleration to prevent sideways movement
         transform.rotation = Quaternion.LookRotation(Vector3.forward, lookDir); // Actual rotation

@@ -36,8 +36,6 @@ public class AIController : Pawn
 
     protected ObjectTracker tracker;
 
-    protected float normalizedDifficulty { get { return BehaviorProperties != null ? EnemyManager.Difficulty / Mathf.Max(0.01f, BehaviorProperties.MaxDifficulty) : 1.0f; } } // Range form 0 to 1 indicating current difficulty
-
     new protected void Start()
     {
         base.Start();
