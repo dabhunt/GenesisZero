@@ -24,4 +24,5 @@ public class AIPropertyObject : ScriptableObject
     public float MaxAlertTrackTime = 5.0f;
     public float AlertEnemiesRadius = 1.0f;
     public bool OnlyAlertVisibleEnemies = true;
+    public float MaxDifficulty = 4.0f;
 }

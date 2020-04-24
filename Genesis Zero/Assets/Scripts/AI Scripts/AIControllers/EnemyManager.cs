@@ -9,6 +9,7 @@ using UnityEngine;
 public class EnemyManager : MonoBehaviour
 {
     public static List<AIController> AllEnemies = new List<AIController>();
+    public static float Difficulty = 1.0f;
 
     private void Start()
     {
