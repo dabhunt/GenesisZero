@@ -112,6 +112,15 @@ public class BossAI : AIController
 
         CheckActions(); // Checks and updates what actions the boss should do
 
+        if (bossstate == State.Setting) // CHeck if the boss is doing special animation
+        {
+            boxanimating = true;
+        }
+        else
+        {
+            boxanimating = false;
+        }
+
         if (boxanimating == false)
         {
             animator.gameObject.GetComponent<SnakeBossBase>().EnableIK();
@@ -267,13 +276,12 @@ public class BossAI : AIController
             LastHealth = GetHealth().GetValue();
         }
 
-        if (HealthLoss >= TotalHealth / 2)
+        if (HealthLoss >= TotalHealth / 2 )
         {
             action = 1;
-            bossstate = State.Setting;
-            chargetime = Time.fixedDeltaTime / 2;
+            SetBossstate(State.Setting, 4);
             HealthLoss = 0;
-            Debug.Log("Center");
+            animator.Play("BossWildTest");
         }
         else if (Heat >= 5)
         {
@@ -299,7 +307,6 @@ public class BossAI : AIController
     public void ChooseAction(int action, bool bypass)
     {
         // Do an action based on a set up state.
-
         if (bossstate == State.Repositioning || RepeatingAttack > 0)
         {
             movetarget = Target;    // Reset movetarget back to default target (player)
