@@ -65,7 +65,7 @@ public class Projectile : MonoBehaviour
         {
             SphereCollider col = GetComponent<SphereCollider>();
             bool hitdetect = Physics.SphereCast(transform.position, col.radius, transform.forward, out hit, (speed * 1f * Time.fixedDeltaTime));
-            if (hitdetect && hit.collider != col && (hit.collider.gameObject.GetComponent<BodyPart>() || !hit.collider.isTrigger))
+            if (hitdetect && hit.collider != col && (hit.collider.gameObject.GetComponent<BodyPart>() || !hit.collider.isTrigger) && hit.collider.tag != "Hitbox")
             {
                 Vector3 dir = speed * transform.forward * Time.fixedDeltaTime;
                 dir = dir.normalized * (hit.distance + col.radius * 2);
