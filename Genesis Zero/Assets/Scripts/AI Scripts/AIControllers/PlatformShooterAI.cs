@@ -51,6 +51,7 @@ public class PlatformShooterAI : AIController
     [Header("Difficulty")]
     public DifficultyMultiplier SpeedDifficultyMultiplier;
     public DifficultyMultiplier AimDifficultyMultiplier;
+    public DifficultyMultiplier ShootRateDifficultyMultiplier;
 
     protected void Awake()
     {
@@ -184,7 +185,7 @@ public class PlatformShooterAI : AIController
         {
             if (attackLaunchTime <= 0)
             {
-                attackLaunchTime = AttackLaunchInterval;
+                attackLaunchTime = AttackLaunchInterval * ShootRateDifficultyMultiplier.GetFactor();
                 if (AttackProjectile != null)
                 {
 

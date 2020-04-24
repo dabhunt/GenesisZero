@@ -37,6 +37,7 @@ public class DroneAI : AIController
     [Header("Difficulty")]
     public DifficultyMultiplier SpeedDifficultyMultiplier;
     public DifficultyMultiplier RotationDifficultyMultiplier;
+    public DifficultyMultiplier ShootRateDifficultyMultiplier;
 
     protected void Awake()
     {
@@ -119,7 +120,7 @@ public class DroneAI : AIController
         {
             if (attackLaunchTime <= 0)
             {
-                attackLaunchTime = AttackLaunchInterval;
+                attackLaunchTime = AttackLaunchInterval * ShootRateDifficultyMultiplier.GetFactor();
                 if (AttackProjectile != null)
                 {
                     GameObject spawnedProjectile = Instantiate(AttackProjectile, spawnProjectileSpot.transform.position, transform.rotation);
