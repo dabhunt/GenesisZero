@@ -25,9 +25,10 @@ public class DifficultyMultiplier
 {
     public float MinFactor = 0.5f;
     public float MaxFactor = 1.5f;
+    public bool Invert = false;
 
     public float GetFactor()
     {
-        return Mathf.Lerp(MinFactor, MaxFactor, EnemyManager.normalizedDifficulty);
+        return Invert ? Mathf.Lerp(MaxFactor, MinFactor, EnemyManager.normalizedDifficulty) : Mathf.Lerp(MinFactor, MaxFactor, EnemyManager.normalizedDifficulty);
     }
 }

@@ -37,6 +37,7 @@ public class AIController : Pawn
     protected ObjectTracker tracker;
 
     public DifficultyMultiplier ChargeTimeDifficultyMultiplier;
+    public DifficultyMultiplier CooldownTimeDifficultyMultiplier;
 
     new protected void Start()
     {
@@ -164,6 +165,7 @@ public class AIController : Pawn
      */
     private void StateUpdate()
     {
+        float stateTimeFactor = 1.0f;
         if (state == AIState.Idle)
         {
             if ((GetDistanceToTarget() <= BehaviorProperties.DetectRadius && targetVisible) || alertTracking)
@@ -211,6 +213,7 @@ public class AIController : Pawn
         }
         else if (state == AIState.Charge) // State when charging up an attack
         {
+            stateTimeFactor = ChargeTimeDifficultyMultiplier.GetFactor();
             if (stateTime >= BehaviorProperties.AttackChargeTime)
             {
                 ChangeState(AIState.Attack);
@@ -225,13 +228,14 @@ public class AIController : Pawn
         }
         else if (state == AIState.Cooldown) // State when cooling down after attack
         {
+            stateTimeFactor = CooldownTimeDifficultyMultiplier.GetFactor();
             if (stateTime >= BehaviorProperties.AttackCooldownTime)
             {
                 ChangeState(AIState.Follow);
             }
         }
 
-        stateTime += Time.fixedDeltaTime * (state == AIState.Charge ? ChargeTimeDifficultyMultiplier.GetFactor() : 1.0f);
+        stateTime += Time.fixedDeltaTime * stateTimeFactor;
     }
 
     /**
