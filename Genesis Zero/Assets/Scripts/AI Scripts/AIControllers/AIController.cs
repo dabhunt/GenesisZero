@@ -36,6 +36,8 @@ public class AIController : Pawn
 
     protected ObjectTracker tracker;
 
+    public DifficultyMultiplier ChargeTimeDifficultyMultiplier;
+
     new protected void Start()
     {
         base.Start();
@@ -229,7 +231,7 @@ public class AIController : Pawn
             }
         }
 
-        stateTime += Time.fixedDeltaTime;
+        stateTime += Time.fixedDeltaTime * (state == AIState.Charge ? ChargeTimeDifficultyMultiplier.GetFactor() : 1.0f);
     }
 
     /**
