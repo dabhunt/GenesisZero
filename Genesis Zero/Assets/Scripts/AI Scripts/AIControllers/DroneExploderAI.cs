@@ -39,6 +39,7 @@ public class DroneExploderAI : AIController
 
     [Header("Difficulty")]
     public DifficultyMultiplier SpeedDifficultyMultiplier;
+    public DifficultyMultiplier RotationDifficultyMultiplier;
 
     protected void Awake()
     {
@@ -59,7 +60,7 @@ public class DroneExploderAI : AIController
         if (state == AIState.Follow || state == AIState.Charge || state == AIState.Attack || state == AIState.Cooldown)
         {
             // Rotation assumes that local up direction is forward
-            lookDir = Vector3.Slerp(lookDir, targetPosition - transform.position, RotationRate * Time.fixedDeltaTime); // Rotate to face target
+            lookDir = Vector3.Slerp(lookDir, targetPosition - transform.position, RotationRate * RotationDifficultyMultiplier.GetFactor() * Time.fixedDeltaTime); // Rotate to face target
             targetSpeed = MoveSpeed;
             frb.Accelerate((transform.position - targetPosition).normalized * Mathf.Min(GetAvoidCloseness(), AvoidAccelLimit) * Acceleration * AvoidAmount);
         }
