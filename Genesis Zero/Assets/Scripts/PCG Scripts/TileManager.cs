@@ -17,6 +17,7 @@ public class TileManager : MonoBehaviour
 	public string teleporterID = "Teleporter_Mock2";
 	public GameObject[] tilePrefabs;
 	public GameObject[] enemyPrefabs;
+	public GameObject[] interactablePrefabs;
 	[Header("Enemy Spawning")]
 	public Vector2 MinMaxEnemies = new Vector2(3, 5);
 	[Range(0, 1)]
@@ -64,6 +65,32 @@ public class TileManager : MonoBehaviour
 		{
 			generateBuilding(Random.Range(minBuildingWidth, maxBuildingWidth), Random.Range(minBuildingTileCount, maxBuildingTileCount), level);
 		}
+		
+		//Placemat PCG Pass
+		foreach (GameObject mat in GameObject.FindGameObjectsWithTag("Placemat"))
+		{
+			if (mat.name == "GodHeadMat") //Case 1: God Heads
+			{
+				GameObject newGodHead = Instantiate(interactablePrefabs[0]) as GameObject;
+				newGodHead.transform.position = mat.transform.position;
+			}
+			else if (mat.name == "ChestMat") //Case 2: Chests/Safes
+			{
+				GameObject newChest = Instantiate(interactablePrefabs[1]) as GameObject;
+				newChest.transform.position = mat.transform.position;
+			}
+			else if (mat.name == "MerchantMat") //Case 3: Merchants
+			{
+				GameObject newMerchant = Instantiate(interactablePrefabs[2]) as GameObject;
+				newMerchant.transform.position = mat.transform.position;
+			}
+			else if (mat.name == "ScrapMat") //Case 4: Scrap Convertors
+			{
+				GameObject newScrap = Instantiate(interactablePrefabs[3]) as GameObject;
+				newScrap.transform.position = mat.transform.position;
+			}
+		}
+		
 		//this should be turned on later to disable the prefab gameobject
 		//portalPrefab.SetActive(false);
     }
