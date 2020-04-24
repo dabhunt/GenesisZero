@@ -8,6 +8,9 @@ public class UniqueEffects : MonoBehaviour
     //this script contains non bullet related unique effects of modifiers outside the data structure of stats
     //if this is 2, it checks twice per second
     public float checksPerSecond = 4f;
+    [Header("Music Cross Fade durations")]
+    public float fadeIn = 9f;
+    public float fadeOut = 12f;
     //these are all done in multipliers, not in flat amounts
     // 1.1 = 10% increase, .9f = 10% reduction
     [Header("Adrenaline Rush")]
@@ -53,13 +56,14 @@ public class UniqueEffects : MonoBehaviour
 
     private Player player;
     private OverHeat overheat;
+    private bool incombat = false;
     void Start()
     {
         player = GetComponent<Player>();
         overheat = GetComponent<OverHeat>();
         float repeatRate = 1 / checksPerSecond - (Time.deltaTime * 2);
         if (repeatRate > 0.01f)
-            InvokeRepeating("CheckUniques",0, repeatRate);
+            InvokeRepeating("CheckUniques", 0, repeatRate);
         aManager = FindObjectOfType<AudioManager>();
     }
     public void CheckUniques() {
@@ -101,10 +105,10 @@ public class UniqueEffects : MonoBehaviour
             hitbox.GetComponent<Hitbox>().InitializeHitbox(player.GetDamage().GetValue() * 2f * multi, player, false);
             hitbox.transform.parent = transform;
             hit.SetLifeTime(.25f);
-            hit.Burn = new Vector2(3,HE_TotalBurnDMG/3);
+            hit.Burn = new Vector2(3, HE_TotalBurnDMG / 3);
             hit.SetStunTime(1f);
-            hitbox.GetComponent<SphereCollider>().radius = 2*multi;
-            VFXManager.instance.PlayEffect("VFX_HeatExpulsion", hitbox.transform.position, 0, 2* multi);
+            hitbox.GetComponent<SphereCollider>().radius = 2 * multi;
+            VFXManager.instance.PlayEffect("VFX_HeatExpulsion", hitbox.transform.position, 0, 2 * multi);
             aManager.PlaySoundOneShot("SFX_ExplosionEnemy");
             overheat.SetHeat(0);
         }
@@ -117,7 +121,7 @@ public class UniqueEffects : MonoBehaviour
         if (stacks > 0 && heat >= 50)
         {
             float bonusAP = player.GetAbilityPower().GetBaseValue() * HS_APBonus * (heat / 100);
-            player.GetAbilityPower().AddRepeatingBonus(bonusAP,bonusAP, .8f,"HeatSink_AP");
+            player.GetAbilityPower().AddRepeatingBonus(bonusAP, bonusAP, .8f, "HeatSink_AP");
             player.GetAbilityPower().CheckBonuses();
         }
     }
@@ -148,15 +152,24 @@ public class UniqueEffects : MonoBehaviour
     {
         MusicDecay = 10;
         EnterCombatMusic();
+        Invoke("ExitCombat", MusicDecay+fadeOut);
+    }
+    public bool IsInCombat()
+    {
+        return incombat;
+    }
+    private void ExitCombat()
+    {
+        incombat = false;
     }
     public void EnterCombatMusic()
     {
-        AudioManager.instance.CrossFadeChannels(1, 5.0f, 2, 9.0f);
+        AudioManager.instance.CrossFadeChannels(1, 5.0f, 2, fadeIn);
         //AudioManager.instance.CrossFadeChannels(2, "Music", "CombatMusic", true, 15);
     }
     public void ExitCombatMusic()
     {
-        AudioManager.instance.CrossFadeChannels(2, 5.0f, 1, 12.0f);
+        AudioManager.instance.CrossFadeChannels(2, 5.0f, 1, fadeOut);
     }
     void StackDecayTimer()
     {

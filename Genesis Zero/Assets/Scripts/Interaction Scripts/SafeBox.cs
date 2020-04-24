@@ -28,7 +28,7 @@ public class SafeBox : MonoBehaviour
     {
         if (!isActive || player == null)
             return;
-        if (Vector3.Distance(player.transform.position, gameObject.transform.position) <= 5)
+        if (Vector2.Distance(player.transform.position, gameObject.transform.position) <= 5)
         {
             if (Input.GetKeyDown(KeyCode.F))
             {

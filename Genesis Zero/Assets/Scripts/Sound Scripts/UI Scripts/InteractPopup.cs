@@ -35,7 +35,7 @@ public class InteractPopup : MonoBehaviour
     {
         if (player == null)
             return;
-        if (Vector3.Distance(player.transform.position, transform.position) <= activeDistance)
+        if (Vector2.Distance(player.transform.position, transform.position) <= activeDistance)
         {
             if (!visible && interactable)
             {

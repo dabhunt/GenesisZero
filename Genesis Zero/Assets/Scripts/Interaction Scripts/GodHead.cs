@@ -60,7 +60,7 @@ public class GodHead : MonoBehaviour
             return;
         if (GameInputManager.instance.GetActiveControlMap() == "MenuControls")
             return;
-        if (Vector3.Distance(player.transform.position, transform.position) <= activeDistance && skillManager.GetModAmount() > 0)
+        if (Vector2.Distance(player.transform.position, transform.position) <= activeDistance && skillManager.GetModAmount() > 0)
         {
             int interactions = DialogueManager.instance.GetInteractAmount(0);
             //if player has interacted with a merchant less than twice, show extended dialogue
