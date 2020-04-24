@@ -15,7 +15,8 @@ public class InteractPopup : MonoBehaviour
     public float YOffset = 1.5f;
     public string PopText = "Press [F] to interact";
     private Canvas canvasRef;
-    private bool interactable = true;
+    public bool interactable = true;
+    public bool visible = false;
     private Player player;
     private GameObject popup;
     private Camera camRef;
@@ -36,15 +37,15 @@ public class InteractPopup : MonoBehaviour
             return;
         if (Vector3.Distance(player.transform.position, transform.position) <= activeDistance)
         {
-            if (!interactable)
+            if (!visible && interactable)
             {
-                interactable = true;
+                visible = true;
                 InitializeUI();
             }
         }
         else
         {
-            interactable = false;
+            visible = false;
             if (popup != null)
                 Destroy(popup);
         }

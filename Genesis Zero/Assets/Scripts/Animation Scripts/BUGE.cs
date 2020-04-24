@@ -28,12 +28,16 @@ public class BUGE : MonoBehaviour
     private float minDistReset;
     private float maxDistReset;
     private Queue<WayPoint> animWaypoints;
+    private List<DialogueInfo> dialogueInfo;
     private bool AnimEnabled = false;
     private bool lookOverride = false;
+    private bool interactable = false;
     private EventSystem eventSystem;
+    private GameObject alertObj;
     void Start()
     {
         animWaypoints = new Queue<WayPoint>();
+        dialogueInfo = new List<DialogueInfo>();
         GameObject temp = GameObject.FindWithTag("Player");
 		playerController = temp.GetComponent<PlayerController>();
 		Player = temp.GetComponent<Transform>();
@@ -41,8 +45,10 @@ public class BUGE : MonoBehaviour
 		prevFacingRight = playerController.IsFacingRight();
         minDistReset = MinDistance;
         maxDistReset = MaxDistance;
+        alertObj = GameObject.FindGameObjectWithTag("BUG-EAlert");
+        alertObj.SetActive(false);
         //Test waypoint system
-	}
+    }
     private void Update()
     {
         if (Input.GetMouseButtonDown(1)) //rightclick to test waypoint system
@@ -69,6 +75,10 @@ public class BUGE : MonoBehaviour
                 }
             }
             
+        }
+        if (Input.GetKeyDown(KeyCode.F))
+        {
+            Interact();
         }
     }
     void FixedUpdate()
@@ -180,6 +190,61 @@ public class BUGE : MonoBehaviour
         LookAtObj = lookat;
         lookOverride = true;
         Invoke("StopLook", seconds);
+    }
+    /* called when player interacts with BUG-E
+     */
+    private void Interact() 
+    {
+        DialogueInfo info;
+        if (dialogueInfo.Count < 1)
+            return;
+        info = dialogueInfo[0];
+        dialogueInfo.RemoveAt(0);
+        DialogueManager.instance.TriggerDialogue(info.dialogueName);
+        if (dialogueInfo.Count < 1)
+        {
+            //turn off exclaimation mark
+            alertObj.SetActive(false);
+            interactable = false;
+        }
+        if (info.flysOver)
+        {
+            animWaypoints.Enqueue(info.waypoint);
+        }
+    }
+    /* Remove dialogue from queue if the player leaves the range
+     */
+    public void TooFar(DialogueInfo info)
+    {
+        if (dialogueInfo.Count > 0)
+        {
+            for (int i = 0; i < dialogueInfo.Count; i++)
+            {
+                if (info.ID == dialogueInfo[i].ID)
+                {
+                    dialogueInfo.RemoveAt(i);
+                }  
+            }
+        }
+        else {
+            alertObj.SetActive(false);
+        }
+    }
+    public void AddOptionalDialoguePrompt(DialogueInfo info)
+    {
+        //if the queue already has that file, don't add it
+        if (dialogueInfo.Count > 0)
+        {
+            for (int i = 0; i < dialogueInfo.Count; i++)
+            {
+                if (dialogueInfo[i].dialogueName == info.dialogueName)
+                    return;
+            }
+        }
+        alertObj.SetActive(true);
+        alertObj.GetComponent<FollowObject>().updatePos();
+        dialogueInfo.Add(info);
+        interactable = true;
     }
     private void StopLook()
     {
