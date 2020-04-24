@@ -116,6 +116,7 @@ public class PlayerController : MonoBehaviour
         overheat = GetComponent<OverHeat>();
         player = GetComponent<Player>();
         camRef = Camera.main;
+        worldXhair.transform.position = transform.position;
     }
 
     private void Update()
@@ -379,11 +380,11 @@ public class PlayerController : MonoBehaviour
         if (isGrounded)
             return;
         if (isRolling)
-        {            
+        {
             fallSpeedMult = fallSpeedWhileRolling * 0;
             vertVel = 0;
         }
-           
+
         if (isDashing)
             fallSpeedMult = fallSpeedWhileDashing;
         if (!isDashing && !isRolling)
@@ -398,8 +399,8 @@ public class PlayerController : MonoBehaviour
         }
     }
 
-    /* This function is invoked when player press 
-     * roll button for dodgerolling. 
+    /* This function is invoked when player press
+     * roll button for dodgerolling.
      * It will put the player into rolling state
      */
     public void DodgeRoll(InputAction.CallbackContext ctx)
@@ -491,17 +492,23 @@ public class PlayerController : MonoBehaviour
      */
     private void Aim()
     {
-        //float camZ = Mathf.Abs(canvasRef.worldCamera.transform.position.z - transform.position.z);
-        float camZ = Vector3.Distance(transform.position, camRef.transform.position);
-        Vector3 mouseWorldPos = camRef.ScreenToWorldPoint(new Vector3(Input.mousePosition.x, Input.mousePosition.y, camZ));
-        Vector3 maxBounds = camRef.ViewportToWorldPoint(new Vector3(1, 1, camZ));
-        Vector3 minBounds = camRef.ViewportToWorldPoint(new Vector3(0, 0, camZ));
-        //Clamp the mouse position to bind worldXhair inside screen when using mouse
-        mouseWorldPos.x = Mathf.Clamp(mouseWorldPos.x, minBounds.x, maxBounds.x);
-        mouseWorldPos.y = Mathf.Clamp(mouseWorldPos.y, minBounds.y, maxBounds.y);
-        mouseWorldPos.z = 0;
-        worldXhair.transform.position = mouseWorldPos;
-        screenXhair.position = new Vector2(Input.mousePosition.x, Input.mousePosition.y);
+        float camZ = Mathf.Abs(camRef.transform.position.z);
+        Vector3 worldXhairPos;
+        Vector3 screenXhairPos = new Vector2(Input.mousePosition.x, Input.mousePosition.y);
+
+        //Calculating to stop crosshair from going off screen;
+        Vector3 maxBounds = camRef.ViewportToScreenPoint(new Vector3(1, 1, 0));
+        Vector3 minBounds = camRef.ViewportToScreenPoint(new Vector3(0, 0, 0));
+        //Setting the screenXhair position and clamping it to stay in screen
+        screenXhairPos.x = Mathf.Clamp(screenXhairPos.x, minBounds.x, maxBounds.x);
+        screenXhairPos.y = Mathf.Clamp(screenXhairPos.y, minBounds.y, maxBounds.y);
+        screenXhair.position = screenXhairPos;
+
+        //Setting position of worldXhair to match screenXhair
+        worldXhairPos = camRef.ScreenToWorldPoint(new Vector3 (screenXhairPos.x, screenXhairPos.y, camZ));
+        worldXhairPos.z = 0;
+        worldXhair.transform.position = worldXhairPos;
+
         // checking where the player's aiming
         if (transform.position.x < worldXhair.transform.position.x)
             isAimingRight = true;

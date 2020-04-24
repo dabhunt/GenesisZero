@@ -71,4 +71,14 @@ public class GameInputManager : MonoBehaviour
         }
         return false;
     }
+
+    public void DisablePlayerControls()
+    {
+        inputActions.PlayerControls.Disable();
+    }
+
+    public void EnablePlayerControls()
+    {
+        inputActions.PlayerControls.Enable();
+    }
 }
