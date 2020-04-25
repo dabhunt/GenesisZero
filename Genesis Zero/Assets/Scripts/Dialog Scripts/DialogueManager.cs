@@ -34,16 +34,16 @@ public class DialogueManager : MonoBehaviour
             Destroy(gameObject);
             return;
         }
+        dialoguePlayed = new Dictionary<string, int>();
+        charIcons = new Queue<string>();
+        sentences = new Queue<string>();
+        durations = new Queue<string>();
         //DontDestroyOnLoad(gameObject);
 
     }
     // Start is called before the first frame update
     void Start()
     {
-        dialoguePlayed = new Dictionary<string, int>();
-        charIcons = new Queue<string>();
-        sentences = new Queue<string>();
-        durations = new Queue<string>();
         interactions = new int[3];
         instance.EndDialogue();
         instance.TriggerDialogue("StartDialogue");
@@ -201,10 +201,10 @@ public class DialogueManager : MonoBehaviour
         switch (type) 
         {
             case 0: //Merchant interaction trigger
-                GetComponent<InteractInterface>().ClosestInteractable().GetComponent<Merchant>().AfterDialogue();
+                InteractInterface.instance.ClosestInteractable().GetComponent<Merchant>().AfterDialogue();
                 break;
             case 1: //GodHead interaction trigger
-                GetComponent<InteractInterface>().ClosestInteractable().GetComponent<GodHead>().AfterDialogue();
+                InteractInterface.instance.ClosestInteractable().GetComponent<GodHead>().AfterDialogue();
                 break;
             case 2: //Snakeboss interaction trigger
                 break;
@@ -231,9 +231,10 @@ public class DialogueManager : MonoBehaviour
     //returns the amount of times that dialoguename has played
     public int GetDialoguePlayedAmount(string name) 
     {
-        if (dialoguePlayed.ContainsKey(name)) 
-            return dialoguePlayed[name];
-        return 0;
+        int newin;
+        if (!dialoguePlayed.TryGetValue(name, out newin))
+            return 0;
+        return dialoguePlayed[name];
     }
     //change currentType so that invokeAfterDialogue plays the right dialogue
     public void SetInteractionAfterDialogue(int type)

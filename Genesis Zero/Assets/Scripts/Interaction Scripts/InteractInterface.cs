@@ -7,10 +7,25 @@ using UnityEngine.Events;
 
 public class InteractInterface : MonoBehaviour
 {
+    public static InteractInterface instance;
     private string type;
-    private GameObject closest;
     private float minProximity = 7f;
     private bool canInteract = true;
+    private GameObject player;
+    void Awake()
+    {
+        if (instance == null)
+            instance = this;
+        else
+        {
+            Destroy(gameObject);
+            return;
+        }
+    }
+    private void Start()
+    {
+       player = GameObject.FindGameObjectWithTag("Player");
+    }
     //returns the closest object in the game with the tag "Interactable"
     public GameObject ClosestInteractable()
     {
@@ -22,19 +37,29 @@ public class InteractInterface : MonoBehaviour
         string[] strArray = {tag};
         return ClosestTaggedObj(strArray);
     }
-    private void Update()
+    void Update()
     {
         if (Input.GetKeyDown(KeyCode.F))
         {
+            //determine which interactable / pickup is closest, and perform interact
             string[] strArray = { "Interactable", "Pickups" };
             GameObject obj = ClosestTaggedObj(strArray);
+            //if the closestObject is too far away, it returns null
+            print("obj: " + obj);
+            if (obj == null)
+                return;
+            if (obj.GetComponent<SkillPickup>() != null)
+            { obj.GetComponent<SkillPickup>().Interact(); return; }
             if (obj.GetComponent<Merchant>() != null)
                 { obj.GetComponent<Merchant>().Interact(); return; }
             if (obj.GetComponent<GodHead>() != null)
                 { obj.GetComponent<GodHead>().Interact(); return; }
-            if (obj.GetComponent<SkillPickup>() != null)
-                { obj.GetComponent<SkillPickup>().Interact(); return; }
-
+            if (obj.GetComponent<ModConverter>() != null)
+                { obj.GetComponent<ModConverter>().Interact(); return; }
+            if (obj.GetComponent<SafeBox>() != null)
+                { obj.GetComponent<SafeBox>().Interact(); return; }
+            if (obj.GetComponent<BUGE>() != null)
+                { obj.GetComponent<BUGE>().Interact(); return; }
         }
     }
     public GameObject ClosestTaggedObj(string[] tags)
@@ -42,21 +67,28 @@ public class InteractInterface : MonoBehaviour
         if (!canInteract)
             return null;
         List<GameObject> objects = new List<GameObject>();
-        GameObject player = GameObject.FindGameObjectWithTag("Player");
         //add all gameObjects that contain the tags specified in the passed in array into a big list
         for (int i = 0; i < tags.Length;i++)
         {
             objects.AddRange(GameObject.FindGameObjectsWithTag(tags[i]));
         }
+        if (objects.Count < 1)
+            return null;
         //evaluates the distance between the player and each object of this tag
-        float shortest = Vector3.Distance(player.transform.position, objects[0].transform.position);
+        GameObject closest = objects[0];
+        float shortest = Vector2.Distance(player.transform.position, objects[0].transform.position);
         for (int i = 0; i < objects.Count; i++)
         {
-            float dist = Vector3.Distance(player.transform.position, objects[i].transform.position);
+            float dist = Vector2.Distance(player.transform.position, objects[i].transform.position);
             if (dist < shortest)
             {
-                shortest = dist;
-                closest = objects[i];
+                //if the Inactiveflag component is on the script, it ignores it
+                //this solves the problem that there are many components with different active states being checked here
+                if (objects[i].GetComponent<InactiveFlag>() == null)
+                {
+                    shortest = dist;
+                    closest = objects[i];
+                }
             }
         }
         if (shortest >= minProximity)
@@ -68,7 +100,7 @@ public class InteractInterface : MonoBehaviour
     public void Select(string sint)
     {
         int num = int.Parse(sint);
-        closest = ClosestInteractable();
+        GameObject closest = ClosestInteractable();
         if (closest.GetComponent<GodHead>() != null)
         {
             closest.GetComponent<GodHead>().UpdateSelect(num);
@@ -85,23 +117,23 @@ public class InteractInterface : MonoBehaviour
     //God head functions Accept offer, decline offer
     public void Accept()
     {
-        closest = ClosestInteractable();
+        GameObject closest = ClosestInteractable();
         closest.GetComponent<GodHead>().FinalConfirmSelection();
     }
     public void Decline()
     {
-        closest = ClosestInteractable();
+        GameObject closest = ClosestInteractable();
         closest.GetComponent<GodHead>().CloseUI();
     }
     //Merchant functions Purchase, or exitshop
     public void Purchase()
     {
-        closest = ClosestInteractable();
+        GameObject closest = ClosestInteractable();
         closest.GetComponent<Merchant>().FinalConfirmSelection();
     }
     public void ExitShop()
     {
-        closest = ClosestInteractable();
+        GameObject closest = ClosestInteractable();
         closest.GetComponent<Merchant>().CloseUI();
     }
 

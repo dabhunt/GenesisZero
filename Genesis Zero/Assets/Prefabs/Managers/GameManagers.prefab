@@ -10,7 +10,6 @@ GameObject:
   m_Component:
   - component: {fileID: 6979027268991551798}
   - component: {fileID: 1006860593726510182}
-  - component: {fileID: 4754638615081859116}
   m_Layer: 0
   m_Name: DialogueManager
   m_TagString: Untagged
@@ -47,18 +46,6 @@ MonoBehaviour:
   dialogueText: {fileID: 0}
   charImage: {fileID: 0}
   parent: {fileID: 0}
---- !u!114 &4754638615081859116
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1481965072029859053}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: e4f774eda6a21f6469082dfb9360d10c, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
 --- !u!1 &2727501474454769957
 GameObject:
   m_ObjectHideFlags: 0
@@ -178,6 +165,10 @@ MonoBehaviour:
   minOffset: 0
   maxOffset: 0
   teleporterID: Teleporter_Mock2
+  godHeadSpawnChance: 0.2
+  chestSpawnChance: 0.2
+  merchantSpawnChance: 0.2
+  scrapConverterSpawnChance: 0.2
   tilePrefabs:
   - {fileID: 9185498982791388943, guid: 677f37bb230073444803d3dd39d10d69, type: 3}
   - {fileID: 9185498982791388943, guid: 9834548ed635bb7499e1db000adb5acd, type: 3}
@@ -203,6 +194,7 @@ MonoBehaviour:
   - {fileID: 4068762687681014671, guid: fba6c47c750dc514ca0c7548b7487fd1, type: 3}
   - {fileID: 751653433366621662, guid: 98cebdfd2df96c042aa7cc6718dd4b56, type: 3}
   - {fileID: 2000804235349801773, guid: adcbcf4f6b76a3c4195e183ee3e39524, type: 3}
+  interactablePrefabs: []
   MinMaxEnemies: {x: 3, y: 5}
   SpawnChance: 0.2
   curlevel: 0

@@ -30,13 +30,6 @@ public class Merchant : MonoBehaviour
     //change to private later below this point
     private int itemSelectNum = -1;
     //public List<SkillObject> modSkills;
-
-    private void Update()
-    {
-        if (Input.GetKeyDown(KeyCode.F))
-            Interact();
-    }
-
     private void Start()
     {
         gameObjList = new List<GameObject>();
