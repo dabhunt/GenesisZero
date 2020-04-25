@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.InputSystem;
 using UnityEngine.UI;
+using UnityEngine.Events;
 
 public class InteractInterface : MonoBehaviour
 {
@@ -13,19 +14,49 @@ public class InteractInterface : MonoBehaviour
     //returns the closest object in the game with the tag "Interactable"
     public GameObject ClosestInteractable()
     {
+        return ClosestTaggedObj("Interactable");
+    }
+    public GameObject ClosestTaggedObj(string tag)
+    {
+        //convert single string into array
+        string[] strArray = {tag};
+        return ClosestTaggedObj(strArray);
+    }
+    private void Update()
+    {
+        if (Input.GetKeyDown(KeyCode.F))
+        {
+            string[] strArray = { "Interactable", "Pickups" };
+            GameObject obj = ClosestTaggedObj(strArray);
+            if (obj.GetComponent<Merchant>() != null)
+                { obj.GetComponent<Merchant>().Interact(); return; }
+            if (obj.GetComponent<GodHead>() != null)
+                { obj.GetComponent<GodHead>().Interact(); return; }
+            if (obj.GetComponent<SkillPickup>() != null)
+                { obj.GetComponent<SkillPickup>().Interact(); return; }
+
+        }
+    }
+    public GameObject ClosestTaggedObj(string[] tags)
+    {
         if (!canInteract)
             return null;
+        List<GameObject> objects = new List<GameObject>();
         GameObject player = GameObject.FindGameObjectWithTag("Player");
-        GameObject[] objArray = GameObject.FindGameObjectsWithTag("Interactable");
-        GameObject closest = objArray[0];
-        float shortest = Vector3.Distance(player.transform.position, objArray[0].transform.position);
-        for (int i = 0; i < objArray.Length; i++)
+        //add all gameObjects that contain the tags specified in the passed in array into a big list
+        for (int i = 0; i < tags.Length;i++)
         {
-            float dist = Vector3.Distance(player.transform.position, objArray[i].transform.position);
+            objects.AddRange(GameObject.FindGameObjectsWithTag(tags[i]));
+        }
+        //evaluates the distance between the player and each object of this tag
+        float shortest = Vector3.Distance(player.transform.position, objects[0].transform.position);
+        for (int i = 0; i < objects.Count; i++)
+        {
+            float dist = Vector3.Distance(player.transform.position, objects[i].transform.position);
             if (dist < shortest)
             {
                 shortest = dist;
-                closest = objArray[i];
+                closest = objects[i];
             }
         }
         if (shortest >= minProximity)

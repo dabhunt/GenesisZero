@@ -157,6 +157,10 @@ public class SkillPickup : MonoBehaviour
             }
         }
     }
+    public void Interact()
+    {
+
+    }
     public void SetDropped(bool boo)
     {
         dropped = boo;
