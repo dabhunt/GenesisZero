@@ -27,15 +27,18 @@ public class Teleporter : MonoBehaviour
 			//thePlayer.transform.position = destination.position;
 
 			//thePlayer.transform.position = new Vector3(-120, 16, 0);
-			if(GetAnimationStateTime()>=1){
-			teleport();
-		}
+		//	if(GetAnimationStateTime()>=1){
+		//	teleport();
+		ani.Play("TeleportAnimation");
+			}
 		}
 
-	}
 	private void Update()
 	{
 		portalAnimation();
+	}
+	public void callteleportfromAnimation(){
+		teleport();
 	}
 	private void teleport()
 	{
