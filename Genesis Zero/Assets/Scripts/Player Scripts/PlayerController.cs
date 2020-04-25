@@ -386,7 +386,10 @@ public class PlayerController : MonoBehaviour
         }
 
         if (isDashing)
-            fallSpeedMult = fallSpeedWhileDashing;
+        {
+            fallSpeedMult = 0;
+            vertVel = 0;
+        }
         if (!isDashing && !isRolling)
         {
             fallSpeedMult = resetfallSpeed;

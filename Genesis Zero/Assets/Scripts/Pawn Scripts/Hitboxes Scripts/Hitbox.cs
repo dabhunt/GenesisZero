@@ -47,7 +47,7 @@ public class Hitbox : MonoBehaviour
     private List<GameObject> hittargets = new List<GameObject>();
     private Vector3 lastposition;
     private Vector3 spawnposition;
-
+    private GameObject player;
     private void Awake()
     {
         if (GetComponent<Rigidbody>() == null)
@@ -63,6 +63,7 @@ public class Hitbox : MonoBehaviour
     // Start is called before the first frame update
     void Start()
     {
+        player = GameObject.FindGameObjectWithTag("Player");
         //colliders.Clear();
         state = State.Active;
         if (GetComponent<Collider>() == null)
@@ -91,13 +92,6 @@ public class Hitbox : MonoBehaviour
                 CheckCollisions(col);
             }
         }
-    }
-    private UniqueEffects GetUniqueEffects()
-    {
-        GameObject temp = GameObject.FindGameObjectWithTag("Player");
-        if (temp != null)
-            return temp.GetComponent<Player>().GetComponent<UniqueEffects>();
-        return null;
     }
     public void AddCollliders(Transform currentparent, List<Collider> colliders)
     {
@@ -213,20 +207,21 @@ public class Hitbox : MonoBehaviour
 
                 float phealth = p.GetHealth().GetValue();
                 float damagetaken = p.TakeDamage(finaldamage, Source);
-                GetUniqueEffects().DamageGivenTrigger();
+                if (player != null)
+                    player.GetComponent<Player>().GetComponent<UniqueEffects>().DamageGivenTrigger();
                 if (damagetaken >= phealth)
                     if (killDelegate != null) killDelegate();
 
                 GameObject emit = VFXManager.instance.PlayEffect("DamageNumber", new Vector3(transform.position.x - 1, transform.position.y + 1, transform.position.z - 4f));
                 emit.GetComponent<DamageNumber>().SetNumber(damagetaken, Critical);
-
                 if (Critical)
                 {
                     emit.GetComponent<DamageNumber>().SetColor(new Color(1, 1, 0));
                 }
                 else if (special && bp.damagemultipler > 1)
                 {
-                    GetUniqueEffects().WeakPointHit();
+                    if (player != null)
+                        player.GetComponent<Player>().GetComponent<UniqueEffects>().WeakPointHit();
                     emit.GetComponent<DamageNumber>().SetColor(Color.red);
                 }
                 else if (special && bp.damagemultipler < 1)

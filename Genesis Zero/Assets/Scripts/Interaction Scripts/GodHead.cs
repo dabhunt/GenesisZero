@@ -23,7 +23,7 @@ public class GodHead : MonoBehaviour
     private PlayerSounds sound;
     private List<GameObject> modObjUI;
     //private SkillUIElement skillUIElement;
-    private bool isActive = true;
+    public bool isActive = true;
     private int canistersNeeded = 0;
     //private bool confirmationWindowOpen = false;
     //change to private later below this point
@@ -46,11 +46,6 @@ public class GodHead : MonoBehaviour
         //confirmUI.gameObject.SetActive(false);
     }
 
-    private void Update()
-    {
-        if (Input.GetKeyDown(KeyCode.F))
-            Interact();
-    }
     public void Interact()
     {
         if (!isActive)
@@ -60,7 +55,7 @@ public class GodHead : MonoBehaviour
             return;
         if (GameInputManager.instance.GetActiveControlMap() == "MenuControls")
             return;
-        if (Vector3.Distance(player.transform.position, transform.position) <= activeDistance && skillManager.GetModAmount() > 0)
+        if (Vector2.Distance(player.transform.position, transform.position) <= activeDistance && skillManager.GetModAmount() > 0)
         {
             int interactions = DialogueManager.instance.GetInteractAmount(0);
             //if player has interacted with a merchant less than twice, show extended dialogue
@@ -92,13 +87,6 @@ public class GodHead : MonoBehaviour
         InitializeUI();
         UpdateSelect(0);
         //sacUI.gameObject.SetActive(true);   
-    }
-    public void Select(InputAction.CallbackContext ctx)
-    {
-        if (ctx.performed)
-        {
-            
-        }
     }
     public void UpdateSelect(int num)
     {
@@ -227,6 +215,8 @@ public class GodHead : MonoBehaviour
     public void CloseUI()
     {
         isActive = false;
+        //marks this object as no longer able to be interacted with
+        gameObject.AddComponent<InactiveFlag>();
         sacUI.gameObject.SetActive(false);
         StateManager.instance.UnpauseGame();
         modSelectNum = -1;

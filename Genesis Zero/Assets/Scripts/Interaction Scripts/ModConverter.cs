@@ -19,19 +19,22 @@ public class ModConverter : MonoBehaviour
         player = GameObject.FindGameObjectWithTag("Player");
         Player playerScript = player.GetComponent<Player>();
         sk = playerScript.GetSkillManager();
+        gameObject.AddComponent<InactiveFlag>();
     }
     //When you press the Interact button, the Merchant/Machine determines what random Mod to give you
-    private void Update()
+    public void Interact()
     {
         if (!isActive || player == null)
             return;
         if (Vector3.Distance(player.transform.position, gameObject.transform.position) <= 5)
         {
-            if (Input.GetKeyDown(KeyCode.F))
+            if (modList.Count >= 1)
             {
-                if (modList.Count >= 1)
-                    sk.SpawnMod(player.transform.position, GetNewMod().name);
+                sk.SpawnMod(player.transform.position, GetNewMod().name);
+                //marks this object as no longer able to be interacted with
+                gameObject.AddComponent<InactiveFlag>();
             }
+                
         }
     }
     //returns a new mod based on what mod's are being held in the list
@@ -73,6 +76,7 @@ public class ModConverter : MonoBehaviour
     }
     public void AddMod(SkillObject skill)
     {
+        Destroy(GetComponent<InactiveFlag>());
         modList.Add(skill);
         string s = "";
         if (modList.Count > 1)

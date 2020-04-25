@@ -69,12 +69,13 @@ public class StateManager : MonoBehaviour
         {
             player.SetEssence(player.GetMaxEssenceAmount());
             player.SetKeys(3);
+            player.GetHealth().SetMaxValue(2000);
         }
         if (Input.GetKeyDown(KeyCode.PageUp))
         {
-            Merchant closestMerchant = GetComponent<InteractInterface>().ClosestInteractable().GetComponent<Merchant>();
+            Merchant closestMerchant = InteractInterface.instance.ClosestInteractable().GetComponent<Merchant>();
             if (closestMerchant != null && closestMerchant.GetWindowOpen())
-                GetComponent<InteractInterface>().ClosestInteractable().GetComponent<Merchant>().InitializeUI();
+                InteractInterface.instance.ClosestInteractable().GetComponent<Merchant>().InitializeUI();
         }
         //get to next level instantly
         if (Input.GetKey(KeyCode.ScrollLock))

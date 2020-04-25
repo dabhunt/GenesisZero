@@ -44,7 +44,14 @@ public class PlatformShooterAI : AIController
     public GameObject AttackProjectile;
     public float AttackLaunchInterval = 1.0f;
     private float attackLaunchTime = 0.0f;
+    public float AimSpeed = 1.0f;
     public Vector3 ProjectileStart = Vector3.zero;
+    private Vector3 projectileAim = Vector3.right;
+
+    [Header("Difficulty")]
+    public DifficultyMultiplier SpeedDifficultyMultiplier;
+    public DifficultyMultiplier AimDifficultyMultiplier;
+    public DifficultyMultiplier ShootRateDifficultyMultiplier;
 
     protected void Awake()
     {
@@ -55,6 +62,7 @@ public class PlatformShooterAI : AIController
     {
         base.Start();
         faceDir = Mathf.RoundToInt(Mathf.Sign(Random.value - 0.5f));
+        projectileAim = Vector3.right * faceDir;
         patrolCycleOffset = Random.value * Mathf.PI;
     }
 
@@ -68,7 +76,8 @@ public class PlatformShooterAI : AIController
         base.SetTarget(tr);
         if (Target != null && tracker != null)
         {
-            tracker.GiveUpCondition = () => {
+            tracker.GiveUpCondition = () =>
+            {
                 return tracker.PeekFirstPoint().y > transform.position.y + MaxFollowHeight
                 || tracker.PeekFirstPoint().y < transform.position.y - MaxFollowHeight;
             };
@@ -105,7 +114,7 @@ public class PlatformShooterAI : AIController
 
                 if (edgeBehind)
                 {
-                    frb.Accelerate(Mathf.Sign(transform.position.x - targetPosition.x) * Vector3.right * Mathf.Min(GetAvoidCloseness(), AvoidAccelLimit) * Acceleration * AvoidAmount * slopeForceFactor); // Acceleration to keep away from the target
+                    frb.Accelerate(Mathf.Sign(transform.position.x - targetPosition.x) * Vector3.right * Mathf.Min(GetAvoidCloseness(), AvoidAccelLimit) * Acceleration * AvoidAmount * slopeForceFactor * SpeedDifficultyMultiplier.GetFactor()); // Acceleration to keep away from the target
                 }
             }
         }
@@ -128,7 +137,7 @@ public class PlatformShooterAI : AIController
         }
         faceDirChangeTime += Time.fixedDeltaTime;
 
-        targetSpeed *= GetSpeed().GetValue();
+        targetSpeed *= GetSpeed().GetValue() * SpeedDifficultyMultiplier.GetFactor();
         frb.Accelerate(Vector3.right * (targetSpeed * faceDir - frb.GetVelocity().x) * Acceleration * slopeForceFactor); // Accelerate toward the target
 
         // Smoothly rotate to face target
@@ -167,16 +176,21 @@ public class PlatformShooterAI : AIController
             }
         }
 
+        projectileAim = Vector3.Slerp(projectileAim,
+            (Target.position - transform.position - new Vector3(ProjectileStart.x * faceDir, ProjectileStart.y, ProjectileStart.z)).normalized,
+            AimSpeed * AimDifficultyMultiplier.GetFactor() * Time.fixedDeltaTime);
+
         // Projectile shooting logic
         if (state == AIState.Attack)
         {
             if (attackLaunchTime <= 0)
             {
-                attackLaunchTime = AttackLaunchInterval;
+                attackLaunchTime = AttackLaunchInterval * ShootRateDifficultyMultiplier.GetFactor();
                 if (AttackProjectile != null)
                 {
+
                     GameObject spawnedProjectile = Instantiate(AttackProjectile, transform.position + new Vector3(ProjectileStart.x * faceDir, ProjectileStart.y, ProjectileStart.z),
-                        Quaternion.LookRotation(Vector3.forward, (Target.position - transform.position - new Vector3(ProjectileStart.x * faceDir, ProjectileStart.y, ProjectileStart.z)).normalized));
+                        Quaternion.LookRotation(Vector3.forward, projectileAim));
                     Hitbox spawnedHitbox = spawnedProjectile.GetComponent<Hitbox>();
                     if (spawnedHitbox != null)
                     {
@@ -214,6 +228,11 @@ public class PlatformShooterAI : AIController
         Ray backRay = new Ray(trueOrigin, new Vector3(BackEdgeRay.x * faceDir, BackEdgeRay.y, BackEdgeRay.z));
         edgeInFront = ForwardEdgeRay.sqrMagnitude > 0 ? Physics.Raycast(forwardRay, ForwardEdgeRay.magnitude, groundCheckMask, QueryTriggerInteraction.Ignore) : true;
         edgeBehind = BackEdgeRay.sqrMagnitude > 0 ? Physics.Raycast(backRay, BackEdgeRay.magnitude, groundCheckMask, QueryTriggerInteraction.Ignore) : true;
+    }
+
+    public override Vector3 GetAimDirection()
+    {
+        return projectileAim;
     }
 
     protected void OnDrawGizmosSelected()

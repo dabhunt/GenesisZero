@@ -33,19 +33,22 @@ public class BUGE : MonoBehaviour
     private bool lookOverride = false;
     private EventSystem eventSystem;
     private GameObject alertObj;
+    private bool mouseOver = false;
+    private GameObject playerObj;
     void Start()
     {
         animWaypoints = new Queue<WayPoint>();
         dialogueInfo = new List<DialogueInfo>();
-        GameObject temp = GameObject.FindWithTag("Player");
-		playerController = temp.GetComponent<PlayerController>();
-		Player = temp.GetComponent<Transform>();
+        playerObj = GameObject.FindWithTag("Player");
+		playerController = playerObj.GetComponent<PlayerController>();
+		Player = playerObj.GetComponent<Transform>();
 		speedvar = Speed;
 		prevFacingRight = playerController.IsFacingRight();
         minDistReset = MinDistance;
         maxDistReset = MaxDistance;
         alertObj = GameObject.FindGameObjectWithTag("BUG-EAlert");
         alertObj.SetActive(false);
+
         //Test waypoint system
     }
     private void Update()
@@ -69,16 +72,33 @@ public class BUGE : MonoBehaviour
                     print("blocked by UI: screnXhair.Z " + playerController.screenXhair.transform.position.z);
                 }
                 else
-                {
-                    AddWayPoint(playerController.worldXhair.transform.position, 1f);
+                {//if the player mouse is not on BUGE, add a waypoint
+                    if (mouseOver == false)
+                        AddWayPoint(playerController.worldXhair.transform.position, 1f);
                 }
             }
             
         }
-        if (Input.GetKeyDown(KeyCode.F))
+    }
+    private void OnMouseOver()
+    {
+        print("over");
+        mouseOver = true;
+        if (Input.GetMouseButtonDown(1))
         {
             Interact();
         }
+    }
+    private void OnMouseEnter()
+    {
+        LookAt(playerObj, 3f);
+        if (alertObj.activeSelf)
+            GetComponent<InteractPopup>().visible = true;
+    }
+    private void OnMouseExit()
+    {
+        GetComponent<InteractPopup>().visible = false;
+        mouseOver = false;
     }
     void FixedUpdate()
      {
@@ -192,7 +212,7 @@ public class BUGE : MonoBehaviour
     }
     /* called when player interacts with BUG-E
      */
-    private void Interact() 
+    public void Interact() 
     {
         DialogueInfo info;
         if (dialogueInfo.Count < 1)
