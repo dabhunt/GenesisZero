@@ -132,6 +132,7 @@ MonoBehaviour:
   FlashColor: {r: 1, g: 1, b: 1, a: 1}
   FlashRate: 40
   AimAtTarget: 0
+  UseAiAim: 0
 --- !u!1 &1492215082563166375
 GameObject:
   m_ObjectHideFlags: 0
@@ -5199,6 +5200,14 @@ MonoBehaviour:
   StateChangeEvent:
     m_PersistentCalls:
       m_Calls: []
+  ChargeTimeDifficultyMultiplier:
+    MinFactor: 0.6
+    MaxFactor: 1.2
+    Invert: 0
+  CooldownTimeDifficultyMultiplier:
+    MinFactor: 0.5
+    MaxFactor: 1.3
+    Invert: 1
   RotationRate: 10
   MoveSpeed: 7
   Acceleration: 5
@@ -5216,6 +5225,14 @@ MonoBehaviour:
   attackParticles: {fileID: 2000804235089814667}
   explosionPrefab: {fileID: 6641631083453567850, guid: e7f154a9fc29bcb429ca9d7203da43ec,
     type: 3}
+  SpeedDifficultyMultiplier:
+    MinFactor: 0.5
+    MaxFactor: 1.5
+    Invert: 0
+  RotationDifficultyMultiplier:
+    MinFactor: 0.5
+    MaxFactor: 1.5
+    Invert: 0
   WallCheckCasts: 6
   WallCheckDistance: 2
   WallMask:
@@ -5331,7 +5348,7 @@ MonoBehaviour:
   sound: 
   quitting: 0
   minEssenceDrop: 0
-  maxEssenceDrop: 4
+  maxEssenceDrop: 3
   ModifierDropChance: 0.15
   minDropVelocity: 0.75
   maxDropVelocity: 1.2

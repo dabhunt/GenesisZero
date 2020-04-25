@@ -37,6 +37,10 @@ public class DroneExploderAI : AIController
     public ParticleSystem attackParticles;
     public GameObject explosionPrefab;
 
+    [Header("Difficulty")]
+    public DifficultyMultiplier SpeedDifficultyMultiplier;
+    public DifficultyMultiplier RotationDifficultyMultiplier;
+
     protected void Awake()
     {
         frb = GetComponent<FakeRigidbody>();
@@ -56,7 +60,7 @@ public class DroneExploderAI : AIController
         if (state == AIState.Follow || state == AIState.Charge || state == AIState.Attack || state == AIState.Cooldown)
         {
             // Rotation assumes that local up direction is forward
-            lookDir = Vector3.Slerp(lookDir, targetPosition - transform.position, RotationRate * Time.fixedDeltaTime); // Rotate to face target
+            lookDir = Vector3.Slerp(lookDir, targetPosition - transform.position, RotationRate * RotationDifficultyMultiplier.GetFactor() * Time.fixedDeltaTime); // Rotate to face target
             targetSpeed = MoveSpeed;
             frb.Accelerate((transform.position - targetPosition).normalized * Mathf.Min(GetAvoidCloseness(), AvoidAccelLimit) * Acceleration * AvoidAmount);
         }
@@ -72,7 +76,7 @@ public class DroneExploderAI : AIController
             patrolDir = Mathf.RoundToInt(Mathf.Sign(Random.value - 0.5f));
         }
 
-        targetSpeed *= GetSpeed().GetValue();
+        targetSpeed *= GetSpeed().GetValue() * SpeedDifficultyMultiplier.GetFactor();
         frb.Accelerate(transform.up * (targetSpeed - frb.GetVelocity().magnitude * Mathf.Clamp01(Vector3.Dot(transform.up, frb.GetVelocity().normalized))) * Acceleration); // Accelerate toward the target
         frb.Accelerate(-transform.right * frb.GetVelocity().magnitude * Vector3.Dot(transform.right, frb.GetVelocity().normalized) * SideDecel); // Deceleration to prevent sideways movement
         transform.rotation = Quaternion.LookRotation(Vector3.forward, lookDir); // Actual rotation
