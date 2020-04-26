@@ -2294,6 +2294,16 @@ PrefabInstance:
       propertyPath: CritBulletColor.r
       value: 1
       objectReference: {fileID: 0}
+    - target: {fileID: 6050059327587820865, guid: 3a23a898f6ab9fe4dbd23959c05c1b64,
+        type: 3}
+      propertyPath: stunDuration
+      value: 0.6
+      objectReference: {fileID: 0}
+    - target: {fileID: 6050059327587820865, guid: 3a23a898f6ab9fe4dbd23959c05c1b64,
+        type: 3}
+      propertyPath: stunIncreasePerStack
+      value: 0.3
+      objectReference: {fileID: 0}
     - target: {fileID: 6354411229908155465, guid: 3a23a898f6ab9fe4dbd23959c05c1b64,
         type: 3}
       propertyPath: m_Layer
@@ -2468,6 +2478,11 @@ PrefabInstance:
         type: 3}
       propertyPath: horCastPadding
       value: 0.35
+      objectReference: {fileID: 0}
+    - target: {fileID: 7660217626254256146, guid: 3a23a898f6ab9fe4dbd23959c05c1b64,
+        type: 3}
+      propertyPath: rollCooldownDuration
+      value: 1.4
       objectReference: {fileID: 0}
     - target: {fileID: 7822332276100496726, guid: 3a23a898f6ab9fe4dbd23959c05c1b64,
         type: 3}
@@ -11662,7 +11677,7 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1632414319}
   m_LocalRotation: {x: 0.05232799, y: 0.017428488, z: -0.0009133884, w: 0.99847746}
-  m_LocalPosition: {x: -24.278244, y: 6.7147927, z: -35.39674}
+  m_LocalPosition: {x: -24.278225, y: 6.7147956, z: -35.39674}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children:
   - {fileID: 1932838403}
@@ -17186,7 +17201,7 @@ MonoBehaviour:
   YOffset: 1.5
   TitleText: 
   PopText: Right Click to Interact
-  interactable: 1
+  interactable: 0
   visible: 0
 --- !u!1001 &3917716875270287146
 PrefabInstance:
