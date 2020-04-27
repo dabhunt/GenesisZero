@@ -92,13 +92,22 @@ public class BUGE : MonoBehaviour
     private void OnMouseEnter()
     {
         LookAt(playerObj, 3f);
+        
         if (alertObj.activeSelf)
-            GetComponent<InteractPopup>().visible = true;
+        {
+            VFXManager.instance.ChangeColor(alertObj, Color.red);
+            GetComponent<InteractPopup>().interactable = true;
+        }
+           
     }
     private void OnMouseExit()
     {
-        GetComponent<InteractPopup>().visible = false;
-        mouseOver = false;
+        if(alertObj.activeSelf)
+        {
+            VFXManager.instance.ChangeColor(alertObj, Color.white);
+            GetComponent<InteractPopup>().interactable = false;
+            mouseOver = false;
+        }
     }
     void FixedUpdate()
      {
@@ -234,6 +243,7 @@ public class BUGE : MonoBehaviour
      */
     public void TooFar(DialogueInfo info)
     {
+        ClearWayPoints();
         if (dialogueInfo.Count > 0)
         {
             for (int i = 0; i < dialogueInfo.Count; i++)

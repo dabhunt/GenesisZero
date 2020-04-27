@@ -94,6 +94,12 @@ public class InteractPopup : MonoBehaviour
             popup.transform.position = screenPos;
             //SetScreenPos(screenPos);
         }
+        else
+        {
+            visible = false;
+            if (popup != null)
+                Destroy(popup);
+        }
     }
     public void DestroyPopUp()
     {
