@@ -335,7 +335,8 @@ public class BossAI : AIController
             else if (Attack == 1)
             {
                 SetRepeatingAttacks(3);
-                actiontime = RepeatingAttack > 0 ? SetAttackTime(1.2f, 1) : SetAttackTime(1.5f, 1);
+				animator.Play("BossFireTest");
+				actiontime = RepeatingAttack > 0 ? SetAttackTime(1.2f, 1) : SetAttackTime(1.5f, 1);
                 SetBossstate(State.Firebreath, actiontime);
                 Vector3 target = PredictPath(1f);
                 SpawnIndicator(transform.position, new Vector2(24, 4), target - transform.position, new Color(1, 0, 0, .1f), Vector2.zero, false, true, actiontime - .1f);
