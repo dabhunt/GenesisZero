@@ -199,6 +199,10 @@ public class BossAI : AIController
                     // Expose weakpoints
                     transform.position = Vector2.MoveTowards(transform.position, movetarget.position, speed * (Vector2.Distance(transform.position, movetarget.position) * Mathf.Clamp(chargetime / 5, .5f, 4)) * Time.fixedDeltaTime);
                 }
+				else if (bossstate == State.Stunned)
+				{
+					GetComponent<SphereCollider>().isTrigger = false;
+				}
 
                 Vector3 finalposition = Vector3.Lerp(LastPosition, new Vector3(transform.position.x, transform.position.y, zdepth), .3f);
                 LastPosition = finalposition;
@@ -282,16 +286,17 @@ public class BossAI : AIController
             action = 1;
             SetBossstate(State.Setting, 4);
             HealthLoss = 0;
-            animator.Play("BossWildTest");
-        }
+			animator.SetTrigger("WildTrigger");
+			animator.SetBool("Wild",true);
+		}
         else if (Heat >= 5)
         {
             action = 2;
             bossstate = State.Setting;
             chargetime = Time.fixedDeltaTime / 2;
             Heat = 0;
-            Debug.Log("Cooling");
-        }
+			animator.SetTrigger("Overheating");
+		}
 
         if (chargetime > 0)
         {
@@ -326,7 +331,7 @@ public class BossAI : AIController
             if (Attack == 0)
             {
                 SetRepeatingAttacks(3);
-				animator.Play("BossFireTest");
+				animator.SetTrigger("FireSpitting");
 				actiontime = RepeatingAttack > 0 ? SetAttackTime(1.35f, 1) : SetAttackTime(2, 1);
                 SetBossstate(State.Headbutt, actiontime);
                 Vector3 target = PredictPath(1.25f);
@@ -337,7 +342,7 @@ public class BossAI : AIController
             else if (Attack == 1)
             {
                 SetRepeatingAttacks(3);
-				animator.Play("BossFireTest");
+				animator.SetTrigger("FireSpitting");
 				actiontime = RepeatingAttack > 0 ? SetAttackTime(1.2f, 1) : SetAttackTime(1.5f, 1);
                 SetBossstate(State.Firebreath, actiontime);
                 Vector3 target = PredictPath(1f);

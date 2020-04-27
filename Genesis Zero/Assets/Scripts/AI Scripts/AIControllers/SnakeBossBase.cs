@@ -17,9 +17,9 @@ public class SnakeBossBase : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-        if (!Boss.GetComponent<BossAI>().animating)
+        if (!Boss.GetComponent<BossAI>().boxanimating)
         {
-            transform.position = Vector3.Lerp(transform.position, origin + new Vector3((maxoffset.x * ((Boss.transform.position.x - origin.x) / 10)), 0, 0), Time.deltaTime);
+            transform.position = Vector3.Lerp(transform.position, origin + new Vector3((maxoffset.x * ((Boss.transform.position.x - origin.x) / 10)), 0, 0), 1);
         }
     }
 
