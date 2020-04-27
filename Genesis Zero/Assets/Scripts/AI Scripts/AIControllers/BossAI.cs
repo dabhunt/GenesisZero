@@ -150,7 +150,8 @@ public class BossAI : AIController
             if (bossstate == State.Centering || bossstate == State.Pulse)
             {
                 transform.rotation = Quaternion.Slerp(transform.rotation, Quaternion.LookRotation(back, up), 2 * Time.fixedDeltaTime);
-                HeadModel.transform.rotation = Quaternion.Slerp(transform.rotation, Quaternion.LookRotation(back, up), 2 * Time.fixedDeltaTime);
+				HeadModel.transform.rotation = transform.rotation;
+				//HeadModel.transform.rotation = Quaternion.Slerp(transform.rotation, Quaternion.LookRotation(back, up), 2 * Time.fixedDeltaTime);
                 lookposition = transform.position + transform.forward;
                 lookingatcamera = true;
             }
@@ -158,9 +159,9 @@ public class BossAI : AIController
             {
                 Vector3 lookoffset = new Vector3(0, 0, lookDir.x > 0 ? -1f : -1f);
                 transform.LookAt(lookposition + lookoffset);
-                HeadModel.transform.rotation = Quaternion.Slerp(transform.rotation, Quaternion.LookRotation(back, up), 2 * Time.fixedDeltaTime);
-                //HeadModel.transform.LookAt(lookposition + lookoffset);
-                lookingatcamera = false;
+				HeadModel.transform.rotation = transform.rotation;
+				//HeadModel.transform.LookAt(lookposition + lookoffset);
+				lookingatcamera = false;
             }
 
 
@@ -325,7 +326,8 @@ public class BossAI : AIController
             if (Attack == 0)
             {
                 SetRepeatingAttacks(3);
-                actiontime = RepeatingAttack > 0 ? SetAttackTime(1.35f, 1) : SetAttackTime(2, 1);
+				animator.Play("BossFireTest");
+				actiontime = RepeatingAttack > 0 ? SetAttackTime(1.35f, 1) : SetAttackTime(2, 1);
                 SetBossstate(State.Headbutt, actiontime);
                 Vector3 target = PredictPath(1.25f);
                 SpawnIndicator(transform.position, new Vector2(16, 6), target - transform.position, new Color(1, 0, 0, .1f), Vector2.zero, false, true, chargeuptime);

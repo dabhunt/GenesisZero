@@ -6,7 +6,6 @@ namespace DitzelGames.FastIK
     /// <summary>
     /// Fabrik IK Solver
     /// </summary>
-    [ExecuteInEditMode]
     public class FastIKFabric : MonoBehaviour
     {
         /// <summary>
