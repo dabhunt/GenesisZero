@@ -513,8 +513,7 @@ public class AIController : Pawn
      */
     public void AlertAndFollow(Pawn target)
     {
-        if (target == null)
-            return;
+        if (target == null) { return; }
         AlertAndFollow(target.transform, false);
     }
 
@@ -533,11 +532,14 @@ public class AIController : Pawn
     {
         if (target != null && (state == AIState.Patrol || state == AIState.Idle || alertTracking))
         {
-            alertPoint = target.position;
-            alertTracking = true;
-            if (alertOthers)
+            if (CheckVisibility(target.transform))
             {
-                AlertNearbyEnemies(target);
+                alertPoint = target.position;
+                alertTracking = true;
+                if (alertOthers)
+                {
+                    AlertNearbyEnemies(target);
+                }
             }
         }
     }
