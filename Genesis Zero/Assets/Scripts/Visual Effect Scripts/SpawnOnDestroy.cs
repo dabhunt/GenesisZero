@@ -23,6 +23,10 @@ public class SpawnOnDestroy : MonoBehaviour
     private Player player;
     private bool canDrop = true;
     private AudioManager aManager;
+
+    //I'm definitely doing something wrong here since I can't connect EAnimator to this script on enemies...
+    //public Animator Animator;
+
     //bool applicationIsQuitting;
     // Start is called before the first frame update
     // Update is called once per frame
