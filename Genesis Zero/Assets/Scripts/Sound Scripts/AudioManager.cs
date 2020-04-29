@@ -119,6 +119,49 @@ public class AudioManager : MonoBehaviour
 
 	// Utility functions
 
+	public bool ChannelIsPlaying(int channel)
+	{
+		bool isPlaying = false;
+		switch (channel)
+		{
+			case 1:
+				isPlaying = Primary.isPlaying;
+				break;
+			case 2:
+				isPlaying = Secondary.isPlaying;
+				break;
+			case 3:
+				isPlaying = Tertiary.isPlaying;
+				break;
+			default:
+				Debug.LogWarning("ChannelIsPlaying: Channel " + channel + " not supported!");
+				break;
+		}
+		return isPlaying;
+	}
+	//--------------------------------------------------
+
+	public float ChannelVolume(int channel)
+	{
+		float vol = 0f;
+		switch (channel)
+		{
+			case 1:
+				vol = Primary.volume;
+				break;
+			case 2:
+				vol = Secondary.volume;
+				break;
+			case 3:
+				vol = Tertiary.volume;
+				break;
+			default:
+				Debug.LogWarning("ChannelVolume: Channel " + channel + " not supported!");
+				break;
+		}
+		return vol;
+	}
+	//--------------------------------------------------
 	public void AdjustVolumeChannel(int channel, float vol)
 	{
 		switch (channel)
@@ -301,7 +344,6 @@ public class AudioManager : MonoBehaviour
 
 	public void FadeInChannel(int channel, float vol, float inTime)
 	{
-		SetVolumeChannel(channel, 0);
 		FadeChannel(channel, vol, inTime);
 	}
 
@@ -316,14 +358,18 @@ public class AudioManager : MonoBehaviour
 
 	public void CrossFadeChannels(int outAudio, float outTime, int inAudio, float inTime)
 	{
-		FadeOutChannel(outAudio, outTime);
-		FadeInChannel(inAudio, setVolumeMusic, inTime);
+		if (ChannelVolume(outAudio) != 0)
+			FadeOutChannel(outAudio, outTime);
+		if (ChannelVolume(inAudio) != setVolumeMusic)
+			FadeInChannel(inAudio, setVolumeMusic, inTime);
 	}
 
 	public void CrossFadeChannels(int outAudio, float outTime, int inAudio, float inVol, float inTime)
 	{
-		FadeOutChannel(outAudio, outTime);
-		FadeInChannel(inAudio, inVol, inTime);
+		if (ChannelVolume(outAudio) != 0)
+			FadeOutChannel(outAudio, outTime);
+		if (ChannelVolume(inAudio) != inVol)
+			FadeInChannel(inAudio, inVol, inTime);
 	}
 
 	//--------------------------------------------------
@@ -432,11 +478,11 @@ public class AudioManager : MonoBehaviour
 
 	public void PlayFadeInTrack(int channel, string type, string name, bool loop, float inTime)
 	{
-		AudioSource temp = ImportAudio(type, name, setVolumeMusic, 0f, 1f, loop, 0f, true);
+		AudioSource temp = ImportAudio(type, name, 0f, 0f, 1f, loop, 0f, true);
 		CopyToChannel(channel, temp);
 		Destroy(temp);
 
-		FadeInChannel(channel, 1, inTime);
+		FadeInChannel(channel, setVolumeMusic, inTime);
 		PlayChannel(channel);
 	}
 
