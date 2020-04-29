@@ -25,7 +25,9 @@ public class TileManager : MonoBehaviour
 	public float scrapConverterSpawnChance = .2f;
 	
 	[Header("Prefab Containers")]
-	public GameObject[] tilePrefabs;
+	private GameObject[] tilePrefabs;
+	public GameObject[] industrialTilePrefabs;
+	public GameObject[] cityTilePrefabs;
 	public GameObject[] enemyPrefabs;
 	public GameObject[] interactablePrefabs;
 	
@@ -38,8 +40,6 @@ public class TileManager : MonoBehaviour
 	private float currentPos = 22.0f;
 	private float tileLength = 22.0f;
 	private float tileHeight = 6.5f;
-	private GameObject portalPrefab;
-	private GameObject tempPortal;
 	public int curlevel = 0;
 	private void Awake()
 	{
@@ -53,8 +53,9 @@ public class TileManager : MonoBehaviour
 	}
 	private void Start()
     {
-		portalPrefab = GameObject.Find(teleporterID);
-		tempPortal = portalPrefab; 
+		//tilePrefabs = industrialTilePrefabs;
+		tilePrefabs = cityTilePrefabs;
+		
 		//Level 1
 		int level = 0;
         for (int i = 0; i < numberOfBuildings; ++i)
