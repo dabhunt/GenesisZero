@@ -86,12 +86,13 @@ public class BUGE : MonoBehaviour
     }
     private void OnMouseOver()
     {
-        print("over");
         mouseOver = true;
         if (Input.GetMouseButtonDown(1))
         {
             Interact();
             followingPlayer = true;
+            GetComponent<InteractPopup>().interactable = false;
+            GetComponent<InteractPopup>().DestroyPopUp();
         }
     }
     private void OnMouseEnter()
