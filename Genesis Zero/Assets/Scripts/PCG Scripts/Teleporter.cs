@@ -42,10 +42,11 @@ public class Teleporter : MonoBehaviour
 	}
 	private void teleport()
 	{
-		player.position = new Vector2(destinationX, destinationY);
+		GameObject.FindWithTag("Player").transform.position = new Vector2(destinationX, destinationY);
+		GameObject.FindWithTag("CamCollider").transform.position = new Vector2(destinationX, GameObject.FindWithTag("CamCollider").transform.position.y);
 		TileManager.instance.curlevel++;
 	}
-	public void SetDesination(Vector2 destination)
+	public void SetDestination(Vector2 destination)
 	{
 		destinationX = destination.x;
 		destinationY = destination.y;
