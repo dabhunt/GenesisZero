@@ -29,7 +29,15 @@ public class Restart : MonoBehaviour
     	//if player is dead, restart the scene
     	if (player == null)
         {
-            RestartScene();
+            // Play gameover music/fade out any playing tracks
+            // AudioManager.instance.PlayTrack(1, "Music", "GameOver", false, true);
+
+            // Fade to black
+            overlay.SetActive(true);
+            overlay.GetComponent<SpriteFade>().FadeIn(2f);
+
+            // Show game over menu after fading in
+            StartCoroutine("ExecuteAfterTime", 4f);
         } else{
     		exitingScene = false;
     	}
@@ -39,22 +47,10 @@ public class Restart : MonoBehaviour
     // Update is called once per frame
     public void RestartScene()
     {
-        /*
         exitingScene = true;
         string scene = SceneManager.GetActiveScene().name;
 		//Load it
-		SceneManager.LoadScene(scene, LoadSceneMode.Single);*/
-
-
-        // Play gameover music/fade out any playing tracks
-        // AudioManager.instance.PlayTrack(1, "Music", "GameOver", false, true);
-
-        // Fade to black
-        overlay.SetActive(true);
-        overlay.GetComponent<SpriteFade>().FadeIn(2f);
-
-        // Show game over menu after fading in
-        StartCoroutine("ExecuteAfterTime", 4f);
+		SceneManager.LoadScene(scene, LoadSceneMode.Single);
     }
     void OnApplicationQuit()
     {
