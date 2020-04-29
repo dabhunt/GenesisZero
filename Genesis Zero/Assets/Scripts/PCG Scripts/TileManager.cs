@@ -79,6 +79,9 @@ public class TileManager : MonoBehaviour
 		}
 		
 		//Placemat PCG Pass
+		bool teleporterIsSpawned = false;
+		List<GameObject> teleporterInstances = new List<GameObject>();
+		float levelTracking = 0f;
 		foreach (GameObject mat in GameObject.FindGameObjectsWithTag("Placemat"))
 		{
 			if (mat.name == "GodHeadMat" && Random.value <= godHeadSpawnChance) //Case 1: God Heads
@@ -100,6 +103,18 @@ public class TileManager : MonoBehaviour
 			{
 				GameObject newScrap = Instantiate(interactablePrefabs[3]) as GameObject;
 				newScrap.transform.position = mat.transform.position;
+			}
+			else if (mat.name == "TeleportMat")
+			{
+				if (teleporterIsSpawned == false && mat.transform.position.x > levelTracking)
+				{
+					GameObject newTele = Instantiate(interactablePrefabs[4]) as GameObject;
+					teleporterInstances.Add(newTele);
+					levelTracking += levelSpacing;
+					
+					newTele.GetComponent<Teleporter>().SetDestination(new Vector2(levelTracking + 10, 40));
+				}
+				teleporterInstances[teleporterInstances.Count - 1].transform.position = mat.transform.position;
 			}
 		}
 		
@@ -196,27 +211,6 @@ public class TileManager : MonoBehaviour
 				spawnVector.z += 2;
 			}
 			
-			//Spawn Teleporter
-			if (Random.Range(0, 10) == 0)
-			{
-				//GameObject exitPortal = Instantiate(portalPrefab) as GameObject;
-				//temp fix until better second pass PCG teleporter system added
-				if (levelNumber == 0)
-				{
-					spawnVector.y += 7;
-					spawnVector.x -= 22;
-					spawnVector.z -= 2;
-					tempPortal.transform.position = spawnVector;
-					//the destination should be the start point of the next level, not 0,0
-					float rng = Random.Range(1, 4)/10;
-					tempPortal.GetComponent<Teleporter>().SetDesination(new Vector2(levelNumber * levelSpacing + levelSpacing * rng, 70f));
-					spawnVector.y -= 7;
-					spawnVector.x += 22;
-					spawnVector.z += 2;
-				}
-
-			}
-			
 			//Iterate counting variables
 			shift--;
 			end--;
@@ -224,6 +218,6 @@ public class TileManager : MonoBehaviour
 		
 		//Shift currentPos for next building
 		currentPos += tileLength * width;
-		currentPos += Random.Range(10.0f, 30.0f);
+		currentPos += Random.Range(8.0f, 15.0f);
 	}
 }
