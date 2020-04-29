@@ -95,6 +95,7 @@ public class SpawnOnDestroy : MonoBehaviour
                     // if essence drop chance exceeds the random value from 0 to 1.0f, it drops
                     float offset = i / (1.5f + Random.value * 4);
                     GameObject essence = Instantiate(EssencePrefab, new Vector3(transform.position.x + offset, transform.position.y + offset, -4), Quaternion.identity);
+                    essence.GetComponent<Animator>().SetInteger("EssenceAmt", amount);
                     essence = Drop(essence);
                     //Destroy(rb);
                 }
