@@ -19,19 +19,28 @@ public class SpawnOnDestroy : MonoBehaviour
     public float maxDropVelocity;
     public GameObject EssencePrefab;
 
+    Animator eAnimator; //Essence Animator
+
     private SkillObject ModDrop;
     private Player player;
     private bool canDrop = true;
     private AudioManager aManager;
 
-    //I'm definitely doing something wrong here since I can't connect EAnimator to this script on enemies...
-    //public Animator Animator;
+
 
     //bool applicationIsQuitting;
     // Start is called before the first frame update
     // Update is called once per frame
+
+    private void Awake()
+    {
+        eAnimator = EssencePrefab.GetComponent<Animator>();
+    }
+
     void Start()
     {
+        EssencePrefab.GetComponent<Animator>();
+
         quitting = false;
         GameObject temp = GameObject.FindWithTag("StateManager");
         if (temp != null)
@@ -79,6 +88,8 @@ public class SpawnOnDestroy : MonoBehaviour
             if (canDrop)
             {
                 int amount = Random.Range(minEssenceDrop, maxEssenceDrop);
+                eAnimator.SetInteger("EssenceAmt", amount); //Goes into essence animator to determine size.
+
                 for (int i = 0; i < amount; i++)
                 {
                     // if essence drop chance exceeds the random value from 0 to 1.0f, it drops
