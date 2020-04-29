@@ -91,6 +91,7 @@ public class BUGE : MonoBehaviour
         {
             Interact();
             followingPlayer = true;
+            flashlight.SetActive(true);
             GetComponent<InteractPopup>().interactable = false;
             GetComponent<InteractPopup>().DestroyPopUp();
         }

@@ -10,16 +10,17 @@ public class DeactivateDistant : MonoBehaviour
     public float updatesPerSecond=1f;
     public float enemyDistOffset = 5f;
     private float resetEnemyDist;
+    private float resetDist;
     //which game tags to check and deactivate if out of range
     public string[] tags = new string[] {"Enemy"};
     private List<GameObject> objects = new List<GameObject>();
-    private Player player;
+    private GameObject camObj;
     private bool firstCheck = true;
     void Start()
     {
-       	GameObject temp = GameObject.FindWithTag("Player");
+       	camObj = GameObject.FindWithTag("MainCamera");
+        resetDist = deactivateDist;
         resetEnemyDist = enemyDistOffset;
-       	player = temp.GetComponent<Player>();
     	InvokeRepeating("Check", 1/updatesPerSecond, 1/updatesPerSecond);
     }
     private void Update()
@@ -49,9 +50,9 @@ public class DeactivateDistant : MonoBehaviour
     			firstCheck = false;
     		}
    			for (int i = 0; i < objects.Count; i++){
-   				if (objects[i] != null && player != null){
+   				if (objects[i] != null && camObj != null){
                     //check each objects distance relative to the player transform, if outside the designated distance, it's inactive otherwise it's active.
-                    float dist = Vector3.Distance(player.transform.position, objects[i].transform.position);
+                    float dist = Vector2.Distance(camObj.transform.position, objects[i].transform.position);
                     if (objects[i].gameObject.tag == "Enemy")
                     {
                         //make it so that enemies load in slower than cubbies, preventing them from falling through cubbies that haven't loaded yet
@@ -74,6 +75,14 @@ public class DeactivateDistant : MonoBehaviour
     public void EnableEnemies()
     {
         enemyDistOffset = resetEnemyDist;
+    }
+    public void ResetDist()
+    {
+        deactivateDist = resetDist;
+    }
+    public void SetDist(float num)
+    {
+        deactivateDist = num;
     }
     //public void SetTagDistance( float newdist)
     //{

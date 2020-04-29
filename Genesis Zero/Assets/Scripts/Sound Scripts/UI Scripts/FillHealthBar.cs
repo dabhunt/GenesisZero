@@ -21,7 +21,7 @@ public class FillHealthBar : MonoBehaviour
     private bool delayedStart = true;
     void Start()
     {
-        Invoke("DelayedStart", 4);
+        Invoke("DelayedStart", 0);
     }
     public void DelayedStart()
     {

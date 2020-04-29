@@ -153,6 +153,17 @@ public class StateManager : MonoBehaviour
         StartCoroutine(LoadSceneCoroutine());
         //SceneManager.LoadScene("MainMenu", LoadSceneMode.Single);
     }
+    /* when given a transform, this recursively disables all objects below it, excluding one
+     * This is currently used to turn off the canvas without ruining other things / needing to make a new canvas
+     */
+    public void SetActiveExcludingChild(Transform t, string excludedName, bool enabled)
+    {
+        foreach (Transform child in t)
+        {
+            if (child.name != excludedName)
+                child.gameObject.SetActive(enabled);
+        }
+    }
 
     IEnumerator LoadSceneCoroutine()
     {
