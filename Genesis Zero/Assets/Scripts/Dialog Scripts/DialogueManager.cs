@@ -46,7 +46,7 @@ public class DialogueManager : MonoBehaviour
     {
         interactions = new int[3];
         instance.EndDialogue();
-        instance.TriggerDialogue("StartDialogue");
+        //instance.TriggerDialogue("StartDialogue");
         buge = GameObject.FindWithTag("BUG-E").GetComponent<BUGE>();
         //StateManager.instance.PauseGame();
     }

@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.Events;
-public class OptionalDialogueZone : MonoBehaviour
+public class BugeIntro : MonoBehaviour
 {
     public string DialogueFileName = "";
     public bool BugeFlysOver = true;
@@ -39,7 +39,6 @@ public class OptionalDialogueZone : MonoBehaviour
         info.SetValues(newpoint, DialogueFileName, BugeFlysOver, GetInstanceID());
         if (dist < triggerRadius)
         {
-            buge.GetComponent<BUGE>().FollowingPlayer(true);
             buge.GetComponent<BUGE>().AddOptionalDialoguePrompt(info);
         }
         else 

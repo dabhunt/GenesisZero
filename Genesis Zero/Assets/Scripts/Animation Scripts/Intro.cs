@@ -31,6 +31,7 @@ public class Intro : MonoBehaviour
         tmp = transform.Find("Text").gameObject.GetComponent<TextMeshProUGUI>();
         transform.Find("Overlay").GetComponent<Image>().enabled = true;
         NextCard();
+        GameInputManager.instance.DisablePlayerControls();
     }
     public void NextCard()
     {
@@ -75,7 +76,9 @@ public class Intro : MonoBehaviour
     }
     public void EndIntro()
     {
+        cardQueue.Clear();
         gameObject.SetActive(false);
         gameObject.transform.parent.Find("BlackOverlay").GetComponent<SpriteFade>().FadeOut(4f);
+        GameObject.FindGameObjectWithTag("MainCamera").GetComponent<CutsceneController>().IntroCutscene();
     }
 }

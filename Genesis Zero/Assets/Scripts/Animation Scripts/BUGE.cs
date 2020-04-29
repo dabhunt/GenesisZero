@@ -35,6 +35,8 @@ public class BUGE : MonoBehaviour
     private GameObject alertObj;
     private bool mouseOver = false;
     private GameObject playerObj;
+    public bool followingPlayer = false;
+    private GameObject flashlight;
     void Start()
     {
         animWaypoints = new Queue<WayPoint>();
@@ -47,6 +49,8 @@ public class BUGE : MonoBehaviour
         minDistReset = MinDistance;
         maxDistReset = MaxDistance;
         alertObj = GameObject.FindGameObjectWithTag("BUG-EAlert");
+        flashlight = transform.Find("flashlightouter").gameObject;
+        flashlight.SetActive(false);
         alertObj.SetActive(false);
 
         //Test waypoint system
@@ -80,13 +84,20 @@ public class BUGE : MonoBehaviour
             
         }
     }
+    public void FollowingPlayer(bool boo)
+    {
+        followingPlayer = boo;
+        flashlight.SetActive(boo);
+    }
     private void OnMouseOver()
     {
-        print("over");
         mouseOver = true;
         if (Input.GetMouseButtonDown(1))
         {
             Interact();
+
+            GetComponent<InteractPopup>().interactable = false;
+            GetComponent<InteractPopup>().DestroyPopUp();
         }
     }
     private void OnMouseEnter()
@@ -111,6 +122,8 @@ public class BUGE : MonoBehaviour
     }
     void FixedUpdate()
      {
+        if (!followingPlayer)
+            return;
         if (animWaypoints.Count > 0)
             AnimEnabled = true;
         else { AnimEnabled = false; }
@@ -219,8 +232,7 @@ public class BUGE : MonoBehaviour
         lookOverride = true;
         Invoke("StopLook", seconds);
     }
-    /* called when player interacts with BUG-E
-     */
+    /* called when player interacts with BUG-E */
     public void Interact() 
     {
         DialogueInfo info;
@@ -286,7 +298,7 @@ public class BUGE : MonoBehaviour
             animWaypoints.Dequeue();
         }
     }
-    //Real seconds are used so that timescale doesn't effect it
+    //Real seconds are used so that timescale doesn't effect it in paused parts
     public static IEnumerator WaitForRealSeconds(float delay)
     {
         float start = Time.realtimeSinceStartup;
