@@ -213,7 +213,7 @@ public class ShieldEnemyAI : AIController
 
             //if (Vector3.Dot(normalizedTargetDir, Vector3.up) > 0)
             //{
-            Vector3 lungeDir = (normalizedTargetDir + Vector3.up * Mathf.Abs(Vector3.Dot(normalizedTargetDir, Vector3.right)) * LungeVerticality).normalized;
+            Vector3 lungeDir = (new Vector3(normalizedTargetDir.x, normalizedTargetDir.y * LungeVerticality, 0.0f) + Vector3.up * Mathf.Abs(Vector3.Dot(normalizedTargetDir, Vector3.right)) * LungeVerticality).normalized;
             //}
             frb.AddVelocity(lungeDir * LungeSpeed * LungeDifficultyMultiplier.GetFactor());
             SpawnAttackHitbox();

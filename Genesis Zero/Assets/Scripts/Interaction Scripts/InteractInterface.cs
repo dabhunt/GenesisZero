@@ -45,7 +45,6 @@ public class InteractInterface : MonoBehaviour
             string[] strArray = { "Interactable", "Pickups" };
             GameObject obj = ClosestTaggedObj(strArray);
             //if the closestObject is too far away, it returns null
-            print("obj: " + obj);
             if (obj == null)
                 return;
             if (obj.GetComponent<SkillPickup>() != null)
