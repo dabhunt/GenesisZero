@@ -53,7 +53,8 @@ public class TileManager : MonoBehaviour
 	}
 	private void Start()
     {
-		tilePrefabs = industrialTilePrefabs;
+		//tilePrefabs = industrialTilePrefabs;
+		tilePrefabs = cityTilePrefabs;
 		
 		//Level 1
 		int level = 0;
