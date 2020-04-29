@@ -30,6 +30,8 @@ public class OptionalDialogueZone : MonoBehaviour
         //if we don't want this dialogue to play more than once, and it has already been played, don't play it
         if (!TriggerRepeatedly && DialogueManager.instance.GetDialoguePlayedAmount(DialogueFileName) > 0)
             return;
+        if (player == null)
+            return;
         float dist = Vector3.Distance(player.transform.position, this.transform.position);
         
         Vector2 vec = new Vector2(transform.position.x, transform.position.y + 2f);
