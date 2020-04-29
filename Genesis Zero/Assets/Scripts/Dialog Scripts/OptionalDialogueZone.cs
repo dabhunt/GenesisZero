@@ -39,7 +39,7 @@ public class OptionalDialogueZone : MonoBehaviour
         info.SetValues(newpoint, DialogueFileName, BugeFlysOver, GetInstanceID());
         if (dist < triggerRadius)
         {
-            buge.GetComponent<BUGE>().followingPlayer = true;
+            buge.GetComponent<BUGE>().FollowingPlayer(true);
             buge.GetComponent<BUGE>().AddOptionalDialoguePrompt(info);
         }
         else 

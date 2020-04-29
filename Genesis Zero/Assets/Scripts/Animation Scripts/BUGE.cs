@@ -84,14 +84,18 @@ public class BUGE : MonoBehaviour
             
         }
     }
+    public void FollowingPlayer(bool boo)
+    {
+        followingPlayer = boo;
+        flashlight.SetActive(boo);
+    }
     private void OnMouseOver()
     {
         mouseOver = true;
         if (Input.GetMouseButtonDown(1))
         {
             Interact();
-            followingPlayer = true;
-            flashlight.SetActive(true);
+
             GetComponent<InteractPopup>().interactable = false;
             GetComponent<InteractPopup>().DestroyPopUp();
         }
