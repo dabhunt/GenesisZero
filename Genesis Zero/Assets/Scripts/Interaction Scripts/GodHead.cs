@@ -207,9 +207,9 @@ public class GodHead : MonoBehaviour
                 }
             }
         }
-        screenPos = camRef.WorldToScreenPoint(new Vector3(player.transform.position.x, transform.position.y +Yoffset, 0));
+        screenPos = camRef.WorldToScreenPoint(new Vector3(player.transform.position.x, 0, 0));
+        sacUI.transform.position = new Vector2(screenPos.x, sacUI.transform.position.y);
         //sets default selection to position 0
-        sacUI.transform.position = screenPos;
         UpdateSelect(0);
     }
     public void CloseUI()

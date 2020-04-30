@@ -34,6 +34,8 @@ public class OverHeat : MonoBehaviour
     {
         float stacks = GetComponent<Player>().GetSkillStack("Broken Cooling Cell");
         float minHeat = stacks * BC_minHeat;
+        if (minHeat >= 80)
+            minHeat = 80;
         if (heat < minHeat)
         {
             heat = minHeat;

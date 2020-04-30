@@ -57,6 +57,7 @@ public class Intro : MonoBehaviour
             FadeIn();
             Invoke("FadeOut", fadeDuration + durationOnCard);
             Invoke("NextCard", fadeDuration + durationOnCard + fadeDuration +inactiveDuration);
+            
         }
     }
     void Update()
@@ -76,6 +77,7 @@ public class Intro : MonoBehaviour
     }
     public void EndIntro()
     {
+        CancelInvoke();
         cardQueue.Clear();
         gameObject.SetActive(false);
         gameObject.transform.parent.Find("BlackOverlay").GetComponent<SpriteFade>().FadeOut(4f);

@@ -220,6 +220,8 @@ public class Hitbox : MonoBehaviour
                 }
                 else if (special && bp.damagemultipler > 1)
                 {
+                    if (AudioManager.instance != null)
+                        AudioManager.instance.PlayRandomSFXType("EnemyHit", this.gameObject, .2f);
                     if (player != null)
                         player.GetComponent<Player>().GetComponent<UniqueEffects>().WeakPointHit();
                     emit.GetComponent<DamageNumber>().SetColor(Color.red);

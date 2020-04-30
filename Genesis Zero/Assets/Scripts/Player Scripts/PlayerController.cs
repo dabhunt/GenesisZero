@@ -334,7 +334,12 @@ public class PlayerController : MonoBehaviour
                     transform.position = Vector3.Lerp(transform.position, transform.position + Vector3.up * 1* characterHeight , 5 * Time.fixedDeltaTime);
 
             if (vertVel < 0)
+            {
                 vertVel = 0;
+                if  (Time.realtimeSinceStartup > 12f)
+                    sound.Land();
+            }
+               
             if (!isJumping)
                 jumpCount = 2;
         }

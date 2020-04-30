@@ -169,20 +169,24 @@ MonoBehaviour:
   chestSpawnChance: 0.2
   merchantSpawnChance: 0.2
   scrapConverterSpawnChance: 0.2
-  tilePrefabs:
+  industrialTilePrefabs:
   - {fileID: 9185498982791388943, guid: 677f37bb230073444803d3dd39d10d69, type: 3}
   - {fileID: 9185498982791388943, guid: 9834548ed635bb7499e1db000adb5acd, type: 3}
   - {fileID: 9185498982791388943, guid: 82dfeb33c3496de4391c29bdd5ec10f3, type: 3}
   - {fileID: 9185498982791388943, guid: 35a97d7d98171044f93b994defe2dd6f, type: 3}
   - {fileID: 9185498982791388943, guid: 24023770fa99f154a9a286590062df90, type: 3}
-  - {fileID: 9185498982791388943, guid: 8ddee047cd726ac499d60f52415e0626, type: 3}
-  - {fileID: 9185498982791388943, guid: 357de1d00648cce4e8a58c2f5bd8904f, type: 3}
   - {fileID: 9185498982791388943, guid: db04a1f1993ea3c49a29a81358faf66b, type: 3}
+  - {fileID: 9185498982791388943, guid: 357de1d00648cce4e8a58c2f5bd8904f, type: 3}
   - {fileID: 9185498982791388943, guid: 42fd7cfc25a13c344be0056728d11598, type: 3}
   - {fileID: 9185498982791388943, guid: ffefa325a40936e4880f9968d854feb3, type: 3}
+  - {fileID: 9185498982791388943, guid: 8ddee047cd726ac499d60f52415e0626, type: 3}
   - {fileID: 9185498982791388943, guid: 85a716a89a21aae44963de1fbb050d55, type: 3}
   - {fileID: 9185498982791388943, guid: 2639b48700390e3408436e19c15569ef, type: 3}
   - {fileID: 9185498982791388943, guid: b8d9175f36d6a2744b7f9fced2f37a02, type: 3}
+  cityTilePrefabs:
+  - {fileID: 634548710047661334, guid: c1dcd5ce34d1ff74ba49402178cd03f7, type: 3}
+  - {fileID: 4470244243477715161, guid: cf99aa6987ac1ac4f9b268feb20c15e1, type: 3}
+  - {fileID: 3559608525886929863, guid: 4169dae326f794b43bbcd02361d77153, type: 3}
   enemyPrefabs:
   - {fileID: 2000804235349801773, guid: adcbcf4f6b76a3c4195e183ee3e39524, type: 3}
   - {fileID: 751653433366621662, guid: a38a6e063fdb55c49aca2ee8f4e6f4a8, type: 3}
@@ -194,7 +198,12 @@ MonoBehaviour:
   - {fileID: 4068762687681014671, guid: fba6c47c750dc514ca0c7548b7487fd1, type: 3}
   - {fileID: 751653433366621662, guid: 98cebdfd2df96c042aa7cc6718dd4b56, type: 3}
   - {fileID: 2000804235349801773, guid: adcbcf4f6b76a3c4195e183ee3e39524, type: 3}
-  interactablePrefabs: []
+  interactablePrefabs:
+  - {fileID: 761995717423943829, guid: 50cbbdc141985834fbf9aceb73894fd7, type: 3}
+  - {fileID: 905818986537453828, guid: d173f133ec2bbdf43a8740a24d456f5d, type: 3}
+  - {fileID: 4852321564293427694, guid: e7b4a1a47cb8e2b46a910868b15e960a, type: 3}
+  - {fileID: 905818986537453828, guid: 9d68d04ca724ea844a575055543eb81d, type: 3}
+  - {fileID: 8402454202125708677, guid: 4f68d692249f7a34fa7a0842e4218bbd, type: 3}
   MinMaxEnemies: {x: 3, y: 5}
   SpawnChance: 0.2
   curlevel: 0
@@ -260,6 +269,18 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 4781bfb81e98bf34f9d0c9a7d15becd3, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+--- !u!114 &197337959
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 8825409176370879083}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: cd99636ece0ce3f4da50ca0abd18102e, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
 --- !u!1 &8825409176775595401
@@ -653,6 +674,12 @@ PrefabInstance:
       objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: ea0fa8ae0297c2d4e9ca1efaf6cef204, type: 3}
+--- !u!1 &8825409176370879083 stripped
+GameObject:
+  m_CorrespondingSourceObject: {fileID: 6641844269039700375, guid: ea0fa8ae0297c2d4e9ca1efaf6cef204,
+    type: 3}
+  m_PrefabInstance: {fileID: 2762594223640040444}
+  m_PrefabAsset: {fileID: 0}
 --- !u!4 &8825409176370879081 stripped
 Transform:
   m_CorrespondingSourceObject: {fileID: 6641844269039700373, guid: ea0fa8ae0297c2d4e9ca1efaf6cef204,
