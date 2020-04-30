@@ -26,6 +26,10 @@ public class AudioManager : MonoBehaviour
 	private float setVolumeSound;
 	private bool globalMute;
 	private bool soundUpdate;
+	private bool isFading;
+	private Tween PrimaryTween;
+	private Tween SecondTween;
+	private Tween ThirdTween;
 	private List<GameObject> soundPlayerChilds = new List<GameObject>();
 	private GameObject playerObj;
 	// Singleton instance.
@@ -327,14 +331,17 @@ public class AudioManager : MonoBehaviour
 	{
 		switch (channel)
 		{
-			case 1:
-				Primary.DOFade(vol, fadeTime);
+			case 1: //if channel is already tweening, don't do it again
+				if (PrimaryTween == null || PrimaryTween.IsPlaying() == false)
+					PrimaryTween = Primary.DOFade(vol, fadeTime);
 				break;
 			case 2:
-				Secondary.DOFade(vol, fadeTime);
+				if (SecondTween == null || SecondTween.IsPlaying() == false)
+					SecondTween = Secondary.DOFade(vol, fadeTime);
 				break;
 			case 3:
-				Tertiary.DOFade(vol, fadeTime);
+				if (ThirdTween == null  ||ThirdTween.IsPlaying() == false)
+					ThirdTween = Tertiary.DOFade(vol, fadeTime);
 				break;
 			default:
 				Debug.LogWarning("FadeChannel: Channel " + channel + " not supported!");
@@ -358,9 +365,9 @@ public class AudioManager : MonoBehaviour
 
 	public void CrossFadeChannels(int outAudio, float outTime, int inAudio, float inTime)
 	{
-		if (ChannelVolume(outAudio) != 0)
+		if (ChannelVolume(outAudio) != 0 && !isFading)
 			FadeOutChannel(outAudio, outTime);
-		if (ChannelVolume(inAudio) != setVolumeMusic)
+		if (ChannelVolume(inAudio) != setVolumeMusic && !isFading)
 			FadeInChannel(inAudio, setVolumeMusic, inTime);
 	}
 
@@ -655,13 +662,17 @@ public class AudioManager : MonoBehaviour
 	//note that if you pass a string value that more than one type of sound has in it's name this will be problematic
 	public void PlayRandomSFXType(string name)
 	{
-		PlayRandomSFXType(name, null);
+		PlayRandomSFXType(name, null, 0);
 	}
-	public void PlayRandomSFXType(string name, GameObject obj)
+	//takes the name of the sound type to look for, gameobject to play it on, and the +/- pitch range to vary the sound
+	// an example pitch range value would be .5, if you wanted pitches to range from .75 to 1.25 (a spread of .5 from the baseline 1)
+	public void PlayRandomSFXType(string name, GameObject obj, float pitchRange)
 	{
-		if (obj == null)
+		float Volume = 4;
+		if (obj == null || obj == playerObj)
 		{ // playerObj is used if no object is passed in
 			obj = getPlayerObj();
+			Volume = 1;
 		}
 		bool found = false;
 		List<string> type = new List<string>();
@@ -679,7 +690,10 @@ public class AudioManager : MonoBehaviour
 		{
 			//play random sound of that same name
 			//PlayAttachedSound(type[rng], obj);
-			PlaySound(type[rng]);
+			float pitch = 1;
+			if (pitchRange != 0)//
+				pitch = (1-(pitchRange/2))+ (Random.value * pitchRange);
+			PlaySound(type[rng], Volume, pitch );
 		}
 		else
 		{

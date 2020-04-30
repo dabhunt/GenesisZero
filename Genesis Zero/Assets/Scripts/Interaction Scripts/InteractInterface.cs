@@ -46,7 +46,11 @@ public class InteractInterface : MonoBehaviour
             GameObject obj = ClosestTaggedObj(strArray);
             //if the closestObject is too far away, it returns null
             if (obj == null)
+            {
+                AudioManager.instance.PlaySound("SFX_Nope");
                 return;
+            }
+            AudioManager.instance.PlayRandomSFXType("Interact", null, .3f);
             if (obj.GetComponent<SkillPickup>() != null)
             { obj.GetComponent<SkillPickup>().Interact(); return; }
             if (obj.GetComponent<Merchant>() != null)

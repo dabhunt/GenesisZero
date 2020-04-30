@@ -1,6 +1,7 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.UI;
 using UnityEngine.SceneManagement;
 using DG.Tweening;
 public class Restart : MonoBehaviour
@@ -9,10 +10,10 @@ public class Restart : MonoBehaviour
     private GameObject player;
     public bool exitingScene;
 
-    public GameObject canvas;
-    public GameObject pauseMenu;
-    public GameObject resume;
-    public GameObject overlay;
+    private GameObject canvas;
+    private GameObject pauseMenu;
+    private GameObject resume;
+    private GameObject overlay;
 
     void Start()
     {
@@ -34,6 +35,7 @@ public class Restart : MonoBehaviour
 
             // Fade to black
             overlay.SetActive(true);
+            AudioManager.instance.PlaySound("SFX_GameOver");
             overlay.GetComponent<SpriteFade>().FadeIn(2f);
 
             // Show game over menu after fading in
@@ -63,6 +65,7 @@ public class Restart : MonoBehaviour
 
     private void GameOverMenu()
     {
+        GetComponent<Image>().enabled = false;
         resume.SetActive(false);
         pauseMenu.SetActive(true);
     }

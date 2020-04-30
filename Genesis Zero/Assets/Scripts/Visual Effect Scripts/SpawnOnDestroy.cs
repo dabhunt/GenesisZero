@@ -63,7 +63,7 @@ public class SpawnOnDestroy : MonoBehaviour
                 if (aManager != null)
                 {
                     //plays sound at this location
-                    aManager.PlayRandomSFXType(sound, this.gameObject);
+                    aManager.PlayRandomSFXType(sound, this.gameObject, .2f);
                 }
             }
             //if vfx string is not empty

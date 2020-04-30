@@ -19,15 +19,15 @@ public class PlayerSounds : MonoBehaviour
 	}
 	public void Jump()
 	{
-		aManager.PlayRandomSFXType("Jump");
+		aManager.PlayRandomSFXType("Jump", null, .3f);
 	}
 	public void GunShot()
 	{
-		aManager.PlayRandomSFXType("Gunshot");
+		aManager.PlayRandomSFXType("Gunshot", null, .5f);
 	}
 	public void Land()
 	{
-		aManager.PlayRandomSFXType("Jump");
+		aManager.PlayRandomSFXType("Jump", null, .3f);
 	}
 	public void Walk()
 	{

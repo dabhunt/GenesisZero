@@ -8,6 +8,7 @@ public class EnemyOverlayShader : MonoBehaviour
     private float delayBeforeDissolving = 0;
     private bool dissolveComplete = false;
     private float CurrentTimeEffect = 0;
+    private bool DeathSFXPlayed = false;
 
     void Start()
     {
@@ -29,6 +30,11 @@ public class EnemyOverlayShader : MonoBehaviour
 
         if (ratio <= 0)
         {
+            if (!DeathSFXPlayed)
+            {
+                AudioManager.instance.PlayRandomSFXType("EnemyDeath", this.gameObject, .2f);
+                DeathSFXPlayed = true;
+            }
             if (!dissolveComplete)
             {
                 //float deathDuration = GetComponentInParent<Pawn>().Stats.deathDuration;
