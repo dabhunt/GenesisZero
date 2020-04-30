@@ -53,8 +53,8 @@ public class TileManager : MonoBehaviour
 	}
 	private void Start()
     {
-		tilePrefabs = industrialTilePrefabs;
-		//tilePrefabs = cityTilePrefabs;
+		//tilePrefabs = industrialTilePrefabs;
+		tilePrefabs = cityTilePrefabs;
 		
 		//Level 1
 		int level = 0;
@@ -62,7 +62,8 @@ public class TileManager : MonoBehaviour
 		{
 			generateBuilding(Random.Range(minBuildingWidth, maxBuildingWidth), Random.Range(minBuildingTileCount, maxBuildingTileCount), level);
 		}
-		
+		//tilePrefabs = industrialTilePrefabs;
+		tilePrefabs = cityTilePrefabs;
 		//Level 2
 		++level;
 		currentPos = levelSpacing*level + 22;
