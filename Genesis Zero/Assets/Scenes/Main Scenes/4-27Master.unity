@@ -5577,6 +5577,10 @@ MonoBehaviour:
   fillColor: {r: 0, g: 1, b: 0.91090965, a: 1}
   gainHPColor: {r: 0.2509804, g: 0.7529412, b: 0.27058825, a: 1}
   lowHPcolor: {r: 0.93725497, g: 0.24313727, b: 0.21176472, a: 1}
+  randomness: 60
+  strength: 1
+  duration: 0.75
+  vibration: 5
 --- !u!114 &462403157
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -11662,7 +11666,7 @@ Transform:
   m_GameObject: {fileID: 905681073}
   m_LocalRotation: {x: 0.05232799, y: 0.017428488, z: -0.0009133884, w: 0.99847746}
   m_LocalPosition: {x: -99.137505, y: 119.34576, z: -35.437553}
-  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_LocalScale: {x: 1.0000001, y: 1.0000005, z: 1.0000004}
   m_Children:
   - {fileID: 1477407521}
   m_Father: {fileID: 0}
@@ -18361,6 +18365,7 @@ GameObject:
   - component: {fileID: 1477407523}
   - component: {fileID: 1477407522}
   - component: {fileID: 1477407524}
+  - component: {fileID: 1477407525}
   m_Layer: 0
   m_Name: cm
   m_TagString: Untagged
@@ -18497,6 +18502,23 @@ MonoBehaviour:
     m_RecenteringTime: 2
     m_LegacyHeadingDefinition: -1
     m_LegacyVelocityFilterStrength: -1
+--- !u!114 &1477407525
+MonoBehaviour:
+  m_ObjectHideFlags: 3
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1477407520}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 68bb026fafb42b14791938953eaace77, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  m_NoiseProfile: {fileID: 11400000, guid: 69ce8388f6785dd4c8c39915efece2f4, type: 2}
+  m_PivotOffset: {x: 0, y: 0, z: 0}
+  m_AmplitudeGain: 0
+  m_FrequencyGain: 1
+  mNoiseOffsets: {x: -278.10657, y: -286.5039, z: -794.91614}
 --- !u!1 &1478172214
 GameObject:
   m_ObjectHideFlags: 0

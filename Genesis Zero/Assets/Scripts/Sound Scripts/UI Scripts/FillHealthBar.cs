@@ -10,6 +10,11 @@ public class FillHealthBar : MonoBehaviour
     public Color fillColor = new Color(0,1,.9f);
     public Color gainHPColor = new Color(.25f, .75f, .27f);
     public Color lowHPcolor;
+    [Header("Camera Shake")]
+    public float randomness = 60;
+    public float strength = 1f;
+    public float duration = .75f;
+    public int vibration = 5;
 
     private Player player;
     private float valueLastFrame = 100;
@@ -19,8 +24,10 @@ public class FillHealthBar : MonoBehaviour
     private SpriteFade fade;
     private Color zero; //lowHPcolor but with 0 alpha
     private bool delayedStart = true;
+    private Camera camRef;
     void Start()
     {
+        camRef = Camera.main;
         Invoke("DelayedStart", 0);
     }
     public void DelayedStart()
@@ -57,6 +64,10 @@ public class FillHealthBar : MonoBehaviour
             fillImage.color = Color.white;
             DOTween.To(() => slider.value, x => slider.value = x, curValue, tweenTime);
             float pain = (valueLastFrame - curValue) / 15;
+            if (pain > .5f)
+            {
+                camRef.transform.DOShakePosition(duration:duration, strength:strength, vibrato: vibration,randomness:randomness,snapping:false, fadeOut:true);
+            }
             pain = Mathf.Clamp(pain, 0, 1);
             fade.HurtTween(pain);
             HurtTween();

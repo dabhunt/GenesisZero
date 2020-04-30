@@ -62,6 +62,7 @@ public class UniqueEffects : MonoBehaviour
     {
         player = GetComponent<Player>();
         overheat = GetComponent<OverHeat>();
+
         float repeatRate = 1 / checksPerSecond - (Time.deltaTime * 2);
         if (repeatRate > 0.01f)
             InvokeRepeating("CheckUniques", 0, repeatRate);

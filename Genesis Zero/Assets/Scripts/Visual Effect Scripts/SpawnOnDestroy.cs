@@ -59,7 +59,6 @@ public class SpawnOnDestroy : MonoBehaviour
         // otherwise play the effect
         else
         {
-            print("stuff is spawning on destroy");
             if (sound != null && sound != "")
             {
                 if (aManager != null)
