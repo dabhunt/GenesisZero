@@ -72,6 +72,7 @@ public class UniqueEffects : MonoBehaviour
         HeatReduction();
         HalfHeatTrigger();
         //specific Mod effects
+        BoilingPoint();
         ChemicalAccelerant();
         AmplifiedEssence();
         ConcentratedEssence();

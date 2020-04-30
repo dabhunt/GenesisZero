@@ -51,13 +51,15 @@ public class SpawnOnDestroy : MonoBehaviour
     private void OnDestroy()
     {
         //if the scene is being restarted or the player quits
-        if (restartScript == null || restartScript.ExitingScene() || quitting)
+        if (player == null || restartScript == null || restartScript.ExitingScene() || quitting)
         {
+            quitting = true;
             return;
         }
         // otherwise play the effect
         else
         {
+            print("stuff is spawning on destroy");
             if (sound != null && sound != "")
             {
                 if (aManager != null)

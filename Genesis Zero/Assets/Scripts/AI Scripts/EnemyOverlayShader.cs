@@ -32,7 +32,7 @@ public class EnemyOverlayShader : MonoBehaviour
         {
             if (!DeathSFXPlayed)
             {
-                AudioManager.instance.PlayRandomSFXType("EnemyDeath", this.gameObject, .2f);
+                AudioManager.instance.PlayRandomSFXType("EnemyDeath", this.gameObject, .9f, 1.2f, 7f);
                 DeathSFXPlayed = true;
             }
             if (!dissolveComplete)

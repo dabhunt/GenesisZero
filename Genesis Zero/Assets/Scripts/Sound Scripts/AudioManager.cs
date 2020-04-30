@@ -74,6 +74,11 @@ public class AudioManager : MonoBehaviour
 			// Any sounds finished playing are removed
 			for (int i = soundPlayerChilds.Count - 1; i >= 0; i--)
 			{
+				if (soundPlayerChilds[i] == null)
+				{
+					soundPlayerChilds.RemoveAt(i);
+					return;
+				}
 				if (!soundPlayerChilds[i].GetComponent<AudioSource>().isPlaying)
 				{
 					Destroy(soundPlayerChilds[i]);
@@ -545,7 +550,7 @@ public class AudioManager : MonoBehaviour
 		// Add a new instance for the list of instances
 		if (audioClip == null)
 			return;
-		if (obj = null)
+		if (obj == null)
 			obj = getPlayerObj();
 		GameObject dummyGameObject = new GameObject(audioClip.name);
 		soundPlayerChilds.Add(dummyGameObject);
@@ -608,16 +613,16 @@ public class AudioManager : MonoBehaviour
 
 	public void PlaySound(string name)
 	{
-		PlaySound(name, setVolumeSound, 1, false, getPlayerObj().transform.position, 0f);
+		PlaySound(name, setVolumeSound, 1, false, Vector3.zero, 0f);
 	}
 
 	public void PlaySound(string name, bool loop, float delay)
 	{
-		PlaySound(name, setVolumeSound, 1, loop, getPlayerObj().transform.position, 0f);
+		PlaySound(name, setVolumeSound, 1, loop, Vector3.zero, 0f);
 	}
 	public void PlaySound(string name, float vol, float pit)
 	{
-		PlaySound(name, vol, pit, false, getPlayerObj().transform.position, 0f);
+		PlaySound(name, vol, pit, false, Vector3.zero, 0f);
 	}
 	public void PlaySound(string name, float vol, float pit, bool loop, Vector3 vector)
 	{
@@ -625,6 +630,8 @@ public class AudioManager : MonoBehaviour
 	}
 	public void PlaySound(string name, float vol, float pit, bool loop, Vector3 vector, float delay)
 	{
+		if (vector == Vector3.zero && playerObj != null)
+			vector = playerObj.transform.position;
 		AudioSource temp = ImportAudio("SFX", name, vol, 0f, pit, loop, 0f, true);
 		if (temp == null)
 		{
@@ -643,7 +650,7 @@ public class AudioManager : MonoBehaviour
 	}
 	public void PlayAttachedSound(string name, GameObject obj)
 	{
-		instance.PlayAttachedSound(name, obj, 1, 1, false, 0);
+		PlayAttachedSound(name, obj, 1, 1, false, 0);
 	}
 
 	public void PlayAttachedSound(string name, GameObject obj, float vol, float pit, bool loop, float delay)
@@ -662,21 +669,30 @@ public class AudioManager : MonoBehaviour
 	//note that if you pass a string value that more than one type of sound has in it's name this will be problematic
 	public void PlayRandomSFXType(string name)
 	{
-		PlayRandomSFXType(name, null, 0);
+		PlayRandomSFXType(name, null, 1,1, -1);
 	}
 	//takes the name of the sound type to look for, gameobject to play it on, and the +/- pitch range to vary the sound
 	// an example pitch range value would be .5, if you wanted pitches to range from .75 to 1.25 (a spread of .5 from the baseline 1)
 	public void PlayRandomSFXType(string name, GameObject obj, float pitchRange)
 	{
+		PlayRandomSFXType(name, null, 1-(pitchRange/2), 1+(pitchRange/2), -1);
+	}
+	//pitchMin and pitchMax represent the min and max values that RNG can allow for
+	public void PlayRandomSFXType(string name, GameObject obj, float pitchMin, float pitchMax, float vol)
+	{
+		float pitchRange = pitchMax - pitchMin;
+		//default volume values if audio is played on an object in world space
 		float Volume = 4;
 		if (obj == null || obj == playerObj)
 		{ // playerObj is used if no object is passed in
 			obj = getPlayerObj();
-			Volume = 1;
+			Volume = 1; //sounds played right next to the audio listener should not exceed 1
 		}
+		if (vol > 0)
+			Volume = vol;
 		bool found = false;
 		List<string> type = new List<string>();
-		for (int i = 0; i < SFXNames.Count; i ++)
+		for (int i = 0; i < SFXNames.Count; i++)
 		{
 			if (SFXNames[i].Contains(name))
 			{
@@ -691,9 +707,10 @@ public class AudioManager : MonoBehaviour
 			//play random sound of that same name
 			//PlayAttachedSound(type[rng], obj);
 			float pitch = 1;
-			if (pitchRange != 0)//
-				pitch = (1-(pitchRange/2))+ (Random.value * pitchRange);
-			PlaySound(type[rng], Volume, pitch );
+			if (pitchRange > 0)//
+				pitch = pitchMin + (Random.value * pitchRange);
+			//PlaySound(type[rng], Volume, pitch);
+			PlayAttachedSound(type[rng], obj, Volume, pitch, false, 0);
 		}
 		else
 		{
