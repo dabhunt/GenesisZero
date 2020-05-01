@@ -16,6 +16,8 @@ public class StateManager : MonoBehaviour
     public GameObject canvas;
     public GameObject pauseMenu;
     private AsyncOperation operation;
+    private GameObject optionsMenu;
+    private GameObject pMenuButtons;
     private void Awake()
     {
         if (instance == null)
@@ -34,6 +36,7 @@ public class StateManager : MonoBehaviour
         restart = temp.GetComponent<Restart>();
         canvas = GameObject.FindWithTag("CanvasUI");
         pauseMenu = canvas.transform.Find("PauseMenu").gameObject;
+        optionsMenu = canvas.transform.Find("OptionsScreen").gameObject;
     }
     private void Update()
     {
@@ -167,6 +170,12 @@ public class StateManager : MonoBehaviour
             if (child.name != excludedName)
                 child.gameObject.SetActive(enabled);
         }
+    }
+
+    public void ToggleOptionsMenu(bool toggle)
+    {
+        pauseMenu.SetActive(!toggle);
+        optionsMenu.SetActive(toggle);
     }
 
     IEnumerator LoadSceneCoroutine()

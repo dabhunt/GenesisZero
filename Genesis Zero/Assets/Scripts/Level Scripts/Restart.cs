@@ -26,7 +26,7 @@ public class Restart : MonoBehaviour
         canvas = GameObject.FindWithTag("CanvasUI");
         pauseMenu = canvas.transform.Find("PauseMenu").gameObject;
         gameovertext = canvas.transform.Find("Gameover").gameObject;
-        resume = pauseMenu.transform.Find("Decline (1)").gameObject;
+        resume = pauseMenu.transform.Find("Buttons").transform.Find("Continue").gameObject;
         overlay = canvas.transform.Find("BlackOverlay").gameObject;
     }
     void Update()
