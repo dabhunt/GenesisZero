@@ -735,7 +735,7 @@ public class AudioManager : MonoBehaviour
 		bool found = false;
 		for (int i = 0; i < soundPlayerChilds.Count; i++)
 		{
-			if (soundPlayerChilds[i].GetComponent<AudioSource>().isPlaying && soundPlayerChilds[i].name.Contains(name))
+			if (soundPlayerChilds[i] != null && soundPlayerChilds[i].GetComponent<AudioSource>().isPlaying && soundPlayerChilds[i].name.Contains(name))
 			{
 				found = true;
 				soundPlayerChilds[i].GetComponent<AudioSource>().Stop();
