@@ -58,15 +58,14 @@ public class GodHead : MonoBehaviour
         if (Vector2.Distance(player.transform.position, transform.position) <= activeDistance && skillManager.GetModAmount() > 0)
         {
             int interactions = DialogueManager.instance.GetInteractAmount(0);
-            //if player has interacted with a merchant less than twice, show extended dialogue
+            //if player has interacted with any god less than twice, show extended dialogue
             if (interactions <= 1)
             {
-                //reads the 0_ and 1_Merchant files
+                //reads the 0_ and 1_ god files
                 DialogueManager.instance.TriggerDialogue(interactions + "_FallenGod");
             }
             else //if player has interacted twice, don't show dialogue text just go straight into UI
             {
-                //DialogueManager.instance.TriggerDialogue("Default_Merchant");
                 AfterDialogue();
             }
             DialogueManager.instance.SetInteractionAfterDialogue(1);

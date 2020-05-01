@@ -186,10 +186,15 @@ public class BUGE : MonoBehaviour
                     speedvar = Speed;
                 } 
             }
-            else if (distance >= MinDistance)
+            if (distance >= MinDistance)
             {
                 speedvar += acceleration;
                 //this.transform.position = Vector3.MoveTowards(this.transform.position, follow, speedvar * Time.deltaTime);
+            }
+            else
+            {
+                if (speedvar > 3)
+                    speedvar -= acceleration;
             }
             this.transform.position = Vector3.MoveTowards(this.transform.position, follow, speedvar * Time.deltaTime);
             Vector3 sinPos = this.transform.position;
