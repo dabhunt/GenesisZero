@@ -31,14 +31,10 @@ public class SpawnOnDestroy : MonoBehaviour
     //bool applicationIsQuitting;
     // Start is called before the first frame update
     // Update is called once per frame
-
-    private void Awake()
-    {
-        eAnimator = EssencePrefab.GetComponent<Animator>();
-    }
-
     void Start()
     {
+        if (eAnimator != null)
+            eAnimator = EssencePrefab.GetComponent<Animator>();
         EssencePrefab.GetComponent<Animator>();
 
         quitting = false;
