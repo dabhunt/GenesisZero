@@ -334,7 +334,12 @@ public class PlayerController : MonoBehaviour
                     transform.position = Vector3.Lerp(transform.position, transform.position + Vector3.up * 1* characterHeight , 5 * Time.fixedDeltaTime);
 
             if (vertVel < 0)
+            {
                 vertVel = 0;
+                if  (Time.realtimeSinceStartup > 12f)
+                    sound.Land();
+            }
+               
             if (!isJumping)
                 jumpCount = 2;
         }
@@ -380,9 +385,15 @@ public class PlayerController : MonoBehaviour
         if (isGrounded)
             return;
         if (isRolling)
-            fallSpeedMult = fallSpeedWhileRolling;
+        {
+            fallSpeedMult = 0;
+            vertVel = 0;
+        }
         if (isDashing)
-            fallSpeedMult = fallSpeedWhileDashing;
+        {
+            fallSpeedMult = 0;
+            vertVel = 0;
+        }
         if (!isDashing && !isRolling)
         {
             fallSpeedMult = resetfallSpeed;
@@ -410,12 +421,16 @@ public class PlayerController : MonoBehaviour
             {
                 animator.SetTrigger("startRoll");
                 StartCoroutine(ResetTrigger("startRoll", triggerResetTime));
+                VFXManager.instance.PlayEffect("VFX_PlayerDashStart", transform.position);
+                gameObject.GetComponentInChildren<SkinnedMeshRenderer>().enabled = false; //TEMPORARY CHANGE THIS
+                VFXManager.instance.PlayEffectForDuration("VFX_PlayerDashEffect", transform.position, rollDuration).transform.parent = transform;
                 //Select roll direction based on crosshair position and input
                 if (movementInput.x != 0)
                     rollDirection = movementInput.x > 0 ? 1 : -1;
                 else
                     rollDirection =  isAimingRight ? 1 : -1;
                 isRolling = true;
+                
                 GetComponent<Player>().SetInvunerable(rollDuration);
                 NewLayerMask(rollingLayerMask, rollDuration);
                 timeRolled = 0;
@@ -436,7 +451,15 @@ public class PlayerController : MonoBehaviour
             }
         }
     }
-
+    private void EndRoll()
+    {
+        isRolling = false;
+        animator.SetTrigger("endRoll");
+        StartCoroutine(ResetTrigger("endRoll", triggerResetTime));
+        rollCooldown = rollCooldownDuration;
+        gameObject.GetComponentInChildren<SkinnedMeshRenderer>().enabled = true;
+        StartCoroutine(ResetCooldown(rollCooldownDuration));
+    }
     /* This function keeps track of rolling state
      * and make player exit rolling state if necessary
      */
@@ -447,12 +470,8 @@ public class PlayerController : MonoBehaviour
         {
             //interupts roll if it's blocked
             if ((rollDirection > 0 && IsBlocked(Vector3.right)) || (rollDirection < 0 && IsBlocked(Vector3.left)))
-            {   
-                isRolling = false;
-                animator.SetTrigger("endRoll");
-                StartCoroutine(ResetTrigger("endRoll", triggerResetTime));
-                rollCooldown = rollCooldownDuration;
-                StartCoroutine(ResetCooldown(rollCooldownDuration));
+            {
+                EndRoll();
                 return;
             }
             //continue rolling if rollDuration is not reached
@@ -463,13 +482,9 @@ public class PlayerController : MonoBehaviour
             }
             else
             {
-                isRolling = false;
-                animator.SetTrigger("endRoll");
-                StartCoroutine(ResetTrigger("endRoll", triggerResetTime));
-                rollCooldown = rollCooldownDuration;
-                StartCoroutine(ResetCooldown(rollCooldownDuration));
+                EndRoll();
             }
-            //lastRollingPosition = transform.position;
+
         }
     }
 

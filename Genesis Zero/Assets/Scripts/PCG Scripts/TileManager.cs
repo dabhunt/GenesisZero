@@ -5,6 +5,8 @@ using UnityEngine;
 public class TileManager : MonoBehaviour
 {
 	//Public Variables (Visible in Inspector)
+	
+	[Header("Tile Spawning")]
 	public static TileManager instance;
 	public int maxBuildingWidth = 5;
 	public int minBuildingWidth = 2;
@@ -14,19 +16,30 @@ public class TileManager : MonoBehaviour
 	public float levelSpacing = 1000;
 	public float minOffset;
 	public float maxOffset;
+	
+	[Header("Interactable Spawning")]
 	public string teleporterID = "Teleporter_Mock2";
-	public GameObject[] tilePrefabs;
+	public float godHeadSpawnChance = .2f;
+	public float chestSpawnChance = .2f;
+	public float merchantSpawnChance = .2f;
+	public float scrapConverterSpawnChance = .2f;
+	
+	[Header("Prefab Containers")]
+	private GameObject[] tilePrefabs;
+	public GameObject[] industrialTilePrefabs;
+	public GameObject[] cityTilePrefabs;
 	public GameObject[] enemyPrefabs;
+	public GameObject[] interactablePrefabs;
+	
 	[Header("Enemy Spawning")]
 	public Vector2 MinMaxEnemies = new Vector2(3, 5);
 	[Range(0, 1)]
 	public float SpawnChance = .1f;
+	
 	//Private Variables
 	private float currentPos = 22.0f;
 	private float tileLength = 22.0f;
 	private float tileHeight = 6.5f;
-	private GameObject portalPrefab;
-	private GameObject tempPortal;
 	public int curlevel = 0;
 	private void Awake()
 	{
@@ -40,15 +53,17 @@ public class TileManager : MonoBehaviour
 	}
 	private void Start()
     {
-		portalPrefab = GameObject.Find(teleporterID);
-		tempPortal = portalPrefab; 
+		tilePrefabs = industrialTilePrefabs;
+		//tilePrefabs = cityTilePrefabs;
+		
 		//Level 1
 		int level = 0;
         for (int i = 0; i < numberOfBuildings; ++i)
 		{
 			generateBuilding(Random.Range(minBuildingWidth, maxBuildingWidth), Random.Range(minBuildingTileCount, maxBuildingTileCount), level);
 		}
-		
+		//tilePrefabs = industrialTilePrefabs;
+		tilePrefabs = cityTilePrefabs;
 		//Level 2
 		++level;
 		currentPos = levelSpacing*level + 22;
@@ -64,6 +79,47 @@ public class TileManager : MonoBehaviour
 		{
 			generateBuilding(Random.Range(minBuildingWidth, maxBuildingWidth), Random.Range(minBuildingTileCount, maxBuildingTileCount), level);
 		}
+		
+		//Placemat PCG Pass
+		bool teleporterIsSpawned = false;
+		List<GameObject> teleporterInstances = new List<GameObject>();
+		float levelTracking = 0f;
+		foreach (GameObject mat in GameObject.FindGameObjectsWithTag("Placemat"))
+		{
+			if (mat.name == "GodHeadMat" && Random.value <= godHeadSpawnChance) //Case 1: God Heads
+			{
+				GameObject newGodHead = Instantiate(interactablePrefabs[0]) as GameObject;
+				newGodHead.transform.position = mat.transform.position;
+			}
+			else if (mat.name == "ChestMat" && Random.value <= chestSpawnChance) //Case 2: Chests/Safes
+			{
+				GameObject newChest = Instantiate(interactablePrefabs[1]) as GameObject;
+				newChest.transform.position = mat.transform.position;
+			}
+			else if (mat.name == "MerchantMat" && Random.value <= merchantSpawnChance) //Case 3: Merchants
+			{
+				GameObject newMerchant = Instantiate(interactablePrefabs[2]) as GameObject;
+				newMerchant.transform.position = mat.transform.position;
+			}
+			else if (mat.name == "ScrapMat" && Random.value <= scrapConverterSpawnChance) //Case 4: Scrap Convertors
+			{
+				GameObject newScrap = Instantiate(interactablePrefabs[3]) as GameObject;
+				newScrap.transform.position = mat.transform.position;
+			}
+			else if (mat.name == "TeleportMat")
+			{
+				if (teleporterIsSpawned == false && mat.transform.position.x > levelTracking)
+				{
+					GameObject newTele = Instantiate(interactablePrefabs[4]) as GameObject;
+					teleporterInstances.Add(newTele);
+					levelTracking += levelSpacing;
+					
+					newTele.GetComponent<Teleporter>().SetDestination(new Vector2(levelTracking + 10, 40));
+				}
+				teleporterInstances[teleporterInstances.Count - 1].transform.position = mat.transform.position;
+			}
+		}
+		
 		//this should be turned on later to disable the prefab gameobject
 		//portalPrefab.SetActive(false);
     }
@@ -157,27 +213,6 @@ public class TileManager : MonoBehaviour
 				spawnVector.z += 2;
 			}
 			
-			//Spawn Teleporter
-			if (Random.Range(0, 10) == 0)
-			{
-				//GameObject exitPortal = Instantiate(portalPrefab) as GameObject;
-				//temp fix until better second pass PCG teleporter system added
-				if (levelNumber == 0)
-				{
-					spawnVector.y += 7;
-					spawnVector.x -= 22;
-					spawnVector.z -= 2;
-					tempPortal.transform.position = spawnVector;
-					//the destination should be the start point of the next level, not 0,0
-					float rng = Random.Range(1, 4)/10;
-					tempPortal.GetComponent<Teleporter>().SetDesination(new Vector2(levelNumber * levelSpacing + levelSpacing * rng, 70f));
-					spawnVector.y -= 7;
-					spawnVector.x += 22;
-					spawnVector.z += 2;
-				}
-
-			}
-			
 			//Iterate counting variables
 			shift--;
 			end--;
@@ -185,6 +220,6 @@ public class TileManager : MonoBehaviour
 		
 		//Shift currentPos for next building
 		currentPos += tileLength * width;
-		currentPos += Random.Range(10.0f, 30.0f);
+		currentPos += Random.Range(8.0f, 15.0f);
 	}
 }

@@ -13,12 +13,15 @@ public class InteractPopup : MonoBehaviour
     public float activeDistance = 1.5f;
     public float scaleSize = .5f;
     public float YOffset = 1.5f;
+    public string TitleText = "";
     public string PopText = "Press [F] to interact";
     private Canvas canvasRef;
-    private bool interactable = true;
+    public bool interactable = true;
+    public bool visible = false;
     private Player player;
     private GameObject popup;
     private Camera camRef;
+    private Color titleColor;
     //private GameInputActions inputActions;
     void Start()
     {
@@ -29,22 +32,29 @@ public class InteractPopup : MonoBehaviour
         //inputActions = GameInputManager.instance.GetInputActions();
         camRef = Camera.main;
         InvokeRepeating("DistanceCheck", 0, checksPerSecond);
+        //if there is a skillpickup attached to this, set the title to the name and rarity color
+        if (GetComponent<SkillPickup>() != null)
+        {
+            SkillObject skill = GetComponent<SkillPickup>().skill;
+            titleColor = player.GetSkillManager().GetColor(skill);
+            TitleText = skill.name;
+        }
     }
     private void DistanceCheck()
     {
         if (player == null)
             return;
-        if (Vector3.Distance(player.transform.position, transform.position) <= activeDistance)
+        if (Vector2.Distance(player.transform.position, transform.position) <= activeDistance)
         {
-            if (!interactable)
+            if (!visible && interactable)
             {
-                interactable = true;
+                visible = true;
                 InitializeUI();
             }
         }
         else
         {
-            interactable = false;
+            visible = false;
             if (popup != null)
                 Destroy(popup);
         }
@@ -54,13 +64,14 @@ public class InteractPopup : MonoBehaviour
     {
         Vector2 screenPos = CalcScreenPos();
         popup = (GameObject)GameObject.Instantiate(Resources.Load("UI/InteractPopup"), screenPos, Quaternion.identity);
-        popup.GetComponentInChildren<Text>().text = PopText;
         SetScreenPos(screenPos);
+        SetTitle(TitleText);
+        SetText(PopText);
     }
     private Vector2 CalcScreenPos()
     {
         Vector2 headScreenPos;
-        headScreenPos = Camera.main.WorldToScreenPoint(new Vector3(transform.position.x, transform.position.y + YOffset, 0));
+        headScreenPos = camRef.WorldToScreenPoint(new Vector3(transform.position.x, transform.position.y + YOffset, 0));
         //RectTransformUtility.ScreenPointToLocalPointInRectangle(canvasRef.transform as RectTransform, headScreenPos, canvasRef.worldCamera, out pos);
         return headScreenPos;
     }
@@ -78,10 +89,14 @@ public class InteractPopup : MonoBehaviour
     {
         if (interactable && popup != null)
         {
-            Vector2 screenPos = camRef.WorldToScreenPoint(new Vector3(transform.position.x, transform.position.y + YOffset, 0));
-            //popup.transform.localPosition = screenPos;
-            popup.transform.position = screenPos;
+            popup.transform.position = camRef.WorldToScreenPoint(new Vector3(transform.position.x, transform.position.y + YOffset, 0));
             //SetScreenPos(screenPos);
+        }
+        else
+        {
+            visible = false;
+            if (popup != null)
+                Destroy(popup);
         }
     }
     public void DestroyPopUp()
@@ -93,9 +108,36 @@ public class InteractPopup : MonoBehaviour
     {
         if (popup != null)
         {
-            popup.GetComponentInChildren<Text>().text = newtext;
+            popup.transform.Find("InteractText").gameObject.GetComponent<Text>().text = newtext;
             PopText = newtext;
+        }
+    }
+
+    public void SetTitle(string newtitle)
+    {
+        if (popup != null)
+        {
+            //if there is a valid newtitle string, do this
+            if (newtitle != null && newtitle != "")
+            {
+                popup.transform.Find("TitleText").gameObject.SetActive(true);
+                popup.transform.Find("TitleText").gameObject.GetComponent<Text>().text = newtitle;
+                popup.transform.Find("TitleText").gameObject.GetComponent<Text>().color = titleColor;
+                popup.transform.Find("BG").localScale = new Vector2(1, 1.7f);
+                TitleText = newtitle;
+            }
+            else 
+            {
+                popup.transform.Find("BG").localScale = new Vector2(1, 1f);
+                TitleText = "";
+                popup.transform.Find("TitleText").gameObject.SetActive(false);
+            }
         }       
+    }
+    public void SetTitleAndText(string newtext, string newtitle)
+    {
+        SetText(newtext);
+        SetTitle(newtitle);
     }
     private void OnDestroy()
     {

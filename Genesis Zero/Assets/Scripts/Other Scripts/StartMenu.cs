@@ -11,15 +11,43 @@ public class StartMenu : MonoBehaviour
     private AsyncOperation operation;
     private Slider loadBar;
     private Text loadPercentage;
-    private GameObject loadingScreen;
+
     private GameObject mainMenuScreen;
     private GameObject optionsScreen;
-    
+    private GameObject loadingScreen;
+    private TMPro.TMP_Dropdown resDropdown;
+    private List<Resolution> resolutions;
+
     public void Start()
     {
-        loadingScreen = canvas.transform.Find("LoadingScreen").gameObject;
+        List<string> values;
+        //Caching some canvas groups
         mainMenuScreen = canvas.transform.Find("MainMenuScreen").gameObject;
+        loadingScreen = canvas.transform.Find("LoadingScreen").gameObject;
         optionsScreen = canvas.transform.Find("OptionsScreen").gameObject;
+        resDropdown = optionsScreen.transform.Find("Resolution").GetComponent<TMPro.TMP_Dropdown>();
+
+        //Populating Resolution list
+        Resolution[] options = Screen.resolutions;
+        resolutions = new List<Resolution>(options);
+        values = new List<string>();
+        resolutions.Reverse();
+
+        int index = 0;
+        for (int i = 0; i < resolutions.Count; i++)
+        {
+            if (resolutions[i].refreshRate < 60)
+                continue;
+            values.Add(resolutions[i].width + "x" + resolutions[i].height + " (" + resolutions[i].refreshRate + " hz)");
+            if (resolutions[i].height == Screen.currentResolution.height && resolutions[i].width == Screen.currentResolution.width)
+            {
+                index = i;
+            }
+        }
+        resDropdown.ClearOptions();
+        resDropdown.AddOptions(values);
+        resDropdown.value = index;
+        resDropdown.RefreshShownValue();
     }
 
     //Onclick Event for Start Button
@@ -33,14 +61,12 @@ public class StartMenu : MonoBehaviour
         loadPercentage = loadBar.transform.Find("LoadPercentage").gameObject.GetComponent<Text>();
         LoadScene();
     }
-
     //Onclick Event for Options Button
     public void OptionsButton()
     {
         mainMenuScreen.transform.Find("Buttons").gameObject.SetActive(false);
         canvas.transform.Find("OptionsScreen").gameObject.SetActive(true);
     }
-
     //Onclick event for Quit Button
     public void QuitButton()
     {
@@ -49,15 +75,6 @@ public class StartMenu : MonoBehaviour
         UnityEditor.EditorApplication.isPlaying = false;
         #endif
     }
-
-    //Onclick Event for BackButton(options menu)
-    public void OptionsBackButton()
-    {
-        optionsScreen.SetActive(false);
-        mainMenuScreen.transform.Find("Buttons").gameObject.SetActive(true);
-        mainMenuScreen.SetActive(true);
-    }
-
     private void LoadScene()
     {
         StartCoroutine(LoadSceneCoroutine());

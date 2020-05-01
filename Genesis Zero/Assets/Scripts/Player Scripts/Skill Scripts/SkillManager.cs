@@ -34,7 +34,7 @@ public class SkillManager
 
     // Lower the number, lower the chance. Determined by this order (0 - 100)
     private int goldchance = 10; 
-    private int bluechance = 35; // Realistically its bluechance - goldchance in code
+    private int bluechance = 40; // Realistically its bluechance - goldchance in code
     // No white chance becuase it is the default if the other two do not go through
 
     public SkillManager(Player p)
@@ -494,7 +494,8 @@ public class SkillManager
         SkillObject so = (SkillObject)Resources.Load("Skills/Abilities/" + name);
         GameObject emit = (GameObject)GameObject.Instantiate(Resources.Load("Pickups/AbilityPickup"), position, Quaternion.identity);
         emit.GetComponent<SkillPickup>().skill = so;
-        emit.GetComponent<SimpleTooltip>().infoLeft = so.Description;
+        emit.GetComponent<SimpleTooltip>().infoLeft = so.name + "\n";
+        emit.GetComponent<SimpleTooltip>().infoLeft += so.Description;
         return emit;
     }
 
@@ -503,7 +504,8 @@ public class SkillManager
         SkillObject so = Resources.Load<SkillObject>("Skills/Modifiers/" + name);
         GameObject modObj = (GameObject)GameObject.Instantiate(Resources.Load("Pickups/ModPickup"), position, Quaternion.identity);
         modObj.GetComponent<SkillPickup>().skill = so;
-        modObj.GetComponent<SimpleTooltip>().infoLeft = so.Description;
+        modObj.GetComponent<SimpleTooltip>().infoLeft = so.name + "\n";
+        modObj.GetComponent<SimpleTooltip>().infoLeft += so.Description;
         //change the color of the mod to the color based on rarity
         VFXManager.instance.ChangeColor(modObj, GetColor(so));
         return modObj;

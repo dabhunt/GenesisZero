@@ -7,30 +7,31 @@ public class PlayerSounds : MonoBehaviour
     // Start is called before the first frame update
     private PlayerController PC;
     private AudioManager aManager;
+	private GameObject playerObj;
     //bool applicationIsQuitting;
     // Start is called before the first frame update
     // Update is called once per frame
 	private void Start()
 	{
-		GameObject temp = GameObject.FindWithTag("Player");
-		PC = temp.GetComponent<PlayerController>();
+		playerObj = GameObject.FindWithTag("Player");
+		PC = playerObj.GetComponent<PlayerController>();
 		aManager = FindObjectOfType<AudioManager>();
 	}
 	public void Jump()
 	{
-		aManager.PlayRandomSFXType("Jump");
+		aManager.PlayRandomSFXType("Jump", null, .3f);
 	}
 	public void GunShot()
 	{
-		aManager.PlayRandomSFXType("Gunshot");
+		aManager.PlayRandomSFXType("Gunshot", null, 1, 1.5f, .7f);
 	}
 	public void Land()
 	{
-		aManager.PlayRandomSFXType("Jump");
+		aManager.PlayRandomSFXType("Jump", null, .3f);
 	}
 	public void Walk()
 	{
-		aManager.PlaySound("SFX_Running");
+		aManager.PlayAttachedSound("SFX_Running", null, .3f, 1, false, 0);
 	}
 	public void StopWalk(){
 		aManager.StopSound("SFX_Running");

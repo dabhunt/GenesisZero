@@ -22,6 +22,8 @@ public class GuidanceSystem : MonoBehaviour
     }
     public void CheckDist()
     {
+        if (player == null)
+            return;
         totalDistance += Vector3.Distance(player.transform.position, lastLocation);
         if (totalDistance > triggerDistance)
         {

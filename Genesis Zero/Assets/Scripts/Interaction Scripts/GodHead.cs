@@ -23,7 +23,7 @@ public class GodHead : MonoBehaviour
     private PlayerSounds sound;
     private List<GameObject> modObjUI;
     //private SkillUIElement skillUIElement;
-    private bool isActive = true;
+    public bool isActive = true;
     private int canistersNeeded = 0;
     //private bool confirmationWindowOpen = false;
     //change to private later below this point
@@ -46,11 +46,6 @@ public class GodHead : MonoBehaviour
         //confirmUI.gameObject.SetActive(false);
     }
 
-    private void Update()
-    {
-        if (Input.GetKeyDown(KeyCode.F))
-            Interact();
-    }
     public void Interact()
     {
         if (!isActive)
@@ -60,18 +55,17 @@ public class GodHead : MonoBehaviour
             return;
         if (GameInputManager.instance.GetActiveControlMap() == "MenuControls")
             return;
-        if (Vector3.Distance(player.transform.position, transform.position) <= activeDistance && skillManager.GetModAmount() > 0)
+        if (Vector2.Distance(player.transform.position, transform.position) <= activeDistance && skillManager.GetModAmount() > 0)
         {
             int interactions = DialogueManager.instance.GetInteractAmount(0);
-            //if player has interacted with a merchant less than twice, show extended dialogue
+            //if player has interacted with any god less than twice, show extended dialogue
             if (interactions <= 1)
             {
-                //reads the 0_ and 1_Merchant files
+                //reads the 0_ and 1_ god files
                 DialogueManager.instance.TriggerDialogue(interactions + "_FallenGod");
             }
             else //if player has interacted twice, don't show dialogue text just go straight into UI
             {
-                //DialogueManager.instance.TriggerDialogue("Default_Merchant");
                 AfterDialogue();
             }
             DialogueManager.instance.SetInteractionAfterDialogue(1);
@@ -92,13 +86,6 @@ public class GodHead : MonoBehaviour
         InitializeUI();
         UpdateSelect(0);
         //sacUI.gameObject.SetActive(true);   
-    }
-    public void Select(InputAction.CallbackContext ctx)
-    {
-        if (ctx.performed)
-        {
-            
-        }
     }
     public void UpdateSelect(int num)
     {
@@ -219,14 +206,16 @@ public class GodHead : MonoBehaviour
                 }
             }
         }
-        screenPos = camRef.WorldToScreenPoint(new Vector3(player.transform.position.x, transform.position.y +Yoffset, 0));
+        screenPos = camRef.WorldToScreenPoint(new Vector3(player.transform.position.x, 0, 0));
+        sacUI.transform.position = new Vector2(screenPos.x, sacUI.transform.position.y);
         //sets default selection to position 0
-        sacUI.transform.position = screenPos;
         UpdateSelect(0);
     }
     public void CloseUI()
     {
         isActive = false;
+        //marks this object as no longer able to be interacted with
+        gameObject.AddComponent<InactiveFlag>();
         sacUI.gameObject.SetActive(false);
         StateManager.instance.UnpauseGame();
         modSelectNum = -1;

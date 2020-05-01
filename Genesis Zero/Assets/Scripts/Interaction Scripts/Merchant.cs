@@ -30,13 +30,6 @@ public class Merchant : MonoBehaviour
     //change to private later below this point
     private int itemSelectNum = -1;
     //public List<SkillObject> modSkills;
-
-    private void Update()
-    {
-        if (Input.GetKeyDown(KeyCode.F))
-            Interact();
-    }
-
     private void Start()
     {
         gameObjList = new List<GameObject>();
@@ -58,7 +51,7 @@ public class Merchant : MonoBehaviour
         //prevent player from activating multiple times
         if (StateManager.instance.IsPaused())
             return;
-        if (Vector3.Distance(player.transform.position, transform.position) <= activeDistance)
+        if (Vector2.Distance(player.transform.position, transform.position) <= activeDistance)
         {
             int interactions = DialogueManager.instance.GetInteractAmount(0);
             //if player has interacted with a merchant less than twice, show extended dialogue

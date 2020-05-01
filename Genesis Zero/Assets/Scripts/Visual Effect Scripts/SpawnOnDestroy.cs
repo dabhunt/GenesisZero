@@ -8,7 +8,7 @@ public class SpawnOnDestroy : MonoBehaviour
 {
     public string vfxName;
     public float vfxScaleMultiplier;
-    public string[] sounds = new string[0];
+    public string sound;
     public bool quitting;
     private Restart restartScript;
     //.3f is 30% drop chance
@@ -51,22 +51,20 @@ public class SpawnOnDestroy : MonoBehaviour
     private void OnDestroy()
     {
         //if the scene is being restarted or the player quits
-        if (restartScript == null || restartScript.ExitingScene() || quitting)
+        if (player == null || restartScript == null || restartScript.ExitingScene() || quitting)
         {
+            quitting = true;
             return;
         }
         // otherwise play the effect
         else
         {
-            if (sounds.Length > 0)
+            if (sound != null && sound != "")
             {
-                //if string is not empty, calls audio manager to play sound based on string
-                // note this only works if audio manager has been told to load the sound at the beginnning of the game
-                int rng = Random.Range(1, sounds.Length);
-                rng--;
                 if (aManager != null)
                 {
-                    aManager.PlaySoundOneShot(sounds[rng]);
+                    //plays sound at this location
+                    aManager.PlayRandomSFXType(sound, this.gameObject, .2f);
                 }
             }
             //if vfx string is not empty
