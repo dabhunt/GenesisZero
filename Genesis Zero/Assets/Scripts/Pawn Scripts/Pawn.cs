@@ -180,7 +180,6 @@ public class Pawn : MonoBehaviour
                     if (colliding)
                     {
                         colliding = !hit.collider.isTrigger;
-                        Debug.Log("Shift");
                     }
                     translation = colliding ? -translation : translation;
                 }

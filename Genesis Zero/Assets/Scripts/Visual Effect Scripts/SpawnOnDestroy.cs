@@ -51,8 +51,9 @@ public class SpawnOnDestroy : MonoBehaviour
     private void OnDestroy()
     {
         //if the scene is being restarted or the player quits
-        if (restartScript == null || restartScript.ExitingScene() || quitting)
+        if (player == null || restartScript == null || restartScript.ExitingScene() || quitting)
         {
+            quitting = true;
             return;
         }
         // otherwise play the effect
@@ -63,7 +64,7 @@ public class SpawnOnDestroy : MonoBehaviour
                 if (aManager != null)
                 {
                     //plays sound at this location
-                    aManager.PlayRandomSFXType(sound, this.gameObject);
+                    aManager.PlayRandomSFXType(sound, this.gameObject, .2f);
                 }
             }
             //if vfx string is not empty

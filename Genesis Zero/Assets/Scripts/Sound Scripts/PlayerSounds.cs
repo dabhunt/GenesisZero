@@ -19,19 +19,19 @@ public class PlayerSounds : MonoBehaviour
 	}
 	public void Jump()
 	{
-		aManager.PlayRandomSFXType("Jump");
+		aManager.PlayRandomSFXType("Jump", null, .3f);
 	}
 	public void GunShot()
 	{
-		aManager.PlayRandomSFXType("Gunshot");
+		aManager.PlayRandomSFXType("Gunshot", null, 1, 1.5f, .7f);
 	}
 	public void Land()
 	{
-		aManager.PlayRandomSFXType("Jump");
+		aManager.PlayRandomSFXType("Jump", null, .3f);
 	}
 	public void Walk()
 	{
-		aManager.PlaySound("SFX_Running");
+		aManager.PlayAttachedSound("SFX_Running", null, .3f, 1, false, 0);
 	}
 	public void StopWalk(){
 		aManager.StopSound("SFX_Running");

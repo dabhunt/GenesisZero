@@ -23,7 +23,7 @@ public class GodHead : MonoBehaviour
     private PlayerSounds sound;
     private List<GameObject> modObjUI;
     //private SkillUIElement skillUIElement;
-    private bool isActive = true;
+    public bool isActive = true;
     private int canistersNeeded = 0;
     //private bool confirmationWindowOpen = false;
     //change to private later below this point
@@ -46,11 +46,6 @@ public class GodHead : MonoBehaviour
         //confirmUI.gameObject.SetActive(false);
     }
 
-    private void Update()
-    {
-        if (Input.GetKeyDown(KeyCode.F))
-            Interact();
-    }
     public void Interact()
     {
         if (!isActive)
@@ -92,13 +87,6 @@ public class GodHead : MonoBehaviour
         InitializeUI();
         UpdateSelect(0);
         //sacUI.gameObject.SetActive(true);   
-    }
-    public void Select(InputAction.CallbackContext ctx)
-    {
-        if (ctx.performed)
-        {
-            
-        }
     }
     public void UpdateSelect(int num)
     {
@@ -219,14 +207,16 @@ public class GodHead : MonoBehaviour
                 }
             }
         }
-        screenPos = camRef.WorldToScreenPoint(new Vector3(player.transform.position.x, transform.position.y +Yoffset, 0));
+        screenPos = camRef.WorldToScreenPoint(new Vector3(player.transform.position.x, 0, 0));
+        sacUI.transform.position = new Vector2(screenPos.x, sacUI.transform.position.y);
         //sets default selection to position 0
-        sacUI.transform.position = screenPos;
         UpdateSelect(0);
     }
     public void CloseUI()
     {
         isActive = false;
+        //marks this object as no longer able to be interacted with
+        gameObject.AddComponent<InactiveFlag>();
         sacUI.gameObject.SetActive(false);
         StateManager.instance.UnpauseGame();
         modSelectNum = -1;

@@ -65,16 +65,21 @@ public class StateManager : MonoBehaviour
             string skillStr = player.GetSkillManager().GetRandomMod().name;
             player.GetSkillManager().SpawnMod(new Vector3(player.transform.position.x+2, player.transform.position.y+5, 0), skillStr);
         }
+        if (Input.GetKey(KeyCode.End))
+        {
+            player.GetHealth().SetValue(0);
+        }
         if (Input.GetKeyDown(KeyCode.Home))
         {
             player.SetEssence(player.GetMaxEssenceAmount());
             player.SetKeys(3);
+            player.GetHealth().SetMaxValue(2000);
         }
         if (Input.GetKeyDown(KeyCode.PageUp))
         {
-            Merchant closestMerchant = GetComponent<InteractInterface>().ClosestInteractable().GetComponent<Merchant>();
+            Merchant closestMerchant = InteractInterface.instance.ClosestInteractable().GetComponent<Merchant>();
             if (closestMerchant != null && closestMerchant.GetWindowOpen())
-                GetComponent<InteractInterface>().ClosestInteractable().GetComponent<Merchant>().InitializeUI();
+                InteractInterface.instance.ClosestInteractable().GetComponent<Merchant>().InitializeUI();
         }
         //get to next level instantly
         if (Input.GetKey(KeyCode.ScrollLock))
@@ -151,6 +156,17 @@ public class StateManager : MonoBehaviour
     {
         StartCoroutine(LoadSceneCoroutine());
         //SceneManager.LoadScene("MainMenu", LoadSceneMode.Single);
+    }
+    /* when given a transform, this recursively disables all objects below it, excluding one
+     * This is currently used to turn off the canvas without ruining other things / needing to make a new canvas
+     */
+    public void SetActiveExcludingChild(Transform t, string excludedName, bool enabled)
+    {
+        foreach (Transform child in t)
+        {
+            if (child.name != excludedName)
+                child.gameObject.SetActive(enabled);
+        }
     }
 
     IEnumerator LoadSceneCoroutine()

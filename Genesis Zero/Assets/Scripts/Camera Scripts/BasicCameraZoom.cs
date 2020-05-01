@@ -25,13 +25,13 @@ public class BasicCameraZoom : MonoBehaviour
         {
             target += zoomSpeed;
             target = Mathf.Clamp(target, fovMin, fovMax);
-            Camera.main.fieldOfView = target;
+            myCamera.fieldOfView = target;
         }
         if (Input.GetAxis("Mouse ScrollWheel") > 0)
         {
             target -= zoomSpeed;
             target = Mathf.Clamp(target, fovMin, fovMax);
-            Camera.main.fieldOfView = target;
+            myCamera.fieldOfView = target;
         }
   
     }
@@ -44,7 +44,7 @@ public class BasicCameraZoom : MonoBehaviour
             {
                 fovMax = field;
             }
-            StartCoroutine(Spandout(.5f, Camera.main.fieldOfView, field, spanding));
+            StartCoroutine(Spandout(.5f, myCamera.fieldOfView, field, spanding));
         }
     }
 
@@ -58,7 +58,7 @@ public class BasicCameraZoom : MonoBehaviour
                 reset = false;
                 break;
             }
-            Camera.main.fieldOfView = start + ((target - start) * f / time);
+            myCamera.fieldOfView = start + ((target - start) * f / time);
             yield return new WaitForSeconds(Time.fixedDeltaTime);
         }
         spanding = false;

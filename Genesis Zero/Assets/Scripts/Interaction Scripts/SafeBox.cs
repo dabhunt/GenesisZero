@@ -9,7 +9,6 @@ public class SafeBox : MonoBehaviour
     private GameObject player;
     private Animator animator;
     Player playerScript;
-    public bool isActive = true;
     /* This script controls what happens when the player interacts with the mod converter, and the math behind what mod you get in return
      * Essentially, you cannot get back a modifier of lower quality than you put in, and putting in more modifiers increases the likelyhood
      * of a higher tier mod coming out
@@ -21,44 +20,45 @@ public class SafeBox : MonoBehaviour
         player = GameObject.FindGameObjectWithTag("Player");
         playerScript = player.GetComponent<Player>();
         sk = playerScript.GetSkillManager();
-        animator = GetComponent<Animator>();
+        animator = transform.Find("Top").gameObject.GetComponent<Animator>();
     }
     //When you press the Interact button, the Merchant/Machine determines what random Mod to give you
     private void Update()
     {
-        if (!isActive || player == null)
+        if (GetComponent<InteractPopup>() == null)
+            return;
+        if (playerScript.GetKeysAmount() < 1)
+        {
+            GetComponent<InteractPopup>().SetText("You need a Keycode Cracker to open this");
+        }
+        else
+        {
+            GetComponent<InteractPopup>().SetText("Press [F] to Open the Lock Box");
+        }
+    }
+    public void Interact()
+    {
+        print("interacting");
+        if (player == null)
             return;
         if (Vector2.Distance(player.transform.position, gameObject.transform.position) <= 5)
         {
-            if (Input.GetKeyDown(KeyCode.F))
+            InteractPopup iPop = GetComponent<InteractPopup>();
+            if (iPop == null) //if the player has already
+                transform.Find("Top").gameObject.transform.Find("LightEffects").gameObject.SetActive(false);
+            if (playerScript.GetKeysAmount() >= 1)
             {
-                InteractPopup iPop = GetComponent<InteractPopup>();
-                if (iPop == null) //if the player has already
-                    transform.Find("LightEffects").gameObject.SetActive(false);
-                if (playerScript.GetKeysAmount() >= 1)
+                animator.SetTrigger("OpenTrigger");
+                transform.Find("Top").gameObject.transform.Find("LightEffects").gameObject.SetActive(true);
+                if (iPop != null)
                 {
-                    animator.SetTrigger("OpenTrigger");
-                    transform.Find("LightEffects").gameObject.SetActive(true);
-                    if (iPop != null)
-                    {
-                        iPop.DestroyPopUp();
-                        Destroy(iPop);
-                    }
-                    playerScript.GetKeys().AddValue(-1);
+                    iPop.DestroyPopUp();
+                    Destroy(iPop);
                 }
-
+                //marks this object as no longer able to be interacted with
+                gameObject.AddComponent<InactiveFlag>();
+                playerScript.GetKeys().AddValue(-1);
             }
-            if (GetComponent<InteractPopup>() == null)
-                return;
-            if (playerScript.GetKeysAmount() < 1)
-            {
-                GetComponent<InteractPopup>().SetText("You need a Keycode Cracker to open this");
-            }
-            else
-            {
-                GetComponent<InteractPopup>().SetText("Press [F] to Open the Lock Box");
-            }
-
         }
     }
     //returns a SkillObject, takes an int as the number of times that the mod should reroll to get best rarity value

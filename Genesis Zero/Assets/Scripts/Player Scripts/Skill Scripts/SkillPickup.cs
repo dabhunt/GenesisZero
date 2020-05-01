@@ -45,18 +45,7 @@ public class SkillPickup : MonoBehaviour
     {
         //if the player dropped the skill using right click
         if (dropped)
-        {
-          
             return;
-        }
-        if (Input.GetKeyDown(KeyCode.F))
-        {
-            //if the player presses F within range, it will be pulled towards them
-            if (Vector2.Distance(player.transform.position, transform.position) <= pickupDist )
-            {
-                pressed = true;
-            }
-        }
         //if the player has no more room for new modifiers, tell them
         if (!skill.IsAbility)
         {
@@ -93,10 +82,13 @@ public class SkillPickup : MonoBehaviour
                 targetIsPlayer = false;
             if (dropped)
             {
-                target = GetComponent<InteractInterface>().ClosestInteractable();
+                target = InteractInterface.instance.ClosestInteractable();
                 //if target is null, or target is the player
                 if (target == null || target.GetComponent<ModConverter>() == null)
+                {
+                    target = null;
                     return;
+                }
                 //this section of code deals with what the mod should do once it reaches a ScrapConverter
                 float dist = Vector2.Distance(target.transform.position, transform.position);
                 if (dist < modConverterDist)
@@ -155,6 +147,13 @@ public class SkillPickup : MonoBehaviour
                     }
                 }
             }
+        }
+    }
+    public void Interact()
+    {
+        if (Vector2.Distance(player.transform.position, transform.position) <= pickupDist)
+        {
+            pressed = true;
         }
     }
     public void SetDropped(bool boo)

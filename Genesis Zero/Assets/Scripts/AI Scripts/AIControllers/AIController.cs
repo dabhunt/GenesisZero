@@ -36,6 +36,9 @@ public class AIController : Pawn
 
     protected ObjectTracker tracker;
 
+    public DifficultyMultiplier ChargeTimeDifficultyMultiplier;
+    public DifficultyMultiplier CooldownTimeDifficultyMultiplier;
+
     new protected void Start()
     {
         base.Start();
@@ -162,6 +165,7 @@ public class AIController : Pawn
      */
     private void StateUpdate()
     {
+        float stateTimeFactor = 1.0f;
         if (state == AIState.Idle)
         {
             if ((GetDistanceToTarget() <= BehaviorProperties.DetectRadius && targetVisible) || alertTracking)
@@ -209,6 +213,7 @@ public class AIController : Pawn
         }
         else if (state == AIState.Charge) // State when charging up an attack
         {
+            stateTimeFactor = ChargeTimeDifficultyMultiplier.GetFactor();
             if (stateTime >= BehaviorProperties.AttackChargeTime)
             {
                 ChangeState(AIState.Attack);
@@ -223,13 +228,14 @@ public class AIController : Pawn
         }
         else if (state == AIState.Cooldown) // State when cooling down after attack
         {
+            stateTimeFactor = CooldownTimeDifficultyMultiplier.GetFactor();
             if (stateTime >= BehaviorProperties.AttackCooldownTime)
             {
                 ChangeState(AIState.Follow);
             }
         }
 
-        stateTime += Time.fixedDeltaTime;
+        stateTime += Time.fixedDeltaTime * stateTimeFactor;
     }
 
     /**
@@ -507,8 +513,7 @@ public class AIController : Pawn
      */
     public void AlertAndFollow(Pawn target)
     {
-        if (target == null)
-            return;
+        if (target == null) { return; }
         AlertAndFollow(target.transform, false);
     }
 
@@ -527,11 +532,17 @@ public class AIController : Pawn
     {
         if (target != null && (state == AIState.Patrol || state == AIState.Idle || alertTracking))
         {
-            alertPoint = target.position;
-            alertTracking = true;
-            if (alertOthers)
+            if (CheckVisibility(target.transform))
             {
-                AlertNearbyEnemies(target);
+                alertPoint = target.position;
+                alertTracking = true;
+                //AudioManager.instance.PlayRandomSFXType("Enemy", this.gameObject);
+                print("enemy SFX");
+                AudioManager.instance.PlayRandomSFXType("EnemyNearby", this.gameObject, .2f);
+                if (alertOthers)
+                {
+                    AlertNearbyEnemies(target);
+                }
             }
         }
     }
@@ -555,6 +566,18 @@ public class AIController : Pawn
                 nearEnemies[i].AlertAndFollow(target, false);
             }
         }
+    }
+
+    /**
+     * Returns the aim direction to the target for enemies that shoot
+     */
+    public virtual Vector3 GetAimDirection()
+    {
+        if (Target != null)
+        {
+            return (Target.position - transform.position).normalized;
+        }
+        return Vector3.right;
     }
 
     private void OnDestroy()

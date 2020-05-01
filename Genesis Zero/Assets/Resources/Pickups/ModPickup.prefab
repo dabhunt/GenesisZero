@@ -5164,7 +5164,6 @@ GameObject:
   - component: {fileID: 7179544142195874851}
   - component: {fileID: 281433942632845671}
   - component: {fileID: 1836501136668433475}
-  - component: {fileID: 6996150684985563569}
   m_Layer: 11
   m_Name: ModPickup
   m_TagString: Pickups
@@ -5222,7 +5221,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   skill: {fileID: 0}
   YOffset: 0.5
-  modConverterDist: 0.3
+  modConverterDist: 1
 --- !u!114 &8320875331519572631
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -5237,8 +5236,9 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   checksPerSecond: 4
   activeDistance: 2.5
-  scaleSize: 0.5
+  scaleSize: 0.4
   YOffset: 0.9
+  TitleText: 
   PopText: Press [F] to pick up
   interactable: 1
   visible: 0
@@ -5284,18 +5284,6 @@ BoxCollider:
   serializedVersion: 2
   m_Size: {x: 1.33, y: 0.13, z: 4}
   m_Center: {x: 0, y: -0.29, z: 0}
---- !u!114 &6996150684985563569
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 4794356865562389418}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: e4f774eda6a21f6469082dfb9360d10c, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
 --- !u!1001 &818113794971705795
 PrefabInstance:
   m_ObjectHideFlags: 0

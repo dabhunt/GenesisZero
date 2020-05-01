@@ -33,19 +33,26 @@ public class BUGE : MonoBehaviour
     private bool lookOverride = false;
     private EventSystem eventSystem;
     private GameObject alertObj;
+    private bool mouseOver = false;
+    private GameObject playerObj;
+    public bool followingPlayer = false;
+    private GameObject flashlight;
     void Start()
     {
         animWaypoints = new Queue<WayPoint>();
         dialogueInfo = new List<DialogueInfo>();
-        GameObject temp = GameObject.FindWithTag("Player");
-		playerController = temp.GetComponent<PlayerController>();
-		Player = temp.GetComponent<Transform>();
+        playerObj = GameObject.FindWithTag("Player");
+		playerController = playerObj.GetComponent<PlayerController>();
+		Player = playerObj.GetComponent<Transform>();
 		speedvar = Speed;
 		prevFacingRight = playerController.IsFacingRight();
         minDistReset = MinDistance;
         maxDistReset = MaxDistance;
         alertObj = GameObject.FindGameObjectWithTag("BUG-EAlert");
+        flashlight = transform.Find("flashlightouter").gameObject;
+        flashlight.SetActive(false);
         alertObj.SetActive(false);
+
         //Test waypoint system
     }
     private void Update()
@@ -69,19 +76,54 @@ public class BUGE : MonoBehaviour
                     print("blocked by UI: screnXhair.Z " + playerController.screenXhair.transform.position.z);
                 }
                 else
-                {
-                    AddWayPoint(playerController.worldXhair.transform.position, 1f);
+                {//if the player mouse is not on BUGE, add a waypoint
+                    if (mouseOver == false)
+                        AddWayPoint(playerController.worldXhair.transform.position, 1f);
                 }
             }
             
         }
-        if (Input.GetKeyDown(KeyCode.F))
+    }
+    public void FollowingPlayer(bool boo)
+    {
+        followingPlayer = boo;
+        flashlight.SetActive(boo);
+    }
+    private void OnMouseOver()
+    {
+        mouseOver = true;
+        if (Input.GetMouseButtonDown(1))
         {
             Interact();
+
+            GetComponent<InteractPopup>().interactable = false;
+            GetComponent<InteractPopup>().DestroyPopUp();
+        }
+    }
+    private void OnMouseEnter()
+    {
+        LookAt(playerObj, 3f);
+        
+        if (alertObj.activeSelf)
+        {
+            VFXManager.instance.ChangeColor(alertObj, Color.red);
+            GetComponent<InteractPopup>().interactable = true;
+        }
+           
+    }
+    private void OnMouseExit()
+    {
+        if(alertObj.activeSelf)
+        {
+            VFXManager.instance.ChangeColor(alertObj, Color.white);
+            GetComponent<InteractPopup>().interactable = false;
+            mouseOver = false;
         }
     }
     void FixedUpdate()
      {
+        if (!followingPlayer)
+            return;
         if (animWaypoints.Count > 0)
             AnimEnabled = true;
         else { AnimEnabled = false; }
@@ -190,9 +232,8 @@ public class BUGE : MonoBehaviour
         lookOverride = true;
         Invoke("StopLook", seconds);
     }
-    /* called when player interacts with BUG-E
-     */
-    private void Interact() 
+    /* called when player interacts with BUG-E */
+    public void Interact() 
     {
         DialogueInfo info;
         if (dialogueInfo.Count < 1)
@@ -214,6 +255,7 @@ public class BUGE : MonoBehaviour
      */
     public void TooFar(DialogueInfo info)
     {
+        ClearWayPoints();
         if (dialogueInfo.Count > 0)
         {
             for (int i = 0; i < dialogueInfo.Count; i++)
@@ -256,7 +298,7 @@ public class BUGE : MonoBehaviour
             animWaypoints.Dequeue();
         }
     }
-    //Real seconds are used so that timescale doesn't effect it
+    //Real seconds are used so that timescale doesn't effect it in paused parts
     public static IEnumerator WaitForRealSeconds(float delay)
     {
         float start = Time.realtimeSinceStartup;

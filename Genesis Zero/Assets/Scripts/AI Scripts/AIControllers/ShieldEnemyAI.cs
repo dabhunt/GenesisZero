@@ -44,6 +44,10 @@ public class ShieldEnemyAI : AIController
     public Vector3 AttackHitboxStart = Vector3.zero;
     private Transform spawnedHitboxObj; // Refernce to currently spawned hitbox object
 
+    [Header("Difficulty")]
+    public DifficultyMultiplier SpeedDifficultyMultiplier;
+    public DifficultyMultiplier LungeDifficultyMultiplier;
+
     protected void Awake()
     {
         frb = GetComponent<FakeRigidbody>();
@@ -132,7 +136,7 @@ public class ShieldEnemyAI : AIController
             targetSpeed = 0.0f;
         }
 
-        targetSpeed *= GetSpeed().GetValue();
+        targetSpeed *= GetSpeed().GetValue() * SpeedDifficultyMultiplier.GetFactor();
         if ((isGrounded && state != AIState.Attack) || state == AIState.Cooldown)
         {
             frb.Accelerate(Vector3.right * (targetSpeed * faceDir - frb.GetVelocity().x) * Acceleration * slopeForceFactor); // Accelerate toward the target
@@ -209,9 +213,9 @@ public class ShieldEnemyAI : AIController
 
             //if (Vector3.Dot(normalizedTargetDir, Vector3.up) > 0)
             //{
-            Vector3 lungeDir = (normalizedTargetDir + Vector3.up * Mathf.Abs(Vector3.Dot(normalizedTargetDir, Vector3.right)) * LungeVerticality).normalized;
+            Vector3 lungeDir = (new Vector3(normalizedTargetDir.x, normalizedTargetDir.y * LungeVerticality, 0.0f) + Vector3.up * Mathf.Abs(Vector3.Dot(normalizedTargetDir, Vector3.right)) * LungeVerticality).normalized;
             //}
-            frb.AddVelocity(lungeDir * LungeSpeed);
+            frb.AddVelocity(lungeDir * LungeSpeed * LungeDifficultyMultiplier.GetFactor());
             SpawnAttackHitbox();
         }
     }
@@ -230,6 +234,7 @@ public class ShieldEnemyAI : AIController
             spawnedHitbox.DirectionalKnockback = true;
             spawnedHitbox.Knockbackforce = 20f;
             spawnedHitbox.InitializeHitbox(GetDamage().GetValue(), this);
+            spawnedHitbox.SetLifeTime(1);
         }
     }
 

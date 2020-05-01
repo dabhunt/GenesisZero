@@ -9,8 +9,9 @@ public class UniqueEffects : MonoBehaviour
     //if this is 2, it checks twice per second
     public float checksPerSecond = 4f;
     [Header("Music Cross Fade durations")]
-    public float fadeIn = 9f;
-    public float fadeOut = 12f;
+    public float fadeIn = 3f;
+    public float fadeOut = 5f;
+    public float durationUntilDecay = 6f;
     //these are all done in multipliers, not in flat amounts
     // 1.1 = 10% increase, .9f = 10% reduction
     [Header("Adrenaline Rush")]
@@ -61,6 +62,7 @@ public class UniqueEffects : MonoBehaviour
     {
         player = GetComponent<Player>();
         overheat = GetComponent<OverHeat>();
+
         float repeatRate = 1 / checksPerSecond - (Time.deltaTime * 2);
         if (repeatRate > 0.01f)
             InvokeRepeating("CheckUniques", 0, repeatRate);
@@ -71,6 +73,7 @@ public class UniqueEffects : MonoBehaviour
         HeatReduction();
         HalfHeatTrigger();
         //specific Mod effects
+        BoilingPoint();
         ChemicalAccelerant();
         AmplifiedEssence();
         ConcentratedEssence();
@@ -90,6 +93,7 @@ public class UniqueEffects : MonoBehaviour
         if (MusicDecay < 0)
         {
             ExitCombatMusic();
+            Invoke("ExitCombat", fadeOut);
         }
     }
     public void OverHeatTrigger()
@@ -150,9 +154,8 @@ public class UniqueEffects : MonoBehaviour
     }
     public void DamageGivenTrigger()
     {
-        MusicDecay = 10;
+        MusicDecay = durationUntilDecay;
         EnterCombatMusic();
-        Invoke("ExitCombat", MusicDecay+fadeOut);
     }
     public bool IsInCombat()
     {
