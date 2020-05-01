@@ -91,7 +91,9 @@ public class SkillDisplay : MonoBehaviour
                 instance.GetComponent<SkillUIElement>().SetColor(SkillManager.GetColor(skills[i]));
                 instance.GetComponent<SkillUIElement>().SetStack(SkillManager.GetSkillStack(skills[i].name));
                 instance.GetComponent<SkillUIElement>().SetSkill(skills[i]);
-                instance.GetComponent<SimpleTooltip>().infoLeft = skills[i].Description;
+
+                instance.GetComponent<SimpleTooltip>().infoLeft = skills[i].name + "\n";
+                instance.GetComponent<SimpleTooltip>().infoLeft += skills[i].Description;
                 skilldisplay.Add(instance);
             }
 
@@ -105,7 +107,8 @@ public class SkillDisplay : MonoBehaviour
                 abil1.transform.localScale = new Vector3(AbilityScale, AbilityScale, AbilityScale);
                 abil1.GetComponent<SkillUIElement>().SetIcon(skills[i].Icon);
                 abil1.GetComponent<SkillUIElement>().SetColor(SkillManager.GetColor(skills[i]));
-                abil1.GetComponent<SimpleTooltip>().infoLeft = skills[i].Description;
+                abil1.GetComponent<SimpleTooltip>().infoLeft = skills[i].name + "\n";
+                abil1.GetComponent<SimpleTooltip>().infoLeft += skills[i].Description;
                 skilldisplay.Add(abil1);
             }
             else if (skills[i].IsAbility && SkillManager.GetAbility2() && skills[i].name == SkillManager.GetAbility2().name)
@@ -118,7 +121,8 @@ public class SkillDisplay : MonoBehaviour
                 abil2.transform.localScale = new Vector3(AbilityScale, AbilityScale, AbilityScale);
                 abil2.GetComponent<SkillUIElement>().SetIcon(skills[i].Icon);
                 abil2.GetComponent<SkillUIElement>().SetColor(SkillManager.GetColor(skills[i]));
-                abil2.GetComponent<SimpleTooltip>().infoLeft = skills[i].Description;
+                abil2.GetComponent<SimpleTooltip>().infoLeft = skills[i].name + "\n";
+                abil2.GetComponent<SimpleTooltip>().infoLeft += skills[i].Description;
                 skilldisplay.Add(abil2);
             }
 
