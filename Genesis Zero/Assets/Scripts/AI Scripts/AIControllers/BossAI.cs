@@ -56,6 +56,7 @@ public class BossAI : AIController
 	public GameObject FireballPrefab;
 	public GameObject HeadbuttPrefab;
 	public GameObject PulsePrefab;
+	public GameObject FlameGround;
 
 	public GameObject HeadModel;
 	public Animator animator;
@@ -151,7 +152,6 @@ public class BossAI : AIController
 			if (bossstate == State.Centering || bossstate == State.Pulse)
 			{
 				Quaternion look = Quaternion.LookRotation((transform.position + new Vector3(0,0,-10)) - transform.position);
-
 				transform.rotation = Quaternion.Slerp(transform.rotation, look, 2 * Time.fixedDeltaTime);
 				HeadModel.transform.rotation = transform.rotation;
 				//HeadModel.transform.rotation = Quaternion.Slerp(transform.rotation, Quaternion.LookRotation(back, up), 2 * Time.fixedDeltaTime);
@@ -285,12 +285,18 @@ public class BossAI : AIController
 			LastHealth = GetHealth().GetValue();
 		}
 
+		if (IsDying())
+		{
+			FlameGround.SetActive(false);
+		}
+
 		if (HealthLoss >= TotalHealth / 2)
 		{
 			action = 1;
 			SetBossstate(State.Setting, 4);
 			HealthLoss = 0;
-			animator.SetTrigger("WildTrigger");
+			animator.SetTrigger("WildTrigger");	//Set wild trigger
+			FlameGround.SetActive(true);		//Set the flame ground to true/active
 			animator.SetBool("Wild", true);
 		}
 		else if (Heat >= 5)
@@ -335,13 +341,14 @@ public class BossAI : AIController
 			if (Attack == 0)
 			{
 				SetRepeatingAttacks(3);
-				animator.SetTrigger("FireSpitting");
+				animator.SetTrigger("Headbutting");
 				actiontime = RepeatingAttack > 0 ? SetAttackTime(1.35f, 1) : SetAttackTime(2, 1);
 				SetBossstate(State.Headbutt, actiontime);
 				Vector3 target = PredictPath(1.25f);
 				SpawnIndicator(transform.position, new Vector2(16, 6), target - transform.position, new Color(1, 0, 0, .1f), Vector2.zero, false, true, chargeuptime);
 				LookAtVectorTemp(target + ((target - transform.position).normalized * 20), actiontime);
 				StartCoroutine(MoveTo(transform.position + ((target - transform.position).normalized * 16), .25f, chargeuptime));
+				Invoke("SpawnHeadbutt", chargeuptime);
 			}
 			else if (Attack == 1)
 			{
@@ -358,9 +365,10 @@ public class BossAI : AIController
 			{
 				SetRepeatingAttacks(0);
 				animator.SetTrigger("Pulsing");
-				actiontime = RepeatingAttack > 0 ? SetAttackTime(1.2f, 1) : SetAttackTime(1.2f, 1);
+				actiontime = RepeatingAttack > 0 ? SetAttackTime(1.4f, 1.2f) : SetAttackTime(1.4f, 1.2f);
 				SetBossstate(State.Pulse, actiontime);
-				SpawnIndicator(transform.position, new Vector2(18, 18), lookDir, new Color(1, 0, 0, .1f), Vector2.zero, true, false, actiontime);
+				SpawnIndicator(transform.position, new Vector2(18, 18), lookDir, new Color(1, 0, 0, .1f), Vector2.zero, true, false, chargeuptime);
+				Invoke("Pulse", chargeuptime);
 			}
 
 			if (RepeatingAttack < 0)
@@ -629,6 +637,25 @@ public class BossAI : AIController
 		Quaternion rot = Quaternion.Euler(angle.x, angle.y, 0);
 		GameObject hitbox = Instantiate(FireballPrefab, transform.position, rot);
 	}
+
+	void SpawnHeadbutt()
+	{
+		Vector2 angle = (Vector2)transform.rotation.eulerAngles;
+		Quaternion rot = Quaternion.Euler(angle.x, angle.y, 0);
+		GameObject hitbox = Instantiate(HeadbuttPrefab, transform.position, rot);
+		hitbox.transform.parent = transform;
+		hitbox.GetComponent<Hitbox>().LifeTime = .25f;
+	}
+
+	void Pulse()
+	{
+		Vector2 angle = (Vector2)transform.rotation.eulerAngles;
+		Quaternion rot = Quaternion.Euler(angle.x, angle.y, 0);
+		GameObject hitbox = Instantiate(PulsePrefab, transform.position, rot);
+		hitbox.transform.parent = transform;
+		hitbox.GetComponent<Hitbox>().LifeTime = .1f;
+	}
+
 
 	public void SpawnIndicator(Vector2 position, Vector2 size, Vector2 dir, Color color, Vector2 offset, bool centered, bool square, float time)
 	{

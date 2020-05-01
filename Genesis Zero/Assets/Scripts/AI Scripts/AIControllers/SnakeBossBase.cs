@@ -19,8 +19,13 @@ public class SnakeBossBase : MonoBehaviour
     {
         if (!Boss.GetComponent<BossAI>().boxanimating)
         {
-            transform.position = Vector3.Lerp(transform.position, origin + new Vector3((maxoffset.x * ((Boss.transform.position.x - origin.x) / 10)), 0, 0), 1);
-        }
+            transform.position = Vector3.Lerp(transform.position, origin + new Vector3((maxoffset.x * ((Boss.transform.position.x - origin.x) / 10)), 0, 0), Time.deltaTime);
+			GetComponent<Animator>().applyRootMotion = true;
+		}
+		else
+		{
+			GetComponent<Animator>().applyRootMotion = false;
+		}
     }
 
     public void DisableIK()
