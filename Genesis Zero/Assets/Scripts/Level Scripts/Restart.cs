@@ -40,7 +40,7 @@ public class Restart : MonoBehaviour
             // Fade to black
             overlay.SetActive(true);
             GameObject buge = GameObject.FindWithTag("BUG-E");
-            AudioManager.instance.PlaySound("SFX_GameOver", 1, 1, false, buge.transform.position);
+            AudioManager.instance.PlaySound("SFX_GameOver", 3, 1, false, buge.transform.position);
             overlay.GetComponent<SpriteFade>().FadeIn(2f);
             gameovertext.GetComponent<TextMeshProUGUI>().color = new Color(1, 1, 1, 0);
             gameovertext.GetComponent<TextMeshProUGUI>().DOFade(1, 1.5F);

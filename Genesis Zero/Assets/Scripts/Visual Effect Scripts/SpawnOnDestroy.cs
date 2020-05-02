@@ -19,7 +19,7 @@ public class SpawnOnDestroy : MonoBehaviour
     public float maxDropVelocity;
     public GameObject EssencePrefab;
 
-    Animator eAnimator; //Essence Animator
+
 
     private SkillObject ModDrop;
     private Player player;
@@ -33,9 +33,7 @@ public class SpawnOnDestroy : MonoBehaviour
     // Update is called once per frame
     void Start()
     {
-        if (eAnimator != null)
-            eAnimator = EssencePrefab.GetComponent<Animator>();
-        EssencePrefab.GetComponent<Animator>();
+
 
         quitting = false;
         GameObject temp = GameObject.FindWithTag("StateManager");
@@ -87,7 +85,7 @@ public class SpawnOnDestroy : MonoBehaviour
                 if (maxEssenceDrop < 1)
                     return;
                 int amount = Random.Range(minEssenceDrop, maxEssenceDrop);
-                eAnimator.SetInteger("EssenceAmt", amount); //Goes into essence animator to determine size.
+                 //Goes into essence animator to determine size.
                 //for (int i = 0; i < amount; i++)
                 //{
                 // if essence drop chance exceeds the random value from 0 to 1.0f, it drops
@@ -114,7 +112,6 @@ public class SpawnOnDestroy : MonoBehaviour
         //float force = Random.Range(minDropVelocity, maxDropVelocity);
         float force = .5f;
         //random rotation and force applied
-        obj.transform.rotation = Random.rotation;
         rb.GetComponent<Rigidbody>().velocity = Random.onUnitSphere * force;
         return obj;
     }
