@@ -71,6 +71,12 @@ public class Restart : MonoBehaviour
 
     private void GameOverMenu()
     {
+        GameObject[] pickups = GameObject.FindGameObjectsWithTag("Pickups");
+        for (int i = 0; i < pickups.Length; i++)
+        {
+            if (pickups[i].GetComponent<InteractPopup>() != null)
+                pickups[i].GetComponent<InteractPopup>().DestroyPopUp();
+        }
         pauseMenu.GetComponent<Image>().enabled = false;
         resume.SetActive(false);
         pauseMenu.SetActive(true);

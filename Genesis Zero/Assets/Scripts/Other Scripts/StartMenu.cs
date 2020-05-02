@@ -26,7 +26,7 @@ public class StartMenu : MonoBehaviour
         loadingScreen = canvas.transform.Find("LoadingScreen").gameObject;
         optionsScreen = canvas.transform.Find("OptionsScreen").gameObject;
         resDropdown = optionsScreen.transform.Find("Resolution").GetComponent<TMPro.TMP_Dropdown>();
-
+        Cursor.visible = true;
         //Populating Resolution list
         Resolution[] options = Screen.resolutions;
         resolutions = new List<Resolution>(options);
@@ -79,7 +79,6 @@ public class StartMenu : MonoBehaviour
     {
         StartCoroutine(LoadSceneCoroutine());
     }
-    
     //Load main scene and display progress
     IEnumerator LoadSceneCoroutine()
     {

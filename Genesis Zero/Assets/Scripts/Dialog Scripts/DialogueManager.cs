@@ -61,6 +61,8 @@ public class DialogueManager : MonoBehaviour
         * (optional) fourth label = voice clip if available
         * assumptions: first 3 labels always exist, fourth label may not exist,
         * */
+        if (StateManager.instance.IsPaused() == true || pauseGame == true)
+            Cursor.visible = true;
         StopAllCoroutines(); //makes sure no other dialogue will mess with new dialogue
         deQueueOnFinish = deQueue;
         TextAsset ta = (TextAsset)Resources.Load("Dialogue/" + name);
@@ -187,6 +189,7 @@ public class DialogueManager : MonoBehaviour
             StateManager.instance.UnpauseGame();
 
         }
+        Cursor.visible = false;
         if (deQueueOnFinish)
             buge.DequeueWayPoint();
         InvokeAfterDialogue(currentType);

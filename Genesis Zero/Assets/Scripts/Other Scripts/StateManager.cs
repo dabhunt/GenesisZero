@@ -174,7 +174,7 @@ public class StateManager : MonoBehaviour
 
     public void ToggleOptionsMenu(bool toggle)
     {
-        pauseMenu.SetActive(!toggle);
+        //pauseMenu.SetActive(!toggle);
         optionsMenu.SetActive(toggle);
     }
 
