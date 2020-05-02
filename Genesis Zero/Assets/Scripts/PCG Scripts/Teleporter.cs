@@ -10,7 +10,7 @@ public class Teleporter : MonoBehaviour
 	public float destinationZ = 0;
 
 	//Variables for animator
-	public Transform player;
+	private Transform player;
 	public float portalactivedistance=1f;
 	Animator ani;
 
