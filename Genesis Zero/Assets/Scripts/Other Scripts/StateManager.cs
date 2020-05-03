@@ -110,7 +110,10 @@ public class StateManager : MonoBehaviour
         {
             restart.RestartScene();
         }
-
+        if (isPaused == true)
+            Cursor.visible = true;
+        else 
+            Cursor.visible = false;
     }
 
     void OnSceneLoaded(Scene scene, LoadSceneMode mode)
