@@ -13,6 +13,7 @@ public class StartMenu : MonoBehaviour
     private Text loadPercentage;
 
     private GameObject mainMenuScreen;
+    private GameObject menuButtons;
     private GameObject optionsScreen;
     private GameObject loadingScreen;
     private TMPro.TMP_Dropdown resDropdown;
@@ -26,6 +27,20 @@ public class StartMenu : MonoBehaviour
         loadingScreen = canvas.transform.Find("LoadingScreen").gameObject;
         optionsScreen = canvas.transform.Find("OptionsScreen").gameObject;
         resDropdown = optionsScreen.transform.Find("Resolution").GetComponent<TMPro.TMP_Dropdown>();
+        loadBar = loadingScreen.transform.Find("LoadBar").gameObject.GetComponent<Slider>();
+        loadPercentage = loadBar.transform.Find("LoadPercentage").gameObject.GetComponent<Text>();
+        menuButtons = mainMenuScreen.transform.Find("Buttons").gameObject;
+
+        GameObject conbttn = menuButtons.transform.Find("Continue").gameObject;
+        if (SaveLoadManager.instance.SaveExists())
+        {
+            conbttn.SetActive(true);
+        }
+        else
+        {
+            conbttn.SetActive(false);
+        }
+
         Cursor.visible = true;
         //Populating Resolution list
         Resolution[] options = Screen.resolutions;
@@ -50,22 +65,26 @@ public class StartMenu : MonoBehaviour
         resDropdown.RefreshShownValue();
     }
 
+    public void ContinueButton()
+    {
+        mainMenuScreen.SetActive(false);
+        loadingScreen.SetActive(true);
+        LoadScene(false);
+    }
+
     //Onclick Event for Start Button
     public void StartButton()
     {
         //hiding MainMenuScreen.
         mainMenuScreen.SetActive(false);
         loadingScreen.SetActive(true);
-        //grabbing some component to show loading screen
-        loadBar = loadingScreen.transform.Find("LoadBar").gameObject.GetComponent<Slider>();
-        loadPercentage = loadBar.transform.Find("LoadPercentage").gameObject.GetComponent<Text>();
-        LoadScene();
+        LoadScene(true);
     }
     //Onclick Event for Options Button
     public void OptionsButton()
     {
-        mainMenuScreen.transform.Find("Buttons").gameObject.SetActive(false);
-        canvas.transform.Find("OptionsScreen").gameObject.SetActive(true);
+        mainMenuScreen.SetActive(false);
+        optionsScreen.SetActive(true);
     }
     //Onclick event for Quit Button
     public void QuitButton()
@@ -75,8 +94,9 @@ public class StartMenu : MonoBehaviour
         UnityEditor.EditorApplication.isPlaying = false;
         #endif
     }
-    private void LoadScene()
+    private void LoadScene(bool newGame)
     {
+        SaveLoadManager.instance.newGame = newGame;
         StartCoroutine(LoadSceneCoroutine());
     }
     //Load main scene and display progress

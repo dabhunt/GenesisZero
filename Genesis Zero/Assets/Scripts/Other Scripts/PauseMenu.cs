@@ -6,6 +6,8 @@ public class PauseMenu : MonoBehaviour
 {
     public void QuitButton()
     {
+        //Save Game
+        SaveLoadManager.instance.SaveGame();
         Application.Quit();
         #if UNITY_EDITOR
         UnityEditor.EditorApplication.isPlaying = false;
@@ -13,6 +15,8 @@ public class PauseMenu : MonoBehaviour
     }
     public void MenuButton()
     {
+        //Save Game
+        SaveLoadManager.instance.SaveGame();
         StateManager.instance.LoadMenu();
     }
     public void RestartButton()

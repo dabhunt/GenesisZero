@@ -8,9 +8,19 @@ using System.IO;
 public class SaveLoadManager : MonoBehaviour
 {
     public static SaveLoadManager instance;
-    public string filename;
+    [Tooltip("Name of file for player data")]
+    public string pFileName = "pData";
+    [Tooltip("Name of file for map data")]
+    public string mFileName = "mData";
 
-    private string path;
+    private string pPath;
+    private string mPath;
+    private static bool newgame = true;
+    public bool newGame
+    { 
+        get {return newgame;} 
+        set {newgame = value;}
+    }
     private void Awake()
     {
         if (instance == null)
@@ -26,7 +36,8 @@ public class SaveLoadManager : MonoBehaviour
 
     private void Start()
     {
-        path = "/" + filename + ".dat";
+        pPath = "/" + pFileName + ".dat";
+        mPath = "/" + mFileName + ".dat";
     }
 
     /* Update and save data that we wanna save
@@ -34,36 +45,50 @@ public class SaveLoadManager : MonoBehaviour
      */
     public void SaveGame()
     {
+        Debug.Log("Saving Game");
         BinaryFormatter bf = new BinaryFormatter();
-        FileStream file = File.Create(Application.persistentDataPath + path);
+        FileStream file = File.Create(Application.persistentDataPath + pPath);
         Player player = GameObject.FindGameObjectWithTag("Player").GetComponent<Player>();
-        SaveData data = SaveData(player);
+        PlayerData playerData = GetPlayerData(player);
         //Serialize and write to the file
-        bf.Serialize(file, data);
+        bf.Serialize(file, playerData);
         file.Close();
     }
 
-    /* Load saved data from the hidden
+    /* Load saved player data from the hidden
      * binary file.
      */
-    public void LoadGame()
+    public PlayerData LoadPlayerData()
     {
-        if (File.Exists(Application.persistentDataPath + path))
+        if (File.Exists(Application.persistentDataPath + pPath))
         {
+            Debug.Log("Loading Last Save");
             BinaryFormatter bf = new BinaryFormatter();
-            FileStream file = File.Open(Application.persistentDataPath + path, FileMode.Open);            
-            SaveData data = (SaveData) bf.Deserialize(file);
+            FileStream file = File.Open(Application.persistentDataPath + pPath, FileMode.Open);            
+            PlayerData playerData = bf.Deserialize(file) as PlayerData;
             file.Close();
-            Player player = GameObject.FindGameObjectWithTag("Player").GetComponent<Player>();
-            LoadData(data, player);
+            return playerData;
+        }
+        else
+        {
+            Debug.LogError("Save Files not found");
+            return null;
         }
     }
 
-    /* Load saved data from file and apply
-     * it to the current game.
+    /* Load saved map data from the hidden
+     * binary file.
      */
-    private void LoadData(SaveData data, Player player)
+    public MapData LoadMapData()
     {
+        return null;
+    }
+
+    /* Applying saved player data to current game session.
+     */
+    public void ApplyPlayerData(PlayerData data, GameObject playerObj)
+    {
+        Player player = playerObj.GetComponent<Player>();
         player.GetHealth().SetValue(data.health);
         player.GetDamage().SetValue(data.damage);
         player.GetSpeed().SetValue(data.speed);
@@ -75,14 +100,21 @@ public class SaveLoadManager : MonoBehaviour
         player.GetRange().SetValue(data.range);
         player.GetShield().SetValue(data.shield);
         player.GetWeight().SetValue(data.weight);
+        playerObj.transform.position = new Vector3(data.playerPosition[0], data.playerPosition[1], data.playerPosition[2]);
     }
 
+    /* Applying saved player data to current game session.
+     */
+    public void ApplyMapData(MapData data)
+    {
+
+    }
     /* Returns a SaveData object with the most updated
      * values from the current game state.
      */
-    private SaveData SaveData(Player player)
+    private PlayerData GetPlayerData(Player player)
     {
-        SaveData data = new SaveData();
+        PlayerData data = new PlayerData();
         //data.seed = ;
         data.playerPosition[0] = player.gameObject.transform.position.x;
         data.playerPosition[1] = player.gameObject.transform.position.y;
@@ -99,29 +131,44 @@ public class SaveLoadManager : MonoBehaviour
         data.shield = player.GetShield().GetValue();
         data.weight = player.GetWeight().GetValue();
         //data.deathDuration = player.Stats.deathDuration;
-        
+
+        data.invunerable = player.GetInvunerableStatus();
+        data.stunned = player.GetStunnedStatus();
+        data.burning = player.GetBurningStatus();
+        data.slowed = player.GetSlowedStatus();
+        data.stunimmune = player.GetStunImmuneStatus();
+
         return data;
+    }
+
+    private MapData GetMapData()
+    {
+        return null;
+    }
+
+    public bool SaveExists()
+    {
+        if (File.Exists(Application.persistentDataPath + pPath) /*&& File.Exists(Application.persistentDataPath + mPath)*/)
+            return true;
+        else
+            return false;
     }
 }
 
 [Serializable]
-public class SaveData
+public class PlayerData
 {
-    //private Status invunerable, stunned, burning, slowed, stunimmune;
-    public float seed; //PCG seed
     public float[] playerPosition;
     //player stats
     public float health, damage, speed, attackSpeed, flatDamageReduction, damageReduction, dodgeChance, critChance, critdamage, range, shield, weight;
-    public bool invunerable, stunned, burning, slowed, stunimmune;
-    public float burntime, burndamage, burntick;
-    private float slowtime, knockbackforce;
-    public SaveData()
+    public Status invunerable, stunned, burning, slowed, stunimmune;
+    public PlayerData()
     {
         playerPosition = new float[3];
-        invunerable = false;
-        stunned = false;
-        burning = false;
-        slowed = false;
-        stunimmune = false;
     }
+}
+
+public class MapData
+{
+    public float seed;
 }

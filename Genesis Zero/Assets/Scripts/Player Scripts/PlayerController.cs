@@ -507,7 +507,7 @@ public class PlayerController : MonoBehaviour
         screenXhair.position = screenXhairPos;
 
         //Setting position of worldXhair to match screenXhair
-        worldXhairPos = camRef.ScreenToWorldPoint(new Vector3 (screenXhairPos.x, screenXhairPos.y, camZ));
+        worldXhairPos = camRef.ScreenToWorldPoint(new Vector3 (screenXhairPos.x, screenXhairPos.y, camZ + 0.5f));
         worldXhairPos.z = 0;
         worldXhair.transform.position = worldXhairPos;
 

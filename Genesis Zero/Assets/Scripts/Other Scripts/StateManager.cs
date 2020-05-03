@@ -30,8 +30,15 @@ public class StateManager : MonoBehaviour
     }
     private void Start()
     {
-        GameObject temp = GameObject.FindWithTag("Player");
+        GameObject temp = GameObject.FindGameObjectWithTag("Player");
         player = temp.GetComponent<Player>();
+        if (!SaveLoadManager.instance.newGame)
+        {
+            PlayerData pData = SaveLoadManager.instance.LoadPlayerData();
+            //MapData mData = SaveLoadManager.instance.LoadMapData();
+            SaveLoadManager.instance.ApplyPlayerData(pData, temp);
+        }
+
         temp = GameObject.FindWithTag("StateManager");
         restart = temp.GetComponent<Restart>();
         canvas = GameObject.FindWithTag("CanvasUI");
