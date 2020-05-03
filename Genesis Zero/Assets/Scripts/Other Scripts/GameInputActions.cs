@@ -216,7 +216,18 @@ public class @GameInputActions : IInputActionCollection, IDisposable
                     ""path"": ""<Keyboard>/space"",
                     ""interactions"": """",
                     ""processors"": """",
-                    ""groups"": """",
+                    ""groups"": ""Keyboard&Mouse"",
+                    ""action"": ""Jump"",
+                    ""isComposite"": false,
+                    ""isPartOfComposite"": false
+                },
+                {
+                    ""name"": """",
+                    ""id"": ""936f5bec-00b0-4389-8dcc-7b68ab704c0e"",
+                    ""path"": ""<Keyboard>/upArrow"",
+                    ""interactions"": """",
+                    ""processors"": """",
+                    ""groups"": ""Keyboard&Mouse"",
                     ""action"": ""Jump"",
                     ""isComposite"": false,
                     ""isPartOfComposite"": false
@@ -293,7 +304,7 @@ public class @GameInputActions : IInputActionCollection, IDisposable
                     ""path"": ""<Gamepad>/rightStick"",
                     ""interactions"": """",
                     ""processors"": """",
-                    ""groups"": """",
+                    ""groups"": ""Gamepads"",
                     ""action"": ""AimController"",
                     ""isComposite"": false,
                     ""isPartOfComposite"": false
@@ -737,9 +748,4 @@ public class @GameInputActions : IInputActionCollection, IDisposable
         void OnUnpause(InputAction.CallbackContext context);
         void OnMove(InputAction.CallbackContext context);
     }
-    public InputActionAsset GetInputActionAsset()
-    {
-        return asset;
-    }
 }
-

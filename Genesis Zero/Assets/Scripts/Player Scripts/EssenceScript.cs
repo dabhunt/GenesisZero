@@ -9,9 +9,12 @@ public class EssenceScript : MonoBehaviour
     private bool added;
     public float speedvar=1.1f;
     public float attractionDistance=5f;
+    Animator eAnimator; //Essence Animator
     // Start is called before the first frame update
     void Start()
     {
+        eAnimator = GetComponent<Animator>();
+        eAnimator.SetInteger("EssenceAmt", Amount);
         target = GameObject.FindGameObjectWithTag("Player");
     }
 
@@ -21,10 +24,13 @@ public class EssenceScript : MonoBehaviour
             Vector3 transTarget = target.transform.position;
             transTarget.y ++;
             float distance = Vector2.Distance(transform.position, transTarget);
-
+            //GetComponent<Animator>().
             if (distance < attractionDistance){
                 if (GetComponent<Floating>() != null)
+                {
                     Destroy(GetComponent<Floating>());
+                    GetComponent<Animator>().SetBool("PlayerTouch", true);
+                }
                 //transform.LookAt(target.transform.position);
                 speedvar = speedvar*1.1f;
                 this.transform.position = Vector3.MoveTowards(this.transform.position, transTarget, speedvar * Time.deltaTime);

@@ -58,7 +58,7 @@ public class PlayerController : MonoBehaviour
     //Component Parts
     private Player player;
     private OverHeat overheat;
-    
+
     //Input variables
     GameInputActions inputActions;
     private Vector2 movementInput;
@@ -159,7 +159,7 @@ public class PlayerController : MonoBehaviour
         Vector3 distXhair = worldXhair.transform.position - transform.position;
 
         maxSpeed = GetComponent<Player>().GetSpeed().GetValue();
-        
+
         CalculateForwardDirection();
         if (isRolling) return;
 
@@ -252,7 +252,7 @@ public class PlayerController : MonoBehaviour
      * when player press jump button to make player jump
      */
     public void Jump(InputAction.CallbackContext ctx)
-    {   
+    {
         if (ctx.performed)
         {
             if (!inputActions.PlayerControls.enabled) return;
@@ -306,7 +306,7 @@ public class PlayerController : MonoBehaviour
         float startVel = vertVel;
         if (IsBlocked(Vector3.up))
             vertVel = -1;
-        
+
         if (vertVel > 0)
         {
             vertVel -= gravity * Time.fixedDeltaTime;
@@ -406,8 +406,8 @@ public class PlayerController : MonoBehaviour
         }
     }
 
-    /* This function is invoked when player press 
-     * roll button for dodgerolling. 
+    /* This function is invoked when player press
+     * roll button for dodgerolling.
      * It will put the player into rolling state
      */
     public void DodgeRoll(InputAction.CallbackContext ctx)
@@ -430,7 +430,7 @@ public class PlayerController : MonoBehaviour
                 else
                     rollDirection =  isAimingRight ? 1 : -1;
                 isRolling = true;
-                
+
                 GetComponent<Player>().SetInvunerable(rollDuration);
                 NewLayerMask(rollingLayerMask, rollDuration);
                 timeRolled = 0;
@@ -493,7 +493,7 @@ public class PlayerController : MonoBehaviour
      * Gun rotates to point at crosshair
      */
     private void Aim()
-    {   
+    {
         float camZ = Mathf.Abs(camRef.transform.position.z);
         Vector3 worldXhairPos;
         Vector3 screenXhairPos = new Vector2(Input.mousePosition.x, Input.mousePosition.y);
@@ -510,7 +510,7 @@ public class PlayerController : MonoBehaviour
         worldXhairPos = camRef.ScreenToWorldPoint(new Vector3 (screenXhairPos.x, screenXhairPos.y, camZ));
         worldXhairPos.z = 0;
         worldXhair.transform.position = worldXhairPos;
-        
+
         // checking where the player's aiming
         if (transform.position.x < worldXhair.transform.position.x)
             isAimingRight = true;
@@ -542,7 +542,7 @@ public class PlayerController : MonoBehaviour
     {
         bool isBlock = false;
         RaycastHit hit;
-        
+
         float radius = (0.5f * characterWidth) - vertCastPadding;
         float maxDist = (0.5f * characterHeight) - radius + vertCastPadding;
         Vector3 halfY = new Vector3 (0, characterHeight * 0.25f, 0);

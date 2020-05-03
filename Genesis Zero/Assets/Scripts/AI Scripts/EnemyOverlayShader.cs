@@ -16,6 +16,7 @@ public class EnemyOverlayShader : MonoBehaviour
     private Tween hpTween;
     private float onOffVal = 0;
     private float hpVal = 0;
+    private bool lowHPFlag = false;
 
     void Start()
     {
@@ -28,23 +29,20 @@ public class EnemyOverlayShader : MonoBehaviour
     {
         float ratio = GetComponentInParent<Pawn>().GetHealth().GetValue() / GetComponentInParent<Pawn>().GetHealth().GetMaxValue();
         hpcurValue = GetComponentInParent<Pawn>().GetHealth().GetValue();
-        if (ratio < lowHealthCutoff)
+        if (hpcurValue < hpvalueLastFrame && hpcurValue > 0)
         {
-            float onOffMulti = -12 * (1 - ratio);
-            //VFXManager.instance.PlayEffect("VFX_LoopingSparks", transform.position);
-            gameObject.GetComponent<Renderer>().material.SetFloat("_OnOff", onOffMulti);
-            gameObject.GetComponent<Renderer>().material.SetFloat("_LowHP", .15f);
+            onOffVal = -12;
+            hpVal = .15f;
+            Invoke("TweenBack", tweenDuration);
         }
-        else
+        if (ratio < lowHealthCutoff && lowHPFlag == false)
         {
-            if (hpcurValue < hpvalueLastFrame && hpcurValue > 0)
-            {
-                onTween = DOTween.To(() => onOffVal, x => onOffVal = x, -12, tweenDuration);
-                hpTween = DOTween.To(() => hpVal, x => hpVal = x, .15f, tweenDuration);
-                Invoke("TweenBack", tweenDuration);
-            }
+            lowHPFlag = true;
+            GameObject sparks = VFXManager.instance.PlayEffectReturn("VFX_LoopingSparks", transform.position, 0, "");
+            sparks.transform.SetParent(this.transform);
+            //gameObject.GetComponent<Renderer>().material.SetFloat("_OnOff", -12f);
+            //gameObject.GetComponent<Renderer>().material.SetFloat("_LowHP", .15f);
         }
-
         gameObject.GetComponent<Renderer>().material.SetFloat("_OnOff", onOffVal);
         gameObject.GetComponent<Renderer>().material.SetFloat("_LowHP", hpVal);
         hpvalueLastFrame = GetComponentInParent<Pawn>().GetHealth().GetValue();

@@ -19,15 +19,22 @@ public class SpawnOnDestroy : MonoBehaviour
     public float maxDropVelocity;
     public GameObject EssencePrefab;
 
+
+
     private SkillObject ModDrop;
     private Player player;
     private bool canDrop = true;
     private AudioManager aManager;
+
+
+
     //bool applicationIsQuitting;
     // Start is called before the first frame update
     // Update is called once per frame
     void Start()
     {
+
+
         quitting = false;
         GameObject temp = GameObject.FindWithTag("StateManager");
         if (temp != null)
@@ -75,15 +82,19 @@ public class SpawnOnDestroy : MonoBehaviour
             }
             if (canDrop)
             {
+                if (maxEssenceDrop < 1)
+                    return;
                 int amount = Random.Range(minEssenceDrop, maxEssenceDrop);
-                for (int i = 0; i < amount; i++)
-                {
-                    // if essence drop chance exceeds the random value from 0 to 1.0f, it drops
-                    float offset = i / (1.5f + Random.value * 4);
-                    GameObject essence = Instantiate(EssencePrefab, new Vector3(transform.position.x + offset, transform.position.y + offset, -4), Quaternion.identity);
-                    essence = Drop(essence);
+                 //Goes into essence animator to determine size.
+                //for (int i = 0; i < amount; i++)
+                //{
+                // if essence drop chance exceeds the random value from 0 to 1.0f, it drops
+                float offset = (1.5f + Random.value * 4);
+                GameObject essence = Instantiate(EssencePrefab, new Vector3(transform.position.x, transform.position.y, -4), Quaternion.identity);
+                essence.GetComponent<EssenceScript>().Amount = amount;
+                essence = Drop(essence);
                     //Destroy(rb);
-                }
+                //}
                 // if modifier drop chance exceeds the random value from 0 to 1.0f, it drops
                 if (ModifierDropChance > Random.value && player != null)
                 {
@@ -101,7 +112,6 @@ public class SpawnOnDestroy : MonoBehaviour
         //float force = Random.Range(minDropVelocity, maxDropVelocity);
         float force = .5f;
         //random rotation and force applied
-        obj.transform.rotation = Random.rotation;
         rb.GetComponent<Rigidbody>().velocity = Random.onUnitSphere * force;
         return obj;
     }
