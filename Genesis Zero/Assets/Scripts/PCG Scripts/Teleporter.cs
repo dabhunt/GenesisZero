@@ -75,7 +75,8 @@ public class Teleporter : MonoBehaviour
     {
 		float distance;
 
-
+		if (player == null) 
+			return -1;
 		distance=Vector3.Distance(transform.position,player.position); //keeps everything a positive value and returns the distance
 		return distance;
     }

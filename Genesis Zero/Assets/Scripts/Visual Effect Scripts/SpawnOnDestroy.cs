@@ -19,7 +19,7 @@ public class SpawnOnDestroy : MonoBehaviour
     public float maxDropVelocity;
     public GameObject EssencePrefab;
 
-    Animator eAnimator; //Essence Animator
+
 
     private SkillObject ModDrop;
     private Player player;
@@ -31,15 +31,9 @@ public class SpawnOnDestroy : MonoBehaviour
     //bool applicationIsQuitting;
     // Start is called before the first frame update
     // Update is called once per frame
-
-    private void Awake()
-    {
-        eAnimator = EssencePrefab.GetComponent<Animator>();
-    }
-
     void Start()
     {
-        EssencePrefab.GetComponent<Animator>();
+
 
         quitting = false;
         GameObject temp = GameObject.FindWithTag("StateManager");
@@ -91,12 +85,12 @@ public class SpawnOnDestroy : MonoBehaviour
                 if (maxEssenceDrop < 1)
                     return;
                 int amount = Random.Range(minEssenceDrop, maxEssenceDrop);
-                eAnimator.SetInteger("EssenceAmt", amount); //Goes into essence animator to determine size.
+                 //Goes into essence animator to determine size.
                 //for (int i = 0; i < amount; i++)
                 //{
                 // if essence drop chance exceeds the random value from 0 to 1.0f, it drops
                 float offset = (1.5f + Random.value * 4);
-                GameObject essence = Instantiate(EssencePrefab, new Vector3(transform.position.x, transform.position.y + offset, -4), Quaternion.identity);
+                GameObject essence = Instantiate(EssencePrefab, new Vector3(transform.position.x, transform.position.y, -4), Quaternion.identity);
                 essence.GetComponent<EssenceScript>().Amount = amount;
                 essence = Drop(essence);
                     //Destroy(rb);
@@ -118,7 +112,6 @@ public class SpawnOnDestroy : MonoBehaviour
         //float force = Random.Range(minDropVelocity, maxDropVelocity);
         float force = .5f;
         //random rotation and force applied
-        obj.transform.rotation = Random.rotation;
         rb.GetComponent<Rigidbody>().velocity = Random.onUnitSphere * force;
         return obj;
     }
