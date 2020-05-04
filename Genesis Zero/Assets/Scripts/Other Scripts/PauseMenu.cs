@@ -23,4 +23,14 @@ public class PauseMenu : MonoBehaviour
     {
         StateManager.instance.UnpauseGame();
     }
+
+    public void OptionButton()
+    {
+        StateManager.instance.ToggleOptionsMenu(true);
+    }
+
+    public void OptionBackButton()
+    {
+        StateManager.instance.ToggleOptionsMenu(false);
+    }
 }

@@ -1,7 +1,7 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
-
+using DG.Tweening;
 public class EnemyOverlayShader : MonoBehaviour
 {
     private float lowHealthCutoff = .33f;
@@ -9,6 +9,14 @@ public class EnemyOverlayShader : MonoBehaviour
     private bool dissolveComplete = false;
     private float CurrentTimeEffect = 0;
     private bool DeathSFXPlayed = false;
+    private float hpcurValue;
+    private float hpvalueLastFrame;
+    private float tweenDuration = .26f;
+    private Tween onTween;
+    private Tween hpTween;
+    private float onOffVal = 0;
+    private float hpVal = 0;
+    private bool lowHPFlag = false;
 
     void Start()
     {
@@ -20,14 +28,24 @@ public class EnemyOverlayShader : MonoBehaviour
     void Update()
     {
         float ratio = GetComponentInParent<Pawn>().GetHealth().GetValue() / GetComponentInParent<Pawn>().GetHealth().GetMaxValue();
-        float onOffMulti = -12 * (1 - ratio);
-        if (ratio < lowHealthCutoff)
+        hpcurValue = GetComponentInParent<Pawn>().GetHealth().GetValue();
+        if (hpcurValue < hpvalueLastFrame && hpcurValue > 0)
         {
-            //VFXManager.instance.PlayEffect("VFX_LoopingSparks", transform.position);
-            gameObject.GetComponent<Renderer>().material.SetFloat("_OnOff", onOffMulti);
-            gameObject.GetComponent<Renderer>().material.SetFloat("_LowHP", .15f);
+            onOffVal = -12;
+            hpVal = .15f;
+            Invoke("TweenBack", tweenDuration);
         }
-
+        if (ratio < lowHealthCutoff && lowHPFlag == false)
+        {
+            lowHPFlag = true;
+            GameObject sparks = VFXManager.instance.PlayEffectReturn("VFX_LoopingSparks", transform.position, 0, "");
+            sparks.transform.SetParent(this.transform);
+            //gameObject.GetComponent<Renderer>().material.SetFloat("_OnOff", -12f);
+            //gameObject.GetComponent<Renderer>().material.SetFloat("_LowHP", .15f);
+        }
+        gameObject.GetComponent<Renderer>().material.SetFloat("_OnOff", onOffVal);
+        gameObject.GetComponent<Renderer>().material.SetFloat("_LowHP", hpVal);
+        hpvalueLastFrame = GetComponentInParent<Pawn>().GetHealth().GetValue();
         if (ratio <= 0)
         {
             if (!DeathSFXPlayed)
@@ -51,6 +69,11 @@ public class EnemyOverlayShader : MonoBehaviour
 
         }
 
+    }
+    public void TweenBack()
+    {
+        onTween = DOTween.To(() => onOffVal, x => onOffVal = x, 0, tweenDuration);
+        hpTween = DOTween.To(() => hpVal, x => hpVal = x, 0, tweenDuration);
     }
     public void FinishDissolve()
     {

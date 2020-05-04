@@ -187,6 +187,7 @@ public class DialogueManager : MonoBehaviour
             StateManager.instance.UnpauseGame();
 
         }
+        Cursor.visible = false;
         if (deQueueOnFinish)
             buge.DequeueWayPoint();
         InvokeAfterDialogue(currentType);

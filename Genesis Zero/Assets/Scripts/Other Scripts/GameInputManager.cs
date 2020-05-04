@@ -7,7 +7,7 @@ public class GameInputManager : MonoBehaviour
 {
     public static GameInputManager instance;
     private GameInputActions inputActions;
-    private InputActionAsset actionAsset;
+    public InputActionAsset actionAsset;
     private string activeControlMap;
     private void Awake() 
     {
@@ -19,7 +19,7 @@ public class GameInputManager : MonoBehaviour
             return;
         }
         inputActions = new GameInputActions();
-        actionAsset = inputActions.GetInputActionAsset();
+        //actionAsset = inputActions.GetInputActionAsset();
         //inputActions.MenuControls.Disable();
     }
 

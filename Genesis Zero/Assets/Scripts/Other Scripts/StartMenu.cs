@@ -26,7 +26,6 @@ public class StartMenu : MonoBehaviour
         loadingScreen = canvas.transform.Find("LoadingScreen").gameObject;
         optionsScreen = canvas.transform.Find("OptionsScreen").gameObject;
         resDropdown = optionsScreen.transform.Find("Resolution").GetComponent<TMPro.TMP_Dropdown>();
-
         //Populating Resolution list
         Resolution[] options = Screen.resolutions;
         resolutions = new List<Resolution>(options);
@@ -61,14 +60,12 @@ public class StartMenu : MonoBehaviour
         loadPercentage = loadBar.transform.Find("LoadPercentage").gameObject.GetComponent<Text>();
         LoadScene();
     }
-
     //Onclick Event for Options Button
     public void OptionsButton()
     {
         mainMenuScreen.transform.Find("Buttons").gameObject.SetActive(false);
         canvas.transform.Find("OptionsScreen").gameObject.SetActive(true);
     }
-
     //Onclick event for Quit Button
     public void QuitButton()
     {
@@ -77,114 +74,10 @@ public class StartMenu : MonoBehaviour
         UnityEditor.EditorApplication.isPlaying = false;
         #endif
     }
-
-    //Onclick Event for BackButton(options menu)
-    public void OptionsBackButton()
-    {
-        optionsScreen.SetActive(false);
-        mainMenuScreen.transform.Find("Buttons").gameObject.SetActive(true);
-        mainMenuScreen.SetActive(true);
-    }
-
-    //Event to set master volume
-    public void SetMasterVolume(float value)
-    {
-        if (value >= -40f)
-            AudioManager.instance.mixer.SetFloat("masterVolume", value);
-        else
-            AudioManager.instance.mixer.SetFloat("masterVolume", -80f);
-    }
-
-    //Event to set sfx volume
-    public void SetSFXVolume(float value)
-    {
-        if (value >= -40f)
-            AudioManager.instance.mixer.SetFloat("sfxVolume", value);
-        else
-            AudioManager.instance.mixer.SetFloat("sfxVolume", -80f);
-    }
-
-    //Event to set music volume
-    public void SetMusicVolume(float value)
-    {
-        if (value >= -40f)
-            AudioManager.instance.mixer.SetFloat("musicVolume", value);
-        else
-            AudioManager.instance.mixer.SetFloat("musicVolume", -80f);
-    }
-
-    //Event for toggle mute(master)
-    public void MuteMaster(bool value)
-    {
-        if (value)
-        {
-            SetInteractable("Master", false);
-            SetMasterVolume(-80f);
-        }
-        else
-        {
-            SetInteractable("Master", true);
-            SetMasterVolume(GetSliderValue("Master"));
-        }
-    }
-
-    //Event for toggle mute(sfx)
-    public void MuteSFX(bool value)
-    {
-        if (value)
-        {
-            SetInteractable("SFX", false);
-            SetSFXVolume(-80f);
-        }
-        else
-        {
-            SetInteractable("SFX", true);
-            SetSFXVolume(GetSliderValue("SFX"));
-        }
-    }
-
-    //Event for toggle mute(music)
-    public void MuteMusic(bool value)
-    {
-        if (value)
-        {
-            SetInteractable("Music", false);
-            SetMusicVolume(-80f);
-        }
-        else
-        {
-            SetInteractable("Music", true);
-            SetMusicVolume(GetSliderValue("Music"));
-        }
-    }
-
-    private float GetSliderValue(string name)
-    {
-        float volume = optionsScreen.transform.Find("AudioSettings").Find(name).gameObject.GetComponent<Slider>().value;
-        return volume;
-    }
-
-    private void SetInteractable(string name, bool value)
-    {
-        Slider slider = optionsScreen.transform.Find("AudioSettings").Find(name).gameObject.GetComponent<Slider>();
-        slider.interactable = value;
-    }
-
-    public void SetFullScreen(bool value)
-    {
-        Screen.fullScreen = value;
-    }
-    //Event to set Resolution
-    public void SetResolution(int index)
-    {
-        Screen.SetResolution(resolutions[index].width, resolutions[index].height, Screen.fullScreen, resolutions[index].refreshRate);
-    }
-
     private void LoadScene()
     {
         StartCoroutine(LoadSceneCoroutine());
     }
-    
     //Load main scene and display progress
     IEnumerator LoadSceneCoroutine()
     {

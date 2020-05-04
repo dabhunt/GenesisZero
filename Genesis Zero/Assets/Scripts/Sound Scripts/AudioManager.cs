@@ -563,7 +563,7 @@ public class AudioManager : MonoBehaviour
 
 		// Get the audio source component created
 		AudioSource audioSource = soundPlayerChilds[currentIndex].GetComponent<AudioSource>();
-
+		audioSource.outputAudioMixerGroup = mixer.FindMatchingGroups("Master/SFX")[0];
 		// Configure the audio source component
 		audioSource.clip = audioClip;
 		audioSource.volume = vol;
@@ -735,7 +735,7 @@ public class AudioManager : MonoBehaviour
 		bool found = false;
 		for (int i = 0; i < soundPlayerChilds.Count; i++)
 		{
-			if (soundPlayerChilds[i].GetComponent<AudioSource>().isPlaying && soundPlayerChilds[i].name.Contains(name))
+			if (soundPlayerChilds[i] != null && soundPlayerChilds[i].GetComponent<AudioSource>().isPlaying && soundPlayerChilds[i].name.Contains(name))
 			{
 				found = true;
 				soundPlayerChilds[i].GetComponent<AudioSource>().Stop();
