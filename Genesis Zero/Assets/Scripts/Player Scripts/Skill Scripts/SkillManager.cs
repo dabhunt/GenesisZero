@@ -386,6 +386,14 @@ public class SkillManager
         return returnlist;
     }
 
+    public void SetCountByName(string name, int num)
+    {
+        if (Skills.ContainsKey(name)) // Adds to the stack of skills
+        {
+            Skills[name] = num;
+        }
+    }
+
     public List<SkillObject> GetRandomWhites(int amount)
     {
         return GetRandomMods(amount, 1);

@@ -89,6 +89,7 @@ public class SaveLoadManager : MonoBehaviour
     public void ApplyPlayerData(PlayerData data, GameObject playerObj)
     {
         Player player = playerObj.GetComponent<Player>();
+        SkillManager sM = player.GetSkillManager();
         player.GetHealth().SetValue(data.health);
         player.GetDamage().SetValue(data.damage);
         player.GetSpeed().SetValue(data.speed);
@@ -100,6 +101,16 @@ public class SaveLoadManager : MonoBehaviour
         player.GetRange().SetValue(data.range);
         player.GetShield().SetValue(data.shield);
         player.GetWeight().SetValue(data.weight);
+        player.SetEssence(data.essence);
+
+        SkillObject sObject;
+        for (int i = 0; i < data.skillList.Length; i++)
+        {
+            sObject = sM.GetSkillFromString(data.skillList[i]);
+            sM.AddSkill(sObject);
+            sM.SetCountByName(data.skillList[i], data.skillStacks[i]);
+        }
+
         playerObj.transform.position = new Vector3(data.playerPosition[0], data.playerPosition[1], data.playerPosition[2]);
     }
 
@@ -107,7 +118,7 @@ public class SaveLoadManager : MonoBehaviour
      */
     public void ApplyMapData(MapData data)
     {
-
+        //apply the seed
     }
     /* Returns a SaveData object with the most updated
      * values from the current game state.
@@ -115,6 +126,10 @@ public class SaveLoadManager : MonoBehaviour
     private PlayerData GetPlayerData(Player player)
     {
         PlayerData data = new PlayerData();
+        SkillManager sM = player.GetSkillManager();
+        List<SkillObject> sList = sM.GetSkillObjects();
+        data.skillList = new string[sList.Count];
+        data.skillStacks = new int[sList.Count];
         //data.seed = ;
         data.playerPosition[0] = player.gameObject.transform.position.x;
         data.playerPosition[1] = player.gameObject.transform.position.y;
@@ -138,12 +153,21 @@ public class SaveLoadManager : MonoBehaviour
         data.slowed = player.GetSlowedStatus();
         data.stunimmune = player.GetStunImmuneStatus();
 
+        data.essence = player.GetEssenceAmount();
+
+        for (int i = 0; i < sList.Count; i++)
+        {
+            data.skillList[i] = sList[i].name;
+            data.skillStacks[i] = sM.GetSkillStack(sList[i].name);
+        }
         return data;
     }
 
     private MapData GetMapData()
     {
-        return null;
+        MapData data = new MapData();
+        //grab seed here
+        return data;
     }
 
     public bool SaveExists()
@@ -161,7 +185,11 @@ public class PlayerData
     public float[] playerPosition;
     //player stats
     public float health, damage, speed, attackSpeed, flatDamageReduction, damageReduction, dodgeChance, critChance, critdamage, range, shield, weight;
+    public float essence;
     public Status invunerable, stunned, burning, slowed, stunimmune;
+
+    public string[] skillList;
+    public int[] skillStacks;
     public PlayerData()
     {
         playerPosition = new float[3];
