@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
+using DG.Tweening;
 
 /**
  * Kenny Doan
@@ -37,10 +38,14 @@ public class BossAI : AIController
 	public float TriggerRadius;
 	public float TimeBeforeFight;
 	[HideInInspector]
-	public bool initiated, lookingatcamera;
+	public bool initiated, lookingatcamera, Wild;
 	private int Heat, RepeatingAttack, Attack;
 	private float actiontime = 1;
 	private float chargeuptime = .5f;
+
+	//Headbutt variables
+	private float headbutttime, headbuttdelay, headbutttotaltime, headbuttdistance;
+	private Vector3 headbuttstartposition, headbutttarget, headbuttangle;
 
 	public GameObject Healthbar;
 	private GameObject healthbar;
@@ -58,8 +63,11 @@ public class BossAI : AIController
 	public GameObject PulsePrefab;
 	public GameObject FlameGround;
 
+	public GameObject ForwardLookObject;
 	public GameObject HeadModel;
 	public Animator animator;
+
+	private GameObject camera;
 
 	private Vector3 back, foward, up, down;
 	protected void Awake()
@@ -80,6 +88,7 @@ public class BossAI : AIController
 		LastHealth = TotalHealth;
 		indicators = new List<GameObject>();
 		back = Vector3.back; foward = Vector3.forward; up = Vector3.up; down = Vector3.down;
+		camera = Camera.main.gameObject;
 	}
 
 	new protected void Update()
@@ -92,7 +101,8 @@ public class BossAI : AIController
 			if (TimeBeforeFight < 0)
 			{
 				GameObject canvas = GameObject.FindGameObjectWithTag("CanvasUI");
-				healthbar = Instantiate(Healthbar, canvas.transform.position + (Healthbar.GetComponent<RectTransform>().position + new Vector3(0, 412, 0)), Quaternion.identity, canvas.transform);
+				healthbar = canvas.transform.Find("BossHealthbar").gameObject;
+				healthbar.SetActive(true);
 				TimeBeforeFight = 0;
 				Camera.main.GetComponent<BasicCameraZoom>().ChangeFieldOfView(30);
 				StartCoroutine(CockBack(1.25f, Target.position - transform.position, 1));
@@ -151,8 +161,10 @@ public class BossAI : AIController
 
 			if (bossstate == State.Centering || bossstate == State.Pulse)
 			{
-				Quaternion look = Quaternion.LookRotation((transform.position + new Vector3(0,0,-10)) - transform.position);
-				transform.rotation = Quaternion.Slerp(transform.rotation, look, 2 * Time.fixedDeltaTime);
+				Quaternion look = Quaternion.LookRotation((ForwardLookObject.transform.position) - transform.position);
+				//transform.rotation = Quaternion.Slerp(transform.rotation, look, 2 * Time.fixedDeltaTime);
+				//transform.transform.LookAt(ForwardLookObject.transform, new Vector3(0,1,0));
+				transform.rotation = Quaternion.RotateTowards(transform.rotation, Quaternion.LookRotation((ForwardLookObject.transform.position) - transform.position), Time.fixedDeltaTime * 180);
 				HeadModel.transform.rotation = transform.rotation;
 				//HeadModel.transform.rotation = Quaternion.Slerp(transform.rotation, Quaternion.LookRotation(back, up), 2 * Time.fixedDeltaTime);
 				lookposition = transform.position + transform.forward;
@@ -193,6 +205,17 @@ public class BossAI : AIController
 					transform.position = Vector2.MoveTowards(transform.position, movetarget.position, speed * (Vector2.Distance(transform.position, movetarget.position) * Mathf.Clamp(chargetime / 5, .5f, 4)) * Time.fixedDeltaTime);
 					if (Vector2.Distance(movetarget.position, transform.position) < 2) { chargetime = Time.fixedDeltaTime / 2; }
 				}
+				else if (bossstate == State.Headbutt && headbuttdelay <= 0)
+				{
+					GetComponent<SphereCollider>().isTrigger = true;
+					Vector3 startposition = headbuttstartposition;
+					float totaltime = headbutttotaltime;
+					float distance = headbuttdistance;
+					float hbspeed = distance / totaltime;
+					transform.position = Vector3.Lerp(startposition, headbutttarget, (totaltime - headbutttime) / totaltime);
+					//transform.position += (headbutttarget - startposition).normalized * hbspeed * Time.fixedDeltaTime;
+					LastPosition = transform.position;
+				}
 				else if (bossstate == State.Centering)
 				{
 					GetComponent<SphereCollider>().isTrigger = true;
@@ -208,9 +231,13 @@ public class BossAI : AIController
 					GetComponent<SphereCollider>().isTrigger = false;
 				}
 
-				Vector3 finalposition = Vector3.Lerp(LastPosition, new Vector3(transform.position.x, transform.position.y, zdepth), .3f);
-				LastPosition = finalposition;
-				transform.position = finalposition;
+				if (bossstate != State.Headbutt)
+				{
+					Vector3 finalposition = Vector3.Lerp(LastPosition, new Vector3(transform.position.x, transform.position.y, zdepth), .3f);
+					LastPosition = finalposition;
+					transform.position = finalposition;
+				}
+
 			}
 			else
 			{
@@ -225,14 +252,15 @@ public class BossAI : AIController
 		}
 
 		//Display Health
-		if (healthbar && initiated)
+		if (IsDying())
+		{
+			healthbar.SetActive(false);
+		}
+		else if (healthbar && initiated)
 		{
 			healthbar.GetComponentInChildren<Slider>().value = GetHealth().GetRatio();
 		}
-		else if (healthbar)
-		{
-			healthbar.SetActive(true);
-		}
+
 
 		//Update Indicators
 		for (int i = 0; i < indicators.Count; ++i)
@@ -248,8 +276,28 @@ public class BossAI : AIController
 
 			}
 		}
+		if (!GameObject.FindGameObjectWithTag("BossRoom").GetComponent<BoxCollider2D>().bounds.Contains((Vector2)transform.position))
+		{
+			Bounds bound = GameObject.FindGameObjectWithTag("BossRoom").GetComponent<BoxCollider2D>().bounds;
+			transform.position = Vector2.Lerp(transform.position, bound.center, Time.fixedDeltaTime);
+			if (bound.Contains(transform.position))
+			{
+				GetComponent<SphereCollider>().isTrigger = false;
+			}
+			else
+			{
+				Debug.Log("Stunned");
+				GetComponent<SphereCollider>().isTrigger = true;
+				if (bossstate == State.Headbutt)
+				{
+					camera.transform.DOShakePosition(duration: .75f, strength: 1, vibrato: 5, randomness: 60, snapping: false, fadeOut: true);
+				}
+				chargetime = .5f;
+				SetBossstate(State.Stunned, .5f);
+			}
 
-		if (GetComponent<SphereCollider>().isTrigger == true)
+		}
+		else if (GetComponent<SphereCollider>().isTrigger == true)
 		{
 			Collider[] hit = Physics.OverlapSphere(transform.position, GetComponent<SphereCollider>().radius / 2);
 			foreach (Collider col in hit)
@@ -258,20 +306,14 @@ public class BossAI : AIController
 				{
 					Debug.Log("Stunned");
 					GetComponent<SphereCollider>().isTrigger = false;
+					chargetime = .5f;
+					if (bossstate == State.Headbutt)
+					{
+						camera.transform.DOShakePosition(duration: .75f, strength: 1, vibrato: 5, randomness: 60, snapping: false, fadeOut: true);
+					}
 					SetBossstate(State.Stunned, .5f);
 				}
 			}
-			/**
-            BoxCollider2D Bossroom = GameObject.FindGameObjectWithTag("BossRoom").GetComponent<BoxCollider2D>();
-            if (Bossroom)
-            {
-                if (!Bossroom.bounds.Contains((Vector2)transform.position + (Vector2)(Vector3.forward * GetComponent<SphereCollider>().radius)))
-                {
-                    GetComponent<SphereCollider>().isTrigger = false;
-                    chargetime = Time.deltaTime;
-                }
-            }
-            */
 		}
 	}
 
@@ -295,9 +337,10 @@ public class BossAI : AIController
 			action = 1;
 			SetBossstate(State.Setting, 4);
 			HealthLoss = 0;
-			animator.SetTrigger("WildTrigger");	//Set wild trigger
-			FlameGround.SetActive(true);		//Set the flame ground to true/active
+			animator.SetTrigger("WildTrigger"); //Set wild trigger
+			FlameGround.SetActive(true);        //Set the flame ground to true/active
 			animator.SetBool("Wild", true);
+			Wild = true;
 		}
 		else if (Heat >= 5)
 		{
@@ -318,6 +361,29 @@ public class BossAI : AIController
 			}
 		}
 
+		if (headbuttdelay > 0)
+		{
+			headbuttdelay -= Time.fixedDeltaTime;
+			if (headbuttdelay <= 0)
+			{
+				headbuttstartposition = transform.position;
+				headbutttarget = headbuttstartposition + headbuttangle;
+				Debug.Log("Distance: " + Vector2.Distance(transform.position, headbutttarget));
+			}
+		}
+		else
+		{
+			if (headbutttime > 0)
+			{
+				headbutttime -= Time.fixedDeltaTime;
+			}
+			else
+			{
+				headbutttime = 0;
+			}
+			headbuttdelay = 0;
+		}
+
 	}
 
 	public void ChooseAction(int action, bool bypass)
@@ -335,28 +401,30 @@ public class BossAI : AIController
 					Attack = (int)Random.Range(0, 10) <= 6 ? 2 : Attack;
 				}
 			}
-
+			//Attack = 0;
 			GetComponent<SphereCollider>().isTrigger = false;
 
 			if (Attack == 0)
 			{
-				SetRepeatingAttacks(3);
 				animator.SetTrigger("Headbutting");
-				actiontime = RepeatingAttack > 0 ? SetAttackTime(1.35f, 1) : SetAttackTime(2, 1);
+				actiontime = RepeatingAttack > 0 ? SetAttackTime(1.35f, 1) : SetAttackTime(1.4f, 1.1f);
+				SetRepeatingAttacks(2);
 				SetBossstate(State.Headbutt, actiontime);
 				Vector3 target = PredictPath(1.25f);
 				SpawnIndicator(transform.position, new Vector2(16, 6), target - transform.position, new Color(1, 0, 0, .1f), Vector2.zero, false, true, chargeuptime);
 				LookAtVectorTemp(target + ((target - transform.position).normalized * 20), actiontime);
-				StartCoroutine(MoveTo(transform.position + ((target - transform.position).normalized * 16), .25f, chargeuptime));
+				//StartCoroutine(MoveTo(transform.position + ((target - transform.position).normalized * 16), .25f, chargeuptime));
+				headbuttangle = ((target - transform.position).normalized * 16);
+				HeadButt(transform.position + ((target - transform.position).normalized * 16), .25f, chargeuptime);
 				Invoke("SpawnHeadbutt", chargeuptime);
 			}
 			else if (Attack == 1)
 			{
-				SetRepeatingAttacks(3);
 				animator.SetTrigger("FireSpitting");
-				actiontime = RepeatingAttack > 0 ? SetAttackTime(1.2f, 1) : SetAttackTime(1.5f, 1);
+				actiontime = RepeatingAttack > 0 ? SetAttackTime(.8f, .7f) : SetAttackTime(1f, .9f);
+				SetRepeatingAttacks(2);
 				SetBossstate(State.Firebreath, actiontime);
-				Vector3 target = PredictPath(1f);
+				Vector3 target = PredictPath(.2f);
 				SpawnIndicator(transform.position, new Vector2(24, 4), target - transform.position, new Color(1, 0, 0, .1f), Vector2.zero, false, true, actiontime - .1f);
 				LookAtVectorTemp(target, actiontime - .1f);
 				Invoke("SpitFireball", actiontime - .1f);
@@ -408,7 +476,7 @@ public class BossAI : AIController
 		switch (action)
 		{
 			case 0:
-				Debug.Log("Repos");
+				//Debug.Log("Repos");
 				SetBossstate(State.Repositioning, 2);
 				movetarget = GetClosestWaypoint();
 				break;
@@ -430,7 +498,7 @@ public class BossAI : AIController
 	public float SetAttackTime(float actiontime, float chargeuptime)
 	{
 		this.actiontime = actiontime;
-		this.chargetime = chargeuptime;
+		this.chargeuptime = chargeuptime;
 		return actiontime;
 	}
 
@@ -447,6 +515,8 @@ public class BossAI : AIController
 	{
 		if (RepeatingAttack <= 0)
 		{
+			float minnum = Wild ? 2 : 0;
+			minnum = num == 0 ? 0 : minnum;
 			RepeatingAttack = (int)Random.Range(0, num + 1);
 		}
 		else
@@ -539,8 +609,13 @@ public class BossAI : AIController
 	public Vector3 PredictPath(float time)
 	{
 		float zspeed = targetmovement.y > 0 ? targetmovement.y - .1f : targetmovement.y + .1f;
+		Vector3 preditedpath = ((targetmovement * time * (1 / Time.fixedDeltaTime)) * Mathf.Clamp(GetDistanceToTarget() / 20, .1f, 1));
+		if (targetmovement.y == 0)
+		{
+			preditedpath.y = 0;
+		}
 		//Debug.Log("Z:" + zspeed);
-		Vector3 position = Target.position + ((targetmovement * time * (1 / Time.fixedDeltaTime)) * Mathf.Clamp(GetDistanceToTarget() / 20, .1f, 1));
+		Vector3 position = Target.position + preditedpath;
 		position += new Vector3(0, 0, zspeed * 6 * Time.fixedDeltaTime);
 		return position;
 	}
@@ -589,15 +664,16 @@ public class BossAI : AIController
 	{
 		yield return new WaitForSeconds(delay);
 		Vector3 startposition = transform.position;
-		GetComponent<SphereCollider>().isTrigger = true;
 		animating = true;
 		float totaltime = time;
 		float distance = Vector2.Distance(transform.position, targetPosition);
 		float speed = distance / totaltime;
 		for (float f = 0; f <= time; f += Time.fixedDeltaTime)
 		{
+			GetComponent<SphereCollider>().isTrigger = true;
 			if (bossstate == State.Stunned)
 			{
+				transform.position += (startposition - targetposition).normalized * Time.fixedDeltaTime;
 				break;
 			}
 			transform.position = Vector3.Lerp(startposition, targetposition, f / time);
@@ -645,6 +721,17 @@ public class BossAI : AIController
 		GameObject hitbox = Instantiate(HeadbuttPrefab, transform.position, rot);
 		hitbox.transform.parent = transform;
 		hitbox.GetComponent<Hitbox>().LifeTime = .25f;
+		GetComponent<SphereCollider>().isTrigger = true;
+	}
+
+	void HeadButt(Vector3 targetposition, float time, float delay)
+	{
+		headbuttdelay = delay;
+		headbutttime = time;
+		headbutttotaltime = time;
+		headbutttarget = targetposition;
+		headbuttstartposition = transform.position;
+		headbuttdistance = Vector2.Distance(headbuttstartposition, headbutttarget);
 	}
 
 	void Pulse()
