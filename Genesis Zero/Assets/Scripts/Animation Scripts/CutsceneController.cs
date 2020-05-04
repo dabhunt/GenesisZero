@@ -17,11 +17,6 @@ public class CutsceneController : MonoBehaviour
         cam = Camera.main;
         InspectorFov = cam.fieldOfView;
         CutsceneCanvas = GameObject.FindGameObjectWithTag("CutsceneCanvas");
-        Invoke("Delayed", 2f);
-    }
-    private void Delayed()
-    {
-        Cursor.visible = true;
     }
     public void IntroCutscene()
     {
@@ -29,13 +24,12 @@ public class CutsceneController : MonoBehaviour
         Cutscene();
         intro.Play();
         GameObject.FindGameObjectWithTag("GameManagers").transform.Find("TileManager").GetComponent<DeactivateDistant>().SetDist(100);
-      
         Invoke("Reset", (float)intro.duration);
     }
     public void Cutscene()
     {
         GameInputManager.instance.DisablePlayerControls();
-        Cursor.visible = true;
+        StateManager.instance.Cursorvisible = true;
         CutsceneCanvas.SetActive(true);
         Primarycanvas.SetActive(false);
         GameInputManager.instance.DisablePlayerControls();
@@ -47,6 +41,7 @@ public class CutsceneController : MonoBehaviour
     }
     public void Reset()
     {
+        StateManager.instance.Cursorvisible = false;
         DOTween.To(() => cam.fieldOfView, x => cam.fieldOfView = x, InspectorFov, 3);
         Cursor.visible = false;
         GameInputManager.instance.EnablePlayerControls();

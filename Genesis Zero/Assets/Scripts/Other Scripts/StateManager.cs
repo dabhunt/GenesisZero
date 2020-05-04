@@ -18,6 +18,7 @@ public class StateManager : MonoBehaviour
     private AsyncOperation operation;
     private GameObject optionsMenu;
     private GameObject pMenuButtons;
+    public bool Cursorvisible = true;
     private void Awake()
     {
         if (instance == null)
@@ -110,7 +111,7 @@ public class StateManager : MonoBehaviour
         {
             restart.RestartScene();
         }
-        if (isPaused == true)
+        if (isPaused == true || Cursorvisible )
             Cursor.visible = true;
         else 
             Cursor.visible = false;
