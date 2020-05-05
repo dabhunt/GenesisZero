@@ -40,19 +40,23 @@ public class SaveLoadManager : MonoBehaviour
         mPath = "/" + mFileName + ".dat";
     }
 
-    /* Update and save data that we wanna save
+    /* Update and save relevant data that we want to save
      * in a hidden away binary file.
      */
     public void SaveGame()
     {
         Debug.Log("Saving Game");
         BinaryFormatter bf = new BinaryFormatter();
-        FileStream file = File.Create(Application.persistentDataPath + pPath);
+        FileStream pFile = File.Create(Application.persistentDataPath + pPath);
+        FileStream mFile = File.Create(Application.persistentDataPath + mPath);
         Player player = GameObject.FindGameObjectWithTag("Player").GetComponent<Player>();
         PlayerData playerData = GetPlayerData(player);
+        MapData mapData = GetMapData();
         //Serialize and write to the file
-        bf.Serialize(file, playerData);
-        file.Close();
+        bf.Serialize(pFile, playerData);
+        pFile.Close();
+        bf.Serialize(mFile, mapData);
+        mFile.Close();
     }
 
     /* Load saved player data from the hidden
@@ -62,7 +66,7 @@ public class SaveLoadManager : MonoBehaviour
     {
         if (File.Exists(Application.persistentDataPath + pPath))
         {
-            Debug.Log("Loading Last Save");
+            Debug.Log("Loading Character Data");
             BinaryFormatter bf = new BinaryFormatter();
             FileStream file = File.Open(Application.persistentDataPath + pPath, FileMode.Open);            
             PlayerData playerData = bf.Deserialize(file) as PlayerData;
@@ -71,7 +75,7 @@ public class SaveLoadManager : MonoBehaviour
         }
         else
         {
-            Debug.LogError("Save Files not found");
+            Debug.LogError("Player save file not found");
             return null;
         }
     }
@@ -81,7 +85,20 @@ public class SaveLoadManager : MonoBehaviour
      */
     public MapData LoadMapData()
     {
-        return null;
+        if (File.Exists(Application.persistentDataPath + mPath))
+        {
+            Debug.Log("Loading MapData");
+            BinaryFormatter bf = new BinaryFormatter();
+            FileStream file = File.Open(Application.persistentDataPath + mPath, FileMode.Open);
+            MapData mapData = bf.Deserialize(file) as MapData;
+            file.Close();
+            return mapData;
+        }
+        else
+        {
+            Debug.LogError("Map data file not found");
+            return null;
+        }
     }
 
     /* Applying saved player data to current game session.
@@ -114,11 +131,13 @@ public class SaveLoadManager : MonoBehaviour
         playerObj.transform.position = new Vector3(data.playerPosition[0], data.playerPosition[1], data.playerPosition[2]);
     }
 
-    /* Applying saved player data to current game session.
+    /* Grabs map data from current session for saving.
      */
-    public void ApplyMapData(MapData data)
+    private MapData GetMapData()
     {
-        //apply the seed
+        MapData data = new MapData();
+        //data.seed = TileManager.instance.GetSeed();
+        return data;
     }
     /* Returns a SaveData object with the most updated
      * values from the current game state.
@@ -163,13 +182,7 @@ public class SaveLoadManager : MonoBehaviour
         return data;
     }
 
-    private MapData GetMapData()
-    {
-        MapData data = new MapData();
-        //grab seed here
-        return data;
-    }
-
+    //Checks if the save files exists
     public bool SaveExists()
     {
         if (File.Exists(Application.persistentDataPath + pPath) /*&& File.Exists(Application.persistentDataPath + mPath)*/)
@@ -195,8 +208,8 @@ public class PlayerData
         playerPosition = new float[3];
     }
 }
-
+[Serializable]
 public class MapData
 {
-    public float seed;
+    public int seed;
 }
