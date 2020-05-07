@@ -41,8 +41,16 @@ public class OptionalDialogueZone : MonoBehaviour
         info.SetValues(newpoint, DialogueFileName, BugeFlysOver, GetInstanceID());
         if (dist < triggerRadius)
         {
-            buge.GetComponent<BUGE>().FollowingPlayer(true);
-            buge.GetComponent<BUGE>().AddOptionalDialoguePrompt(info);
+            if (buge.GetComponent<BUGE>().followingPlayer == true)
+            {
+                buge.GetComponent<BUGE>().AddOptionalDialoguePrompt(info);
+            }
+            else 
+            {
+                //play starting dialogue and pause the game with true param
+                DialogueManager.instance.TriggerDialogue("StartDialogue", true, false );
+                buge.GetComponent<BUGE>().FollowingPlayer(true);
+            }            
         }
         else 
         {

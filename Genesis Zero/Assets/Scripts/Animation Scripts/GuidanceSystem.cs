@@ -35,7 +35,6 @@ public class GuidanceSystem : MonoBehaviour
     }
     public void ShowGuidance()
     {
-        print("showing guidance");
         buge.transform.Find("Arrow").gameObject.SetActive(true);
         GetComponent<BUGE>().LookAt(teleporter,showArrowDuration);
         DialogueManager.instance.TriggerDialogue("BUG-E_Arrow");

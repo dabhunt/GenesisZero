@@ -76,7 +76,10 @@ public class DialogueManager : MonoBehaviour
             string[] output = line.Split(';');
             dialogue.charIcons.Enqueue(output[0]);
             dialogue.sentences.Enqueue(output[1]);
-            dialogue.durations.Enqueue(output[2]);
+            if (output.Length > 2)
+                dialogue.durations.Enqueue(output[2]);
+            else //if no duration is specified, move onto the next piece of dialogue 2 seconds after completion
+                dialogue.durations.Enqueue("2");
             count++;
             if (output.Length > 3)
                 AudioManager.instance.PlaySound(output[3]);
@@ -141,7 +144,8 @@ public class DialogueManager : MonoBehaviour
         dialogueText.text = "";
         //names in this folder HAVE to match the .txt file names of characters in order to load
         charIcon.ToUpper();
-        Sprite spr = Resources.Load<Sprite>("Dialogue/CharacterIcons/" + charIcon);
+        Sprite spr = Resources.Load<Sprite>("Dialogue/CharacterIcons/" + charIcon.ToUpper());
+        print(dur);
         if (spr != null)
         {
             charImage.sprite = spr;

@@ -95,7 +95,6 @@ public class BUGE : MonoBehaviour
         if (Input.GetMouseButtonDown(1))
         {
             Interact();
-
             GetComponent<InteractPopup>().interactable = false;
             GetComponent<InteractPopup>().DestroyPopUp();
         }
@@ -242,7 +241,9 @@ public class BUGE : MonoBehaviour
     {
         DialogueInfo info;
         if (dialogueInfo.Count < 1)
-            return;
+        { //if there are no pending dialogues in queue, tell the player the direction of the nearest teleporter
+            GetComponent<GuidanceSystem>().ShowGuidance();
+        }
         info = dialogueInfo[0];
         dialogueInfo.RemoveAt(0);
         DialogueManager.instance.TriggerDialogue(info.dialogueName);
