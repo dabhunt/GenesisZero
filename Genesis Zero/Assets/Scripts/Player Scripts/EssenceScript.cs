@@ -1,9 +1,15 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.VFX;
+using UnityEngine.Experimental.VFX;
+using UnityEngine.VFX.Utility;
 
 public class EssenceScript : MonoBehaviour
 {
+    private VisualEffect vEffect;
+    static readonly ExposedProperty boolAttribute = "_isNearby";
+
     public int Amount = 1;
     private GameObject target;
     private bool added;
@@ -13,6 +19,7 @@ public class EssenceScript : MonoBehaviour
     // Start is called before the first frame update
     void Start()
     {
+        vEffect = GetComponent<VisualEffect>();
         eAnimator = GetComponent<Animator>();
         eAnimator.SetInteger("EssenceAmt", Amount);
         target = GameObject.FindGameObjectWithTag("Player");
@@ -24,6 +31,7 @@ public class EssenceScript : MonoBehaviour
             Vector3 transTarget = target.transform.position;
             transTarget.y ++;
             float distance = Vector2.Distance(transform.position, transTarget);
+            vEffect.SetBool(boolAttribute, false);
             //GetComponent<Animator>().
             if (distance < attractionDistance){
                 if (GetComponent<Floating>() != null)
@@ -34,8 +42,10 @@ public class EssenceScript : MonoBehaviour
                 //transform.LookAt(target.transform.position);
                 speedvar = speedvar*1.1f;
                 this.transform.position = Vector3.MoveTowards(this.transform.position, transTarget, speedvar * Time.deltaTime);
+                vEffect.SetBool(boolAttribute, true);
+
             }
-            
+
         }
     }
 
