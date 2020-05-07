@@ -430,8 +430,7 @@ public class PlayerController : MonoBehaviour
                 else
                     rollDirection =  isAimingRight ? 1 : -1;
                 isRolling = true;
-
-                GetComponent<Player>().SetInvunerable(rollDuration);
+                GetComponent<Player>().SetInvunerable(rollDuration+.1f);
                 NewLayerMask(rollingLayerMask, rollDuration);
                 timeRolled = 0;
                 //lastRollingPosition = transform.position;
