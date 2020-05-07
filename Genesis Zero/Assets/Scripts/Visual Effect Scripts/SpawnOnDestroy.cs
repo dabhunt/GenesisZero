@@ -85,12 +85,12 @@ public class SpawnOnDestroy : MonoBehaviour
                 if (maxEssenceDrop < 1)
                     return;
                 int amount = Random.Range(minEssenceDrop, maxEssenceDrop);
-                 //Goes into essence animator to determine size.
+                //Goes into essence animator to determine size.
                 //for (int i = 0; i < amount; i++)
                 //{
                 // if essence drop chance exceeds the random value from 0 to 1.0f, it drops
-                float offset = (1.5f + Random.value * 4);
-                GameObject essence = Instantiate(EssencePrefab, new Vector3(transform.position.x, transform.position.y, -4), Quaternion.identity);
+                float offset = -1; /*(1.5f + Random.value * 4);*/
+                GameObject essence = Instantiate(EssencePrefab, new Vector3(transform.position.x, transform.position.y, -2), Quaternion.identity);
                 essence.GetComponent<EssenceScript>().Amount = amount;
                 essence = Drop(essence);
                     //Destroy(rb);
