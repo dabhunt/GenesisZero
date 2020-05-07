@@ -3,6 +3,8 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.Playables;
 using DG.Tweening;
+using UnityEngine.SceneManagement;
+
 public class CutsceneController : MonoBehaviour
 {
     // Start is called before the first frame update
@@ -42,8 +44,10 @@ public class CutsceneController : MonoBehaviour
     public void Reset()
     {
         StateManager.instance.Cursorvisible = false;
-        DOTween.To(() => cam.fieldOfView, x => cam.fieldOfView = x, InspectorFov, 3);
-        Cursor.visible = false;
+        if(SceneManager.GetActiveScene().name != "BossTest")
+		{
+			DOTween.To(() => cam.fieldOfView, x => cam.fieldOfView = x, InspectorFov, 3);
+		}
         GameInputManager.instance.EnablePlayerControls();
         GameObject.FindGameObjectWithTag("GameManagers").transform.Find("TileManager").GetComponent<DeactivateDistant>().ResetDist();
         CutsceneCanvas.SetActive(false);
