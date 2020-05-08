@@ -368,7 +368,7 @@ public class BossAI : AIController
 			{
 				headbuttstartposition = transform.position;
 				headbutttarget = headbuttstartposition + headbuttangle;
-				Debug.Log("Distance: " + Vector2.Distance(transform.position, headbutttarget));
+				//Debug.Log("Distance: " + Vector2.Distance(transform.position, headbutttarget));
 			}
 		}
 		else

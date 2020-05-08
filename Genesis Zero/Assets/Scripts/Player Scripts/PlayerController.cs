@@ -33,12 +33,14 @@ public class PlayerController : MonoBehaviour
     [Header("Physics")]
     public float gravity = 18f;
     public float terminalVel = 24f;
+
     public float fallSpeedMult = 1.45f;
     public float airControlMult = 0.5f;
     public float airSpeedMult = 0.85f;
     public float slopeRayDistMult = 1.25f;
     public float fallSpeedWhileRolling = 1.05f;
     public float fallSpeedWhileDashing = .9f;
+    private float resetTerminalVel = 24f;
     private float resetfallSpeed = 1.45f;
     [Header("Canvas")]
     public Canvas canvasRef;
@@ -282,7 +284,11 @@ public class PlayerController : MonoBehaviour
             }
         }
     }
-
+    public void FallFaster(float terminal)
+    {
+        terminalVel = terminal*-1;
+        vertVel = terminal*.65f;
+    }
     /* This function is used to update the jump cycle and its behavior
      */
     private void UpdateJump()
@@ -328,6 +334,7 @@ public class PlayerController : MonoBehaviour
 
         if (IsBlocked(Vector3.down))
         {
+            terminalVel = resetTerminalVel;
             isGrounded = true;
             if (Physics.Raycast(transform.position, Vector3.down, out hit, characterHeight * 0.5f, immoveables))
                 if (hit.distance < 1f * characterHeight + vertCastPadding)
@@ -384,6 +391,8 @@ public class PlayerController : MonoBehaviour
         float startVel = vertVel;
         if (isGrounded)
             return;
+        if (Input.GetKeyDown(KeyCode.S))
+            FallFaster(-45);
         if (isRolling)
         {
             fallSpeedMult = 0;

@@ -63,6 +63,15 @@ public class StateManager : MonoBehaviour
                 PauseGame();
             }
         }
+        if (Input.GetKeyDown(KeyCode.ScrollLock))
+        {//teleport the player to the boss room
+            player.transform.position = new Vector2(-150,284);
+            //temporary code
+            GameObject.FindWithTag("BUG-E").GetComponent<BUGE>().FollowingPlayer(true);
+            //temporary code ^
+            GameObject.FindWithTag("BUG-E").transform.position = player.transform.position;
+            DialogueManager.instance.TriggerDialogue("Boss");
+        }
         //temporary cheat codes to get mods
         if (Input.GetKey(KeyCode.Backslash))
         {
@@ -75,18 +84,20 @@ public class StateManager : MonoBehaviour
         }
         if (Input.GetKeyDown(KeyCode.Home))
         {
-            player.SetEssence(player.GetMaxEssenceAmount());
-            player.SetKeys(3);
-            player.GetHealth().SetMaxValue(2000);
-        }
-        if (Input.GetKeyDown(KeyCode.PageUp))
-        {
-            Merchant closestMerchant = InteractInterface.instance.ClosestInteractable().GetComponent<Merchant>();
-            if (closestMerchant != null && closestMerchant.GetWindowOpen())
-                InteractInterface.instance.ClosestInteractable().GetComponent<Merchant>().InitializeUI();
+            if (player.GetHealth().GetMaxValue() >= 9999)
+            {
+                player.GetHealth().SetMaxValue(100);
+            }
+            else
+            {
+                player.SetEssence(player.GetMaxEssenceAmount());
+                player.SetKeys(3);
+                player.GetHealth().SetMaxValue(9999);
+            }
+
         }
         //get to next level instantly
-        if (Input.GetKey(KeyCode.ScrollLock))
+        if (Input.GetKey(KeyCode.PageUp))
         {
             int levelNum = TileManager.instance.curlevel;
             float levelSpacing = TileManager.instance.levelSpacing;

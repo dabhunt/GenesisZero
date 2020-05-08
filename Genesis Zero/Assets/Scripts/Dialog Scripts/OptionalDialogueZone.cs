@@ -48,7 +48,7 @@ public class OptionalDialogueZone : MonoBehaviour
             else 
             {
                 //play starting dialogue and pause the game with true param
-                DialogueManager.instance.TriggerDialogue("StartDialogue", true, false );
+                DialogueManager.instance.TriggerDialogue("StartDialogue", true, false);
                 buge.GetComponent<BUGE>().FollowingPlayer(true);
             }            
         }

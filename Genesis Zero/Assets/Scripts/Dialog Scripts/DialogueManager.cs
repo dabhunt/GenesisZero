@@ -145,7 +145,6 @@ public class DialogueManager : MonoBehaviour
         //names in this folder HAVE to match the .txt file names of characters in order to load
         charIcon.ToUpper();
         Sprite spr = Resources.Load<Sprite>("Dialogue/CharacterIcons/" + charIcon.ToUpper());
-        print(dur);
         if (spr != null)
         {
             charImage.sprite = spr;

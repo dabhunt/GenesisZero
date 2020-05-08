@@ -21,6 +21,8 @@ public class MiddleMan : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
+        if (Boss == null)
+            return;
         Vector2 offset = Boss.transform.position - (BossRoom.transform.position + (Vector3)BossRoom.GetComponent<BoxCollider2D>().offset);
         Vector2 ratio = (offset / bounds.size) * 2;
         float xoff = 0;

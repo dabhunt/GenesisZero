@@ -71,6 +71,7 @@ public class Restart : MonoBehaviour
 
     private void GameOverMenu()
     {
+        StateManager.instance.Cursorvisible = true;
         GameObject[] pickups = GameObject.FindGameObjectsWithTag("Pickups");
         for (int i = 0; i < pickups.Length; i++)
         {

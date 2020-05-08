@@ -58,6 +58,10 @@ public class DeactivateDistant : MonoBehaviour
                         //make it so that enemies load in slower than cubbies, preventing them from falling through cubbies that haven't loaded yet
                         dist -= enemyDistOffset;
                     }
+                    if (objects[i].gameObject.tag == "BossRoom")
+                    {
+                        dist -= 50;
+                    }
 	   				if (dist > deactivateDist){
 	   					objects[i].SetActive(false);
 	   				}
