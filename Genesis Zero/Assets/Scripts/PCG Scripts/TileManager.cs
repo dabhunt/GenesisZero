@@ -113,7 +113,6 @@ public class TileManager : MonoBehaviour
 					GameObject newTele = Instantiate(interactablePrefabs[4]) as GameObject;
 					teleporterInstances.Add(newTele);
 					levelTracking += levelSpacing;
-					
 					newTele.GetComponent<Teleporter>().SetDestination(new Vector2(levelTracking + 10, 40));
 					teleporterInstances[teleporterInstances.Count - 1].transform.position = mat.transform.position;
 				}

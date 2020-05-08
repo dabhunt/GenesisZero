@@ -103,8 +103,8 @@ public class StateManager : MonoBehaviour
             float levelSpacing = TileManager.instance.levelSpacing;
             float rng = Random.Range(1.0f, 4.0f) / 10;
             Vector2 destination = new Vector2((levelNum+1) * levelSpacing + levelSpacing * rng, 70f);
-            Vector2 colliderPos = GameObject.FindWithTag("CamCollider").transform.position;
-            GameObject.FindWithTag("CamCollider").transform.position = new Vector2(colliderPos.x + levelSpacing+100, colliderPos.y);
+            //Vector2 colliderPos = GameObject.FindWithTag("CamCollider").transform.position;
+            //GameObject.FindWithTag("CamCollider").transform.position = new Vector2(colliderPos.x + levelSpacing+100, colliderPos.y);
             GameObject.FindWithTag("Player").transform.position = destination;
             TileManager.instance.curlevel++;
 
@@ -127,7 +127,16 @@ public class StateManager : MonoBehaviour
         else 
             Cursor.visible = false;
     }
-
+    //remove all interaction popups
+    public void DestroyPopUpsWithTag(string Tag)
+    {
+        GameObject[] pickups = GameObject.FindGameObjectsWithTag(Tag);
+        for (int i = 0; i < pickups.Length; i++)
+        {
+            if (pickups[i].GetComponent<InteractPopup>() != null)
+                pickups[i].GetComponent<InteractPopup>().DestroyPopUp();
+        }
+    }
     void OnSceneLoaded(Scene scene, LoadSceneMode mode)
     {
         ChangeTimeScale(1, 0);
