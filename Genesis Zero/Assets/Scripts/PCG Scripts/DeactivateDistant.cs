@@ -22,6 +22,7 @@ public class DeactivateDistant : MonoBehaviour
         resetDist = deactivateDist;
         resetEnemyDist = enemyDistOffset;
     	InvokeRepeating("Check", 1/updatesPerSecond, 1/updatesPerSecond);
+        Invoke("DelayedStart", 5);
     }
     private void Update()
     {
@@ -34,6 +35,16 @@ public class DeactivateDistant : MonoBehaviour
                 DisableEnemies();
             }
         }
+    }
+    public void DelayedStart()
+    { //this is to fix the problem of the boss not liking to be deactivated at the start, so we wait 5 seconds
+        string[] newstr = new string[tags.Length+1];
+        for (int i = 0; i < tags.Length; i++)
+        {
+            newstr[i] = tags[i];
+        }
+        newstr[tags.Length] = "BossRoom";
+        tags = newstr;
     }
     // Check is currently called once a second, but can also be called manually when the player is teleported to prevent visual latency
     void Check()

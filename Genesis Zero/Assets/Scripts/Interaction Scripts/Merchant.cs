@@ -75,6 +75,7 @@ public class Merchant : MonoBehaviour
     {
         FindObjectOfType<AudioManager>().StopAllSounds();
         GameInputManager.instance.SwitchControlMap("MenuControls");
+        print("merchant after dialogue");
         isActive = true;
         if (firstInteraction)
         {

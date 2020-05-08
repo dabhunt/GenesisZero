@@ -115,8 +115,9 @@ public class TileManager : MonoBehaviour
 					levelTracking += levelSpacing;
 					
 					newTele.GetComponent<Teleporter>().SetDestination(new Vector2(levelTracking + 10, 40));
+					teleporterInstances[teleporterInstances.Count - 1].transform.position = mat.transform.position;
 				}
-				teleporterInstances[teleporterInstances.Count - 1].transform.position = mat.transform.position;
+				
 			}
 		}
 		
