@@ -11213,6 +11213,56 @@ CapsuleCollider:
   m_Height: 2.000001
   m_Direction: 1
   m_Center: {x: 0.00000006029568, y: -0.0000014305118, z: -0.00000032782629}
+--- !u!1 &3508468469342422060
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 4015093025656341621}
+  - component: {fileID: 157068292045272631}
+  m_Layer: 0
+  m_Name: BossDialogueTrigger1
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &4015093025656341621
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 3508468469342422060}
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 46.94, y: 53.91, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_Children: []
+  m_Father: {fileID: 5269822276670909724}
+  m_RootOrder: 34
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &157068292045272631
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 3508468469342422060}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: edde1c9b496c7df418cebc86ce489004, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  DialogueFileName: Boss
+  BugeFlysOver: 0
+  TriggerRepeatedly: 0
+  type: 0
+  triggerRadius: 10
+  updatesPerSecond: 1
+  BugeDuration: 0
 --- !u!1 &3565978894936208088
 GameObject:
   m_ObjectHideFlags: 0
@@ -12254,6 +12304,69 @@ MeshRenderer:
   m_SortingLayerID: 0
   m_SortingLayer: 0
   m_SortingOrder: 0
+--- !u!1 &3975248043453750119
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 1015300346967246541}
+  - component: {fileID: 4874383390356576172}
+  - component: {fileID: 2184781195883128985}
+  m_Layer: 0
+  m_Name: BossDialogueTrigger1Old
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 0
+--- !u!4 &1015300346967246541
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 3975248043453750119}
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 53.39, y: 46.28, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_Children: []
+  m_Father: {fileID: 5269822276670909724}
+  m_RootOrder: 33
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!65 &4874383390356576172
+BoxCollider:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 3975248043453750119}
+  m_Material: {fileID: 0}
+  m_IsTrigger: 1
+  m_Enabled: 1
+  serializedVersion: 2
+  m_Size: {x: 2, y: 30, z: 1}
+  m_Center: {x: 0, y: 0, z: 0}
+--- !u!114 &2184781195883128985
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 3975248043453750119}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: fa4b2cc61ba41214aa1ca8200e27acbf, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  DialogueFileName: Boss
+  BugeFlysOver: 0
+  TriggerRepeatedly: 0
+  PauseGameWhenTriggered: 0
+  BUGEflyposition: {x: 0, y: 0, z: 0}
+  BUGEflyduration: 0
 --- !u!1 &4000144320672663570
 GameObject:
   m_ObjectHideFlags: 0
@@ -20350,6 +20463,8 @@ Transform:
   - {fileID: 4810084424477210018}
   - {fileID: 5269822276369577694}
   - {fileID: 5269822276289460089}
+  - {fileID: 1015300346967246541}
+  - {fileID: 4015093025656341621}
   m_Father: {fileID: 0}
   m_RootOrder: 0
   m_LocalEulerAnglesHint: {x: 0, y: 180, z: 0}
@@ -21421,9 +21536,9 @@ PrefabInstance:
       objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 471744c3ea3652940be9833f231140bd, type: 3}
---- !u!1 &376881095783282072 stripped
+--- !u!1 &4780848283486712144 stripped
 GameObject:
-  m_CorrespondingSourceObject: {fileID: 376881096835949417, guid: 471744c3ea3652940be9833f231140bd,
+  m_CorrespondingSourceObject: {fileID: 4780848284481447841, guid: 471744c3ea3652940be9833f231140bd,
     type: 3}
   m_PrefabInstance: {fileID: 1204786929}
   m_PrefabAsset: {fileID: 0}
@@ -21433,9 +21548,9 @@ Transform:
     type: 3}
   m_PrefabInstance: {fileID: 1204786929}
   m_PrefabAsset: {fileID: 0}
---- !u!1 &4780848283486712144 stripped
+--- !u!1 &376881095783282072 stripped
 GameObject:
-  m_CorrespondingSourceObject: {fileID: 4780848284481447841, guid: 471744c3ea3652940be9833f231140bd,
+  m_CorrespondingSourceObject: {fileID: 376881096835949417, guid: 471744c3ea3652940be9833f231140bd,
     type: 3}
   m_PrefabInstance: {fileID: 1204786929}
   m_PrefabAsset: {fileID: 0}
@@ -27015,9 +27130,9 @@ PrefabInstance:
       objectReference: {fileID: 8875702858024491913}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 81a3195df7c7c0b4b9b4132efcab752b, type: 3}
---- !u!135 &8875702858024491913 stripped
-SphereCollider:
-  m_CorrespondingSourceObject: {fileID: 3186443633302928109, guid: 81a3195df7c7c0b4b9b4132efcab752b,
+--- !u!1 &5534952506703239753 stripped
+GameObject:
+  m_CorrespondingSourceObject: {fileID: 2000804235349801773, guid: 81a3195df7c7c0b4b9b4132efcab752b,
     type: 3}
   m_PrefabInstance: {fileID: 6274729392869171556}
   m_PrefabAsset: {fileID: 0}
@@ -27027,9 +27142,9 @@ Transform:
     type: 3}
   m_PrefabInstance: {fileID: 6274729392869171556}
   m_PrefabAsset: {fileID: 0}
---- !u!1 &5534952506703239753 stripped
-GameObject:
-  m_CorrespondingSourceObject: {fileID: 2000804235349801773, guid: 81a3195df7c7c0b4b9b4132efcab752b,
+--- !u!135 &8875702858024491913 stripped
+SphereCollider:
+  m_CorrespondingSourceObject: {fileID: 3186443633302928109, guid: 81a3195df7c7c0b4b9b4132efcab752b,
     type: 3}
   m_PrefabInstance: {fileID: 6274729392869171556}
   m_PrefabAsset: {fileID: 0}
