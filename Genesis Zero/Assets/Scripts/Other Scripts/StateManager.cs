@@ -70,7 +70,7 @@ public class StateManager : MonoBehaviour
             GameObject.FindWithTag("BUG-E").GetComponent<BUGE>().FollowingPlayer(true);
             //temporary code ^
             GameObject.FindWithTag("BUG-E").transform.position = player.transform.position;
-            DialogueManager.instance.TriggerDialogue("Boss");
+            //DialogueManager.instance.TriggerDialogue("Boss");
         }
         //temporary cheat codes to get mods
         if (Input.GetKey(KeyCode.Backslash))
