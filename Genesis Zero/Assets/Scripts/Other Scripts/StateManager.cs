@@ -51,16 +51,19 @@ public class StateManager : MonoBehaviour
         }
         //temporary input usage for demo tomorrow
         if (Input.GetKeyDown(KeyCode.Escape))
-        {   
-            if (pauseMenu.activeSelf)
+        {
+            if (Time.realtimeSinceStartup > 10)
             {
-                pauseMenu.SetActive(false);
-                UnpauseGame();
-            }
-            else
-            {
-                pauseMenu.SetActive(true);
-                PauseGame();
+                if (pauseMenu.activeSelf)
+                {
+                    pauseMenu.SetActive(false);
+                    UnpauseGame();
+                }
+                else
+                {
+                    pauseMenu.SetActive(true);
+                    PauseGame();
+                }
             }
         }
         if (Input.GetKeyDown(KeyCode.ScrollLock))
@@ -75,6 +78,7 @@ public class StateManager : MonoBehaviour
         //temporary cheat codes to get mods
         if (Input.GetKey(KeyCode.Backslash))
         {
+            GameObject.FindWithTag("BUG-E").GetComponent<BUGE>().FollowingPlayer(true);
             string skillStr = player.GetSkillManager().GetRandomMod().name;
             player.GetSkillManager().SpawnMod(new Vector3(player.transform.position.x+2, player.transform.position.y+5, 0), skillStr);
         }

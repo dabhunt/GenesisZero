@@ -552,6 +552,8 @@ public class AudioManager : MonoBehaviour
 			return;
 		if (obj == null)
 			obj = getPlayerObj();
+		if (obj == null)
+			obj = GameObject.FindGameObjectWithTag("BUG-E");
 		GameObject dummyGameObject = new GameObject(audioClip.name);
 		soundPlayerChilds.Add(dummyGameObject);
 		int currentIndex = soundPlayerChilds.Count - 1;

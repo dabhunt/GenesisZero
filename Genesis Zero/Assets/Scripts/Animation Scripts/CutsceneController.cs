@@ -20,6 +20,11 @@ public class CutsceneController : MonoBehaviour
         InspectorFov = cam.fieldOfView;
         CutsceneCanvas = GameObject.FindGameObjectWithTag("CutsceneCanvas");
     }
+    private void Update()
+    {
+        if (Input.GetKeyDown(KeyCode.Escape) && CutsceneCanvas.activeSelf)
+            Skip();
+    }
     public void IntroCutscene()
     {
         cam.fieldOfView = 20;

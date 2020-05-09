@@ -129,6 +129,7 @@ public class DialogueManager : MonoBehaviour
     }
     public void DisplayNextSentence()
     {
+        parent.transform.Find("continue").gameObject.SetActive(false);
         if (sentences.Count == 0)
         {
             EndDialogue();
@@ -162,6 +163,7 @@ public class DialogueManager : MonoBehaviour
         }
         if (float.Parse(dur) != -1)
         {
+            parent.transform.Find("continue").gameObject.SetActive(true);
             yield return StartCoroutine(WaitForRealSeconds(float.Parse(dur)));
             DisplayNextSentence();
         }
@@ -169,6 +171,7 @@ public class DialogueManager : MonoBehaviour
     IEnumerator CanSkip(float delay)
     {
         yield return StartCoroutine(WaitForRealSeconds(delay));
+        parent.transform.Find("continue").gameObject.SetActive(true);
         canSkip = true;
     }
       public static IEnumerator WaitForRealSeconds( float delay )

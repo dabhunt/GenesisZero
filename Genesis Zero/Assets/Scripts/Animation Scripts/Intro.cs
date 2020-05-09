@@ -63,6 +63,8 @@ public class Intro : MonoBehaviour
     void Update()
     {
        transform.Find("Overlay").gameObject.GetComponent<Image>().color = overlay;
+        if (Input.GetKeyDown(KeyCode.Escape))
+            EndIntro();
     }
     //public string SplitText()
     //fade in refers to the text becoming visible, even though the overlay is technically fading out

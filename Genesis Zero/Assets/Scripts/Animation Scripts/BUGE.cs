@@ -277,6 +277,16 @@ public class BUGE : MonoBehaviour
             alertObj.SetActive(false);
         }
     }
+    public void AddOptionalDialoguePrompt(string name)
+    {
+        alertObj.SetActive(true);
+        alertObj.GetComponent<FollowObject>().updatePos();
+        WayPoint newpoint = ScriptableObject.CreateInstance<WayPoint>();
+        newpoint.SetValues(Vector3.zero, 0);
+        DialogueInfo info = ScriptableObject.CreateInstance<DialogueInfo>();
+        info.SetValues(newpoint, name, false, GetInstanceID());
+        dialogueInfo.Add(info);
+    }
     public void AddOptionalDialoguePrompt(DialogueInfo info)
     {
         //if the queue already has that file, don't add it

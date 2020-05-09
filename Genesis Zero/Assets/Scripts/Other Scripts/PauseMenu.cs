@@ -13,7 +13,8 @@ public class PauseMenu : MonoBehaviour
     }
     public void MenuButton()
     {
-        StateManager.instance.LoadMenu();
+        
+        //StateManager.instance.LoadMenu();
     }
     public void RestartButton()
     {

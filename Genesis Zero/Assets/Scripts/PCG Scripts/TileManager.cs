@@ -23,6 +23,8 @@ public class TileManager : MonoBehaviour
 	public float chestSpawnChance = .2f;
 	public float merchantSpawnChance = .2f;
 	public float scrapConverterSpawnChance = .2f;
+	public float teleSpawnChance = .03f;//3.0%
+	public float teleIncreasePerIteration = .006f;//0.6% increase each time
 	
 	[Header("Prefab Containers")]
 	private GameObject[] tilePrefabs;
@@ -106,7 +108,7 @@ public class TileManager : MonoBehaviour
 				GameObject newScrap = Instantiate(interactablePrefabs[3]) as GameObject;
 				newScrap.transform.position = mat.transform.position;
 			}
-			else if (mat.name == "TeleportMat")
+			else if (mat.name == "TeleportMat" && Random.value <= teleSpawnChance)
 			{
 				if (teleporterIsSpawned == false && mat.transform.position.x > levelTracking)
 				{
@@ -116,8 +118,8 @@ public class TileManager : MonoBehaviour
 					newTele.GetComponent<Teleporter>().SetDestination(new Vector2(levelTracking + 10, 40));
 					teleporterInstances[teleporterInstances.Count - 1].transform.position = mat.transform.position;
 				}
-				
 			}
+			teleSpawnChance += teleIncreasePerIteration;
 		}
 		
 		//this should be turned on later to disable the prefab gameobject
