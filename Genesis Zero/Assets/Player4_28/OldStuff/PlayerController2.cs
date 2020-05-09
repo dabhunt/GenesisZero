@@ -142,15 +142,8 @@ public class PlayerController2 : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-        if (Input.GetButtonDown("Fire1")&& Time.timeScale==1f)
-        {
-            Time.timeScale = .5f;
-        }
-        else if (Input.GetButtonDown("Fire1") && Time.timeScale == .5f)
-        {
-            Time.timeScale = 1f;
-        }
-       // Time.timeScale = timescale;
+       
+      
         GetInputs();
 
 
