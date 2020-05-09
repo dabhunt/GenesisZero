@@ -27,6 +27,7 @@ public class PlatformShooterAI : AIController
     private float lookAngle = 0.0f; // Angle for rotating the model laterally
     public float rotateRate = 1.0f;
     public float MaxFollowHeight = 5.0f; // Maximum height above the enemy for which the target will be tracked after going out of sight
+    public float StutterRate = 10f; // Rate for stuttering the movement to match the walking animation
 
     [Header("Ground Checking")]
     public float groundCheckDistance = 1.0f;
@@ -90,6 +91,7 @@ public class PlatformShooterAI : AIController
         if (Target == null) { return; }
 
         float slopeForceFactor = Vector3.Dot(groundNormal, Vector3.left * faceDir) + 1.0f; // Adjust movement force based on slope steepness
+        float moveStutter = 1.0f;// Mathf.Round((Mathf.Sin(Time.time * StutterRate) + 1) * 0.5f);
 
         if (state == AIState.Follow || state == AIState.Charge || state == AIState.Attack || state == AIState.Cooldown)
         {
@@ -114,7 +116,7 @@ public class PlatformShooterAI : AIController
 
                 if (edgeBehind)
                 {
-                    frb.Accelerate(Mathf.Sign(transform.position.x - targetPosition.x) * Vector3.right * Mathf.Min(GetAvoidCloseness(), AvoidAccelLimit) * Acceleration * AvoidAmount * slopeForceFactor * SpeedDifficultyMultiplier.GetFactor()); // Acceleration to keep away from the target
+                    frb.Accelerate(Mathf.Sign(transform.position.x - targetPosition.x) * Vector3.right * Mathf.Min(GetAvoidCloseness(), AvoidAccelLimit) * Acceleration * AvoidAmount * slopeForceFactor * moveStutter * SpeedDifficultyMultiplier.GetFactor()); // Acceleration to keep away from the target
                 }
             }
         }
@@ -137,7 +139,7 @@ public class PlatformShooterAI : AIController
         }
         faceDirChangeTime += Time.fixedDeltaTime;
 
-        targetSpeed *= GetSpeed().GetValue() * SpeedDifficultyMultiplier.GetFactor();
+        targetSpeed *= GetSpeed().GetValue() * SpeedDifficultyMultiplier.GetFactor() * moveStutter;
         frb.Accelerate(Vector3.right * (targetSpeed * faceDir - frb.GetVelocity().x) * Acceleration * slopeForceFactor); // Accelerate toward the target
 
         // Smoothly rotate to face target
@@ -179,6 +181,13 @@ public class PlatformShooterAI : AIController
         projectileAim = Vector3.Slerp(projectileAim,
             (Target.position - transform.position - new Vector3(ProjectileStart.x * faceDir, ProjectileStart.y, ProjectileStart.z)).normalized,
             AimSpeed * AimDifficultyMultiplier.GetFactor() * Time.fixedDeltaTime);
+
+        if (anim != null)
+        {
+            anim.SetFacing(Mathf.RoundToInt(Mathf.Sign(frb.GetVelocity().x)) == faceDir);
+            anim.SetAimDirection(projectileAim.y);
+            anim.SetAttacking(state == AIState.Attack || state == AIState.Charge || state == AIState.Cooldown || state == AIState.Follow);
+        }
 
         // Projectile shooting logic
         if (state == AIState.Attack)

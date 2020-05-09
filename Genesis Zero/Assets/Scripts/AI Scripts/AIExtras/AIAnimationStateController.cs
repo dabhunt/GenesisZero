@@ -11,13 +11,21 @@ public class AIAnimationStateController : MonoBehaviour
 {
     private AIController ai;
     private Animator anim;
+    private FakeRigidbody frb;
     float fallLayerBlend = 0.0f;
     public float FallLayerBlendRate = 1.0f;
+    private bool attacking = false;
+    public int AttackLayer = -1;
+    public float AttackLayerBlendRate = 1.0f;
+    float attackLayerBlend = 0.0f;
+    public float WalkSpeedFactor = -1.0f;
+    private bool facingForward = true; // If false, walk animations will be reversed
 
     private void Awake()
     {
         ai = GetComponent<AIController>();
         anim = GetComponentInChildren<Animator>();
+        frb = GetComponent<FakeRigidbody>();
 
         /*if (ai != null)
         {
@@ -46,6 +54,24 @@ public class AIAnimationStateController : MonoBehaviour
             fallLayerBlend = Mathf.Clamp01(fallLayerBlend - FallLayerBlendRate * Time.deltaTime);
         }
         anim.SetLayerWeight(1, fallLayerBlend);
+
+        if (AttackLayer >= 0)
+        {
+            if (attacking)
+            {
+                attackLayerBlend = Mathf.Clamp01(attackLayerBlend + AttackLayerBlendRate * Time.deltaTime);
+            }
+            else
+            {
+                attackLayerBlend = Mathf.Clamp01(attackLayerBlend - AttackLayerBlendRate * Time.deltaTime);
+            }
+            anim.SetLayerWeight(AttackLayer, attackLayerBlend);
+        }
+
+        if (WalkSpeedFactor >= 0 && frb != null)
+        {
+            anim.SetFloat("WalkSpeed", Mathf.Clamp(frb.GetVelocity().magnitude * WalkSpeedFactor * (facingForward ? 1.0f : -1.0f), -1.0f, 1.0f));
+        }
     }
 
     /**
@@ -76,5 +102,29 @@ public class AIAnimationStateController : MonoBehaviour
                 anim.SetTrigger("Cooling Down");
                 break;
         }
+    }
+
+    /**
+     * Sets whether the AI is facing in the direction it's moving
+     */
+    public void SetFacing(bool forward)
+    {
+        facingForward = forward;
+    }
+
+    /**
+     * Sets the blend value for aiming up or down
+     */
+    public void SetAimDirection(float verticalBlend)
+    {
+        anim.SetFloat("AimDirection", Mathf.Clamp(verticalBlend, -1.0f, 1.0f));
+    }
+
+    /**
+     * Sets whether the attack layer should be blended in to override
+     */
+    public void SetAttacking(bool attack)
+    {
+        attacking = attack;
     }
 }
