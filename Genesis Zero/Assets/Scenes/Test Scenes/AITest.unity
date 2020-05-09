@@ -779,6 +779,11 @@ PrefabInstance:
       propertyPath: m_Name
       value: DroneExploder
       objectReference: {fileID: 0}
+    - target: {fileID: 2000804235349801773, guid: adcbcf4f6b76a3c4195e183ee3e39524,
+        type: 3}
+      propertyPath: m_IsActive
+      value: 0
+      objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: adcbcf4f6b76a3c4195e183ee3e39524, type: 3}
 --- !u!1 &450500842
@@ -1246,12 +1251,6 @@ Transform:
   m_Father: {fileID: 0}
   m_RootOrder: 27
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: -180.68199}
---- !u!4 &802155816 stripped
-Transform:
-  m_CorrespondingSourceObject: {fileID: 2000804235349801761, guid: adcbcf4f6b76a3c4195e183ee3e39524,
-    type: 3}
-  m_PrefabInstance: {fileID: 444580647}
-  m_PrefabAsset: {fileID: 0}
 --- !u!1 &806052303
 GameObject:
   m_ObjectHideFlags: 0
@@ -1448,12 +1447,12 @@ PrefabInstance:
     - target: {fileID: 751653433366621650, guid: 98cebdfd2df96c042aa7cc6718dd4b56,
         type: 3}
       propertyPath: m_LocalPosition.x
-      value: 6.01
+      value: 9.78
       objectReference: {fileID: 0}
     - target: {fileID: 751653433366621650, guid: 98cebdfd2df96c042aa7cc6718dd4b56,
         type: 3}
       propertyPath: m_LocalPosition.y
-      value: 5.0000005
+      value: -1.75
       objectReference: {fileID: 0}
     - target: {fileID: 751653433366621650, guid: 98cebdfd2df96c042aa7cc6718dd4b56,
         type: 3}
@@ -1696,7 +1695,7 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 933000255}
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 22.78, y: -0.23, z: 0}
+  m_LocalPosition: {x: 26.66, y: -0.93, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children: []
   m_Father: {fileID: 0}
@@ -2423,12 +2422,6 @@ Transform:
   m_Father: {fileID: 0}
   m_RootOrder: 11
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: -57.417004}
---- !u!4 &1483594899 stripped
-Transform:
-  m_CorrespondingSourceObject: {fileID: 2000804235349801761, guid: bdcde8276b3174c428cacc27ca8e2ad1,
-    type: 3}
-  m_PrefabInstance: {fileID: 2000804233549039610}
-  m_PrefabAsset: {fileID: 0}
 --- !u!1 &1676192595
 GameObject:
   m_ObjectHideFlags: 0
@@ -2527,12 +2520,8 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   ViewObjects:
-  - {fileID: 5049661300904636012}
-  - {fileID: 933000259}
-  - {fileID: 1483594899}
-  - {fileID: 802155816}
-  - {fileID: 2139429687}
   - {fileID: 927480551}
+  - {fileID: 933000259}
   DefaultDistance: 15
   DistanceIncrease: 20
   OutsideFactor: 50
@@ -3292,12 +3281,6 @@ Transform:
   m_Father: {fileID: 0}
   m_RootOrder: 18
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: -96.47201}
---- !u!4 &2139429687 stripped
-Transform:
-  m_CorrespondingSourceObject: {fileID: 751653433366621650, guid: a38a6e063fdb55c49aca2ee8f4e6f4a8,
-    type: 3}
-  m_PrefabInstance: {fileID: 5006686547610265179}
-  m_PrefabAsset: {fileID: 0}
 --- !u!1001 &2000804233549039610
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -3364,6 +3347,11 @@ PrefabInstance:
         type: 3}
       propertyPath: m_Name
       value: Drone
+      objectReference: {fileID: 0}
+    - target: {fileID: 2000804235349801773, guid: bdcde8276b3174c428cacc27ca8e2ad1,
+        type: 3}
+      propertyPath: m_IsActive
+      value: 0
       objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: bdcde8276b3174c428cacc27ca8e2ad1, type: 3}
@@ -3434,14 +3422,13 @@ PrefabInstance:
       propertyPath: m_Name
       value: PlatformPatroller
       objectReference: {fileID: 0}
+    - target: {fileID: 751653433366621662, guid: a38a6e063fdb55c49aca2ee8f4e6f4a8,
+        type: 3}
+      propertyPath: m_IsActive
+      value: 0
+      objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: a38a6e063fdb55c49aca2ee8f4e6f4a8, type: 3}
---- !u!4 &5049661300904636012 stripped
-Transform:
-  m_CorrespondingSourceObject: {fileID: 4068762687681014659, guid: fba6c47c750dc514ca0c7548b7487fd1,
-    type: 3}
-  m_PrefabInstance: {fileID: 9107164831674402287}
-  m_PrefabAsset: {fileID: 0}
 --- !u!1001 &9107164831674402287
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -3508,6 +3495,11 @@ PrefabInstance:
         type: 3}
       propertyPath: m_Name
       value: ShieldEnemy
+      objectReference: {fileID: 0}
+    - target: {fileID: 4068762687681014671, guid: fba6c47c750dc514ca0c7548b7487fd1,
+        type: 3}
+      propertyPath: m_IsActive
+      value: 0
       objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: fba6c47c750dc514ca0c7548b7487fd1, type: 3}
