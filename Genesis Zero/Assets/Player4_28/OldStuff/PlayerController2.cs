@@ -171,14 +171,14 @@ public class PlayerController2 : MonoBehaviour
         if (FacingRight == 1)
         {
             float y = Mathf.Lerp(transform.rotation.eulerAngles.y, 90, rotationspeed);
-            rb.rotation = Quaternion.Euler(new Vector3(0, y, 0));
+            transform.rotation = Quaternion.Euler(new Vector3(0, y, 0));
 
         }
         if (FacingRight == 2)
         {
             float y = Mathf.Lerp(transform.rotation.eulerAngles.y, 270, rotationspeed);
-            rb.rotation = Quaternion.Euler(new Vector3(0, y, 0));
-            //rb.rotation = Quaternion.Slerp(transform.rotation, Quaternion.Euler(new Vector3(0, 270, 0)), rotationspeed);
+            transform.rotation = Quaternion.Euler(new Vector3(0, y, 0));
+            
         }
         WallCheck();
         // rb.MoveRotation(Quaternion.Euler(new Vector3(0, 90 * Mathf.Sign(aimvector.x - transform.position.x), 0)));
