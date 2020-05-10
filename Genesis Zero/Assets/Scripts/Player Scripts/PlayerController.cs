@@ -253,7 +253,7 @@ public class PlayerController : MonoBehaviour
             transform.rotation = Quaternion.Euler(new Vector3(0, y, 0));
             //rb.rotation = Quaternion.Slerp(transform.rotation, Quaternion.Euler(new Vector3(0, 270, 0)), rotationspeed);
         }
-        //transform.position = new Vector3(transform.position.x, transform.position.y, 0);
+        transform.position = new Vector3(transform.position.x, transform.position.y, 0);
     }
 
     /* This function is called in Move()
@@ -620,9 +620,10 @@ public class PlayerController : MonoBehaviour
     {
         float xSpeed = GetCurrentSpeed();
         float ySpeed = vertVel;
-        if (FacingRight==1)
-            xSpeed *= -1;
-        animator.SetFloat("xSpeed", xSpeed);
+        // if (FacingRight==1)
+        // xSpeed *= -1;
+        float animspeed = movementInput.x * FacingSign;
+        animator.SetFloat("xSpeed",animspeed);
         animator.SetFloat("ySpeed", ySpeed);
         animator.SetBool("isGrounded", isGrounded);
         animator.SetBool("isRolling", isRolling);
