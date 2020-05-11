@@ -231,7 +231,7 @@ public class PlatformPatrollerAI : AIController
         if (AttackHitbox != null)
         {
             spawnedHitboxObj = Instantiate(AttackHitbox, Vector3.zero, Quaternion.identity, transform).transform;
-            spawnedHitboxObj.localPosition = ScaleVector3(AttackHitboxStart);
+            spawnedHitboxObj.localPosition = AttackHitboxStart;
             spawnedHitboxObj.localRotation = Quaternion.identity;
             Hitbox spawnedHitbox = spawnedHitboxObj.GetComponent<Hitbox>();
             spawnedHitbox.InitializeHitbox(GetDamage().GetValue(), this);

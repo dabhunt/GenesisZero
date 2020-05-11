@@ -72,7 +72,7 @@ public class ShieldEnemyAI : AIController
         {
             tracker.GiveUpCondition = () =>
             {
-                return tracker.PeekFirstPoint().y > transform.position.y + MaxFollowHeight;
+                return tracker.PeekFirstPoint().y > transform.position.y + ScaleFloat(MaxFollowHeight);
             };
         }
     }
@@ -188,7 +188,7 @@ public class ShieldEnemyAI : AIController
      */
     protected override void UpdateOrigin()
     {
-        trueOrigin = transform.position + new Vector3(Origin.x * faceDir, Origin.y, Origin.z);
+        trueOrigin = transform.position + ScaleVector3(new Vector3(Origin.x * faceDir, Origin.y, Origin.z));
     }
 
     /**
@@ -196,13 +196,13 @@ public class ShieldEnemyAI : AIController
      */
     protected override void GroundCheck()
     {
-        Ray groundRay = new Ray(transform.position + Vector3.up * groundCheckStartHeight, Vector3.down);
+        Ray groundRay = new Ray(transform.position + ScaleVector3(Vector3.up * groundCheckStartHeight), Vector3.down);
         RaycastHit hit = new RaycastHit();
-        isGrounded = Physics.SphereCast(groundRay, groundCheckRadius, out hit, groundCheckDistance, groundCheckMask, QueryTriggerInteraction.Ignore);
+        isGrounded = Physics.SphereCast(groundRay, ScaleFloat(groundCheckRadius), out hit, ScaleFloat(groundCheckDistance), groundCheckMask, QueryTriggerInteraction.Ignore);
         groundNormal = isGrounded ? hit.normal : Vector3.up;
-        Ray forwardRay = new Ray(trueOrigin, new Vector3(ForwardEdgeRay.x * faceDir, ForwardEdgeRay.y, ForwardEdgeRay.z));
+        Ray forwardRay = new Ray(trueOrigin, ScaleVector3(new Vector3(ForwardEdgeRay.x * faceDir, ForwardEdgeRay.y, ForwardEdgeRay.z)));
         //Ray backRay = new Ray(trueOrigin, new Vector3(BackEdgeRay.x * faceDir, BackEdgeRay.y, BackEdgeRay.z));
-        edgeInFront = ForwardEdgeRay.sqrMagnitude > 0 ? Physics.Raycast(forwardRay, ForwardEdgeRay.magnitude, groundCheckMask, QueryTriggerInteraction.Ignore) : true;
+        edgeInFront = ForwardEdgeRay.sqrMagnitude > 0 ? Physics.Raycast(forwardRay, ScaleFloat(ForwardEdgeRay.magnitude), groundCheckMask, QueryTriggerInteraction.Ignore) : true;
     }
 
     /**
@@ -257,13 +257,13 @@ public class ShieldEnemyAI : AIController
     {
         base.OnDrawGizmos();
         Gizmos.color = Color.magenta;
-        Gizmos.DrawWireSphere(transform.position + Vector3.up * groundCheckStartHeight, groundCheckRadius);
+        Gizmos.DrawWireSphere(transform.position + ScaleVector3(Vector3.up * groundCheckStartHeight), ScaleFloat(groundCheckRadius));
         Gizmos.color = Color.yellow;
-        Gizmos.DrawWireSphere(transform.position + Vector3.up * groundCheckStartHeight + Vector3.down * groundCheckDistance, groundCheckRadius);
+        Gizmos.DrawWireSphere(transform.position + ScaleVector3(Vector3.up * groundCheckStartHeight) + ScaleVector3(Vector3.down * groundCheckDistance), ScaleFloat(groundCheckRadius));
         Gizmos.color = Color.red;
-        Gizmos.DrawRay(trueOrigin, new Vector3(ForwardEdgeRay.x * faceDir, ForwardEdgeRay.y, ForwardEdgeRay.z));
+        Gizmos.DrawRay(trueOrigin, ScaleVector3(new Vector3(ForwardEdgeRay.x * faceDir, ForwardEdgeRay.y, ForwardEdgeRay.z)));
         //Gizmos.DrawRay(trueOrigin, new Vector3(BackEdgeRay.x * faceDir, BackEdgeRay.y, BackEdgeRay.z));
         Gizmos.color = Color.green;
-        Gizmos.DrawWireSphere(transform.position + new Vector3(AttackHitboxStart.x * faceDir, AttackHitboxStart.y, AttackHitboxStart.z), 0.1f);
+        Gizmos.DrawWireSphere(transform.position + ScaleVector3(new Vector3(AttackHitboxStart.x * faceDir, AttackHitboxStart.y, AttackHitboxStart.z)), ScaleFloat(0.1f));
     }
 }
