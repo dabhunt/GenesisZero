@@ -96,7 +96,7 @@ public class BossAI : AIController
 		base.Update();
 		if (GetDistanceToTarget() < TriggerRadius && initiated == false) {
 			initiated = true;
-			DialogueManager.instance.TriggerDialogue("Boss", false);
+			//DialogueManager.instance.TriggerDialogue("Boss", false);
 		}
 		if (initiated && TimeBeforeFight > 0)
 		{
