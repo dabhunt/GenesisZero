@@ -137,6 +137,10 @@ public class ShieldEnemyAI : AIController
         }
 
         targetSpeed *= GetSpeed().GetValue() * SpeedDifficultyMultiplier.GetFactor();
+        if (Mathf.Abs(transform.position.x - targetPosition.x) < 0.5f)
+        {
+            targetSpeed = 0.0f;
+        }
         if ((isGrounded && state != AIState.Attack) || state == AIState.Cooldown)
         {
             frb.Accelerate(Vector3.right * (targetSpeed * faceDir - frb.GetVelocity().x) * Acceleration * slopeForceFactor); // Accelerate toward the target

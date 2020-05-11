@@ -140,6 +140,10 @@ public class PlatformShooterAI : AIController
         faceDirChangeTime += Time.fixedDeltaTime;
 
         targetSpeed *= GetSpeed().GetValue() * SpeedDifficultyMultiplier.GetFactor() * moveStutter;
+        if (Mathf.Abs(transform.position.x - targetPosition.x) < 0.5f)
+        {
+            targetSpeed = 0.0f;
+        }
         frb.Accelerate(Vector3.right * (targetSpeed * faceDir - frb.GetVelocity().x) * Acceleration * slopeForceFactor); // Accelerate toward the target
 
         // Smoothly rotate to face target
