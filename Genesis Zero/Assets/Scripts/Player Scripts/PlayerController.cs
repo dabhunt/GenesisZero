@@ -66,6 +66,7 @@ public class PlayerController : MonoBehaviour
     private Vector2 aimInputController;
     private float fireInput;
     private float interactInput;
+    public float rotationspeed;
 
     //Movement Variables
     private RaycastHit groundHitInfo;
@@ -155,10 +156,13 @@ public class PlayerController : MonoBehaviour
         if (StateManager.instance.IsPaused())
             return;
         float multiplier = isGrounded ? 1 : airControlMult;
-        float startVel = Mathf.Abs(currentSpeed);
+        float startVel = currentSpeed;
         Vector3 distXhair = worldXhair.transform.position - transform.position;
 
         maxSpeed = GetComponent<Player>().GetSpeed().GetValue();
+
+
+
 
         CalculateForwardDirection();
         if (isRolling) return;
@@ -209,17 +213,21 @@ public class PlayerController : MonoBehaviour
                 currentSpeed = Mathf.Clamp(currentSpeed, maxSpeed * airSpeedMult, maxSpeed * airSpeedMult);
 
             //Rotation depending on input
-            if (movementInput.x > 0 && transform.eulerAngles.y != 90)
-            {
-                transform.rotation = Quaternion.Euler(0, 90, 0);
-                isFacingRight = true;
-            }
-            if (movementInput.x < 0 && transform.eulerAngles.y != -90)
-            {
-                transform.rotation = Quaternion.Euler(0, -90, 0);
-                isFacingRight = false;
-            }
-            transform.position += moveVec * (startVel * Time.fixedDeltaTime + (0.5f * acceleration * Mathf.Pow(Time.fixedDeltaTime, 2)));
+         /*    if (movementInput.x > 0 && transform.eulerAngles.y != 90)
+             {
+                 transform.rotation = Quaternion.Euler(0, 90, 0);
+                 isFacingRight = true;
+             }
+             if (movementInput.x < 0 && transform.eulerAngles.y != -90)
+             {
+                 transform.rotation = Quaternion.Euler(0, -90, 0);
+                 isFacingRight = false;
+             }*/
+
+           
+
+
+            transform.position += movementInput.x*moveVec * (startVel * Time.fixedDeltaTime + (0.5f * acceleration * Mathf.Pow(Time.fixedDeltaTime, 2)));
             if (gamepadAimTime > 0)
                 worldXhair.transform.position = transform.position + distXhair;
         }
@@ -232,6 +240,19 @@ public class PlayerController : MonoBehaviour
                 currentSpeed = Mathf.Max(currentSpeed, 0);
             }
         }
+
+        if (FacingRight == 1)
+        {
+            float y = Mathf.Lerp(transform.rotation.eulerAngles.y, 90, rotationspeed);
+            transform.rotation = Quaternion.Euler(new Vector3(0, y, 0));
+
+        }
+        if (FacingRight == 2)
+        {
+            float y = Mathf.Lerp(transform.rotation.eulerAngles.y, 270, rotationspeed);
+            transform.rotation = Quaternion.Euler(new Vector3(0, y, 0));
+            //rb.rotation = Quaternion.Slerp(transform.rotation, Quaternion.Euler(new Vector3(0, 270, 0)), rotationspeed);
+        }
         transform.position = new Vector3(transform.position.x, transform.position.y, 0);
     }
 
@@ -240,12 +261,12 @@ public class PlayerController : MonoBehaviour
      */
     private void CalculateForwardDirection()
     {
-        if (!isGrounded)
+       if (!isGrounded)
         {
             moveVec = transform.forward;
             return;
         }
-        moveVec = Vector3.Cross(groundHitInfo.normal, -transform.right);
+       moveVec = Vector3.Cross(groundHitInfo.normal, Vector3.forward);
     }
 
     /* This function is called with an event invoked
@@ -329,9 +350,9 @@ public class PlayerController : MonoBehaviour
         if (IsBlocked(Vector3.down))
         {
             isGrounded = true;
-            if (Physics.Raycast(transform.position, Vector3.down, out hit, characterHeight * 0.5f, immoveables))
+            if (Physics.Raycast(transform.position, Vector3.down, out hit, .1f, immoveables))
                 if (hit.distance < 1f * characterHeight + vertCastPadding)
-                    transform.position = Vector3.Lerp(transform.position, transform.position + Vector3.up * 1* characterHeight , 5 * Time.fixedDeltaTime);
+                    transform.position = Vector3.Lerp(transform.position, transform.position + Vector3.up * .1f , 5 * Time.fixedDeltaTime);
 
             if (vertVel < 0)
             {
@@ -559,7 +580,7 @@ public class PlayerController : MonoBehaviour
         }
         else if (dir == Vector3.down)
         {
-            isBlock = Physics.SphereCast(transform.position, radius, Vector3.down, out groundHitInfo, maxDist, immoveables, QueryTriggerInteraction.UseGlobal);
+            isBlock = Physics.SphereCast(transform.position, radius, Vector3.down, out groundHitInfo, .1f, immoveables, QueryTriggerInteraction.UseGlobal);
             if (isBlock && groundHitInfo.collider.isTrigger)
                 isBlock = false;
         }
@@ -599,9 +620,10 @@ public class PlayerController : MonoBehaviour
     {
         float xSpeed = GetCurrentSpeed();
         float ySpeed = vertVel;
-        if (isFacingRight != isAimingRight)
-            xSpeed *= -1;
-        animator.SetFloat("xSpeed", xSpeed);
+        // if (FacingRight==1)
+        // xSpeed *= -1;
+        float animspeed = movementInput.x * FacingSign;
+        animator.SetFloat("xSpeed",animspeed);
         animator.SetFloat("ySpeed", ySpeed);
         animator.SetBool("isGrounded", isGrounded);
         animator.SetBool("isRolling", isRolling);
@@ -613,6 +635,30 @@ public class PlayerController : MonoBehaviour
         var xSpeed = currentSpeed != 0 ? currentSpeed / maxSpeed : 0;
         return xSpeed;
     }
+
+    private int FacingRight
+    {
+        get
+        {
+            Debug.Log("aimvector-transform.position.x " + (worldXhair.transform.position.x - transform.position.x));
+            // Debug.Log("Sign aimvector-transform= "+Mathf.Sign(aimvector.x - transform.position.x));
+            float facing = (worldXhair.transform.position.x - transform.position.x);
+            return facing >= .3f ? 1 : facing <= -.3f ? 2 : 3;
+        }
+    }//returns a value of 1-3 based on 
+
+    private int FacingSign
+    {
+        get
+        {
+            Vector3 perp = Vector3.Cross(transform.forward, Vector3.forward);
+            float dir = Vector3.Dot(perp, transform.up);
+            return dir > 0f ? -1 : dir < 0f ? 1 : 0;
+        }
+    }
+
+
+
     public bool IsFacingRight(){
         return isFacingRight;
     }
@@ -642,6 +688,7 @@ public class PlayerController : MonoBehaviour
     {
         vertVel = vel;
     }
+
     public void Dash(float duration)
     {
         isDashing = true;
