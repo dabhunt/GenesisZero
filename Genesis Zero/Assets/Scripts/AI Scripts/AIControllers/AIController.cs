@@ -42,6 +42,13 @@ public class AIController : Pawn
 
     new protected void Start()
     {
+        if (!Mathf.Approximately(transform.localScale.x, transform.localScale.y)
+            || !Mathf.Approximately(transform.localScale.y, transform.localScale.z)
+            || !Mathf.Approximately(transform.localScale.x, transform.localScale.z))
+        {
+            transform.localScale = Vector3.one * Mathf.Max(transform.localScale.x, transform.localScale.y, transform.localScale.z);
+        }
+
         base.Start();
         anim = GetComponent<AIAnimationStateController>();
 
@@ -580,6 +587,22 @@ public class AIController : Pawn
             return (Target.position - transform.position).normalized;
         }
         return Vector3.right;
+    }
+
+    /**
+     * Scales a vector3 by the local scale
+     */
+    protected Vector3 ScaleVector3(Vector3 v)
+    {
+        return Vector3.Scale(v, transform.localScale);
+    }
+
+    /**
+     * Scales a float by the local scale magnitude
+     */
+    protected float ScaleFloat(float f)
+    {
+        return f * (transform.localScale.x + transform.localScale.y + transform.localScale.z) / 3.0f;
     }
 
     private void OnDestroy()
