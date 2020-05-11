@@ -21,7 +21,7 @@ public class SnakeBossBase : MonoBehaviour
         if (!Boss.GetComponent<BossAI>().boxanimating)
         {
 			GameObject BossRoom = GameObject.FindGameObjectWithTag("BossRoom");
-			transform.position = Vector3.Lerp(transform.position, origin + new Vector3((maxoffset.x * ((Boss.transform.position.x - origin.x) / 10)), (maxoffset.y * ((Boss.transform.position.y - BossRoom.transform.position.y + BossRoom.GetComponent<BoxCollider2D>().offset.y)) / 10), 0), Time.deltaTime);
+			transform.position = Vector3.Lerp(transform.position, origin + new Vector3((maxoffset.x * ((Boss.transform.position.x - origin.x) / 10)), (maxoffset.y * ((Boss.transform.position.y - BossRoom.transform.position.y + BossRoom.GetComponent<BoxCollider2D>().offset.y)) / 10), 0), Time.deltaTime / 2);
 			GetComponent<Animator>().applyRootMotion = true;
 		}
 		else
