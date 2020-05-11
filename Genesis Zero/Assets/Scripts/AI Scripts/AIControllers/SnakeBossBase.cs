@@ -8,6 +8,7 @@ public class SnakeBossBase : MonoBehaviour
     public Vector3 maxoffset;
     public GameObject Boss;
     private Vector3 origin;
+	
     // Start is called before the first frame update
     void Start()
     {
@@ -19,7 +20,8 @@ public class SnakeBossBase : MonoBehaviour
     {
         if (!Boss.GetComponent<BossAI>().boxanimating)
         {
-            transform.position = Vector3.Lerp(transform.position, origin + new Vector3((maxoffset.x * ((Boss.transform.position.x - origin.x) / 10)), 0, 0), Time.deltaTime);
+			GameObject BossRoom = GameObject.FindGameObjectWithTag("BossRoom");
+			transform.position = Vector3.Lerp(transform.position, origin + new Vector3((maxoffset.x * ((Boss.transform.position.x - origin.x) / 10)), (maxoffset.y * ((Boss.transform.position.y - BossRoom.transform.position.y + BossRoom.GetComponent<BoxCollider2D>().offset.y)) / 10), 0), Time.deltaTime);
 			GetComponent<Animator>().applyRootMotion = true;
 		}
 		else
