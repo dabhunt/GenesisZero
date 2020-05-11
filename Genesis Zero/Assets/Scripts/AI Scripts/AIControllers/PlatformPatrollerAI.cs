@@ -188,7 +188,7 @@ public class PlatformPatrollerAI : AIController
      */
     protected override void UpdateOrigin()
     {
-        trueOrigin = transform.position + ScaleVector3(new Vector3(Origin.x * faceDir, Origin.y, Origin.z));
+        trueOrigin = transform.position + new Vector3(Origin.x * faceDir, Origin.y, Origin.z);
     }
 
     /**
