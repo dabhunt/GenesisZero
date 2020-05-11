@@ -8,8 +8,6 @@ using UnityEngine;
 using UnityEngine.InputSystem;
 using UnityEngine.UI;
 using Cinemachine;
-
-[RequireComponent(typeof(CapsuleCollider))]
 public class PlayerController : MonoBehaviour
 {
     [Header("CharacterDims")]
@@ -20,8 +18,9 @@ public class PlayerController : MonoBehaviour
     public float acceleration = 35f;
     public float jumpStrength = 12f;
     public float doubleJumpStrength = 10f;
-    public float horCastPadding = 0.2f; // offset used for the sides casts
-    public float vertCastPadding = 0.1f; // offset used for the feet/head casts
+    public float horCastLength = 0.3f;
+    public float verCastLength = 1.05f;
+    public float groundCheckPadding = 0.1f;
     public float rollDuration = 3f;
     public float rollSpeedMult = 1.5f;
     public float rollCooldownDuration = 3.0f;
@@ -36,13 +35,9 @@ public class PlayerController : MonoBehaviour
     public float fallSpeedMult = 1.45f;
     public float airControlMult = 0.5f;
     public float airSpeedMult = 0.85f;
-    public float slopeRayDistMult = 1.25f;
     public float fallSpeedWhileRolling = 1.05f;
     public float fallSpeedWhileDashing = .9f;
     private float resetfallSpeed = 1.45f;
-    [Header("Canvas")]
-    public Canvas canvasRef;
-
     [Header("Gun")]
     public GameObject gunObject;
     [Tooltip("GameObject Crosshair (invisible)")]
@@ -80,10 +75,6 @@ public class PlayerController : MonoBehaviour
     private float timeRolled = 0;
     private float rollCooldown = 0;
     private int rollDirection;
-    private Vector3 lastRollingPosition;
-
-    //Aim Variables
-    private float gamepadAimTime;
     private Gun gun;
 
     //Animation/States Variables
@@ -129,12 +120,12 @@ public class PlayerController : MonoBehaviour
     {
         CheckGround();
         CheckWall();
+        DrawDebugLines();
         ApplyGravity();
         Aim();
         Move();
         UpdateJump();
         UpdateDodgeRoll();
-        DrawDebugLines();
     }
     //this swaps out the layermask while abilities are active / player is invulnerable so they can pass through enemies and bullets
     public void NewLayerMask(LayerMask newMask, float duration)
@@ -157,16 +148,8 @@ public class PlayerController : MonoBehaviour
             return;
         float multiplier = isGrounded ? 1 : airControlMult;
         float startVel = currentSpeed;
-        Vector3 distXhair = worldXhair.transform.position - transform.position;
-
         maxSpeed = GetComponent<Player>().GetSpeed().GetValue();
-
-
-
-
-        CalculateForwardDirection();
         if (isRolling) return;
-
         if (isGrounded)
         {
             //Play running sound if player's moving on the ground
@@ -190,9 +173,10 @@ public class PlayerController : MonoBehaviour
                 sound.StopWalk();
             walkSoundPlaying = false;
         }
-
+        
         if (movementInput.x != 0)
         {
+            CalculateForwardDirection();
             if (movementInput.x > 0 && IsBlocked(Vector3.right))
             {
                 currentSpeed = 0;
@@ -208,28 +192,10 @@ public class PlayerController : MonoBehaviour
 
             //This is to calculate air control speeds
             if (isGrounded)
-                currentSpeed = Mathf.Clamp(currentSpeed, maxSpeed, maxSpeed);
+                currentSpeed = Mathf.Clamp(currentSpeed, 0, maxSpeed);
             else
-                currentSpeed = Mathf.Clamp(currentSpeed, maxSpeed * airSpeedMult, maxSpeed * airSpeedMult);
-
-            //Rotation depending on input
-         /*    if (movementInput.x > 0 && transform.eulerAngles.y != 90)
-             {
-                 transform.rotation = Quaternion.Euler(0, 90, 0);
-                 isFacingRight = true;
-             }
-             if (movementInput.x < 0 && transform.eulerAngles.y != -90)
-             {
-                 transform.rotation = Quaternion.Euler(0, -90, 0);
-                 isFacingRight = false;
-             }*/
-
-           
-
-
-            transform.position += movementInput.x*moveVec * (startVel * Time.fixedDeltaTime + (0.5f * acceleration * Mathf.Pow(Time.fixedDeltaTime, 2)));
-            if (gamepadAimTime > 0)
-                worldXhair.transform.position = transform.position + distXhair;
+                currentSpeed = Mathf.Clamp(currentSpeed, 0, maxSpeed * airSpeedMult);
+            transform.position += movementInput.x * moveVec * (startVel * Time.fixedDeltaTime + (0.5f * acceleration * Mathf.Pow(Time.fixedDeltaTime, 2)));
         }
         else
         {
@@ -240,7 +206,7 @@ public class PlayerController : MonoBehaviour
                 currentSpeed = Mathf.Max(currentSpeed, 0);
             }
         }
-
+        
         if (FacingRight == 1)
         {
             float y = Mathf.Lerp(transform.rotation.eulerAngles.y, 90, rotationspeed);
@@ -256,17 +222,24 @@ public class PlayerController : MonoBehaviour
         transform.position = new Vector3(transform.position.x, transform.position.y, 0);
     }
 
+    private void DrawDebugLines()
+    {
+        if (!debug)
+            return;
+        Debug.DrawLine(transform.position, transform.position + moveVec * 2f, Color.red);
+    }
+
     /* This function is called in Move()
      * to calculate the move vector in order to deal with ramps and such
      */
     private void CalculateForwardDirection()
     {
-       if (!isGrounded)
+        if (!isGrounded)
         {
-            moveVec = transform.forward;
+            moveVec = Vector3.right;
             return;
         }
-       moveVec = Vector3.Cross(groundHitInfo.normal, Vector3.forward);
+        moveVec = Vector3.Cross(groundHitInfo.normal, Vector3.forward);
     }
 
     /* This function is called with an event invoked
@@ -283,17 +256,17 @@ public class PlayerController : MonoBehaviour
             if (!isJumping && jumpCount > 0)
             {
                 jumpCount--;
-                animator.SetTrigger("startJump");
+                //animator.SetTrigger("startJump");
                 sound.Jump();
-                StartCoroutine(ResetTrigger("startJump", triggerResetTime));
+                //StartCoroutine(ResetTrigger("startJump", triggerResetTime));
                 isJumping = true;
                 vertVel = jumpStrength;
             }
             else if (!isGrounded && jumpCount > 0)
             {
                 jumpCount--;
-                animator.SetTrigger("startDoubleJump");
-                StartCoroutine(ResetTrigger("startDoubleJump", triggerResetTime));
+                //animator.SetTrigger("startDoubleJump");
+                //StartCoroutine(ResetTrigger("startDoubleJump", triggerResetTime));
                 isJumping = true;
                 vertVel = doubleJumpStrength;
                 if (isFacingRight && movementInput.x <= 0)
@@ -326,7 +299,7 @@ public class PlayerController : MonoBehaviour
 
         float startVel = vertVel;
         if (IsBlocked(Vector3.up))
-            vertVel = -1;
+            vertVel = 0;
 
         if (vertVel > 0)
         {
@@ -345,15 +318,24 @@ public class PlayerController : MonoBehaviour
      */
     private void CheckGround()
     {
-        RaycastHit hit;
-
+        Collider[] cols;
+        Vector3 halfExtends = new Vector3(0.25f * characterWidth, 0, 0);
         if (IsBlocked(Vector3.down))
         {
+            Vector3 origin = transform.position + Vector3.up * 0.25f * characterWidth;
+            cols = Physics.OverlapSphere(origin, 0.5f * characterWidth, immoveables, QueryTriggerInteraction.UseGlobal);
+            if (cols.Length != 0)
+            {
+                foreach (var col in cols)
+                {
+                    if (!col.isTrigger)
+                    {
+                        transform.position = Vector3.Lerp(transform.position, transform.position + Vector3.up * 0.1f, 25 * Time.fixedDeltaTime);
+                        break;
+                    }
+                }
+            }
             isGrounded = true;
-            if (Physics.Raycast(transform.position, Vector3.down, out hit, .1f, immoveables))
-                if (hit.distance < 1f * characterHeight + vertCastPadding)
-                    transform.position = Vector3.Lerp(transform.position, transform.position + Vector3.up * .1f , 5 * Time.fixedDeltaTime);
-
             if (vertVel < 0)
             {
                 vertVel = 0;
@@ -370,34 +352,45 @@ public class PlayerController : MonoBehaviour
         }
     }
 
-    /* This function just push the character back out
-     * if it was lodged into a wall.
-     */
     private void CheckWall()
     {
-        RaycastHit hit;
-
-        if (IsBlocked(Vector3.left))
-        {
-            if (Physics.Raycast(transform.position, Vector3.left, out hit, (characterWidth * 0.5f) + vertCastPadding, immoveables))
-                if (hit.distance < .5f * characterWidth + horCastPadding)
-                    transform.position = Vector3.Lerp(transform.position, transform.position + Vector3.right * characterWidth * .5f, 5 * Time.fixedDeltaTime);
-        }
+        Collider[] cols;
+        Vector3 halfExtends = new Vector3(0, 0.25f * characterHeight, 0);
+        Vector3 rightOrigin = transform.position + new Vector3(0.5f * characterWidth, 0.5f * characterHeight, 0);
+        Vector3 leftOrigin = transform.position + new Vector3(-0.5f * characterWidth, 0.5f * characterHeight, 0);
         if (IsBlocked(Vector3.right))
         {
-            if (Physics.Raycast(transform.position, Vector3.right, out hit, (characterWidth * 0.5f) + vertCastPadding, immoveables))
-                if (hit.distance < .5f * characterWidth + horCastPadding)
-                    transform.position = Vector3.Lerp(transform.position, transform.position + Vector3.left * characterWidth * .5f, 5 * Time.fixedDeltaTime);
+            cols = Physics.OverlapBox(rightOrigin, halfExtends, Quaternion.identity, immoveables, QueryTriggerInteraction.UseGlobal);
+            if (cols.Length != 0)
+            {
+                foreach (var col in cols)
+                {
+                    if (!col.isTrigger)
+                    {
+                        transform.position = Vector3.Lerp(transform.position, transform.position + Vector3.left * 0.1f, 25 * Time.fixedDeltaTime);
+                    }
+                }
+                
+            }
         }
-        if (IsBlocked(Vector3.up))
+        if (IsBlocked(Vector3.left))
         {
-            if (Physics.Raycast(transform.position, Vector3.up, out hit, characterHeight * 0.5f, immoveables))
-                if (hit.distance < .5f * characterHeight + vertCastPadding)
-                    transform.position = Vector3.Lerp(transform.position, transform.position + Vector3.down * .5f * characterHeight, 5 * Time.fixedDeltaTime);
+            cols = Physics.OverlapBox(leftOrigin, halfExtends, Quaternion.identity, immoveables, QueryTriggerInteraction.UseGlobal);
+            if (cols.Length != 0)
+            {
+                foreach (var col in cols)
+                {
+                    if (!col.isTrigger)
+                    {
+                        transform.position = Vector3.Lerp(transform.position, transform.position + Vector3.right * 0.1f, 25 * Time.fixedDeltaTime);
+                    }
+                }
+                
+            }
         }
     }
 
-/* This fuction applies gravity to player
+    /* This fuction applies gravity to player
     * when the player is falling
     */
     private void ApplyGravity()
@@ -440,8 +433,8 @@ public class PlayerController : MonoBehaviour
             if (!inputActions.PlayerControls.enabled) return;
             if (!isRolling && rollCooldown == 0)
             {
-                animator.SetTrigger("startRoll");
-                StartCoroutine(ResetTrigger("startRoll", triggerResetTime));
+                //animator.SetTrigger("startRoll");
+                //StartCoroutine(ResetTrigger("startRoll", triggerResetTime));
                 VFXManager.instance.PlayEffect("VFX_PlayerDashStart", transform.position);
                 gameObject.GetComponentInChildren<SkinnedMeshRenderer>().enabled = false; //TEMPORARY CHANGE THIS
                 VFXManager.instance.PlayEffectForDuration("VFX_PlayerDashEffect", transform.position, rollDuration).transform.parent = transform;
@@ -475,8 +468,8 @@ public class PlayerController : MonoBehaviour
     private void EndRoll()
     {
         isRolling = false;
-        animator.SetTrigger("endRoll");
-        StartCoroutine(ResetTrigger("endRoll", triggerResetTime));
+        //animator.SetTrigger("endRoll");
+        //StartCoroutine(ResetTrigger("endRoll", triggerResetTime));
         rollCooldown = rollCooldownDuration;
         gameObject.GetComponentInChildren<SkinnedMeshRenderer>().enabled = true;
         StartCoroutine(ResetCooldown(rollCooldownDuration));
@@ -545,13 +538,12 @@ public class PlayerController : MonoBehaviour
         if (fireInput > 0)
         {
             if (Time.time > timeToFire)
-            //if (Time.time > timeToFire && !overheat.IsOverheated())
             {
                 timeToFire = Time.time + 1 / player.GetAttackSpeed().GetValue();
                 gun.Shoot();
-                animator.SetTrigger("gunFired");
+                //animator.SetTrigger("gunFired");
                 sound.GunShot();
-                StartCoroutine(ResetTrigger("gunFired", triggerResetTime));
+                //StartCoroutine(ResetTrigger("gunFired", triggerResetTime));
             }
         }
     }
@@ -561,41 +553,42 @@ public class PlayerController : MonoBehaviour
      */
     private bool IsBlocked(Vector3 dir)
     {
-        bool isBlock = false;
         RaycastHit hit;
-
-        float radius = (0.5f * characterWidth) - vertCastPadding;
-        float maxDist = (0.5f * characterHeight) - radius + vertCastPadding;
-        Vector3 halfY = new Vector3 (0, characterHeight * 0.25f, 0);
-        Vector3 boxCenter = isRolling ? transform.position - halfY : transform.position;
-        float boxHalf = isRolling ? (0.25f * characterHeight) - (0.5f * horCastPadding) : (0.5f * characterHeight) - horCastPadding;
-        Vector3 halfExtends = new Vector3(0, boxHalf, 0);
-        Vector3 horDirection;
+        bool isBlock = false;
+        float halfWidth = 0.5f * characterWidth;
+        float halfHeight = 0.5f * characterHeight;
+        Vector3 halfExtends = new Vector3(0, 0.5f * halfHeight, 0);
 
         if (dir == Vector3.up)
         {
-            isBlock = Physics.SphereCast(transform.position, radius, Vector3.up, out hit, maxDist, immoveables, QueryTriggerInteraction.UseGlobal);
+            //Casting from the top of the character's head
+            Vector3 castOrigin = transform.position + new Vector3(0, halfHeight - halfWidth, 0);
+            isBlock = Physics.SphereCast(castOrigin, halfWidth, Vector3.up, out hit, verCastLength, immoveables, QueryTriggerInteraction.UseGlobal);
             if (isBlock && hit.collider.isTrigger)
                 isBlock = false;
         }
         else if (dir == Vector3.down)
         {
-            isBlock = Physics.SphereCast(transform.position, radius, Vector3.down, out groundHitInfo, .1f, immoveables, QueryTriggerInteraction.UseGlobal);
-            if (isBlock && groundHitInfo.collider.isTrigger)
+            Vector3 castOrigin = transform.position + new Vector3(0, halfHeight + halfWidth, 0);
+            isBlock = Physics.SphereCast(castOrigin, halfWidth, Vector3.down, out hit, verCastLength, immoveables, QueryTriggerInteraction.UseGlobal);
+            if (isBlock && hit.collider.isTrigger)
+                isBlock = false;
+            groundHitInfo = hit;
+        }
+        else if (dir == Vector3.left)
+        {
+            //Casting side casts from the center of the character
+            Vector3 castOrigin = transform.position + new Vector3(0, halfHeight, 0);
+            isBlock = Physics.BoxCast(castOrigin, halfExtends, Vector3.left, out hit, Quaternion.identity, horCastLength, immoveables, QueryTriggerInteraction.UseGlobal);
+            if (isBlock && hit.collider.isTrigger)
                 isBlock = false;
         }
         else if (dir == Vector3.right)
         {
-            horDirection = isFacingRight ? moveVec : -moveVec;
-            isBlock = Physics.BoxCast(boxCenter, halfExtends, horDirection, out hit, Quaternion.identity, 0.5f * characterWidth + vertCastPadding, immoveables, QueryTriggerInteraction.UseGlobal);
-            if (isBlock && (hit.collider.isTrigger))
-                isBlock = false;
-        }
-        else if (dir == Vector3.left)
-        {
-            horDirection = !isFacingRight ? moveVec : -moveVec;
-            isBlock = Physics.BoxCast(boxCenter, halfExtends, horDirection, out hit, Quaternion.identity, 0.5f * characterWidth + vertCastPadding, immoveables, QueryTriggerInteraction.UseGlobal);
-            if (isBlock && (hit.collider.isTrigger))
+            //Casting side casts from the center of the character
+            Vector3 castOrigin = transform.position + new Vector3(0, halfHeight, 0);
+            isBlock = Physics.BoxCast(castOrigin, halfExtends, Vector3.right, out hit, Quaternion.identity, horCastLength, immoveables, QueryTriggerInteraction.UseGlobal);
+            if (isBlock && hit.collider.isTrigger)
                 isBlock = false;
         }
         else
@@ -640,7 +633,7 @@ public class PlayerController : MonoBehaviour
     {
         get
         {
-            Debug.Log("aimvector-transform.position.x " + (worldXhair.transform.position.x - transform.position.x));
+            //Debug.Log("aimvector-transform.position.x " + (worldXhair.transform.position.x - transform.position.x));
             // Debug.Log("Sign aimvector-transform= "+Mathf.Sign(aimvector.x - transform.position.x));
             float facing = (worldXhair.transform.position.x - transform.position.x);
             return facing >= .3f ? 1 : facing <= -.3f ? 2 : 3;
@@ -657,19 +650,12 @@ public class PlayerController : MonoBehaviour
         }
     }
 
-
-
     public bool IsFacingRight(){
         return isFacingRight;
     }
     public bool IsAimingRight()
     {
         return isAimingRight;
-    }
-    private void DrawDebugLines()
-    {
-        if (!debug) return;
-        Debug.DrawLine(transform.position, transform.position + moveVec * 2, Color.red);
     }
 
     private IEnumerator ResetTrigger(string trigger, float time)

@@ -265,45 +265,195 @@ Rigidbody:
   m_Interpolate: 0
   m_Constraints: 120
   m_CollisionDetection: 3
---- !u!136 &3228528743140503104
-CapsuleCollider:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 9005105338551200217}
-  m_Material: {fileID: 0}
-  m_IsTrigger: 0
-  m_Enabled: 1
-  m_Radius: 0.186698
-  m_Height: 1.7609019
-  m_Direction: 1
-  m_Center: {x: -5.7145475e-17, y: 0.77966976, z: 0.011833758}
---- !u!114 &3228528743140503111
+--- !u!114 &317960020
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 9005105338551200217}
-  m_Enabled: 0
+  m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: cbb44ac1f6fdb994f9856cd01044df0f, type: 3}
+  m_Script: {fileID: 11500000, guid: 7f8c3c4cfc63b424a9d79eb305988e04, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  speed: 5
-  jumpheight: 10
-  rotationspeed: 0.12
-  mouseaimmask:
+  timeScale: 0.41
+  TS_effectDuration: 3.2
+  MS_ActiveTime: 7
+  MS_Cooldown: 8
+  MT_ActiveTime: 4
+  MT_Cooldown: 13
+  MT_AttackSpeedBoost: 1
+  MT_CritBoost: 0.3
+  scaleMultiPerKill: 1.2
+  ignoreEnemiesLayerMask:
     serializedVersion: 2
-    m_Bits: 32768
-  timescale: 1
-  aimobject: {fileID: 794334638}
-  maxarmdistance: 0
-  MaskOffset: 0
-  GroundCheckDistance: 0.25
-  WallCheckDistance: 0.14
-  originoffset: 0.31
+    m_Bits: 279
+  FD_duration: 0.5
+  FD_gravityReplacement: 0.9
+  AbilityCooldownPanel: {fileID: 0}
+--- !u!114 &317960021
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 9005105338551200217}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: f06ca8c9ec0efae4bbd24b40993c4b66, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  characterHeight: 1.8
+  characterWidth: 0.3
+  acceleration: 35
+  jumpStrength: 12
+  doubleJumpStrength: 10
+  horCastLength: 0.1
+  verCastLength: 0.1
+  groundCheckPadding: 0.1
+  rollDuration: 3
+  rollSpeedMult: 1.5
+  rollCooldownDuration: 3
+  jumpBufferTime: 0.2
+  immoveables:
+    serializedVersion: 2
+    m_Bits: 817
+  rollingLayerMask:
+    serializedVersion: 2
+    m_Bits: 273
+  debug: 1
+  gravity: 18
+  terminalVel: 24
+  fallSpeedMult: 1.45
+  airControlMult: 0.5
+  airSpeedMult: 0.85
+  fallSpeedWhileRolling: 1.05
+  fallSpeedWhileDashing: 0.9
+  gunObject: {fileID: 2088901339}
+  worldXhair: {fileID: 794334637}
+  screenXhair: {fileID: 0}
+  gamePadSens: 15
+  triggerResetTime: 0.25
+  rotationspeed: 0.12
+  moveVec: {x: 1, y: 0, z: 0}
+--- !u!114 &317960022
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 9005105338551200217}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 12419add815bc3642b0000cf406805f3, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  checksPerSecond: 2
+  fadeIn: 3
+  fadeOut: 5
+  durationUntilDecay: 6
+  coolReductionPerStack: 0.5
+  coolReductionSingleStack: 1
+  coolRatePerStack: 1.1
+  BP_MaxExtraHeat: 0.35
+  BP_MaxExtraDMG: 0.35
+  HE_Damage: 20
+  HE_TotalBurnDMG: 21
+  HE_StackMulti: 1.2
+  CA_MaxAttackSpeedPerStack: 0.5
+  CA_MaxCritChancePerStack: 0.25
+  AE_MaxAPMulti: 3
+  SE_MaxAttackSpeed: 1
+  SE_MaxExtraBloom: 0.35
+  TC_MaxAttackSpeed: 1
+  TC_MaxExtraBloom: 0.35
+  HS_APBonus: 1.5
+  heatReductionPerStack: 0.9
+  SL_cooldown: 4
+  SL_bonusPerKill: 15
+  SL_maxDmg: 100
+  SL_decayTime: 10
+--- !u!114 &317960023
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 9005105338551200217}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: ba70d5fbfe07dd04583d3f4a5c50a34e, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  baseBloomMultiplier: 0.9
+  baseHeatAddedPerShot: 3.3
+  baseCoolRatePerSecond: 38
+  baseDelayBeforeCooling: 0.5
+  BC_minHeat: 20
+--- !u!114 &317960024
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 9005105338551200217}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 76b163fb265bd124cbfb7b5dab93af12, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  colliders:
+  - {fileID: 1196647834}
+--- !u!114 &317960025
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 9005105338551200217}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 92790dca09d46164e98abb1cab82ec97, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  Stats: {fileID: 11400000, guid: 10a432e85e7536b4584dd51a18495a93, type: 2}
+  baseAbilityPower: 16
+--- !u!114 &317960026
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 9005105338551200217}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 381d822ddfd775c4ba7f703097a3cb70, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  firePoint: {fileID: 1681270516}
+  basicProjectile: {fileID: 7446024088350224124, guid: 082c3f5fa7950bb43b1cdf80af81d68d,
+    type: 3}
+  CritBulletColor: {r: 1, g: 0.20231721, b: 0.0990566, a: 1}
+  explosiveProjectile: {fileID: 7446024088350224124, guid: 152e92bbf2faf81489bf77708cbf939d,
+    type: 3}
+  explosiveCoolDelay: 1.5
+  blastRadiusBonusPerStack: 0.7
+  blastRadius: 3
+  knockBackPerStack: 5
+  minSpread: 10
+  spreadMultiplier: 0.3
+  piercesPerStack: 1
+  burnDamagePerStack: 2
+  burnTime: 3
+  stunDuration: 0.6
+  stunIncreasePerStack: 0.3
+  stunBulletColor: {r: 0.6461506, g: 0, b: 1, a: 1}
+  reductionPerStack: 0.1
+  AS_heatMulti: 0.6
+  spreadSpeed: 15
+  minXGap: 14
+  maxXGap: 60
 --- !u!114 &3228528743140503106
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -867,196 +1017,6 @@ MonoBehaviour:
     poleTarget: {fileID: 0}
     clampWeight: 0.1
     clampSmoothing: 2
---- !u!114 &317960020
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 9005105338551200217}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 7f8c3c4cfc63b424a9d79eb305988e04, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  timeScale: 0.41
-  TS_effectDuration: 3.2
-  MS_ActiveTime: 7
-  MS_Cooldown: 8
-  MT_ActiveTime: 4
-  MT_Cooldown: 13
-  MT_AttackSpeedBoost: 1
-  MT_CritBoost: 0.3
-  scaleMultiPerKill: 1.2
-  ignoreEnemiesLayerMask:
-    serializedVersion: 2
-    m_Bits: 279
-  FD_duration: 0.5
-  FD_gravityReplacement: 0.9
-  AbilityCooldownPanel: {fileID: 0}
---- !u!114 &317960021
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 9005105338551200217}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: f06ca8c9ec0efae4bbd24b40993c4b66, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  characterHeight: 1.8
-  characterWidth: 0.3
-  acceleration: 35
-  jumpStrength: 12
-  doubleJumpStrength: 10
-  horCastPadding: 0.2
-  vertCastPadding: 0.1
-  rollDuration: 3
-  rollSpeedMult: 1.5
-  rollCooldownDuration: 3
-  jumpBufferTime: 0.2
-  immoveables:
-    serializedVersion: 2
-    m_Bits: 817
-  rollingLayerMask:
-    serializedVersion: 2
-    m_Bits: 273
-  debug: 1
-  gravity: 18
-  terminalVel: 24
-  fallSpeedMult: 1.45
-  airControlMult: 0.5
-  airSpeedMult: 0.85
-  slopeRayDistMult: 1.25
-  fallSpeedWhileRolling: 1.05
-  fallSpeedWhileDashing: 0.9
-  canvasRef: {fileID: 0}
-  gunObject: {fileID: 2088901339}
-  worldXhair: {fileID: 794334637}
-  screenXhair: {fileID: 0}
-  gamePadSens: 15
-  triggerResetTime: 0.25
-  rotationspeed: 0.12
-  moveVec: {x: 1, y: 0, z: 0}
---- !u!114 &317960022
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 9005105338551200217}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 12419add815bc3642b0000cf406805f3, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  checksPerSecond: 2
-  fadeIn: 3
-  fadeOut: 5
-  durationUntilDecay: 6
-  coolReductionPerStack: 0.5
-  coolReductionSingleStack: 1
-  coolRatePerStack: 1.1
-  BP_MaxExtraHeat: 0.35
-  BP_MaxExtraDMG: 0.35
-  HE_Damage: 20
-  HE_TotalBurnDMG: 21
-  HE_StackMulti: 1.2
-  CA_MaxAttackSpeedPerStack: 0.5
-  CA_MaxCritChancePerStack: 0.25
-  AE_MaxAPMulti: 3
-  SE_MaxAttackSpeed: 1
-  SE_MaxExtraBloom: 0.35
-  TC_MaxAttackSpeed: 1
-  TC_MaxExtraBloom: 0.35
-  HS_APBonus: 1.5
-  heatReductionPerStack: 0.9
-  SL_cooldown: 4
-  SL_bonusPerKill: 15
-  SL_maxDmg: 100
-  SL_decayTime: 10
---- !u!114 &317960023
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 9005105338551200217}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: ba70d5fbfe07dd04583d3f4a5c50a34e, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  baseBloomMultiplier: 0.9
-  baseHeatAddedPerShot: 3.3
-  baseCoolRatePerSecond: 38
-  baseDelayBeforeCooling: 0.5
-  BC_minHeat: 20
---- !u!114 &317960024
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 9005105338551200217}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 76b163fb265bd124cbfb7b5dab93af12, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  colliders:
-  - {fileID: 1196647834}
---- !u!114 &317960025
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 9005105338551200217}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 92790dca09d46164e98abb1cab82ec97, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  Stats: {fileID: 11400000, guid: 10a432e85e7536b4584dd51a18495a93, type: 2}
-  baseAbilityPower: 16
---- !u!114 &317960026
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 9005105338551200217}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 381d822ddfd775c4ba7f703097a3cb70, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  firePoint: {fileID: 1681270516}
-  basicProjectile: {fileID: 7446024088350224124, guid: 082c3f5fa7950bb43b1cdf80af81d68d,
-    type: 3}
-  CritBulletColor: {r: 1, g: 0.20231721, b: 0.0990566, a: 1}
-  explosiveProjectile: {fileID: 7446024088350224124, guid: 152e92bbf2faf81489bf77708cbf939d,
-    type: 3}
-  explosiveCoolDelay: 1.5
-  blastRadiusBonusPerStack: 0.7
-  blastRadius: 3
-  knockBackPerStack: 5
-  minSpread: 10
-  spreadMultiplier: 0.3
-  piercesPerStack: 1
-  burnDamagePerStack: 2
-  burnTime: 3
-  stunDuration: 0.6
-  stunIncreasePerStack: 0.3
-  stunBulletColor: {r: 0.6461506, g: 0, b: 1, a: 1}
-  reductionPerStack: 0.1
-  AS_heatMulti: 0.6
-  spreadSpeed: 15
-  minXGap: 14
-  maxXGap: 60
 --- !u!114 &3228528743220115307
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -1670,7 +1630,7 @@ PrefabInstance:
     - target: {fileID: -927199367670048503, guid: cf5bafc1f2e763e41bd921b6736446bb,
         type: 3}
       propertyPath: m_Name
-      value: Player
+      value: Player 1
       objectReference: {fileID: 0}
     - target: {fileID: -927199367670048503, guid: cf5bafc1f2e763e41bd921b6736446bb,
         type: 3}
@@ -1689,6 +1649,12 @@ PrefabInstance:
       objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: cf5bafc1f2e763e41bd921b6736446bb, type: 3}
+--- !u!4 &8757245291322910065 stripped
+Transform:
+  m_CorrespondingSourceObject: {fileID: 8529429290064647585, guid: cf5bafc1f2e763e41bd921b6736446bb,
+    type: 3}
+  m_PrefabInstance: {fileID: 1142052343804473552}
+  m_PrefabAsset: {fileID: 0}
 --- !u!4 &2066352451792749103 stripped
 Transform:
   m_CorrespondingSourceObject: {fileID: 1401826838451548927, guid: cf5bafc1f2e763e41bd921b6736446bb,
@@ -1767,15 +1733,15 @@ Transform:
     type: 3}
   m_PrefabInstance: {fileID: 1142052343804473552}
   m_PrefabAsset: {fileID: 0}
---- !u!4 &7593138297039350581 stripped
-Transform:
-  m_CorrespondingSourceObject: {fileID: 7402050280959761381, guid: cf5bafc1f2e763e41bd921b6736446bb,
-    type: 3}
-  m_PrefabInstance: {fileID: 1142052343804473552}
-  m_PrefabAsset: {fileID: 0}
 --- !u!1 &9005105338551200217 stripped
 GameObject:
   m_CorrespondingSourceObject: {fileID: -927199367670048503, guid: cf5bafc1f2e763e41bd921b6736446bb,
+    type: 3}
+  m_PrefabInstance: {fileID: 1142052343804473552}
+  m_PrefabAsset: {fileID: 0}
+--- !u!4 &7593138297039350581 stripped
+Transform:
+  m_CorrespondingSourceObject: {fileID: 7402050280959761381, guid: cf5bafc1f2e763e41bd921b6736446bb,
     type: 3}
   m_PrefabInstance: {fileID: 1142052343804473552}
   m_PrefabAsset: {fileID: 0}
@@ -1791,9 +1757,9 @@ Transform:
     type: 3}
   m_PrefabInstance: {fileID: 1142052343804473552}
   m_PrefabAsset: {fileID: 0}
---- !u!4 &2784613444191501629 stripped
+--- !u!4 &6616879109303093853 stripped
 Transform:
-  m_CorrespondingSourceObject: {fileID: 2989701457832414701, guid: cf5bafc1f2e763e41bd921b6736446bb,
+  m_CorrespondingSourceObject: {fileID: -3167575404677891443, guid: cf5bafc1f2e763e41bd921b6736446bb,
     type: 3}
   m_PrefabInstance: {fileID: 1142052343804473552}
   m_PrefabAsset: {fileID: 0}
@@ -1803,21 +1769,15 @@ Transform:
     type: 3}
   m_PrefabInstance: {fileID: 1142052343804473552}
   m_PrefabAsset: {fileID: 0}
---- !u!4 &6616879109303093853 stripped
+--- !u!4 &2784613444191501629 stripped
 Transform:
-  m_CorrespondingSourceObject: {fileID: -3167575404677891443, guid: cf5bafc1f2e763e41bd921b6736446bb,
+  m_CorrespondingSourceObject: {fileID: 2989701457832414701, guid: cf5bafc1f2e763e41bd921b6736446bb,
     type: 3}
   m_PrefabInstance: {fileID: 1142052343804473552}
   m_PrefabAsset: {fileID: 0}
 --- !u!4 &7006494058680009898 stripped
 Transform:
   m_CorrespondingSourceObject: {fileID: -1232451692195220358, guid: cf5bafc1f2e763e41bd921b6736446bb,
-    type: 3}
-  m_PrefabInstance: {fileID: 1142052343804473552}
-  m_PrefabAsset: {fileID: 0}
---- !u!4 &8757245291322910065 stripped
-Transform:
-  m_CorrespondingSourceObject: {fileID: 8529429290064647585, guid: cf5bafc1f2e763e41bd921b6736446bb,
     type: 3}
   m_PrefabInstance: {fileID: 1142052343804473552}
   m_PrefabAsset: {fileID: 0}
