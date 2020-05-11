@@ -10,6 +10,7 @@ using UnityEngine.Events;
 public class AIController : Pawn
 {
     public AIPropertyObject BehaviorProperties;
+    protected AIAnimationStateController anim;
 
     public enum AIState { Idle, Patrol, Follow, Charge, Attack, Cooldown }
     protected AIState state = AIState.Idle; // Current behavior state
@@ -42,6 +43,7 @@ public class AIController : Pawn
     new protected void Start()
     {
         base.Start();
+        anim = GetComponent<AIAnimationStateController>();
 
         if (BehaviorProperties == null)
         {

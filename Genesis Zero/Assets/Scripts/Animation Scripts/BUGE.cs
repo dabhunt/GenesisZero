@@ -105,7 +105,7 @@ public class BUGE : MonoBehaviour
         
         if (alertObj.activeSelf)
         {
-            VFXManager.instance.ChangeColor(alertObj, Color.red);
+            //VFXManager.instance.ChangeColor(alertObj, Color.red);
             GetComponent<InteractPopup>().interactable = true;
         }
            
@@ -243,6 +243,7 @@ public class BUGE : MonoBehaviour
         if (dialogueInfo.Count < 1)
         { //if there are no pending dialogues in queue, tell the player the direction of the nearest teleporter
             GetComponent<GuidanceSystem>().ShowGuidance();
+            return;
         }
         info = dialogueInfo[0];
         dialogueInfo.RemoveAt(0);

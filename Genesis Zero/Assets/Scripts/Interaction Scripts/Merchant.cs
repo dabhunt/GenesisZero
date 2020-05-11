@@ -54,6 +54,8 @@ public class Merchant : MonoBehaviour
         if (Vector2.Distance(player.transform.position, transform.position) <= activeDistance)
         {
             int interactions = DialogueManager.instance.GetInteractAmount(0);
+            StateManager.instance.DestroyPopUpsWithTag("Pickups");
+            StateManager.instance.DestroyPopUpsWithTag("Interactable");
             //if player has interacted with a merchant less than twice, show extended dialogue
             if (interactions <= 1)
             {
@@ -62,7 +64,7 @@ public class Merchant : MonoBehaviour
             }
             else // otherwise, play only one line of dialogue
             {
-                DialogueManager.instance.TriggerDialogue("Default_Merchant");
+                AfterDialogue();
             }
             DialogueManager.instance.SetInteractionAfterDialogue(0);
             //incrementInteract takes an int representing type, which is 0 for merchant and adds 1.
@@ -75,18 +77,15 @@ public class Merchant : MonoBehaviour
     {
         FindObjectOfType<AudioManager>().StopAllSounds();
         GameInputManager.instance.SwitchControlMap("MenuControls");
-        print("merchant after dialogue");
         isActive = true;
         if (firstInteraction)
         {
             interactionCount++;
-            DestroyPopUps();
             InitializeUI();
             UpdateSelect(0);
         }
         else
         {
-            DestroyPopUps();
             merchantUI.gameObject.SetActive(true);
         }
     }
@@ -157,16 +156,6 @@ public class Merchant : MonoBehaviour
         {//if none of the above are true, the player is allowed to purchase the item
             purchaseButton.interactable = true;
             purchaseButton.GetComponentInChildren<Text>().text = "Purchase Item";
-        }
-    }
-    private void DestroyPopUps()
-    {
-        GetComponent<InteractPopup>().DestroyPopUp();
-        GameObject[] pickups = GameObject.FindGameObjectsWithTag("Pickups");
-        for (int i = 0; i < pickups.Length; i++)
-        {
-            if (pickups[i].GetComponent<InteractPopup>() != null)
-                pickups[i].GetComponent<InteractPopup>().DestroyPopUp();
         }
     }
     public void InitializeUI()

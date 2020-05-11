@@ -58,6 +58,8 @@ public class GodHead : MonoBehaviour
         if (Vector2.Distance(player.transform.position, transform.position) <= activeDistance && skillManager.GetModAmount() > 0)
         {
             int interactions = DialogueManager.instance.GetInteractAmount(0);
+            StateManager.instance.DestroyPopUpsWithTag("Pickups");
+            StateManager.instance.DestroyPopUpsWithTag("Interactable");
             //if player has interacted with any god less than twice, show extended dialogue
             if (interactions <= 1)
             {

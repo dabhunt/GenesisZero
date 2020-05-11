@@ -73,6 +73,8 @@ public class DialogueManager : MonoBehaviour
         var arrayString = ta.text.Split('\n');
         foreach (var line in arrayString)
         {
+            if (line.Length < 2)
+                break;
             string[] output = line.Split(';');
             dialogue.charIcons.Enqueue(output[0]);
             dialogue.sentences.Enqueue(output[1]);
