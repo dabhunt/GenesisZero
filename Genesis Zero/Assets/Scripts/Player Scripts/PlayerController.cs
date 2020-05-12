@@ -499,7 +499,7 @@ public class PlayerController : MonoBehaviour
             //continue rolling if rollDuration is not reached
             if (timeRolled < rollDuration)
             {
-                transform.position += moveVec * rollSpeed * Time.fixedDeltaTime;
+                transform.position += rollDirection * moveVec * rollSpeed * Time.fixedDeltaTime;
                 timeRolled += Time.fixedDeltaTime;
             }
             else
