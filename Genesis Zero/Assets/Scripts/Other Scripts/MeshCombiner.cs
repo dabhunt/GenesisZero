@@ -39,16 +39,15 @@ public class MeshCombiner : MonoBehaviour
         }
 
         foreach (Transform child in t)
+        {
+            if (child.gameObject.GetComponent<MeshRenderer>() != null)
             {
-                if (child.gameObject.GetComponent<MeshRenderer>() != null)
-                {
-                    child.gameObject.GetComponent<MeshRenderer>().material = mat;
-                }
-                Renderer r = child.gameObject.GetComponent<Renderer>();
-                if (child.childCount > 0)
-                {
-                    RecursiveMeshCombine(child, mat);
-                }
+                child.gameObject.GetComponent<MeshRenderer>().material = mat;
+            }
+            Renderer r = child.gameObject.GetComponent<Renderer>();
+            if (child.childCount > 0)
+            {
+                RecursiveMeshCombine(child, mat);
             }
         }
     }
