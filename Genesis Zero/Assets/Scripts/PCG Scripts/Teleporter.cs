@@ -28,7 +28,7 @@ public class Teleporter : MonoBehaviour
 
 			//thePlayer.transform.position = new Vector3(-120, 16, 0);
 		//	if(GetAnimationStateTime()>=1){
-		//	teleport();
+			teleport();
 		ani.Play("TeleportAnimation");
 			}
 		}

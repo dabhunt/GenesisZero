@@ -395,24 +395,30 @@ public class MeshCombiner : MonoBehaviour
 	//this is used so that tiles with colliders are not removed
 	private bool HasValidCollider(GameObject mf)
 	{
-		float plusOrMinus = 6;
+		//we need to be able to get world position of the z value but that's not working yet
+		//float plusOrMinus = 100;
+		//float plusOrMinus = 2;
 		Collider thisCol = mf.GetComponent<Collider>();
+		if (mf.GetComponent<MeshCollider>() != null)
+			thisCol = null; //mesh colliders don't count
 		Collider[] childCols = mf.GetComponentsInChildren<Collider>();
 		bool meshCol = false;
 		bool keepObj = false;
 		bool correctZ = false;
 		for (int z = 0; z < childCols.Length; z++)
 		{
-			float worldZ = transform.TransformVector(childCols[z].transform.position).z;
+			//float worldZ = transform.TransformVector(childCols[z].transform.position).z;
 			//if the collider is close to the Z axis 0, (+/-2)
-			if (worldZ < plusOrMinus && worldZ > -plusOrMinus)
-				correctZ = true;
-			if (childCols[z].gameObject.GetComponent<MeshCollider>())
+			//if (worldZ < plusOrMinus && worldZ > -plusOrMinus)
+				//correctZ = true;
+			//if it has a mesh collider and there is only one collider found
+			if (childCols[z].gameObject.GetComponent<MeshCollider>() && childCols.Length == 1)
 				meshCol = true;
 		}
 		//if the collider is not close to the Z axis 0, (+/-2), ignore it
-		if (thisCol != null && (transform.TransformVector(thisCol.transform.position).z > plusOrMinus || transform.TransformVector(thisCol.transform.position).z < -plusOrMinus))
-			thisCol = null;
+		//if (thisCol != null && (transform.TransformVector(thisCol.transform.position).z > plusOrMinus || transform.TransformVector(thisCol.transform.position).z < -plusOrMinus))
+		//thisCol = null;
+		correctZ = true;
 		//if it has children with non mesh colliders near Z value 0, keep it
 		if (meshCol == false && childCols.Length > 0 && correctZ == true)
 			keepObj = true;
