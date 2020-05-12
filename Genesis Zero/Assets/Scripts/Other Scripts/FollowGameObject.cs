@@ -16,7 +16,8 @@ public class FollowGameObject : MonoBehaviour
 	// Update is called once per frame
 	void Update()
 	{
-		transform.position = Vector3.Lerp(transform.position, FollowObject.transform.position + Offset, LerpStrength);
+		if (FollowObject != null)
+			transform.position = Vector3.Lerp(transform.position, FollowObject.transform.position + Offset, LerpStrength);
 	}
 
 	[ExecuteInEditMode]

@@ -269,7 +269,7 @@ public class AbilityCasting : MonoBehaviour
         hitbox.GetComponent<Hitbox>().InitializeHitbox(GetComponent<Player>().GetAbilityPower().GetValue()/2, GetComponent<Player>());
         hitbox.GetComponent<Hitbox>().SetStunTime(1.2f);
         player.SetInvunerable(.5f);
-        hitbox.GetComponent<Hitbox>().SetLifeTime(.1f);
+        hitbox.GetComponent<Hitbox>().SetLifeTime(.15f);
     }
 
     private void CastBurstCharge()
