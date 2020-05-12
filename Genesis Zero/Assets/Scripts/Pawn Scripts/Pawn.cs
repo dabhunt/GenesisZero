@@ -298,7 +298,10 @@ public class Pawn : MonoBehaviour
     {
         return invunerable;
     }
-
+    public Status GetBurningStatus()
+    {
+        return burning;
+    }
     public bool IsBurning()
     {
         return burning.IsTrue();

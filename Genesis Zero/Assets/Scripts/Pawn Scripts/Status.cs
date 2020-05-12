@@ -1,5 +1,6 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
+using System;
 using UnityEngine;
 
 /**
@@ -7,6 +8,7 @@ using UnityEngine;
  * Status is a object class that uses time/value to check if the status is true or not.
  * If time is 0 then the status is false, otherwise it is true, unless the threshold is changed
  */
+[Serializable]
 public class Status
 {
     float time;         // time variable, always decrements
