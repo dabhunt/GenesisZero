@@ -215,13 +215,12 @@ public class MeshCombiner : MonoBehaviour
 	private void CombineMeshesWithMutliMaterial(bool showCreatedMeshInfo)
 	{
 		#region Get MeshFilters, MeshRenderers and unique Materials from all children:
-		List<MeshFilter> meshFilters = new List<MeshFilter>();
-		meshFilters.AddRange(GetMeshFiltersToCombine());
-		MeshRenderer[] meshRenderers = new MeshRenderer[meshFilters.Count];
+		MeshFilter[] meshFilters = GetMeshFiltersToCombine();
+		MeshRenderer[] meshRenderers = new MeshRenderer[meshFilters.Length];
 		meshRenderers[0] = GetComponent<MeshRenderer>(); // Our (parent) MeshRenderer.
 
 		List<Material> uniqueMaterialsList = new List<Material>();
-		for(int i = 0; i < meshFilters.Count - 1; i++)
+		for(int i = 0; i < meshFilters.Length-1; i++)
 		{
 			meshRenderers[i+1] = meshFilters[i+1].GetComponent<MeshRenderer>();
 			if(meshRenderers[i+1] != null)
@@ -248,7 +247,7 @@ public class MeshCombiner : MonoBehaviour
 		{
 			List<CombineInstance> submeshCombineInstancesList = new List<CombineInstance>();
 
-			for(int j = 0; j < meshFilters.Count - 1; j++) // Get only childeren Meshes (skip our Mesh).
+			for(int j = 0; j < meshFilters.Length-1; j++) // Get only childeren Meshes (skip our Mesh).
 			{
 				if(meshRenderers[j+1] != null)
 				{
@@ -260,9 +259,8 @@ public class MeshCombiner : MonoBehaviour
 						if(uniqueMaterialsList[i] == submeshMaterials[k])
 						{
 							if (meshFilters[j + 1].sharedMesh == null)
-							{ //if the sharedMesh is null, remove it from the unique material list and from the array
-								uniqueMaterialsList.RemoveAt(i);
-								meshFilters.RemoveAt(i);
+							{ //if the sharedMesh is null, remove it from the unique material list
+								uniqueMaterialsList.RemoveAt(i); 
 							}
 							else
 							{
@@ -321,18 +319,18 @@ public class MeshCombiner : MonoBehaviour
 
 		combinedMesh.CombineMeshes(finalMeshCombineInstancesList.ToArray(), false);
 		meshFilters[0].sharedMesh = combinedMesh;
-		DeactivateCombinedGameObjects(meshFilters.ToArray());
+		DeactivateCombinedGameObjects(meshFilters);
 
 		if(showCreatedMeshInfo)
 		{
 			if(verticesLength <= Mesh16BitBufferVertexLimit)
 			{
-				Debug.Log("<color=#00cc00><b>Mesh \""+name+"\" was created from "+(meshFilters.Count - 1)+" children meshes and has "
+				Debug.Log("<color=#00cc00><b>Mesh \""+name+"\" was created from "+(meshFilters.Length-1)+" children meshes and has "
 					+finalMeshCombineInstancesList.Count+" submeshes, and "+verticesLength+" vertices.</b></color>");
 			}
 			else
 			{
-				Debug.Log("<color=#ff3300><b>Mesh \""+name+"\" was created from "+(meshFilters.Count - 1)+" children meshes and has "
+				Debug.Log("<color=#ff3300><b>Mesh \""+name+"\" was created from "+(meshFilters.Length-1)+" children meshes and has "
 					+finalMeshCombineInstancesList.Count+" submeshes, and "+verticesLength
 					+" vertices. Some old devices, like Android with Mali-400 GPU, do not support over 65535 vertices.</b></color>");
 			}
@@ -363,15 +361,15 @@ public class MeshCombiner : MonoBehaviour
 	{
 		for(int i = 0; i < meshFilters.Length-1; i++) // Skip first MeshFilter belongs to this GameObject in this loop.
 		{
-			bool hasValidCol = HasValidCollider(meshFilters[i + 1].gameObject);
-			if (!destroyCombinedChildren)
+			if(!destroyCombinedChildren)
 			{
 				if(deactivateCombinedChildren)
 				{//if there are no colliders on the object or it's children, excluding mesh colliders
-					if (hasValidCol == false)
+					if (HasValidCollider(meshFilters[i + 1].gameObject) == false)
 					{
 						meshFilters[i + 1].gameObject.SetActive(false);
 					}
+						
 				}
 				if(deactivateCombinedChildrenMeshRenderers)
 				{
@@ -384,7 +382,7 @@ public class MeshCombiner : MonoBehaviour
 			}
 			else
 			{
-				if (meshFilters[i + 1] != null && hasValidCol)
+				if (meshFilters[i + 1] != null && HasValidCollider(meshFilters[i + 1].gameObject) == false)
 				{
 					//print("destroying...");
 					DestroyImmediate(meshFilters[i + 1].gameObject);
@@ -402,11 +400,7 @@ public class MeshCombiner : MonoBehaviour
 		//float plusOrMinus = 2;
 		Collider thisCol = mf.GetComponent<Collider>();
 		if (mf.GetComponent<MeshCollider>() != null)
-		{
-			Destroy(mf.GetComponent<MeshCollider>());
 			thisCol = null; //mesh colliders don't count
-		}
-			
 		Collider[] childCols = mf.GetComponentsInChildren<Collider>();
 		bool meshCol = false;
 		bool keepObj = false;
@@ -416,14 +410,10 @@ public class MeshCombiner : MonoBehaviour
 			//float worldZ = transform.TransformVector(childCols[z].transform.position).z;
 			//if the collider is close to the Z axis 0, (+/-2)
 			//if (worldZ < plusOrMinus && worldZ > -plusOrMinus)
-			//correctZ = true;
+				//correctZ = true;
 			//if it has a mesh collider and there is only one collider found
 			if (childCols[z].gameObject.GetComponent<MeshCollider>() && childCols.Length == 1)
-			{
-				Destroy(childCols[z].gameObject.GetComponent<MeshCollider>());
 				meshCol = true;
-			}
-				
 		}
 		//if the collider is not close to the Z axis 0, (+/-2), ignore it
 		//if (thisCol != null && (transform.TransformVector(thisCol.transform.position).z > plusOrMinus || transform.TransformVector(thisCol.transform.position).z < -plusOrMinus))

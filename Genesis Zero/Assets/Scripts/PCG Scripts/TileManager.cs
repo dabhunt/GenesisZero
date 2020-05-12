@@ -150,15 +150,12 @@ public class TileManager : MonoBehaviour
 			//Create new tile and set parent to TileManager
 			GameObject newTile;
 			newTile = Instantiate(tilePrefabs[Random.Range(0, tilePrefabs.Length)]) as GameObject;
-			if (GetComponent<MeshRenderer>() == null)
-			{
-				MeshCombiner combiner = newTile.AddComponent<MeshCombiner>();
-				combiner.CreateMultiMaterialMesh = true;
-				combiner.DeactivateCombinedChildrenMeshRenderers = true;
-				combiner.DeactivateCombinedChildren = true;
-				combiner.CombineMeshes(false);
-				newTile.GetComponent<MeshRenderer>().receiveShadows = false;
-			}
+			MeshCombiner combiner = newTile.AddComponent<MeshCombiner>();
+			combiner.CreateMultiMaterialMesh = true;
+			combiner.DeactivateCombinedChildrenMeshRenderers = true;
+			combiner.DeactivateCombinedChildren = true;
+			combiner.CombineMeshes(false);
+			newTile.GetComponent<MeshRenderer>().receiveShadows = false;
 			newTile.transform.SetParent(transform);
 			newTile.transform.localRotation = Quaternion.Euler(0, 180,0);
 
