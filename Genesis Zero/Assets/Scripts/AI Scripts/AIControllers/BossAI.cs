@@ -94,7 +94,10 @@ public class BossAI : AIController
 	new protected void Update()
 	{
 		base.Update();
-		if (GetDistanceToTarget() < TriggerRadius) { initiated = true; }
+		if (GetDistanceToTarget() < TriggerRadius && initiated == false) {
+			initiated = true;
+			//DialogueManager.instance.TriggerDialogue("Boss", false);
+		}
 		if (initiated && TimeBeforeFight > 0)
 		{
 			TimeBeforeFight -= Time.deltaTime;
@@ -768,7 +771,7 @@ public class BossAI : AIController
 		return result;
 	}
 
-	private new void OnDrawGizmos()
+	private void OnDrawGizmosSelected()
 	{
 		Gizmos.color = Color.black;
 		GizmosExtra.DrawWireCircle(transform.position, Vector3.forward, TriggerRadius);

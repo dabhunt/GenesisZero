@@ -12,12 +12,14 @@ public class DamageNumber : MonoBehaviour
     private float starttime;
     public Color color;
     private float multi;
+	private Vector3 scale;
 
     private void Start() {
         GetComponent<Canvas>().worldCamera = Camera.main;
         Destroy(this.gameObject, time);
         starttime = time;
-    }
+		scale = GetComponent<RectTransform>().localScale;
+	}
 
     public void Update()
     {
@@ -26,7 +28,9 @@ public class DamageNumber : MonoBehaviour
         number.color = new Color(color.r, color.g, color.b, time / starttime);
         //number.color = new Color(1, 1, 1, time / starttime);
         transform.position += new Vector3(Mathf.Abs(multi) * Time.deltaTime, multi * Time.deltaTime, 0);
-    }
+		GetComponent<RectTransform>().localScale = scale * Mathf.Clamp(((time + (starttime / 2)) / starttime), 1, 99);
+
+	}
 
     // Sets the display of the text given the number
     public void SetNumber(float num)
