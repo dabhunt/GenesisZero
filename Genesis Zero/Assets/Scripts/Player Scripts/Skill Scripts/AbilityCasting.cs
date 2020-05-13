@@ -265,8 +265,7 @@ public class AbilityCasting : MonoBehaviour
     {
         player.GetComponent<PlayerController>().SetVertVel(0);
         player.KnockBackForced(-aimDir + Vector2.up, 25);
-        GameObject hitbox = SpawnGameObject("PulseBurstHitbox", CastAtAngle(transform.position, aimDir, 1), Quaternion.identity);
-        hitbox.GetComponent<Hitbox>().InitializeHitbox(GetComponent<Player>().GetAbilityPower().GetValue()/2, GetComponent<Player>());
+        GameObject hitbox = SpawnGameObject("PulseBurstHitbox", CastAtAngle(transform.position, aimDir, 1), GetComponent<Gun>().firePoint.rotation); hitbox.GetComponent<Hitbox>().InitializeHitbox(GetComponent<Player>().GetAbilityPower().GetValue()/2, GetComponent<Player>());
         hitbox.GetComponent<Hitbox>().SetStunTime(1.2f);
         player.SetInvunerable(.5f);
         hitbox.GetComponent<Hitbox>().SetLifeTime(.15f);
