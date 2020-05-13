@@ -79,8 +79,8 @@ public class PlatformShooterAI : AIController
         {
             tracker.GiveUpCondition = () =>
             {
-                return tracker.PeekFirstPoint().y > transform.position.y + MaxFollowHeight
-                || tracker.PeekFirstPoint().y < transform.position.y - MaxFollowHeight;
+                return tracker.PeekFirstPoint().y > transform.position.y + ScaleFloat(MaxFollowHeight)
+                || tracker.PeekFirstPoint().y < transform.position.y - ScaleFloat(MaxFollowHeight);
             };
         }
     }
@@ -140,6 +140,10 @@ public class PlatformShooterAI : AIController
         faceDirChangeTime += Time.fixedDeltaTime;
 
         targetSpeed *= GetSpeed().GetValue() * SpeedDifficultyMultiplier.GetFactor() * moveStutter;
+        if (Mathf.Abs(transform.position.x - targetPosition.x) < 0.5f)
+        {
+            targetSpeed = 0.0f;
+        }
         frb.Accelerate(Vector3.right * (targetSpeed * faceDir - frb.GetVelocity().x) * Acceleration * slopeForceFactor); // Accelerate toward the target
 
         // Smoothly rotate to face target
@@ -179,7 +183,7 @@ public class PlatformShooterAI : AIController
         }
 
         projectileAim = Vector3.Slerp(projectileAim,
-            (Target.position - transform.position - new Vector3(ProjectileStart.x * faceDir, ProjectileStart.y, ProjectileStart.z)).normalized,
+            (Target.position - transform.position - ScaleVector3(new Vector3(ProjectileStart.x * faceDir, ProjectileStart.y, ProjectileStart.z))).normalized,
             AimSpeed * AimDifficultyMultiplier.GetFactor() * Time.fixedDeltaTime);
 
         if (anim != null)
@@ -198,7 +202,7 @@ public class PlatformShooterAI : AIController
                 if (AttackProjectile != null)
                 {
 
-                    GameObject spawnedProjectile = Instantiate(AttackProjectile, transform.position + new Vector3(ProjectileStart.x * faceDir, ProjectileStart.y, ProjectileStart.z),
+                    GameObject spawnedProjectile = Instantiate(AttackProjectile, transform.position + ScaleVector3(new Vector3(ProjectileStart.x * faceDir, ProjectileStart.y, ProjectileStart.z)),
                         Quaternion.LookRotation(Vector3.forward, projectileAim));
                     Hitbox spawnedHitbox = spawnedProjectile.GetComponent<Hitbox>();
                     if (spawnedHitbox != null)
@@ -221,7 +225,7 @@ public class PlatformShooterAI : AIController
       */
     protected override void UpdateOrigin()
     {
-        trueOrigin = transform.position + new Vector3(Origin.x * faceDir, Origin.y, Origin.z);
+        trueOrigin = transform.position + ScaleVector3(new Vector3(Origin.x * faceDir, Origin.y, Origin.z));
     }
 
     /**
@@ -229,14 +233,14 @@ public class PlatformShooterAI : AIController
       */
     protected override void GroundCheck()
     {
-        Ray groundRay = new Ray(transform.position + Vector3.up * groundCheckStartHeight, Vector3.down);
+        Ray groundRay = new Ray(transform.position + ScaleVector3(Vector3.up * groundCheckStartHeight), Vector3.down);
         RaycastHit hit = new RaycastHit();
-        isGrounded = Physics.SphereCast(groundRay, groundCheckRadius, out hit, groundCheckDistance, groundCheckMask, QueryTriggerInteraction.Ignore);
+        isGrounded = Physics.SphereCast(groundRay, ScaleFloat(groundCheckRadius), out hit, ScaleFloat(groundCheckDistance), groundCheckMask, QueryTriggerInteraction.Ignore);
         groundNormal = isGrounded ? hit.normal : Vector3.up;
-        Ray forwardRay = new Ray(trueOrigin, new Vector3(ForwardEdgeRay.x * faceDir, ForwardEdgeRay.y, ForwardEdgeRay.z));
-        Ray backRay = new Ray(trueOrigin, new Vector3(BackEdgeRay.x * faceDir, BackEdgeRay.y, BackEdgeRay.z));
-        edgeInFront = ForwardEdgeRay.sqrMagnitude > 0 ? Physics.Raycast(forwardRay, ForwardEdgeRay.magnitude, groundCheckMask, QueryTriggerInteraction.Ignore) : true;
-        edgeBehind = BackEdgeRay.sqrMagnitude > 0 ? Physics.Raycast(backRay, BackEdgeRay.magnitude, groundCheckMask, QueryTriggerInteraction.Ignore) : true;
+        Ray forwardRay = new Ray(trueOrigin, ScaleVector3(new Vector3(ForwardEdgeRay.x * faceDir, ForwardEdgeRay.y, ForwardEdgeRay.z)));
+        Ray backRay = new Ray(trueOrigin, ScaleVector3(new Vector3(BackEdgeRay.x * faceDir, BackEdgeRay.y, BackEdgeRay.z)));
+        edgeInFront = ForwardEdgeRay.sqrMagnitude > 0 ? Physics.Raycast(forwardRay, ScaleFloat(ForwardEdgeRay.magnitude), groundCheckMask, QueryTriggerInteraction.Ignore) : true;
+        edgeBehind = BackEdgeRay.sqrMagnitude > 0 ? Physics.Raycast(backRay, ScaleFloat(BackEdgeRay.magnitude), groundCheckMask, QueryTriggerInteraction.Ignore) : true;
     }
 
     public override Vector3 GetAimDirection()
@@ -248,13 +252,13 @@ public class PlatformShooterAI : AIController
     {
         base.OnDrawGizmos();
         Gizmos.color = Color.magenta;
-        Gizmos.DrawWireSphere(transform.position + Vector3.up * groundCheckStartHeight, groundCheckRadius);
+        Gizmos.DrawWireSphere(transform.position + ScaleVector3(Vector3.up * groundCheckStartHeight), ScaleFloat(groundCheckRadius));
         Gizmos.color = Color.yellow;
-        Gizmos.DrawWireSphere(transform.position + Vector3.up * groundCheckStartHeight + Vector3.down * groundCheckDistance, groundCheckRadius);
+        Gizmos.DrawWireSphere(transform.position + ScaleVector3(Vector3.up * groundCheckStartHeight) + ScaleVector3(Vector3.down * groundCheckDistance), ScaleFloat(groundCheckRadius));
         Gizmos.color = Color.red;
-        Gizmos.DrawRay(trueOrigin, new Vector3(ForwardEdgeRay.x * faceDir, ForwardEdgeRay.y, ForwardEdgeRay.z));
-        Gizmos.DrawRay(trueOrigin, new Vector3(BackEdgeRay.x * faceDir, BackEdgeRay.y, BackEdgeRay.z));
+        Gizmos.DrawRay(trueOrigin, ScaleVector3(new Vector3(ForwardEdgeRay.x * faceDir, ForwardEdgeRay.y, ForwardEdgeRay.z)));
+        Gizmos.DrawRay(trueOrigin, ScaleVector3(new Vector3(BackEdgeRay.x * faceDir, BackEdgeRay.y, BackEdgeRay.z)));
         Gizmos.color = Color.green;
-        Gizmos.DrawWireSphere(transform.position + new Vector3(ProjectileStart.x * faceDir, ProjectileStart.y, ProjectileStart.z), 0.1f);
+        Gizmos.DrawWireSphere(transform.position + ScaleVector3(new Vector3(ProjectileStart.x * faceDir, ProjectileStart.y, ProjectileStart.z)), ScaleFloat(0.1f));
     }
 }

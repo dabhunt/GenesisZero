@@ -131,7 +131,7 @@ public class DroneExploderAI : AIController
             Hitbox spawnedHitbox = spawnedExplosion.GetComponent<Hitbox>();
             spawnedHitbox.InitializeHitbox(GetDamage().GetValue(), this);
            
-            GameObject emit = VFXManager.instance.PlayEffect(vfxName, new Vector3(transform.position.x, transform.position.y, transform.position.z), 0f, blastRadius / scaleCorrector);
+            GameObject emit = VFXManager.instance.PlayEffect(vfxName, transform.position, 0f, ScaleFloat(blastRadius / scaleCorrector));
             spawnedExplosion.GetComponent<ProjectileTest>().DestroyEvent.AddListener(DestroySelf);
             if (AudioManager.instance != null)
             {
@@ -187,7 +187,7 @@ public class DroneExploderAI : AIController
         {
             castDir = new Vector3(Mathf.Sin(curAngle), Mathf.Cos(curAngle), 0.0f);
             RaycastHit hit = new RaycastHit();
-            isCloseToWall = Physics.Raycast(transform.position, castDir, out hit, WallCheckDistance, WallMask, QueryTriggerInteraction.Ignore);
+            isCloseToWall = Physics.Raycast(transform.position, castDir, out hit, ScaleFloat(WallCheckDistance), WallMask, QueryTriggerInteraction.Ignore);
             wallPoint = isCloseToWall ? hit.point : Vector3.zero;
             //Debug.DrawRay(transform.position, castDir * WallCheckDistance);
             curAngle += castAngle;

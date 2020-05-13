@@ -57,6 +57,8 @@ public class SpawnOnDestroy : MonoBehaviour
     }
     private void OnDestroy()
     {
+        if (SceneManager.sceneCount > 1) //if more than one scene loaded
+            Destroy(gameObject.GetComponent<SpawnOnDestroy>());
         //if the scene is being restarted or the player quits
         if (player == null || restartScript == null || restartScript.ExitingScene() || quitting)
         {
@@ -64,45 +66,43 @@ public class SpawnOnDestroy : MonoBehaviour
             return;
         }
         // otherwise play the effect
-        else
+        if (sound != null && sound != "")
         {
-            if (sound != null && sound != "")
+            if (aManager != null)
             {
-                if (aManager != null)
-                {
-                    //plays sound at this location
-                    aManager.PlayRandomSFXType(sound, this.gameObject, .2f);
-                }
+                //plays sound at this location
+                aManager.PlayRandomSFXType(sound, this.gameObject, .2f);
             }
-            //if vfx string is not empty
-            if (vfxName != "")
-            {
-                //Calls VFX manager to play desired VFX effect based on string
-                GameObject emit = VFXManager.instance.PlayEffect(vfxName, new Vector3(transform.position.x, transform.position.y, transform.position.z), 0f, vfxScaleMultiplier);
-            }
-            if (canDrop)
-            {
-                if (maxEssenceDrop < 1)
-                    return;
-                int amount = Random.Range(minEssenceDrop, maxEssenceDrop);
+        }
+        //if vfx string is not empty
+        if (vfxName != "")
+        {
+            //Calls VFX manager to play desired VFX effect based on string
+            GameObject emit = VFXManager.instance.PlayEffect(vfxName, new Vector3(transform.position.x, transform.position.y, transform.position.z), 0f, vfxScaleMultiplier);
+        }
+        if (canDrop)
+        {
+            if (maxEssenceDrop < 1)
+                return;
+            int amount = Random.Range(minEssenceDrop, maxEssenceDrop);
                 //Goes into essence animator to determine size.
-                //for (int i = 0; i < amount; i++)
-                //{
-                // if essence drop chance exceeds the random value from 0 to 1.0f, it drops
-                float offset = -1; /*(1.5f + Random.value * 4);*/
-                GameObject essence = Instantiate(EssencePrefab, new Vector3(transform.position.x, transform.position.y, -2), Quaternion.identity);
-                essence.GetComponent<EssenceScript>().Amount = amount;
-                essence = Drop(essence);
-                    //Destroy(rb);
-                //}
-                // if modifier drop chance exceeds the random value from 0 to 1.0f, it drops
-                if (ModifierDropChance > Random.value && player != null)
-                {
-                    SkillManager sk = player.GetSkillManager();
-                    SkillObject mod = sk.GetRandomModByChance();
-                    GameObject modObj = sk.SpawnMod(transform.position, mod.name);
-                }
+            //for (int i = 0; i < amount; i++)
+            //{
+            // if essence drop chance exceeds the random value from 0 to 1.0f, it drops
+            float offset = (1.5f + Random.value * 4);
+            GameObject essence = Instantiate(EssencePrefab, new Vector3(transform.position.x, transform.position.y, -4), Quaternion.identity);
+            essence.GetComponent<EssenceScript>().Amount = amount;
+            essence = Drop(essence);
+                //Destroy(rb);
+            //}
+            // if modifier drop chance exceeds the random value from 0 to 1.0f, it drops
+            if (ModifierDropChance > Random.value && player != null)
+            {
+                SkillManager sk = player.GetSkillManager();
+                SkillObject mod = sk.GetRandomModByChance();
+                GameObject modObj = sk.SpawnMod(transform.position, mod.name);
             }
+       
         }
     }
 
