@@ -40,6 +40,7 @@ public class Restart : MonoBehaviour
             // Fade to black
             overlay.SetActive(true);
             GameObject buge = GameObject.FindWithTag("BUG-E");
+            buge.AddComponent<AudioListener>();
             AudioManager.instance.PlaySound("SFX_GameOver", 3, 1, false, buge.transform.position);
             overlay.GetComponent<SpriteFade>().FadeIn(2f);
             gameovertext.GetComponent<TextMeshProUGUI>().color = new Color(1, 1, 1, 0);
@@ -72,12 +73,8 @@ public class Restart : MonoBehaviour
     private void GameOverMenu()
     {
         StateManager.instance.Cursorvisible = true;
-        GameObject[] pickups = GameObject.FindGameObjectsWithTag("Pickups");
-        for (int i = 0; i < pickups.Length; i++)
-        {
-            if (pickups[i].GetComponent<InteractPopup>() != null)
-                pickups[i].GetComponent<InteractPopup>().DestroyPopUp();
-        }
+        StateManager.instance.DestroyPopUpsWithTag("Pickups");
+        StateManager.instance.DestroyPopUpsWithTag("Interactable");
         pauseMenu.GetComponent<Image>().enabled = false;
         resume.SetActive(false);
         pauseMenu.SetActive(true);
