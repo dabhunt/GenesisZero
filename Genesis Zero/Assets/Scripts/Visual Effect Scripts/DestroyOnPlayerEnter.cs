@@ -34,9 +34,9 @@ public class DestroyOnPlayerEnter : MonoBehaviour
         }
     }
 
-    private void OnTriggerEnter(Collider other)
+    private void OnTriggerStay(Collider other)
     {
-        if (Objects.Count > 0 && other.GetComponent<Player>() && triggered == false)
+        if (Objects.Count > 0 && other.GetComponentInParent<Player>() && triggered == false)
         {
             triggered = true;
         }
