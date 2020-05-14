@@ -49,9 +49,7 @@ public class BossAI : AIController
 
 	public GameObject Healthbar;
 	private GameObject healthbar;
-	private float HealthLoss;
-	private float TotalHealth;
-	private float LastHealth;   //The amount of health the boss had before taking damage;
+	private float HealthLoss, TotalHealth, LastHealth, PassedTime;   //The amount of health the boss had before taking damage;
 	public GameObject Indicator;
 	private List<GameObject> indicators;
 
@@ -93,22 +91,30 @@ public class BossAI : AIController
 
 	new protected void Update()
 	{
+		PassedTime += Time.deltaTime;
 		base.Update();
 		if (GetDistanceToTarget() < TriggerRadius && initiated == false) {
 			initiated = true;
 			Camera.main.GetComponent<BasicCameraZoom>().ChangeFieldOfView(30);
 			DialogueManager.instance.TriggerDialogue("PreBoss4", false);
 		}
+
 		if (initiated && TimeBeforeFight > 0)
 		{
 			TimeBeforeFight -= Time.deltaTime;
-			if (TimeBeforeFight < 0)
+			if (DialogueManager.instance.IsDialoguePlaying() == false)
+			{
+				TimeBeforeFight = 0;
+			}
+			SetInvunerable(Time.deltaTime * 2);
+
+			if (TimeBeforeFight <= 0)
 			{
 				GameObject canvas = GameObject.FindGameObjectWithTag("CanvasUI");
 				healthbar = canvas.transform.Find("BossHealthbar").gameObject;
 				healthbar.SetActive(true);
 				TimeBeforeFight = 0;		
-				StartCoroutine(CockBack(1.25f, Target.position - transform.position, 1));
+				//StartCoroutine(CockBack(1.25f, Target.position - transform.position, 1));
 			}
 		}
 	}
@@ -725,6 +731,7 @@ public class BossAI : AIController
 		Vector2 angle = (Vector2)transform.rotation.eulerAngles;
 		Quaternion rot = Quaternion.Euler(angle.x, angle.y, 0);
 		GameObject hitbox = Instantiate(HeadbuttPrefab, transform.position, rot);
+		hitbox.transform.position += Vector3.forward * 2.5f;
 		hitbox.transform.parent = transform;
 		hitbox.GetComponent<Hitbox>().LifeTime = .25f;
 		GetComponent<SphereCollider>().isTrigger = true;
