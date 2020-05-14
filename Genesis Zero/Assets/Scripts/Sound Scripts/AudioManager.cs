@@ -573,7 +573,7 @@ public class AudioManager : MonoBehaviour
 		audioSource.loop = looping;
 		audioSource.panStereo = 0f;
 		audioSource.spatialBlend = 1.0f;
-
+		Debug.Log("audiosource at playtime: "+ audioSource.volume);
 		// Starts playing the sound
 		audioSource.PlayScheduled(AudioSettings.dspTime + delay);
 	}
@@ -661,6 +661,7 @@ public class AudioManager : MonoBehaviour
 
 		if (temp.playOnAwake)
 		{
+			Debug.Log("vol in PlayAttachedSound: " + vol);
 			PlayClipOnObject(temp.clip, obj, delay, vol, pit, loop);
 		}
 
@@ -682,6 +683,7 @@ public class AudioManager : MonoBehaviour
 	//pitchMin and pitchMax represent the min and max values that RNG can allow for
 	public void PlayRandomSFXType(string name, GameObject obj, float pitchMin, float pitchMax, float vol)
 	{
+		//Debug.Log("vol at start of PlayAttachedSound: " + vol);
 		float pitchRange = pitchMax - pitchMin;
 		//default volume values if audio is played on an object in world space
 		float Volume = 4;
@@ -712,6 +714,7 @@ public class AudioManager : MonoBehaviour
 			if (pitchRange > 0)//
 				pitch = pitchMin + (Random.value * pitchRange);
 			//PlaySound(type[rng], Volume, pitch);
+			//Debug.Log("vol end of PlayRandomSFXtype: " + Volume);
 			PlayAttachedSound(type[rng], obj, Volume, pitch, false, 0);
 		}
 		else

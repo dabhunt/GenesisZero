@@ -6,6 +6,7 @@ public class MiddleMan : MonoBehaviour
 {
     public BoxCollider2D bounds;
     public GameObject BossRoom;
+	public GameObject Target;
     public GameObject Boss;
     public Vector3 maxoffset;
     private Vector2 currentoffset;
@@ -23,7 +24,7 @@ public class MiddleMan : MonoBehaviour
     {
         if (Boss == null)
             return;
-        Vector2 offset = Boss.transform.position - (BossRoom.transform.position + (Vector3)BossRoom.GetComponent<BoxCollider2D>().offset);
+        Vector2 offset = Target.transform.position - (BossRoom.transform.position + (Vector3)BossRoom.GetComponent<BoxCollider2D>().offset);
         Vector2 ratio = (offset / bounds.size) * 2;
         float xoff = 0;
         if (Boss.GetComponent<BossAI>())

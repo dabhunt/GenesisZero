@@ -73,7 +73,7 @@ public class BUGE : MonoBehaviour
                     LookAtObj = new GameObject();
                     LookAtObj.transform.position = animWaypoints.Peek().Destination;
                     LookAt(LookAtObj, 5);
-                    print("blocked by UI: screnXhair.Z " + playerController.screenXhair.transform.position.z);
+                    //print("blocked by UI: screnXhair.Z " + playerController.screenXhair.transform.position.z);
                 }
                 else
                 {//if the player mouse is not on BUGE, add a waypoint

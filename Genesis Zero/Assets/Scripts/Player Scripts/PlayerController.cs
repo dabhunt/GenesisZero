@@ -444,6 +444,7 @@ public class PlayerController : MonoBehaviour
             {
                 //animator.SetTrigger("startRoll");
                 //StartCoroutine(ResetTrigger("startRoll", triggerResetTime));
+                sound.Roll();
                 VFXManager.instance.PlayEffect("VFX_PlayerDashStart", transform.position);
                 gameObject.GetComponentInChildren<SkinnedMeshRenderer>().enabled = false; //TEMPORARY CHANGE THIS
                 VFXManager.instance.PlayEffectForDuration("VFX_PlayerDashEffect", transform.position, rollDuration).transform.parent = transform;
