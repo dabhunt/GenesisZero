@@ -19,6 +19,7 @@ public class PauseMenu : MonoBehaviour
         //StateManager.instance.LoadMenu();
         //Save Game
         SaveLoadManager.instance.SaveGame();
+        
         StateManager.instance.LoadMenu();
     }
     public void RestartButton()

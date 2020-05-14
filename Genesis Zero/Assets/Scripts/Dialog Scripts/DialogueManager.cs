@@ -5,6 +5,7 @@ using UnityEngine.UI;
 using System;
 using System.IO;
 using TMPro;
+using System.Diagnostics;
 
 public class DialogueManager : MonoBehaviour
 {
@@ -25,6 +26,8 @@ public class DialogueManager : MonoBehaviour
     private bool canSkip = true;
     private bool deQueueOnFinish = false;
     private BUGE buge;
+    private Player player;
+    private bool dialoguePlaying = false;
     void Awake()
     {
         if (instance == null)
@@ -48,8 +51,15 @@ public class DialogueManager : MonoBehaviour
         instance.EndDialogue();
         //instance.TriggerDialogue("StartDialogue");
         buge = GameObject.FindWithTag("BUG-E").GetComponent<BUGE>();
+        player = GameObject.FindWithTag("player").GetComponent<Player>();
         //StateManager.instance.PauseGame();
     }
+
+    public bool IsDialoguePlaying()
+    {
+        return dialoguePlaying;
+    }
+
     //takes the name of the txt file, and a bool of if it should dequeue bug-e waypoints upon completion
     public void TriggerDialogue(string name, bool pauseGame, bool deQueue)
     {
@@ -90,7 +100,7 @@ public class DialogueManager : MonoBehaviour
             dialoguePlayed[name] = dialoguePlayed[name] + 1;
         else
             dialoguePlayed.Add(name, 1);
-
+        player.GetComponent<Player>().IsInteracting = true;
         StartDialogue(dialogue);
     }
     public void TriggerDialogue(string name, bool pauseGame)
@@ -103,6 +113,7 @@ public class DialogueManager : MonoBehaviour
     }
     public void StartDialogue(Dialogue dialogue)
     {
+        dialoguePlaying = true;
         //nameText.text = dialogue.name;
         parent.SetActive(true);
         charIcons.Clear();
@@ -193,7 +204,7 @@ public class DialogueManager : MonoBehaviour
         if (currentType == -1)
         {
             StateManager.instance.UnpauseGame();
-
+            player.GetComponent<Player>().IsInteracting = false;
         }
         Cursor.visible = false;
         if (deQueueOnFinish)
@@ -201,7 +212,8 @@ public class DialogueManager : MonoBehaviour
         InvokeAfterDialogue(currentType);
         StopAllCoroutines();
         parent.SetActive(false);
-        
+        dialoguePlaying = false;
+
     }
     public void InvokeAfterDialogue(int type)
     {

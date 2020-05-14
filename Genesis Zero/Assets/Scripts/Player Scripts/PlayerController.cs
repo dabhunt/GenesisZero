@@ -58,7 +58,8 @@ public class PlayerController : MonoBehaviour
 
     //Input variables
     GameInputActions inputActions;
-    private Vector2 movementInput;
+	[HideInInspector]
+    public Vector2 movementInput;
     private Vector2 aimInputMouse;
     private Vector2 aimInputController;
     private float fireInput;
@@ -281,7 +282,8 @@ public class PlayerController : MonoBehaviour
     public void FallFaster(float terminal)
     {
         terminalVel = terminal*-1;
-        vertVel = terminal*.35f;
+        if (vertVel < terminal*.35f)
+            vertVel = terminal*.35f;
     }
     /* This function is used to update the jump cycle and its behavior
      */

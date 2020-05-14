@@ -8,6 +8,7 @@ public class Player : Pawn
     public Statistic Essence, Keys, AbilityPower;
     private List<Statistic> playerStatistics;
     public float baseAbilityPower = 16;
+    public bool IsInteracting = false;
     private float EssenceHardCap = 60f;
     private float MaxEssence = 50f;
     private float MaxKeys = 3f;

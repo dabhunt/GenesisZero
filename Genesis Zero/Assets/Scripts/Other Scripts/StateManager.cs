@@ -192,6 +192,7 @@ public class StateManager : MonoBehaviour
     }
     public void LoadMenu()
     {
+        
         StartCoroutine(LoadSceneCoroutine());
         //SceneManager.LoadScene("MainMenu", LoadSceneMode.Single);
     }
