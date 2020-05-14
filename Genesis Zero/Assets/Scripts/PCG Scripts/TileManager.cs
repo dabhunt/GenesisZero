@@ -150,7 +150,7 @@ public class TileManager : MonoBehaviour
 			//Create new tile and set parent to TileManager
 			GameObject newTile;
 			newTile = Instantiate(tilePrefabs[Random.Range(0, tilePrefabs.Length)]) as GameObject;
-			if (GetComponent<MeshRenderer>() == null)
+			if (newTile.GetComponent<MeshRenderer>() == null)
 			{
 				MeshCombiner combiner = newTile.AddComponent<MeshCombiner>();
 				combiner.CreateMultiMaterialMesh = true;

@@ -23,7 +23,11 @@ public class PlayerSounds : MonoBehaviour
 	}
 	public void GunShot()
 	{
-		aManager.PlayRandomSFXType("Gunshot", null, 1, 1.5f, .7f);
+		aManager.PlayRandomSFXType("Gunshot", playerObj, 1, 1.5f, .6f);
+	}
+	public void Roll()
+	{
+		aManager.PlayRandomSFXType("PhaseRoll", playerObj, .9f, 1.2f, 1f);
 	}
 	public void Land()
 	{
