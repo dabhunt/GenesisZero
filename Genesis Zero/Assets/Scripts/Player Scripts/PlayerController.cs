@@ -58,7 +58,8 @@ public class PlayerController : MonoBehaviour
 
     //Input variables
     GameInputActions inputActions;
-    private Vector2 movementInput;
+	[HideInInspector]
+    public Vector2 movementInput;
     private Vector2 aimInputMouse;
     private Vector2 aimInputController;
     private float fireInput;
