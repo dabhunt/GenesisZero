@@ -11,11 +11,13 @@ public class Teleporter : MonoBehaviour
 
 	//Variables for animator
 	private Transform player;
+	private GameObject buge;
 	public float portalactivedistance = 1f;
 	Animator ani;
 
 	private void Start()
 	{
+		buge = GameObject.FindWithTag("BUG-E");
 		player = GameObject.FindWithTag("Player").transform;    //Grabs the player transform position to use in the rest of the script.
 		ani = GetComponent<Animator>();
 
@@ -47,9 +49,11 @@ public class Teleporter : MonoBehaviour
 		print("teleport");
 		player.position = new Vector2(destinationX, destinationY);
 		//temporary code
-		GameObject.FindWithTag("BUG-E").GetComponent<BUGE>().FollowingPlayer(true);
+		
 		//temporary code ^
-		GameObject.FindWithTag("BUG-E").transform.position = player.position;
+		buge.transform.position = player.position;
+		buge.GetComponent<BUGE>().FollowingPlayer(true);
+		Camera.main.transform.position = new Vector3(player.position.x, player.position.y, -35.6f);
 		//GameObject.FindWithTag("CamCollider").transform.position = new Vector2(destinationX, GameObject.FindWithTag("CamCollider").transform.position.y);
 		TileManager.instance.curlevel++;
 	}

@@ -41,6 +41,8 @@ public class InteractInterface : MonoBehaviour
     {
         if (Input.GetKeyDown(KeyCode.F))
         {
+            if (player.GetComponent<Player>().IsInteracting == true)
+                return;
             //determine which interactable / pickup is closest, and perform interact
             string[] strArray = { "Interactable", "Pickups" };
             GameObject obj = ClosestTaggedObj(strArray);

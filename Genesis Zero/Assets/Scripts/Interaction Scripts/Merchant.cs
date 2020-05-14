@@ -160,6 +160,7 @@ public class Merchant : MonoBehaviour
     }
     public void InitializeUI()
     {
+        player.GetComponent<Player>().IsInteracting = true;
         firstInteraction = false;
         //Destroy the "Press F to interact popup"
         merchantUI = (RectTransform) canvasRef.transform.Find("MerchantUI");
@@ -264,6 +265,7 @@ public class Merchant : MonoBehaviour
     }
     public void CloseUI()
     {
+        player.GetComponent<Player>().IsInteracting = false;
         merchantUI.gameObject.SetActive(false);
         StateManager.instance.UnpauseGame();
         itemSelectNum = -1;

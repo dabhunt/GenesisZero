@@ -26,6 +26,7 @@ public class DialogueManager : MonoBehaviour
     private bool canSkip = true;
     private bool deQueueOnFinish = false;
     private BUGE buge;
+    private Player player;
     private bool dialoguePlaying = false;
     void Awake()
     {
@@ -50,6 +51,7 @@ public class DialogueManager : MonoBehaviour
         instance.EndDialogue();
         //instance.TriggerDialogue("StartDialogue");
         buge = GameObject.FindWithTag("BUG-E").GetComponent<BUGE>();
+        player = GameObject.FindWithTag("player").GetComponent<Player>();
         //StateManager.instance.PauseGame();
     }
 
@@ -98,7 +100,7 @@ public class DialogueManager : MonoBehaviour
             dialoguePlayed[name] = dialoguePlayed[name] + 1;
         else
             dialoguePlayed.Add(name, 1);
-
+        player.GetComponent<Player>().IsInteracting = true;
         StartDialogue(dialogue);
     }
     public void TriggerDialogue(string name, bool pauseGame)
@@ -202,7 +204,7 @@ public class DialogueManager : MonoBehaviour
         if (currentType == -1)
         {
             StateManager.instance.UnpauseGame();
-
+            player.GetComponent<Player>().IsInteracting = false;
         }
         Cursor.visible = false;
         if (deQueueOnFinish)

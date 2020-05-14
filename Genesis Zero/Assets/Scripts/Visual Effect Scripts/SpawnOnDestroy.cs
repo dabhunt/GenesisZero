@@ -57,12 +57,11 @@ public class SpawnOnDestroy : MonoBehaviour
     }
     private void OnDestroy()
     {
-        if (SceneManager.sceneCount > 1) //if more than one scene loaded
-            Destroy(gameObject.GetComponent<SpawnOnDestroy>());
-        //if the scene is being restarted or the player quits
-        if (player == null || restartScript == null || restartScript.ExitingScene() || quitting)
+        //if a scene is being loaded or the player quits/dies
+        if (player == null || SceneManager.sceneCount > 1 || restartScript == null || restartScript.ExitingScene() || quitting)
         {
             quitting = true;
+            Destroy(gameObject.GetComponent<SpawnOnDestroy>());
             return;
         }
         // otherwise play the effect
