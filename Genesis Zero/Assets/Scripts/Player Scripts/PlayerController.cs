@@ -285,7 +285,7 @@ public class PlayerController : MonoBehaviour
     {
         print("vert vel " + vertVel);
         print("terminal "+ terminal);
-        if (vertVel < terminal * .35f)
+        if (vertVel > terminal * .35f)
             vertVel = terminal * .35f;
         terminalVel = terminal*-1;
     }
