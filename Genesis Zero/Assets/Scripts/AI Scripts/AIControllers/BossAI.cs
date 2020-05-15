@@ -95,7 +95,6 @@ public class BossAI : AIController
 
 		if (GetDistanceToTarget() < TriggerRadius && initiated == false) {
 			initiated = true;
-			Camera.main.GetComponent<BasicCameraZoom>().ChangeFieldOfView(30);
 		}
 		if (initiated)
 		{
@@ -117,6 +116,7 @@ public class BossAI : AIController
 
 				if (TimeBeforeFight <= 0)
 				{
+					Camera.main.GetComponent<BasicCameraZoom>().ChangeFieldOfView(30);
 					GameObject canvas = GameObject.FindGameObjectWithTag("CanvasUI");
 					healthbar = canvas.transform.Find("BossHealthbar").gameObject;
 					healthbar.SetActive(true);
@@ -532,7 +532,8 @@ public class BossAI : AIController
 		{
 			float minnum = Wild ? 2 : 0;
 			minnum = num == 0 ? 0 : minnum;
-			RepeatingAttack = (int)Random.Range(0, num + 1);
+			float max = Wild ? num + 2: num;
+			RepeatingAttack = (int)Random.Range(0, max);
 		}
 		else
 		{
