@@ -12,7 +12,7 @@ public class Teleporter : MonoBehaviour
 	//Variables for animator
 	private Transform player;
 	private GameObject buge;
-	public float portalactivedistance = 1f;
+	public float portalactivedistance = 9.5f;
 	Animator ani;
 
 	private void Start()
@@ -80,7 +80,12 @@ public class Teleporter : MonoBehaviour
 			}
 
 
-    }
+	}
+    protected virtual void OnDrawGizmos()
+	{
+		Gizmos.color = Color.magenta;
+		Gizmos.DrawWireSphere(transform.position, 3);
+	}
 
 	public float distanceFromPortal()
     {

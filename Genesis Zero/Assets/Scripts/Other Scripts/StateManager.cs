@@ -75,7 +75,7 @@ public class StateManager : MonoBehaviour
         }
         if (Input.GetKeyDown(KeyCode.ScrollLock))
         {//teleport the player to the boss room
-            player.transform.position = new Vector2(-150,284);
+            player.transform.position = new Vector2(-386,69);
             //temporary code
             GameObject.FindWithTag("BUG-E").GetComponent<BUGE>().FollowingPlayer(true);
             //temporary code ^
