@@ -146,7 +146,8 @@ public class DroneExploderAI : AIController
             // //print("blastRadius = " + blastRadius + "during the on destroy call last section");
             // 
         }
-        gameObject.SetActive(false);
+        Destroy(this.GetComponent<SpawnOnDestroy>());
+        Destroy(this.gameObject);
     }
 
     /*
