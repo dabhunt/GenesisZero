@@ -93,6 +93,11 @@ public class BossAI : AIController
 	{
 		PassedTime += Time.deltaTime;
 		base.Update();
+		if (Target == null)
+		{
+			Target = GameObject.FindGameObjectWithTag("Player").transform;
+		}
+
 		if (GetDistanceToTarget() < TriggerRadius && initiated == false) {
 			initiated = true;
 			Camera.main.GetComponent<BasicCameraZoom>().ChangeFieldOfView(30);
