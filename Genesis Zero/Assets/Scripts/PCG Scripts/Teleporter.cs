@@ -53,7 +53,7 @@ public class Teleporter : MonoBehaviour
 		//temporary code ^
 		buge.transform.position = player.position;
 		buge.GetComponent<BUGE>().FollowingPlayer(true);
-		Camera.main.transform.position = new Vector3(player.position.x, player.position.y, -35.6f);
+		//Camera.main.transform.position = new Vector3(player.position.x, player.position.y, -35.6f);
 		//GameObject.FindWithTag("CamCollider").transform.position = new Vector2(destinationX, GameObject.FindWithTag("CamCollider").transform.position.y);
 		TileManager.instance.curlevel++;
 	}

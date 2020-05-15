@@ -23,8 +23,11 @@ public class TileManager : MonoBehaviour
 	public float chestSpawnChance = .2f;
 	public float merchantSpawnChance = .2f;
 	public float scrapConverterSpawnChance = .2f;
-	public float teleSpawnChance = .03f;//3.0%
-	public float teleIncreasePerIteration = .006f;//0.6% increase each time
+	[Header("Teleporter Spawning")]
+	public float teleSpawnChance = .00f;//3.0%
+	public float teleIncreasePerIteration = .03f;//1% increase each time
+	public int teleIncreaseChanceEvery = 10;//every 10 tp mats the chance of a teleporter spawning increases
+	public int DontSpawnUntilAfter = 30;//the minimum amount of tp mats that must be passed before a teleporter can spawn
 	
 	[Header("Prefab Containers")]
 	private GameObject[] tilePrefabs;
@@ -86,6 +89,7 @@ public class TileManager : MonoBehaviour
 		bool teleporterIsSpawned = false;
 		List<GameObject> teleporterInstances = new List<GameObject>();
 		float levelTracking = 0f;
+		int iter = 0;
 		foreach (GameObject mat in GameObject.FindGameObjectsWithTag("Placemat"))
 		{
 			if (mat.name == "GodHeadMat" && Random.value <= godHeadSpawnChance) //Case 1: God Heads
@@ -118,8 +122,13 @@ public class TileManager : MonoBehaviour
 					newTele.GetComponent<Teleporter>().SetDestination(new Vector2(levelTracking + 10, 40));
 					teleporterInstances[teleporterInstances.Count - 1].transform.position = mat.transform.position;
 				}
+				iter++;
+				//if the iteration exceeds the don't spawnuntilnumber, and iter is divisible by teleIncrease, increase the spawnchance of teleporters
+				if (iter >= DontSpawnUntilAfter && iter % teleIncreaseChanceEvery == 0 )
+					teleSpawnChance += teleIncreasePerIteration;
 			}
-			teleSpawnChance += teleIncreasePerIteration;
+			
+
 		}
 		
 		//this should be turned on later to disable the prefab gameobject

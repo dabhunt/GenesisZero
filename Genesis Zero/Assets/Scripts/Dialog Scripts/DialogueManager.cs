@@ -51,7 +51,6 @@ public class DialogueManager : MonoBehaviour
         instance.EndDialogue();
         //instance.TriggerDialogue("StartDialogue");
         buge = GameObject.FindWithTag("BUG-E").GetComponent<BUGE>();
-        player = GameObject.FindWithTag("player").GetComponent<Player>();
         //StateManager.instance.PauseGame();
     }
 
@@ -59,7 +58,13 @@ public class DialogueManager : MonoBehaviour
     {
         return dialoguePlaying;
     }
-
+    private Player GetPlayer()
+    {
+        if (player != null)
+            return player;
+        player = GameObject.FindWithTag("Player").GetComponent<Player>();
+        return player;
+    }
     //takes the name of the txt file, and a bool of if it should dequeue bug-e waypoints upon completion
     public void TriggerDialogue(string name, bool pauseGame, bool deQueue)
     {
@@ -100,7 +105,8 @@ public class DialogueManager : MonoBehaviour
             dialoguePlayed[name] = dialoguePlayed[name] + 1;
         else
             dialoguePlayed.Add(name, 1);
-        player.GetComponent<Player>().IsInteracting = true;
+        if (GetPlayer() != null)
+            player.IsInteracting = true;
         StartDialogue(dialogue);
     }
     public void TriggerDialogue(string name, bool pauseGame)
@@ -204,7 +210,8 @@ public class DialogueManager : MonoBehaviour
         if (currentType == -1)
         {
             StateManager.instance.UnpauseGame();
-            player.GetComponent<Player>().IsInteracting = false;
+            if (GetPlayer() != null)
+                player.IsInteracting = false;
         }
         Cursor.visible = false;
         if (deQueueOnFinish)

@@ -95,7 +95,6 @@ public class BossAI : AIController
 		base.Update();
 		if (GetDistanceToTarget() < TriggerRadius && initiated == false) {
 			initiated = true;
-			Camera.main.GetComponent<BasicCameraZoom>().ChangeFieldOfView(30);
 			DialogueManager.instance.TriggerDialogue("PreBoss4", false);
 		}
 
@@ -113,6 +112,8 @@ public class BossAI : AIController
 				GameObject canvas = GameObject.FindGameObjectWithTag("CanvasUI");
 				healthbar = canvas.transform.Find("BossHealthbar").gameObject;
 				healthbar.SetActive(true);
+				camera.GetComponent<BasicCameraZoom>().fovMax = 30;
+				camera.GetComponent<BasicCameraZoom>().ChangeFieldOfView(30);
 				TimeBeforeFight = 0;		
 				//StartCoroutine(CockBack(1.25f, Target.position - transform.position, 1));
 			}

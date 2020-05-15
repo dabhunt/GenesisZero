@@ -281,9 +281,9 @@ public class PlayerController : MonoBehaviour
     }
     public void FallFaster(float terminal)
     {
+        if (vertVel < terminal * .35f)
+            vertVel = terminal * .35f;
         terminalVel = terminal*-1;
-        if (vertVel < terminal*.35f)
-            vertVel = terminal*.35f;
     }
     /* This function is used to update the jump cycle and its behavior
      */
