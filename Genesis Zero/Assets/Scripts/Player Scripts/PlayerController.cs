@@ -229,7 +229,9 @@ public class PlayerController : MonoBehaviour
     {
         if (!debug)
             return;
+        Vector3 castOrigin = transform.position + new Vector3(0, 0.5f * characterHeight, 0);
         Debug.DrawLine(transform.position, transform.position + moveVec * 2f, Color.red);
+        Debug.DrawLine(castOrigin, castOrigin + Vector3.down * verCastLength, Color.red);
     }
 
     /* This function is called in Move()
@@ -330,15 +332,18 @@ public class PlayerController : MonoBehaviour
     {
         Collider[] cols;
         Vector3 halfExtends = new Vector3(0.25f * characterWidth, 0, 0);
+        Vector3 origin = transform.position + Vector3.up * 0.25f * characterWidth;
+        cols = Physics.OverlapSphere(origin, 0.5f * characterWidth, immoveables, QueryTriggerInteraction.UseGlobal);
+
+        //Resets jump counts, play landing sound
         if (IsBlocked(Vector3.down))
         {
-            terminalVel = resetTerminalVel;
-            Vector3 origin = transform.position + Vector3.up * 0.25f * characterWidth;
-            cols = Physics.OverlapSphere(origin, 0.5f * characterWidth, immoveables, QueryTriggerInteraction.UseGlobal);
+            isGrounded = true;
             if (cols.Length != 0)
             {
                 foreach (var col in cols)
                 {
+                    //If there's at least one non-trigger collider under -> grounded
                     if (!col.isTrigger)
                     {
                         transform.position = Vector3.Lerp(transform.position, transform.position + Vector3.up * 0.1f, 25 * Time.fixedDeltaTime);
@@ -346,7 +351,7 @@ public class PlayerController : MonoBehaviour
                     }
                 }
             }
-            isGrounded = true;
+            terminalVel = resetTerminalVel;
             if (vertVel < 0)
             {
                 vertVel = 0;
@@ -571,6 +576,7 @@ public class PlayerController : MonoBehaviour
         float halfWidth = 0.5f * characterWidth;
         float halfHeight = 0.5f * characterHeight;
         Vector3 halfExtends = new Vector3(0, 0.5f * halfHeight, 0);
+        RaycastHit[] array;
 
         if (dir == Vector3.up)
         {
@@ -583,10 +589,23 @@ public class PlayerController : MonoBehaviour
         else if (dir == Vector3.down)
         {
             Vector3 castOrigin = transform.position + new Vector3(0, halfHeight + halfWidth, 0);
-            isBlock = Physics.SphereCast(castOrigin, halfWidth, Vector3.down, out hit, verCastLength, immoveables, QueryTriggerInteraction.UseGlobal);
-            if (isBlock && hit.collider.isTrigger)
+            array = Physics.SphereCastAll(castOrigin, halfWidth, Vector3.down, verCastLength, immoveables, QueryTriggerInteraction.UseGlobal);
+            if (array.Length == 0)
+            {
                 isBlock = false;
-            groundHitInfo = hit;
+            }
+            else
+            {
+                foreach (var item in array)
+                {
+                    if (!item.collider.isTrigger)
+                    {
+                        isBlock = true;
+                        groundHitInfo = item;
+                        break;
+                    }
+                }
+            }
         }
         else if (dir == Vector3.left)
         {
