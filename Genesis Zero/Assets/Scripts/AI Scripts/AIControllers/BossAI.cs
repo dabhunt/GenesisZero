@@ -38,7 +38,7 @@ public class BossAI : AIController
 	public float TriggerRadius;
 	public float TimeBeforeFight;
 	[HideInInspector]
-	public bool initiated, lookingatcamera, Wild;
+	public bool initiated, introdialogue, lookingatcamera, Wild;
 	private int Heat, RepeatingAttack, Attack;
 	private float actiontime = 1;
 	private float chargeuptime = .5f;
@@ -91,31 +91,38 @@ public class BossAI : AIController
 
 	new protected void Update()
 	{
-		PassedTime += Time.deltaTime;
 		base.Update();
+
 		if (GetDistanceToTarget() < TriggerRadius && initiated == false) {
 			initiated = true;
-			DialogueManager.instance.TriggerDialogue("PreBoss4", false);
+			Camera.main.GetComponent<BasicCameraZoom>().ChangeFieldOfView(30);
 		}
-
-		if (initiated && TimeBeforeFight > 0)
+		if (initiated)
 		{
-			TimeBeforeFight -= Time.deltaTime;
-			if (DialogueManager.instance.IsDialoguePlaying() == false)
+			PassedTime += Time.deltaTime;
+			if(introdialogue == false && PassedTime >= .85f)
 			{
-				TimeBeforeFight = 0;
+				DialogueManager.instance.TriggerDialogue("PreBoss4", false);
+				introdialogue = true;
 			}
-			SetInvunerable(Time.deltaTime * 2);
 
-			if (TimeBeforeFight <= 0)
+			if(TimeBeforeFight > 0)
 			{
-				GameObject canvas = GameObject.FindGameObjectWithTag("CanvasUI");
-				healthbar = canvas.transform.Find("BossHealthbar").gameObject;
-				healthbar.SetActive(true);
-				camera.GetComponent<BasicCameraZoom>().fovMax = 30;
-				camera.GetComponent<BasicCameraZoom>().ChangeFieldOfView(30);
-				TimeBeforeFight = 0;		
-				//StartCoroutine(CockBack(1.25f, Target.position - transform.position, 1));
+				TimeBeforeFight -= Time.deltaTime;
+				if (DialogueManager.instance.IsDialoguePlaying() == false && PassedTime > 1.25f)
+				{
+					TimeBeforeFight = 0;
+				}
+				SetInvunerable(Time.deltaTime * 2);
+
+				if (TimeBeforeFight <= 0)
+				{
+					GameObject canvas = GameObject.FindGameObjectWithTag("CanvasUI");
+					healthbar = canvas.transform.Find("BossHealthbar").gameObject;
+					healthbar.SetActive(true);
+					TimeBeforeFight = 0;
+					//StartCoroutine(CockBack(1.25f, Target.position - transform.position, 1));
+				}
 			}
 		}
 	}
@@ -191,11 +198,6 @@ public class BossAI : AIController
 				//HeadModel.transform.LookAt(lookposition + lookoffset);
 				lookingatcamera = false;
 			}
-
-
-
-			// Don't move until fight starts
-			if (TimeBeforeFight > 0) { return; }
 
 
 			if (animating == false)
