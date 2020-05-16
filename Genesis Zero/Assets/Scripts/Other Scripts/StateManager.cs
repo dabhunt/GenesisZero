@@ -109,9 +109,12 @@ public class StateManager : MonoBehaviour
         }
         if (Input.GetKeyDown(KeyCode.Insert))
         {
+            
             //give the player 1 random Ability for the first slot
-            player.GetSkillManager().AddSkill(player.GetSkillManager().GetRandomAbility());
+            
             SkillManager skillManager = player.GetSkillManager();
+            skillManager.clearSkills();
+            player.GetSkillManager().AddSkill(player.GetSkillManager().GetRandomAbility());
             SkillObject secondAbility = skillManager.GetRandomAbility();
             while (skillManager.GetAbility1().name == secondAbility.name)
             {
@@ -119,9 +122,11 @@ public class StateManager : MonoBehaviour
             }
             //give the player a second ability, that isn't the same as the first
             player.GetSkillManager().AddSkill(player.GetSkillManager().GetRandomAbility());
-            for (int i = 0; i < 16; i++)
-            {
-                player.GetSkillManager().AddSkill(skillManager.GetRandomModByChance()); 
+            int i = 0;
+            while (player.GetSkillManager().GetAmount() < 19 || i > 250)
+            { 
+                player.GetSkillManager().AddSkill(skillManager.GetRandomModByChance());
+                i++;
             }
         }
         //get to next level instantly

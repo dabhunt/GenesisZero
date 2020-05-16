@@ -289,7 +289,7 @@ public class AbilityCasting : MonoBehaviour
         player.KnockBackForced(aimDir + Vector2.up, 25);
         player.GetComponent<PlayerController>().NewLayerMask(ignoreEnemiesLayerMask, FD_duration);
         GameObject hitbox = SpawnGameObject("FireDashHitbox", CastAtAngle(transform.position, aimDir, .5f), GetComponent<Gun>().firePoint.rotation);
-        hitbox.GetComponent<Hitbox>().InitializeHitbox(GetComponent<Player>().GetAbilityPower().GetValue(), GetComponent<Player>());
+        hitbox.GetComponent<Hitbox>().InitializeHitbox(GetComponent<Player>().GetAbilityPower().GetValue()/2, GetComponent<Player>());
         hitbox.transform.parent = transform;
         player.SetInvunerable(FD_duration);
         player.GetComponent<PlayerController>().Dash(FD_duration+.1f,FD_gravityReplacement);
