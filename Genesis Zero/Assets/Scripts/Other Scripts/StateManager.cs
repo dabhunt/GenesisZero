@@ -116,12 +116,11 @@ public class StateManager : MonoBehaviour
             skillManager.clearSkills();
             player.GetSkillManager().AddSkill(player.GetSkillManager().GetRandomAbility());
             SkillObject secondAbility = skillManager.GetRandomAbility();
-            while (skillManager.GetAbility1().name == secondAbility.name)
-            {
-                secondAbility = skillManager.GetRandomAbility();
-            }
             //give the player a second ability, that isn't the same as the first
-            player.GetSkillManager().AddSkill(player.GetSkillManager().GetRandomAbility());
+            while (skillManager.GetAbilityAmount() < 2)
+            {
+                player.GetSkillManager().AddSkill(player.GetSkillManager().GetRandomAbility());
+            }
             int i = 0;
             while (player.GetSkillManager().GetAmount() < 19 || i > 250)
             { 
