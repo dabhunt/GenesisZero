@@ -454,18 +454,27 @@ public class AIController : Pawn
      */
     public AIController[] GetNearbyEnemies()
     {
-        List<AIController> nearEnemies = new List<AIController>();
         if (BehaviorProperties != null)
         {
-            for (int i = 0; i < EnemyManager.AllEnemies.Count; i++)
+            return GetNearbyEnemies(BehaviorProperties.AlertEnemiesRadius);
+        }
+        return new AIController[0];
+    }
+
+    /**
+     * Returns an array of all enemies within the given radius
+     */
+    public AIController[] GetNearbyEnemies(float radius)
+    {
+        List<AIController> nearEnemies = new List<AIController>();
+        for (int i = 0; i < EnemyManager.AllEnemies.Count; i++)
+        {
+            AIController curEnemy = EnemyManager.AllEnemies[i];
+            if (curEnemy != null && curEnemy != this && curEnemy.gameObject.activeSelf)
             {
-                AIController curEnemy = EnemyManager.AllEnemies[i];
-                if (curEnemy != null && curEnemy != this && curEnemy.gameObject.activeSelf)
+                if ((curEnemy.transform.position - transform.position).sqrMagnitude <= radius * radius)
                 {
-                    if ((curEnemy.transform.position - transform.position).sqrMagnitude <= BehaviorProperties.AlertEnemiesRadius * BehaviorProperties.AlertEnemiesRadius)
-                    {
-                        nearEnemies.Add(curEnemy);
-                    }
+                    nearEnemies.Add(curEnemy);
                 }
             }
         }
