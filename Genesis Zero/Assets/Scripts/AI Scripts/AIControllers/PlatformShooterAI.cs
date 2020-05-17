@@ -91,10 +91,10 @@ public class PlatformShooterAI : AIController
 
         float slopeForceFactor = Vector3.Dot(groundNormal, Vector3.left * faceDir) + 1.0f; // Adjust movement force based on slope steepness
 
-        if (state == AIState.Follow || state == AIState.Charge)
+        if (state == AIState.Follow || state == AIState.Charge || state == AIState.Attack || state == AIState.Cooldown)
         {
             faceDirPrev = faceDir;
-            if (faceDirChangeTime > 0.2f && state != AIState.Cooldown)
+            if (faceDirChangeTime > 0.2f && state != AIState.Attack && state != AIState.Cooldown)
             {
                 faceDir = Mathf.RoundToInt(Mathf.Sign(targetPosition.x - transform.position.x));
             }
@@ -105,6 +105,15 @@ public class PlatformShooterAI : AIController
             }
 
             targetSpeed = MoveSpeed;
+            if (state == AIState.Attack)
+            {
+                targetSpeed *= 0.5f;
+            }
+            if (state == AIState.Cooldown)
+            {
+                targetSpeed *= 0.2f;
+            }
+
             if (isGrounded && faceDir == Mathf.RoundToInt(Mathf.Sign(targetPosition.x - transform.position.x)))
             {
                 if (!edgeInFront)
@@ -112,7 +121,7 @@ public class PlatformShooterAI : AIController
                     targetSpeed = 0.0f;
                 }
 
-                if (edgeBehind)
+                if (edgeBehind && state != AIState.Attack && state != AIState.Cooldown)
                 {
                     frb.Accelerate(Mathf.Sign(transform.position.x - targetPosition.x) * Vector3.right * Mathf.Min(GetAvoidCloseness(), AvoidAccelLimit) * Acceleration * AvoidAmount * slopeForceFactor * SpeedDifficultyMultiplier.GetFactor()); // Acceleration to keep away from the target
                 }
@@ -126,14 +135,6 @@ public class PlatformShooterAI : AIController
                 patrolCycleOffset += Mathf.PI;
             }
             faceDir = Mathf.RoundToInt(Mathf.Sign(Mathf.Sin(Time.time * PatrolSwitchRate + patrolCycleOffset)));
-        }
-        else if (state == AIState.Attack)
-        {
-            targetSpeed = MoveSpeed * 0.5f;
-        }
-        else if (state == AIState.Cooldown)
-        {
-            targetSpeed = MoveSpeed * 0.2f;
         }
         else if (state == AIState.Idle)
         {
