@@ -628,6 +628,14 @@ public class AIController : Pawn
     }
 
     /**
+     * Returns the launching point for projectiles
+     */
+    public virtual Vector3 GetProjectilePoint()
+    {
+        return GetOrigin();
+    }
+
+    /**
      * Scales a vector3 by the local scale
      */
     protected Vector3 ScaleVector3(Vector3 v)

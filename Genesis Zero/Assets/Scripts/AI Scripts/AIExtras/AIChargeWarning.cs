@@ -21,6 +21,7 @@ public class AIChargeWarning : MonoBehaviour
     public bool AimAtTarget = false;
     private float localDist = 0.0f;
     public bool UseAiAim = false;
+    public bool StayAtProjectilePoint = false;
 
     private void Awake()
     {
@@ -53,9 +54,18 @@ public class AIChargeWarning : MonoBehaviour
 
         if (AimAtTarget && controller.Target != null)
         {
-            Vector3 targetDir = UseAiAim ? controller.GetAimDirection() : (controller.Target.position - controller.GetOrigin()).normalized;
-            transform.position = controller.GetOrigin() + targetDir * localDist;
-            transform.rotation = Quaternion.LookRotation(Vector3.forward, new Vector3(-targetDir.y, targetDir.x, 0.0f));
+            if (StayAtProjectilePoint)
+            {
+                Vector3 targetDir = UseAiAim ? controller.GetAimDirection() : (controller.Target.position - controller.GetProjectilePoint()).normalized;
+                transform.position = controller.GetProjectilePoint();
+                transform.rotation = Quaternion.LookRotation(Vector3.forward, new Vector3(-targetDir.y, targetDir.x, 0.0f));
+            }
+            else
+            {
+                Vector3 targetDir = UseAiAim ? controller.GetAimDirection() : (controller.Target.position - controller.GetOrigin()).normalized;
+                transform.position = controller.GetOrigin() + targetDir * localDist;
+                transform.rotation = Quaternion.LookRotation(Vector3.forward, new Vector3(-targetDir.y, targetDir.x, 0.0f));
+            }
         }
 
         if (rend != null)

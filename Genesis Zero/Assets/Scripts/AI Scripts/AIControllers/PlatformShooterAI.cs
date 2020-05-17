@@ -45,6 +45,8 @@ public class PlatformShooterAI : AIController
     public float AimSpeed = 1.0f;
     public Vector3 ProjectileStart = Vector3.zero;
     private Vector3 projectileAim = Vector3.right;
+    public Transform ProjectileSource;
+    private Vector3 nextAim = Vector3.right;
 
     [Header("Difficulty")]
     public DifficultyMultiplier SpeedDifficultyMultiplier;
@@ -182,9 +184,12 @@ public class PlatformShooterAI : AIController
             }
         }
 
-        projectileAim = Vector3.Slerp(projectileAim,
-            (Target.position - transform.position - ScaleVector3(new Vector3(ProjectileStart.x * faceDir, ProjectileStart.y, ProjectileStart.z))).normalized,
-            AimSpeed * AimDifficultyMultiplier.GetFactor() * Time.fixedDeltaTime);
+        if (state != AIState.Attack)
+        {
+            nextAim = (Target.position - transform.position - ScaleVector3(new Vector3(ProjectileStart.x * faceDir, ProjectileStart.y, ProjectileStart.z))).normalized;
+        }
+
+        projectileAim = Vector3.Slerp(projectileAim, nextAim, AimSpeed * AimDifficultyMultiplier.GetFactor() * Time.fixedDeltaTime);
 
         if (anim != null)
         {
@@ -202,8 +207,9 @@ public class PlatformShooterAI : AIController
                 if (AttackProjectile != null)
                 {
 
-                    GameObject spawnedProjectile = Instantiate(AttackProjectile, transform.position + ScaleVector3(new Vector3(ProjectileStart.x * faceDir, ProjectileStart.y, ProjectileStart.z)),
+                    GameObject spawnedProjectile = Instantiate(AttackProjectile, GetProjectilePoint(),
                         Quaternion.LookRotation(Vector3.forward, projectileAim));
+                    spawnedProjectile.transform.parent = transform;
                     Hitbox spawnedHitbox = spawnedProjectile.GetComponent<Hitbox>();
                     if (spawnedHitbox != null)
                     {
@@ -248,6 +254,11 @@ public class PlatformShooterAI : AIController
         return projectileAim;
     }
 
+    public override Vector3 GetProjectilePoint()
+    {
+        return ProjectileSource != null ? ProjectileSource.position : transform.position + ScaleVector3(new Vector3(ProjectileStart.x * faceDir, ProjectileStart.y, ProjectileStart.z));
+    }
+
     protected void OnDrawGizmosSelected()
     {
         base.OnDrawGizmos();
@@ -259,6 +270,6 @@ public class PlatformShooterAI : AIController
         Gizmos.DrawRay(trueOrigin, ScaleVector3(new Vector3(ForwardEdgeRay.x * faceDir, ForwardEdgeRay.y, ForwardEdgeRay.z)));
         Gizmos.DrawRay(trueOrigin, ScaleVector3(new Vector3(BackEdgeRay.x * faceDir, BackEdgeRay.y, BackEdgeRay.z)));
         Gizmos.color = Color.green;
-        Gizmos.DrawWireSphere(transform.position + ScaleVector3(new Vector3(ProjectileStart.x * faceDir, ProjectileStart.y, ProjectileStart.z)), ScaleFloat(0.1f));
+        Gizmos.DrawWireSphere(GetProjectilePoint(), ScaleFloat(0.1f));
     }
 }
