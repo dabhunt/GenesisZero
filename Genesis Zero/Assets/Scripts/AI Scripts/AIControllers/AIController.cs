@@ -180,7 +180,7 @@ public class AIController : Pawn
             for (int i = 0; i < nearBodies.Count; i++)
             {
                 Vector3 bodyDir = transform.position - nearBodies[i].transform.position;
-                frb.Accelerate(bodyDir.normalized * Mathf.Pow(1.0f - bodyDir.magnitude / EnemySpaceRadius, 2.0f) * EnemySpaceForce);
+                frb.Accelerate(bodyDir.normalized * Mathf.Min(10f, Mathf.Pow(1.0f - bodyDir.magnitude / EnemySpaceRadius, 2.0f) * EnemySpaceForce));
             }
         }
         //Debug.Log(GetNearbyEnemies().Length);
