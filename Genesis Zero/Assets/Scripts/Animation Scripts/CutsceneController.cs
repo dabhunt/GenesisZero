@@ -15,6 +15,7 @@ public class CutsceneController : MonoBehaviour
     private float InspectorFov;
     private void Start()
     {
+        UpdateCanvases();
         cam = Camera.main;
         InspectorFov = cam.fieldOfView;
     }
@@ -33,6 +34,7 @@ public class CutsceneController : MonoBehaviour
     }
     public void Cutscene()
     {
+        UpdateCanvases();
         GameInputManager.instance.DisablePlayerControls();
         StateManager.instance.Cursorvisible = true;
         CutsceneCanvas.SetActive(true);
@@ -44,10 +46,16 @@ public class CutsceneController : MonoBehaviour
         intro.time = intro.duration;
         Reset();
     }
+    public void UpdateCanvases()
+    {
+        if (Primarycanvas == null)
+            Primarycanvas = GameObject.FindGameObjectWithTag("CanvasUI");
+        if (CutsceneCanvas == null)
+            CutsceneCanvas = GameObject.FindGameObjectWithTag("CutsceneCanvas");
+    }
     public void Reset()
     {
-        Primarycanvas = GameObject.FindGameObjectWithTag("CanvasUI");
-        CutsceneCanvas = GameObject.FindGameObjectWithTag("CutsceneCanvas");
+        UpdateCanvases();
         StateManager.instance.Cursorvisible = false;
         if(SceneManager.GetActiveScene().name != "BossTest")
 		{
