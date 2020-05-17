@@ -513,7 +513,7 @@ public class AIController : Pawn
     /**
      * Draw visual representations of properties
      */
-    protected virtual void OnDrawGizmos()
+    protected virtual void OnDrawGizmosSelected()
     {
         if (!Application.isPlaying) { UpdateOrigin(); }
 

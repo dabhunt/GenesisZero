@@ -244,7 +244,7 @@ public class PlatformPatrollerAI : AIController
 
     protected void OnDrawGizmosSelected()
     {
-        base.OnDrawGizmos();
+        base.OnDrawGizmosSelected();
         Gizmos.color = Color.magenta;
         Gizmos.DrawWireSphere(transform.position + ScaleVector3(Vector3.up * groundCheckStartHeight), ScaleFloat(groundCheckRadius));
         Gizmos.color = Color.yellow;

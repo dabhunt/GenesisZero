@@ -788,6 +788,6 @@ public class BossAI : AIController
 	{
 		Gizmos.color = Color.black;
 		GizmosExtra.DrawWireCircle(transform.position, Vector3.forward, TriggerRadius);
-		base.OnDrawGizmos();
+		base.OnDrawGizmosSelected();
 	}
 }
