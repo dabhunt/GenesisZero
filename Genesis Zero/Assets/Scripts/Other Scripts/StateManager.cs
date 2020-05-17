@@ -75,7 +75,7 @@ public class StateManager : MonoBehaviour
         }
         if (Input.GetKeyDown(KeyCode.ScrollLock))
         {//teleport the player to the boss room
-            player.transform.position = new Vector2(-150,284);
+            player.transform.position = new Vector2(-386,69);
             //temporary code
             GameObject.FindWithTag("BUG-E").GetComponent<BUGE>().FollowingPlayer(true);
             //temporary code ^
@@ -106,6 +106,27 @@ public class StateManager : MonoBehaviour
                 player.GetHealth().SetMaxValue(9999);
             }
 
+        }
+        if (Input.GetKeyDown(KeyCode.Insert))
+        {
+            
+            //give the player 1 random Ability for the first slot
+            
+            SkillManager skillManager = player.GetSkillManager();
+            skillManager.clearSkills();
+            player.GetSkillManager().AddSkill(player.GetSkillManager().GetRandomAbility());
+            SkillObject secondAbility = skillManager.GetRandomAbility();
+            //give the player a second ability, that isn't the same as the first
+            while (skillManager.GetAbilityAmount() < 2)
+            {
+                player.GetSkillManager().AddSkill(player.GetSkillManager().GetRandomAbility());
+            }
+            int i = 0;
+            while (player.GetSkillManager().GetAmount() < 19 || i > 250)
+            { 
+                player.GetSkillManager().AddSkill(skillManager.GetRandomModByChance());
+                i++;
+            }
         }
         //get to next level instantly
         if (Input.GetKey(KeyCode.PageUp))

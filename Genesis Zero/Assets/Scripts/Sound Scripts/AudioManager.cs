@@ -573,7 +573,7 @@ public class AudioManager : MonoBehaviour
 		audioSource.loop = looping;
 		audioSource.panStereo = 0f;
 		audioSource.spatialBlend = 1.0f;
-		Debug.Log("audiosource at playtime: "+ audioSource.volume);
+		//Debug.Log("audiosource at playtime: "+ audioSource.volume);
 		// Starts playing the sound
 		audioSource.PlayScheduled(AudioSettings.dspTime + delay);
 	}
@@ -661,7 +661,7 @@ public class AudioManager : MonoBehaviour
 
 		if (temp.playOnAwake)
 		{
-			Debug.Log("vol in PlayAttachedSound: " + vol);
+			//Debug.Log("vol in PlayAttachedSound: " + vol);
 			PlayClipOnObject(temp.clip, obj, delay, vol, pit, loop);
 		}
 

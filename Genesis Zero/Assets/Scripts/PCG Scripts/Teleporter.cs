@@ -12,7 +12,7 @@ public class Teleporter : MonoBehaviour
 	//Variables for animator
 	private Transform player;
 	private GameObject buge;
-	public float portalactivedistance = 1f;
+	public float portalactivedistance = 9.5f;
 	Animator ani;
 
 	private void Start()
@@ -53,7 +53,7 @@ public class Teleporter : MonoBehaviour
 		//temporary code ^
 		buge.transform.position = player.position;
 		buge.GetComponent<BUGE>().FollowingPlayer(true);
-		Camera.main.transform.position = new Vector3(player.position.x, player.position.y, -35.6f);
+		//Camera.main.transform.position = new Vector3(player.position.x, player.position.y, -35.6f);
 		//GameObject.FindWithTag("CamCollider").transform.position = new Vector2(destinationX, GameObject.FindWithTag("CamCollider").transform.position.y);
 		TileManager.instance.curlevel++;
 	}
@@ -80,7 +80,12 @@ public class Teleporter : MonoBehaviour
 			}
 
 
-    }
+	}
+    protected virtual void OnDrawGizmos()
+	{
+		Gizmos.color = Color.magenta;
+		Gizmos.DrawWireSphere(transform.position, 3);
+	}
 
 	public float distanceFromPortal()
     {

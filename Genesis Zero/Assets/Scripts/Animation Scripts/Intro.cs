@@ -22,16 +22,19 @@ public class Intro : MonoBehaviour
     private Image image;
     private void Start()
     {
-        cardQueue = new Queue<IntroCard>();
-        IntroCard[] objs = Resources.LoadAll<IntroCard>("IntroCards");
-        for (int i = 0; i < objs.Length; i++)
+        if (SaveLoadManager.instance.newGame == true)
         {
-            cardQueue.Enqueue(objs[i]);
+            cardQueue = new Queue<IntroCard>();
+            IntroCard[] objs = Resources.LoadAll<IntroCard>("IntroCards");
+            for (int i = 0; i < objs.Length; i++)
+            {
+                cardQueue.Enqueue(objs[i]);
+            }
+            tmp = transform.Find("Text").gameObject.GetComponent<TextMeshProUGUI>();
+            transform.Find("Overlay").GetComponent<Image>().enabled = true;
+            NextCard();
+            GameInputManager.instance.DisablePlayerControls();
         }
-        tmp = transform.Find("Text").gameObject.GetComponent<TextMeshProUGUI>();
-        transform.Find("Overlay").GetComponent<Image>().enabled = true;
-        NextCard();
-        GameInputManager.instance.DisablePlayerControls();
     }
     public void NextCard()
     {

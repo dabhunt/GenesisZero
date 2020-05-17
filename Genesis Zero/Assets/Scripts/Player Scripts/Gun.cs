@@ -90,7 +90,7 @@ public class Gun : MonoBehaviour
         //means that instantiate hitbox will not calculate crit on it's own
         bool inheritCrit = false;
         instance.transform.Rotate(Vector3.forward,Random.Range(-spreadAngle, spreadAngle),Space.World);
-       instance.GetComponent<Hitbox>().InitializeHitbox(player.GetDamage().GetValue(), player, inheritCrit);
+        instance.GetComponent<Hitbox>().InitializeHitbox(player.GetDamage().GetValue(), player, inheritCrit);
         //add 1 to stacks, because Compound X applies like a secondary stack of Atom splitter
         int stacks = player.GetSkillStack("Compound X") + 1;
         bool right = controller.IsAimingRight();
@@ -116,7 +116,7 @@ public class Gun : MonoBehaviour
                     Hitbox hit = extraBullet.GetComponent<Hitbox>();
                     extraBullet.transform.Rotate(Vector3.forward, angle, Space.World);
                     //extraBullet.GetComponent<Hitbox>().MaxHits += 2;
-                    hit.InitializeHitbox(player.GetDamage().GetValue(), player, inheritCrit);
+                    hit.InitializeHitbox(player.GetDamage().GetValue()*.65f, player, inheritCrit);
                 }
             }
             //adds extra heat for each of extra bullets fired

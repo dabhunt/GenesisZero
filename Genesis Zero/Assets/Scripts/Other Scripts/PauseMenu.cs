@@ -24,6 +24,7 @@ public class PauseMenu : MonoBehaviour
     }
     public void RestartButton()
     {
+        SaveLoadManager.instance.newGame = true;
         StateManager.instance.restart.RestartScene();
     }
     public void ContinueButton()
