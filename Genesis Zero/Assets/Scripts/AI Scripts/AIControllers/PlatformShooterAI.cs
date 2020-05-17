@@ -127,9 +127,13 @@ public class PlatformShooterAI : AIController
             }
             faceDir = Mathf.RoundToInt(Mathf.Sign(Mathf.Sin(Time.time * PatrolSwitchRate + patrolCycleOffset)));
         }
-        else if (state == AIState.Attack || state == AIState.Cooldown)
+        else if (state == AIState.Attack)
         {
             targetSpeed = MoveSpeed * 0.5f;
+        }
+        else if (state == AIState.Cooldown)
+        {
+            targetSpeed = MoveSpeed * 0.2f;
         }
         else if (state == AIState.Idle)
         {

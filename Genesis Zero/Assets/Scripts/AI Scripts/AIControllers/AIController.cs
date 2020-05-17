@@ -16,6 +16,7 @@ public class AIController : Pawn
     protected AIState state = AIState.Idle; // Current behavior state
     protected bool initialized = false;
 
+    FakeRigidbody frb;
     public float IdlePatrolIntervalMin = 1.0f; // Minimum time interval for switching between idling and patrolling
     public float IdlePatrolIntervalMax = 2.0f; // Maximum time interval for switching between idling and patrolling
     private float idlePatrolIntervalCurrent = 1.0f; // Randomly chosen interval in range
@@ -40,6 +41,9 @@ public class AIController : Pawn
     public DifficultyMultiplier ChargeTimeDifficultyMultiplier;
     public DifficultyMultiplier CooldownTimeDifficultyMultiplier;
 
+    public float EnemySpaceRadius = 2.0f; // Radius within which enemies will push each other away to avoid overlapping
+    public float EnemySpaceForce = 20f; // Force with which to push other enemies away when they're too close
+
     new protected void Start()
     {
         if (!Mathf.Approximately(transform.localScale.x, transform.localScale.y)
@@ -51,6 +55,7 @@ public class AIController : Pawn
 
         base.Start();
         anim = GetComponent<AIAnimationStateController>();
+        frb = GetComponent<FakeRigidbody>();
 
         if (BehaviorProperties == null)
         {
@@ -89,6 +94,7 @@ public class AIController : Pawn
             tracker.Target = Target;
         }
     }
+
     new protected void FixedUpdate()
     {
         base.FixedUpdate();
@@ -158,6 +164,25 @@ public class AIController : Pawn
             alertTrackTime = 0.0f;
         }
 
+        if (frb != null)
+        {
+            AIController[] nearEnemies = GetNearbyEnemies(EnemySpaceRadius);
+            List<FakeRigidbody> nearBodies = new List<FakeRigidbody>();
+            for (int i = 0; i < nearEnemies.Length; i++)
+            {
+                FakeRigidbody curBody = nearEnemies[i].GetComponent<FakeRigidbody>();
+                if (curBody != null)
+                {
+                    nearBodies.Add(curBody);
+                }
+            }
+
+            for (int i = 0; i < nearBodies.Count; i++)
+            {
+                Vector3 bodyDir = transform.position - nearBodies[i].transform.position;
+                frb.Accelerate(bodyDir.normalized * Mathf.Pow(1.0f - bodyDir.magnitude / EnemySpaceRadius, 2.0f) * EnemySpaceForce);
+            }
+        }
         //Debug.Log(GetNearbyEnemies().Length);
     }
 
