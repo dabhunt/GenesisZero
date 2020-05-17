@@ -16,7 +16,7 @@ public class AIController : Pawn
     protected AIState state = AIState.Idle; // Current behavior state
     protected bool initialized = false;
 
-    FakeRigidbody frb;
+    protected FakeRigidbody frb;
     public float IdlePatrolIntervalMin = 1.0f; // Minimum time interval for switching between idling and patrolling
     public float IdlePatrolIntervalMax = 2.0f; // Maximum time interval for switching between idling and patrolling
     private float idlePatrolIntervalCurrent = 1.0f; // Randomly chosen interval in range
@@ -44,6 +44,11 @@ public class AIController : Pawn
     public float EnemySpaceRadius = 2.0f; // Radius within which enemies will push each other away to avoid overlapping
     public float EnemySpaceForce = 20f; // Force with which to push other enemies away when they're too close
 
+    protected void Awake()
+    {
+        frb = GetComponent<FakeRigidbody>();
+    }
+
     new protected void Start()
     {
         if (!Mathf.Approximately(transform.localScale.x, transform.localScale.y)
@@ -55,7 +60,6 @@ public class AIController : Pawn
 
         base.Start();
         anim = GetComponent<AIAnimationStateController>();
-        frb = GetComponent<FakeRigidbody>();
 
         if (BehaviorProperties == null)
         {

@@ -9,8 +9,6 @@ using UnityEngine;
  */
 public class ShieldEnemyAI : AIController
 {
-    protected FakeRigidbody frb;
-
     [Header("Movement")]
     public float MoveSpeed = 10f; // Maximum movement speed
     public float LungeSpeed = 20f; // Lunging attack speed
@@ -47,11 +45,6 @@ public class ShieldEnemyAI : AIController
     [Header("Difficulty")]
     public DifficultyMultiplier SpeedDifficultyMultiplier;
     public DifficultyMultiplier LungeDifficultyMultiplier;
-
-    protected void Awake()
-    {
-        frb = GetComponent<FakeRigidbody>();
-    }
 
     new protected void Start()
     {

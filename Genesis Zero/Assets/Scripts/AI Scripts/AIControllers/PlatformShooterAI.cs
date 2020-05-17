@@ -9,8 +9,6 @@ using UnityEngine;
  */
 public class PlatformShooterAI : AIController
 {
-    protected FakeRigidbody frb;
-
     [Header("Movement")]
     public float MoveSpeed = 10f; // Maximum movement speed
     private float targetSpeed = 0.0f;
@@ -52,11 +50,6 @@ public class PlatformShooterAI : AIController
     public DifficultyMultiplier SpeedDifficultyMultiplier;
     public DifficultyMultiplier AimDifficultyMultiplier;
     public DifficultyMultiplier ShootRateDifficultyMultiplier;
-
-    protected void Awake()
-    {
-        frb = GetComponent<FakeRigidbody>();
-    }
 
     new protected void Start()
     {
