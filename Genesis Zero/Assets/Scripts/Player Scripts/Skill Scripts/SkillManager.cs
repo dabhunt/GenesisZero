@@ -61,13 +61,14 @@ public class SkillManager
      */
     public void AddSkill(SkillObject skill)
     {
-        
-        if (Skills.ContainsKey(skill.name)) // Adds to the stack of skills
+        if (Skills.ContainsKey(skill.name)) // Adds to the stack of skills if player already has one
         {
             Skills[skill.name] = Skills[skill.name] + 1;
         }
         else
         {
+            if (player.GetSkillManager().GetUniqueModAmount() >= player.GetSkillManager().GetModSlotLimit())
+                return;
             skillobjects.Add(skill);
             Skills.Add(skill.name, 1);
             if (skill.IsAbility)
@@ -518,7 +519,14 @@ public class SkillManager
         VFXManager.instance.ChangeColor(modObj, GetColor(so));
         return modObj;
     }
-
+    public void clearSkills()
+    {
+        List<SkillObject> skills = GetSkillObjects();
+        for(int i = 0; i < skills.Count; i ++)
+        {
+            RemoveSkill(skills[i]);
+        }
+    }
     public int GetSkillStack(string name)
     {
         if (Skills.ContainsKey(name))
