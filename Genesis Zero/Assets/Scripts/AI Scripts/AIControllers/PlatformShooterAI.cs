@@ -186,7 +186,7 @@ public class PlatformShooterAI : AIController
 
         if (state != AIState.Attack)
         {
-            nextAim = (Target.position - transform.position - ScaleVector3(new Vector3(ProjectileStart.x * faceDir, ProjectileStart.y, ProjectileStart.z))).normalized;
+            nextAim = (Target.position - GetProjectilePoint()).normalized;
         }
 
         projectileAim = Vector3.Slerp(projectileAim, nextAim, AimSpeed * AimDifficultyMultiplier.GetFactor() * Time.fixedDeltaTime);
