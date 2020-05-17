@@ -93,10 +93,10 @@ public class PlatformShooterAI : AIController
         float slopeForceFactor = Vector3.Dot(groundNormal, Vector3.left * faceDir) + 1.0f; // Adjust movement force based on slope steepness
         float moveStutter = 1.0f;// Mathf.Round((Mathf.Sin(Time.time * StutterRate) + 1) * 0.5f);
 
-        if (state == AIState.Follow || state == AIState.Charge || state == AIState.Attack || state == AIState.Cooldown)
+        if (state == AIState.Follow || state == AIState.Charge)
         {
             faceDirPrev = faceDir;
-            if (faceDirChangeTime > 0.2f)
+            if (faceDirChangeTime > 0.2f && state != AIState.Cooldown)
             {
                 faceDir = Mathf.RoundToInt(Mathf.Sign(targetPosition.x - transform.position.x));
             }
@@ -128,6 +128,10 @@ public class PlatformShooterAI : AIController
                 patrolCycleOffset += Mathf.PI;
             }
             faceDir = Mathf.RoundToInt(Mathf.Sign(Mathf.Sin(Time.time * PatrolSwitchRate + patrolCycleOffset)));
+        }
+        else if (state == AIState.Attack || state == AIState.Cooldown)
+        {
+            targetSpeed = MoveSpeed * 0.5f;
         }
         else if (state == AIState.Idle)
         {
@@ -190,7 +194,7 @@ public class PlatformShooterAI : AIController
         {
             anim.SetFacing(Mathf.RoundToInt(Mathf.Sign(frb.GetVelocity().x)) == faceDir);
             anim.SetAimDirection(projectileAim.y);
-            anim.SetAttacking(state == AIState.Attack || state == AIState.Charge || state == AIState.Cooldown || state == AIState.Follow);
+            anim.SetAttacking(state == AIState.Attack || state == AIState.Charge || state == AIState.Follow);
         }
 
         // Projectile shooting logic
