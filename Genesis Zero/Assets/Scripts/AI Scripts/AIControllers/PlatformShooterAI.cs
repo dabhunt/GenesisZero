@@ -27,7 +27,6 @@ public class PlatformShooterAI : AIController
     private float lookAngle = 0.0f; // Angle for rotating the model laterally
     public float rotateRate = 1.0f;
     public float MaxFollowHeight = 5.0f; // Maximum height above the enemy for which the target will be tracked after going out of sight
-    public float StutterRate = 10f; // Rate for stuttering the movement to match the walking animation
 
     [Header("Ground Checking")]
     public float groundCheckDistance = 1.0f;
@@ -91,7 +90,6 @@ public class PlatformShooterAI : AIController
         if (Target == null) { return; }
 
         float slopeForceFactor = Vector3.Dot(groundNormal, Vector3.left * faceDir) + 1.0f; // Adjust movement force based on slope steepness
-        float moveStutter = 1.0f;// Mathf.Round((Mathf.Sin(Time.time * StutterRate) + 1) * 0.5f);
 
         if (state == AIState.Follow || state == AIState.Charge)
         {
@@ -116,7 +114,7 @@ public class PlatformShooterAI : AIController
 
                 if (edgeBehind)
                 {
-                    frb.Accelerate(Mathf.Sign(transform.position.x - targetPosition.x) * Vector3.right * Mathf.Min(GetAvoidCloseness(), AvoidAccelLimit) * Acceleration * AvoidAmount * slopeForceFactor * moveStutter * SpeedDifficultyMultiplier.GetFactor()); // Acceleration to keep away from the target
+                    frb.Accelerate(Mathf.Sign(transform.position.x - targetPosition.x) * Vector3.right * Mathf.Min(GetAvoidCloseness(), AvoidAccelLimit) * Acceleration * AvoidAmount * slopeForceFactor * SpeedDifficultyMultiplier.GetFactor()); // Acceleration to keep away from the target
                 }
             }
         }
@@ -143,7 +141,7 @@ public class PlatformShooterAI : AIController
         }
         faceDirChangeTime += Time.fixedDeltaTime;
 
-        targetSpeed *= GetSpeed().GetValue() * SpeedDifficultyMultiplier.GetFactor() * moveStutter;
+        targetSpeed *= GetSpeed().GetValue() * SpeedDifficultyMultiplier.GetFactor();
         if (Mathf.Abs(transform.position.x - targetPosition.x) < 0.5f)
         {
             targetSpeed = 0.0f;
