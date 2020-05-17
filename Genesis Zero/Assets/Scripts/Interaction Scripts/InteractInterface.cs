@@ -54,7 +54,7 @@ public class InteractInterface : MonoBehaviour
             }
             AudioManager.instance.PlayRandomSFXType("Interact", null, .3f);
             if (obj.GetComponent<SkillPickup>() != null)
-            { obj.GetComponent<SkillPickup>().Interact(); return; }
+                { obj.GetComponent<SkillPickup>().Interact(); return; }
             if (obj.GetComponent<Merchant>() != null)
                 { obj.GetComponent<Merchant>().Interact(); return; }
             if (obj.GetComponent<GodHead>() != null)

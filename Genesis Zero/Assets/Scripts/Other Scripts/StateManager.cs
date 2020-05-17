@@ -107,6 +107,27 @@ public class StateManager : MonoBehaviour
             }
 
         }
+        if (Input.GetKeyDown(KeyCode.Insert))
+        {
+            
+            //give the player 1 random Ability for the first slot
+            
+            SkillManager skillManager = player.GetSkillManager();
+            skillManager.clearSkills();
+            player.GetSkillManager().AddSkill(player.GetSkillManager().GetRandomAbility());
+            SkillObject secondAbility = skillManager.GetRandomAbility();
+            //give the player a second ability, that isn't the same as the first
+            while (skillManager.GetAbilityAmount() < 2)
+            {
+                player.GetSkillManager().AddSkill(player.GetSkillManager().GetRandomAbility());
+            }
+            int i = 0;
+            while (player.GetSkillManager().GetAmount() < 19 || i > 250)
+            { 
+                player.GetSkillManager().AddSkill(skillManager.GetRandomModByChance());
+                i++;
+            }
+        }
         //get to next level instantly
         if (Input.GetKey(KeyCode.PageUp))
         {

@@ -54,6 +54,7 @@ public class Gun : MonoBehaviour
     private RectTransform[] crossArr;
     private RectTransform screenXhair;
     private float spread;
+    private GameObject vfx_MuzzleFlash;
     private void Start() 
     {
         player = GetComponent<Player>();
@@ -69,12 +70,16 @@ public class Gun : MonoBehaviour
     }
 
     public void Shoot()
-    {   
+    {
+        
         spreadAngle = overheat.ShootBloom();
         //print("spreadAngle: "+spreadAngle);
         Vector3 spawnpoint = new Vector3(firePoint.transform.position.x, firePoint.transform.position.y, 0);
         //instantiate the players next bullet, passing in the crit variable to decide what type of bullet
         bool crit = Crit();
+        vfx_MuzzleFlash = VFXManager.instance.PlayEffectReturn("VFX_MuzzleFlash", spawnpoint, 0, "");
+        vfx_MuzzleFlash.transform.SetParent(firePoint);
+        vfx_MuzzleFlash.transform.localPosition = Vector3.zero;
         GameObject instance = (GameObject) Instantiate(GetProjectile(crit), spawnpoint, Quaternion.identity);
         //sets the object to look towards where it should be firing
         instance.transform.LookAt(controller.worldXhair.transform);
@@ -90,7 +95,7 @@ public class Gun : MonoBehaviour
         //means that instantiate hitbox will not calculate crit on it's own
         bool inheritCrit = false;
         instance.transform.Rotate(Vector3.forward,Random.Range(-spreadAngle, spreadAngle),Space.World);
-       instance.GetComponent<Hitbox>().InitializeHitbox(player.GetDamage().GetValue(), player, inheritCrit);
+        instance.GetComponent<Hitbox>().InitializeHitbox(player.GetDamage().GetValue(), player, inheritCrit);
         //add 1 to stacks, because Compound X applies like a secondary stack of Atom splitter
         int stacks = player.GetSkillStack("Compound X") + 1;
         bool right = controller.IsAimingRight();
@@ -116,7 +121,7 @@ public class Gun : MonoBehaviour
                     Hitbox hit = extraBullet.GetComponent<Hitbox>();
                     extraBullet.transform.Rotate(Vector3.forward, angle, Space.World);
                     //extraBullet.GetComponent<Hitbox>().MaxHits += 2;
-                    hit.InitializeHitbox(player.GetDamage().GetValue(), player, inheritCrit);
+                    hit.InitializeHitbox(player.GetDamage().GetValue()*.65f, player, inheritCrit);
                 }
             }
             //adds extra heat for each of extra bullets fired
@@ -124,6 +129,7 @@ public class Gun : MonoBehaviour
             overheat.Increment(heatPerExtraBullets);
             overheat.GetDelayBeforeCooling().AddRepeatingBonus(.25f, .25f, .5f, "ExtraBulletCoolDelay");
         }
+
     }
     private void FixedUpdate() 
     {
@@ -158,6 +164,7 @@ public class Gun : MonoBehaviour
             hit.Critical = true;
             hit.Damage = player.GetDamage().GetValue();
             projectile = VFXManager.instance.ChangeColor(projectile, CritBulletColor);
+            vfx_MuzzleFlash = VFXManager.instance.ChangeColor(vfx_MuzzleFlash, CritBulletColor);
             float burnDmg = burnDamagePerStack * player.GetSkillStack("Ignition Bullets");
             if (burnDmg > 0)
                 hit.Burn = new Vector2(3, burnDmg);
@@ -166,6 +173,7 @@ public class Gun : MonoBehaviour
             if (exploitStacks > 0)
             {
                 projectile = VFXManager.instance.ChangeColor(projectile, stunBulletColor);
+                vfx_MuzzleFlash = VFXManager.instance.ChangeColor(vfx_MuzzleFlash, stunBulletColor);
                 hit.StunTime = stunDuration + (1 - exploitStacks) * stunIncreasePerStack;
             }
             //apply Knockback on crit if you have it

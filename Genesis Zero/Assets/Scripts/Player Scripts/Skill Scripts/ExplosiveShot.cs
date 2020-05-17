@@ -64,7 +64,7 @@ public class ExplosiveShot : MonoBehaviour
     {
         Hitbox bulletHit = this.GetComponent<Hitbox>();
         Hitbox explosionHit = explosion.GetComponent<Hitbox>();
-        explosion.GetComponent<Hitbox>().InitializeHitbox(bulletHit.Source.GetDamage().GetValue(), bulletHit.Source);
+        explosion.GetComponent<Hitbox>().InitializeHitbox(bulletHit.Source.GetDamage().GetValue()/2, bulletHit.Source);
         //explosionHit.Burn = bulletHit.Burn;
         explosionHit.StunTime = bulletHit.StunTime;
         return explosion;

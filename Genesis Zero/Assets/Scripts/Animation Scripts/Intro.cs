@@ -23,15 +23,20 @@ public class Intro : MonoBehaviour
     private void Start()
     {
         cardQueue = new Queue<IntroCard>();
-        IntroCard[] objs = Resources.LoadAll<IntroCard>("IntroCards");
-        for (int i = 0; i < objs.Length; i++)
+        if (SaveLoadManager.instance.newGame == true)
         {
-            cardQueue.Enqueue(objs[i]);
+
+            IntroCard[] objs = Resources.LoadAll<IntroCard>("IntroCards");
+            for (int i = 0; i < objs.Length; i++)
+            {
+                cardQueue.Enqueue(objs[i]);
+            }
+            tmp = transform.Find("Text").gameObject.GetComponent<TextMeshProUGUI>();
+            transform.Find("Overlay").GetComponent<Image>().enabled = true;
+            NextCard();
+            GameInputManager.instance.DisablePlayerControls();
         }
-        tmp = transform.Find("Text").gameObject.GetComponent<TextMeshProUGUI>();
-        transform.Find("Overlay").GetComponent<Image>().enabled = true;
-        NextCard();
-        GameInputManager.instance.DisablePlayerControls();
+        else { EndIntro();}
     }
     public void NextCard()
     {
@@ -56,13 +61,13 @@ public class Intro : MonoBehaviour
             cardQueue.Dequeue();
             FadeIn();
             Invoke("FadeOut", fadeDuration + durationOnCard);
-            Invoke("NextCard", fadeDuration + durationOnCard + fadeDuration +inactiveDuration);
-            
+            Invoke("NextCard", fadeDuration + durationOnCard + fadeDuration + inactiveDuration);
+
         }
     }
     void Update()
     {
-       transform.Find("Overlay").gameObject.GetComponent<Image>().color = overlay;
+        transform.Find("Overlay").gameObject.GetComponent<Image>().color = overlay;
         if (Input.GetKeyDown(KeyCode.Escape))
             EndIntro();
     }
@@ -83,6 +88,13 @@ public class Intro : MonoBehaviour
         cardQueue.Clear();
         gameObject.SetActive(false);
         gameObject.transform.parent.Find("BlackOverlay").GetComponent<SpriteFade>().FadeOut(4f);
-        GameObject.FindGameObjectWithTag("MainCamera").GetComponent<CutsceneController>().IntroCutscene();
+        if (Camera.main.GetComponentInParent<CutsceneController>())
+        {
+            if (SaveLoadManager.instance.newGame == true)
+                Camera.main.GetComponentInParent<CutsceneController>().IntroCutscene();
+            else
+                Camera.main.GetComponentInParent<CutsceneController>().Reset();
+        }
+
     }
 }
