@@ -102,6 +102,7 @@ public class BossAI : AIController
 			if(introdialogue == false && PassedTime >= .85f)
 			{
 				DialogueManager.instance.TriggerDialogue("PreBoss4", false);
+				AudioManager.instance.PlaySound("SFX_BossRoar(1)");
 				introdialogue = true;
 			}
 
@@ -116,6 +117,7 @@ public class BossAI : AIController
 
 				if (TimeBeforeFight <= 0)
 				{
+					AudioManager.instance.PlaySound("SFX_BossRoar(0)");
 					Camera.main.GetComponent<BasicCameraZoom>().ChangeFieldOfView(30);
 					GameObject canvas = GameObject.FindGameObjectWithTag("CanvasUI");
 					healthbar = canvas.transform.Find("BossHealthbar").gameObject;
@@ -355,6 +357,7 @@ public class BossAI : AIController
 			animator.SetTrigger("WildTrigger"); //Set wild trigger
 			FlameGround.SetActive(true);        //Set the flame ground to true/active
 			animator.SetBool("Wild", true);
+			AudioManager.instance.PlaySound("SFX_BossRoar(0)"); // Play sound Effect
 			Wild = true;
 		}
 		else if (Heat >= 5)
@@ -432,6 +435,7 @@ public class BossAI : AIController
 				headbuttangle = ((target - transform.position).normalized * 16);
 				HeadButt(transform.position + ((target - transform.position).normalized * 16), .25f, chargeuptime);
 				Invoke("SpawnHeadbutt", chargeuptime);
+				AudioManager.instance.PlaySound("SFX_ChargeHeadSlam");
 			}
 			else if (Attack == 1)
 			{
@@ -443,6 +447,7 @@ public class BossAI : AIController
 				SpawnIndicator(transform.position, new Vector2(24, 4), target - transform.position, new Color(1, 0, 0, .1f), Vector2.zero, false, true, actiontime - .1f);
 				LookAtVectorTemp(target, actiontime - .1f);
 				Invoke("SpitFireball", actiontime - .1f);
+				AudioManager.instance.PlaySound("SFX_ChargeFireBall");
 			}
 			else
 			{
@@ -452,6 +457,7 @@ public class BossAI : AIController
 				SetBossstate(State.Pulse, actiontime);
 				SpawnIndicator(transform.position, new Vector2(18, 18), lookDir, new Color(1, 0, 0, .1f), Vector2.zero, true, false, chargeuptime);
 				Invoke("Pulse", chargeuptime);
+				AudioManager.instance.PlaySound("SFX_ChargePulse");
 			}
 
 			if (RepeatingAttack < 0)
