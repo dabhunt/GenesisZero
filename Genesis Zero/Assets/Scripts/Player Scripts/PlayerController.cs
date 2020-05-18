@@ -244,6 +244,8 @@ public class PlayerController : MonoBehaviour
             moveVec = Vector3.right;
             return;
         }
+        Vector3 castOrigin = transform.position + new Vector3(0, 0.5f * characterHeight + 0.5f * characterWidth, 0);
+        Physics.SphereCast(castOrigin, 0.5f * characterWidth, Vector3.down, out groundHitInfo, verCastLength + 0.15f, immoveables, QueryTriggerInteraction.UseGlobal);
         moveVec = Vector3.Cross(groundHitInfo.normal, Vector3.forward);
     }
 
@@ -331,11 +333,9 @@ public class PlayerController : MonoBehaviour
     private void CheckGround()
     {
         Collider[] cols;
-        Vector3 halfExtends = new Vector3(0.25f * characterWidth, 0, 0);
         Vector3 origin = transform.position + Vector3.up * 0.25f * characterWidth;
         cols = Physics.OverlapSphere(origin, 0.5f * characterWidth, immoveables, QueryTriggerInteraction.UseGlobal);
 
-        //Resets jump counts, play landing sound
         if (IsBlocked(Vector3.down))
         {
             isGrounded = true;
@@ -351,6 +351,7 @@ public class PlayerController : MonoBehaviour
                     }
                 }
             }
+            //Resets jump counts, play landing sound
             terminalVel = resetTerminalVel;
             if (vertVel < 0)
             {
@@ -601,7 +602,6 @@ public class PlayerController : MonoBehaviour
                     if (!item.collider.isTrigger)
                     {
                         isBlock = true;
-                        groundHitInfo = item;
                         break;
                     }
                 }
