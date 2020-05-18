@@ -20,7 +20,7 @@ public class PlayerController : MonoBehaviour
     public float doubleJumpStrength = 10f;
     public float horCastLength = 0.3f;
     public float verCastLength = 1.05f;
-    public float groundCheckPadding = 0.1f;
+    public float groundCheckPadding = 0.15f;
     public float rollDuration = 3f;
     public float rollSpeedMult = 1.5f;
     public float rollCooldownDuration = 3.0f;
@@ -46,7 +46,7 @@ public class PlayerController : MonoBehaviour
     public GameObject worldXhair;
     [Tooltip("Canvas Crosshair (visible)")]
     public RectTransform screenXhair;
-    public float gamePadSens = 15f;
+    public float deadZoneRadius = 1.5f;
     private float timeToFire = 0;
 
     [Header("Animations")]
@@ -245,7 +245,7 @@ public class PlayerController : MonoBehaviour
             return;
         }
         Vector3 castOrigin = transform.position + new Vector3(0, 0.5f * characterHeight + 0.5f * characterWidth, 0);
-        Physics.SphereCast(castOrigin, 0.5f * characterWidth, Vector3.down, out groundHitInfo, verCastLength + 0.15f, immoveables, QueryTriggerInteraction.UseGlobal);
+        Physics.SphereCast(castOrigin, 0.5f * characterWidth, Vector3.down, out groundHitInfo, verCastLength + groundCheckPadding, immoveables, QueryTriggerInteraction.UseGlobal);
         moveVec = Vector3.Cross(groundHitInfo.normal, Vector3.forward);
     }
 
@@ -257,7 +257,7 @@ public class PlayerController : MonoBehaviour
         if (ctx.performed)
         {
             if (!inputActions.PlayerControls.enabled) return;
-            if (isRolling) return;
+            if (isRolling || isDashing) return;
             if (isGrounded && jumpCount < 2) return;
             jumpPressedTime = jumpBufferTime;
             if (!isJumping && jumpCount > 0)
@@ -289,7 +289,7 @@ public class PlayerController : MonoBehaviour
         print("terminal "+ terminal);
         if (vertVel > terminal * .35f)
             vertVel = terminal * .35f;
-        terminalVel = terminal*-1;
+        terminalVel = terminal * -1;
     }
     /* This function is used to update the jump cycle and its behavior
      */
@@ -360,7 +360,7 @@ public class PlayerController : MonoBehaviour
                     sound.Land();
             }
                
-            if (!isJumping)
+            if (!isJumping && !isDashing && !isRolling)
                 jumpCount = 2;
         }
         else
@@ -527,28 +527,37 @@ public class PlayerController : MonoBehaviour
      */
     private void Aim()
     {
-        //if (!Cursor.visible) Cursor.visible = true;
-        float radius = 50f;
         float camZ = Mathf.Abs(camRef.transform.position.z);
         Vector3 worldXhairPos;
-        Vector2 screenXhairPos = new Vector2(Input.mousePosition.x, Input.mousePosition.y);
-        Vector3 offsetOrigin = transform.position + Vector3.up * 0.5f * characterHeight;
-        Vector2 charPos = camRef.WorldToScreenPoint(offsetOrigin);
+        Vector2 screenXhairPos;
+
         //Calculating to stop crosshair from going off screen;
         Vector3 maxBounds = camRef.ViewportToScreenPoint(new Vector3(1, 1, 0));
         Vector3 minBounds = camRef.ViewportToScreenPoint(new Vector3(0, 0, 0));
-        //Setting the screenXhair position and clamping it to stay in screen
+        //Shifting origin of deadzone to middle of character
+        Vector3 offsetOrigin = transform.position + Vector3.up * 0.5f * characterHeight;
+        Vector3 worldMousePos = camRef.ScreenToWorldPoint(new Vector3 (Input.mousePosition.x, Input.mousePosition.y, camZ + 0.5f));
+        worldMousePos.z = 0;
+        //Clamping crosshair to a circle around player
+        // if mouse is too close to player
+        if (Vector3.Distance(worldMousePos, offsetOrigin) < deadZoneRadius)
+        {
+            Vector3 direction = (worldMousePos - offsetOrigin).normalized;
+            Vector3 circlePoint = offsetOrigin + (direction * deadZoneRadius);
+            screenXhairPos = camRef.WorldToScreenPoint(circlePoint);
+        }
+        else
+        {
+            screenXhairPos = new Vector2(Input.mousePosition.x, Input.mousePosition.y);
+        }
+        //Clamping position of crosshair inside the screen
         screenXhairPos.x = Mathf.Clamp(screenXhairPos.x, minBounds.x, maxBounds.x);
         screenXhairPos.y = Mathf.Clamp(screenXhairPos.y, minBounds.y, maxBounds.y);
-        if (Vector2.Distance(screenXhairPos, charPos) < radius)
-        {
-            Vector2 direction = (screenXhairPos - charPos).normalized;
-            screenXhairPos = charPos + (direction * radius);
-        }
+        //Updating position of screenXhair
         screenXhair.position = screenXhairPos;
 
-        //Setting position of worldXhair to match screenXhair
-        worldXhairPos = camRef.ScreenToWorldPoint(new Vector3 (screenXhairPos.x, screenXhairPos.y, camZ + 0.5f));
+        //Updating position of worldXhair to match screenXhair
+        worldXhairPos = camRef.ScreenToWorldPoint(new Vector3(screenXhairPos.x, screenXhairPos.y, camZ + 0.5f));
         worldXhairPos.z = 0;
         worldXhair.transform.position = worldXhairPos;
 
