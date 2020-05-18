@@ -246,7 +246,7 @@ public class ShieldEnemyAI : AIController
         }
     }
 
-    protected void OnDrawGizmosSelected()
+    protected override void OnDrawGizmosSelected()
     {
         base.OnDrawGizmosSelected();
         Gizmos.color = Color.magenta;

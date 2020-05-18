@@ -259,7 +259,7 @@ public class PlatformShooterAI : AIController
         return ProjectileSource != null ? ProjectileSource.position : transform.position + ScaleVector3(new Vector3(ProjectileStart.x * faceDir, ProjectileStart.y, ProjectileStart.z));
     }
 
-    protected void OnDrawGizmosSelected()
+    protected override void OnDrawGizmosSelected()
     {
         base.OnDrawGizmosSelected();
         Gizmos.color = Color.magenta;

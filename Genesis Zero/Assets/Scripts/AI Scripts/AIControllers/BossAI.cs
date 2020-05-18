@@ -68,7 +68,7 @@ public class BossAI : AIController
 	private GameObject camera;
 
 	private Vector3 back, foward, up, down;
-	protected void Awake()
+	protected override void Awake()
 	{
 		zdepth = transform.position.z;
 		lookposition = transform.position;
@@ -784,7 +784,7 @@ public class BossAI : AIController
 		return result;
 	}
 
-	private void OnDrawGizmosSelected()
+	protected override void OnDrawGizmosSelected()
 	{
 		Gizmos.color = Color.black;
 		GizmosExtra.DrawWireCircle(transform.position, Vector3.forward, TriggerRadius);
