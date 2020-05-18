@@ -67,12 +67,10 @@ public class SkillManager
         }
         else
         {
-            if (player.GetSkillManager().GetUniqueModAmount() >= player.GetSkillManager().GetModSlotLimit())
-                return;
-            skillobjects.Add(skill);
-            Skills.Add(skill.name, 1);
             if (skill.IsAbility)
             {
+                skillobjects.Add(skill);
+                Skills.Add(skill.name, 1);
                 abilityamount++;
                 playerabilities.Add(skill);
                 if (ability1 == "")
@@ -86,6 +84,10 @@ public class SkillManager
             }
             else
             {
+                if (GetUniqueModAmount() >= GetModSlotLimit())
+                    return;
+                skillobjects.Add(skill);
+                Skills.Add(skill.name, 1);
                 modamount++;
                 playermods.Add(skill);
                 switch (skill.Rarity)
