@@ -125,6 +125,8 @@ public class BossAI : AIController
 					healthbar = canvas.transform.Find("BossHealthbar").gameObject;
 					healthbar.SetActive(true);
 					TimeBeforeFight = 0;
+					SetBossstate(State.Setting, 2);
+					animator.Play("Intro");
 					//StartCoroutine(CockBack(1.25f, Target.position - transform.position, 1));
 				}
 			}
