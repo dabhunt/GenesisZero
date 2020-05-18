@@ -93,20 +93,21 @@ public class BossAI : AIController
 	{
 		base.Update();
 
-		if (GetDistanceToTarget() < TriggerRadius && initiated == false) {
+		if (GetDistanceToTarget() < TriggerRadius && initiated == false)
+		{
 			initiated = true;
 		}
 		if (initiated)
 		{
 			PassedTime += Time.deltaTime;
-			if(introdialogue == false && PassedTime >= .85f)
+			if (introdialogue == false && PassedTime >= .85f)
 			{
 				DialogueManager.instance.TriggerDialogue("PreBoss4", false);
 				AudioManager.instance.PlaySound("SFX_BossRoar(1)");
 				introdialogue = true;
 			}
 
-			if(TimeBeforeFight > 0)
+			if (TimeBeforeFight > 0)
 			{
 				TimeBeforeFight -= Time.deltaTime;
 				if (DialogueManager.instance.IsDialoguePlaying() == false && PassedTime > 1.25f)
@@ -118,6 +119,7 @@ public class BossAI : AIController
 				if (TimeBeforeFight <= 0)
 				{
 					AudioManager.instance.PlaySound("SFX_BossRoar(0)");
+					camera.transform.DOShakePosition(duration: 1.25f, strength: 1, vibrato: 5, randomness: 60, snapping: false, fadeOut: true);
 					Camera.main.GetComponent<BasicCameraZoom>().ChangeFieldOfView(30);
 					GameObject canvas = GameObject.FindGameObjectWithTag("CanvasUI");
 					healthbar = canvas.transform.Find("BossHealthbar").gameObject;
@@ -538,7 +540,7 @@ public class BossAI : AIController
 		{
 			float minnum = Wild ? 2 : 0;
 			minnum = num == 0 ? 0 : minnum;
-			float max = Wild ? num + 2: num;
+			float max = Wild ? num + 2 : num;
 			RepeatingAttack = (int)Random.Range(0, max);
 		}
 		else
@@ -734,6 +736,7 @@ public class BossAI : AIController
 		Vector2 angle = (Vector2)transform.rotation.eulerAngles;
 		Quaternion rot = Quaternion.Euler(angle.x, angle.y, 0);
 		GameObject hitbox = Instantiate(FireballPrefab, transform.position, rot);
+		AudioManager.instance.PlaySound("SFX_FireExplosion", false, 0);
 	}
 
 	void SpawnHeadbutt()
@@ -764,6 +767,8 @@ public class BossAI : AIController
 		GameObject hitbox = Instantiate(PulsePrefab, transform.position, rot);
 		hitbox.transform.parent = transform;
 		hitbox.GetComponent<Hitbox>().LifeTime = .1f;
+		camera.transform.DOShakePosition(duration: .75f, strength: 1, vibrato: 5, randomness: 60, snapping: false, fadeOut: true);
+		AudioManager.instance.PlaySound("SFX_FireExplosion", false, 0);
 	}
 
 
