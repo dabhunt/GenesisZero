@@ -108,7 +108,7 @@ Transform:
   m_GameObject: {fileID: 1233786274}
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
   m_LocalPosition: {x: 0, y: 0, z: 0}
-  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_LocalScale: {x: 0.9, y: 0.9, z: 0.9}
   m_Children:
   - {fileID: 830138126}
   m_Father: {fileID: 2000804235349801761}
@@ -127,13 +127,14 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   StartScale: {x: 0.5, y: 0.5, z: 0.5}
-  EndScale: {x: 2, y: 2, z: 2}
+  EndScale: {x: 0.9, y: 0.9, z: 0.9}
   DisableWhileNotCharging: 1
   FlashTime: 0.5
   FlashColor: {r: 1, g: 1, b: 1, a: 1}
   FlashRate: 40
   AimAtTarget: 0
   UseAiAim: 0
+  StayAtProjectilePoint: 0
 --- !u!1 &1492215082563166375
 GameObject:
   m_ObjectHideFlags: 0
@@ -5348,7 +5349,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   vfxName: VFX_ExplosionEnemy
-  vfxScaleMultiplier: 2
+  vfxScaleMultiplier: 3
   sound: 
   quitting: 0
   minEssenceDrop: 0

@@ -19,13 +19,16 @@ public class AbilityCasting : MonoBehaviour
     [Header("Manic Titan Ability (Active)")]
     //how long the effect lasts
     public float MT_ActiveTime = 4;
-    public float MT_Cooldown = 13f;
+    public float MT_Cooldown = 9f;
     //1 = 100% more attack speed, based on base attack speed
     public float MT_AttackSpeedBoost = 1f;
     public float MT_CritBoost = .3f;
     [Header("Spartan Laser")]
+    public float SL_Cooldown = 6f;
     //each successful kill makes the laser 20% larger
     public float scaleMultiPerKill = 1.2f;
+    private bool SL_pressed = false;
+    private bool SL_charged = false;
     [Header("FireDash")]
     public LayerMask ignoreEnemiesLayerMask;
     public float FD_duration = .5f;
@@ -93,24 +96,24 @@ public class AbilityCasting : MonoBehaviour
         switch (name)
         {
             case "Pulse Burst":
-                InitializeAbility(3, 0, 0, num);
+                InitializeAbility(4, 0, 0, num);
                 CastPulseBurst();
                 break;
             case "Burst Charge":
-                InitializeAbility(3, 0,0, num);
+                InitializeAbility(4, 0,0, num);
                 CastBurstCharge();
                 break;
             case "Overdrive":
-                InitializeAbility(20, 0,0, num);
+                InitializeAbility(17, 0,0, num);
                 CastOverdrive(num);
                 break;
             case "Time Dilation":
-                InitializeAbility(10, 0,0, num);
+                InitializeAbility(9, 0,0, num);
                 CastSlowDown();
                 break;
             case "Culling Blast":
-                InitializeAbility(7, 0,0, num);
-                CastSpartanLaser();
+                InitializeAbility(0, 1, 8, num);
+                CastSpartanLaser(num);
                 break;
             case "Wound Sealant":
                 InitializeAbility(100, 0,0, num);
@@ -125,15 +128,15 @@ public class AbilityCasting : MonoBehaviour
             case "Heat Vent Shield":
                 if (player.GetOverHeat().GetHeat() < 1)
                     return; //prevent player from using shield at 0 heat, since it does nothing
-                InitializeAbility(8, 0, 4, num);
+                InitializeAbility(6, 0, 4, num);
                 CastHeatShield(num);
                 break;
             case "Fire Dash":
-                InitializeAbility(3, 0, 0, num);
+                InitializeAbility(4, 0, 0, num);
                 CastFireDash();
                 break;
             case "Singularity":
-                InitializeAbility(12, 0, 0, num);
+                InitializeAbility(7, 0, 0, num);
                 CastSingularity();
                 break;
             case "Manic Titan":
@@ -170,8 +173,8 @@ public class AbilityCasting : MonoBehaviour
     {
         AbilityCooldown1 = cooldown;
         TotalAbilityCooldown1 = cooldown;
-        AbilityCasttime1 = casttime;
-        TotalAbilityCasttime1 = casttime;
+        //AbilityCasttime1 = casttime;
+        //TotalAbilityCasttime1 = casttime;
         ActiveTime1 = activeTime;
     }
 
@@ -179,8 +182,8 @@ public class AbilityCasting : MonoBehaviour
     {
         AbilityCooldown2 = cooldown;
         TotalAbilityCooldown2 = cooldown;
-        AbilityCasttime2 = casttime;
-        TotalAbilityCasttime2 = casttime;
+        //AbilityCasttime2 = casttime;
+        //TotalAbilityCasttime2 = casttime;
         ActiveTime2 = activeTime;
     }
 
@@ -314,17 +317,48 @@ public class AbilityCasting : MonoBehaviour
         VFXManager.instance.TimeEffect(TS_effectDuration, 1);
     }
 
-    private void CastSpartanLaser()
+    private void CastSpartanLaser(int num)
     {
-        GameObject hitbox = SpawnGameObject("SpartanLaser", CastAtAngle(pc.CenterPoint(), aimDir, .5f), GetComponent<Gun>().firePoint.rotation);
-        SpartanLaser laser = hitbox.GetComponent<SpartanLaser>();
-        UniqueEffects U = GetComponent<UniqueEffects>();
-        float scale = Mathf.Pow(scaleMultiPerKill, U.GetKillCount());
-        hitbox.transform.localScale = new Vector3(scale, scale, scale);
-        float damage = U.SL_CalculateDmg();
-        hitbox.GetComponent<Hitbox>().InitializeHitbox(damage, player);
+        print(" abilitycasttime1: " + AbilityCasttime1);
+        print(" abilitycasttime2: " + AbilityCasttime2);
+        if (SL_pressed == false)
+        {   //check if the user has pressed the ability once to start the charge up process
+            SL_pressed = true;
+            //set the cast time manually for this ability so that we know when it's charged up 
+            if (num == 1)
+                AbilityCasttime1 = 1;
+            else
+                AbilityCasttime2 = 1;
+            print("charging...");
+            //GameObject chargeUp = VFXManager.instance.PlayEffectReturn("ChargeUp", GetComponent<Gun>().firePoint.position, 0, "");
+            //chargeUp.transform.SetParent(this.transform);
+        }
+        //if the ability has been pressed before and the casttime has reached 0
+        else
+        { //if the ability has charged up
+            if (SL_pressed == true && ((num == 1 && AbilityCasttime1 <= 0) || (num == 2 && AbilityCasttime2 <= 0)))   
+            {
+                print("Blasting");
+                SL_pressed = false;
+                GameObject hitbox = SpawnGameObject("SpartanLaser", CastAtAngle(pc.CenterPoint(), aimDir, .5f), GetComponent<Gun>().firePoint.rotation);
+                SpartanLaser laser = hitbox.GetComponent<SpartanLaser>();
+                UniqueEffects U = GetComponent<UniqueEffects>();
+                float scale = Mathf.Pow(scaleMultiPerKill, U.GetKillCount());
+                hitbox.transform.localScale = new Vector3(scale, scale, scale);
+                float damage = U.SL_CalculateDmg();
+                hitbox.GetComponent<Hitbox>().InitializeHitbox(damage, player);
+                //manually put spartan laser ability on cooldown since the initial cast can't have a cooldown
+                if (num == 1)
+                {
+                    AbilityCooldown1 = SL_Cooldown; ui.Cast(0);
+                }
+                else
+                {
+                    AbilityCooldown2 = SL_Cooldown; ui.Cast(1);
+                }
+            }
+        }
     }
-    //this won't work after the changes to getmodfromstring 
     private void CastWoundSealant()
     {
         SkillObject skill = player.GetSkillManager().GetSkillFromString("Wound Sealant");
@@ -371,7 +405,6 @@ public class AbilityCasting : MonoBehaviour
             explosion.GetComponent<Hitbox>().InitializeHitbox(player.GetAbilityPowerAmount()*.8f, player);
         }
     }
-
     private GameObject SpawnGameObject(string name, Vector2 position, Quaternion quat)
     {
         GameObject effect = Instantiate(Resources.Load<GameObject>("Hitboxes/" + name), position, quat);
