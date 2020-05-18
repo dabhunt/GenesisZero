@@ -64,6 +64,7 @@ public class StateManager : MonoBehaviour
                 if (pauseMenu.activeSelf)
                 {
                     pauseMenu.SetActive(false);
+                    ToggleOptionsMenu(false);
                     UnpauseGame();
                 }
                 else

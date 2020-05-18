@@ -47,6 +47,7 @@ public class PlayerController : MonoBehaviour
     [Tooltip("Canvas Crosshair (visible)")]
     public RectTransform screenXhair;
     public float gamePadSens = 15f;
+    public float radius = 70f;
     private float timeToFire = 0;
 
     [Header("Animations")]
@@ -528,7 +529,7 @@ public class PlayerController : MonoBehaviour
     private void Aim()
     {
         //if (!Cursor.visible) Cursor.visible = true;
-        float radius = 50f;
+
         float camZ = Mathf.Abs(camRef.transform.position.z);
         Vector3 worldXhairPos;
         Vector2 screenXhairPos = new Vector2(Input.mousePosition.x, Input.mousePosition.y);
@@ -731,6 +732,10 @@ public class PlayerController : MonoBehaviour
     public void StopDash()
     {
         isDashing = false;
+    }
+    public Vector2 CenterPoint()
+    {
+        return (this.transform.position + new Vector3(0, characterHeight/2,0));
     }
     private void LogDebug()
     {
