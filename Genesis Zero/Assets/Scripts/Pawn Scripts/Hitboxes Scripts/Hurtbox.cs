@@ -95,11 +95,12 @@ public class Hurtbox : MonoBehaviour
         //collision.GetContact(0).point;
         Vector2 hitdir = avg - transform.position;
         float angle = Vector2.Angle(hitdir, vel);
-
-        //if(GetComponent<Player>()) Debug.Log(angle);
-        //Debug.Log("Colliding");
-        if (GetComponentInParent<Pawn>() && GetComponentInParent<Pawn>().GetKnockBackForce() > 3 && ((vel.magnitude > 4 && collision.collider.isTrigger == false) || GetComponentInParent<Pawn>().IsForcedKnockBack()))
+		//Debug.Log("COLLISION");
+		//if(GetComponent<Player>()) Debug.Log(angle);
+		//Debug.Log("Colliding");
+		if (GetComponentInParent<Pawn>() && GetComponentInParent<Pawn>().GetKnockBackForce() > 3 && ((vel.magnitude > 4 && collision.collider.isTrigger == false) || GetComponentInParent<Pawn>().IsForcedKnockBack()))
         {
+			//Debug.Log("STOP");
             if (GetComponentInParent<Pawn>().IsForcedKnockBack() && Mathf.Abs(angle) < 160 && !collisions.Contains(collision.gameObject) && resettime < Time.fixedDeltaTime)
             {
 				GetComponentInParent<Pawn>().KnockBackForced(-GetComponentInParent<Pawn>().GetKnockBackVector(), GetComponentInParent<Pawn>().GetKnockBackForce() / 2);
@@ -111,13 +112,15 @@ public class Hurtbox : MonoBehaviour
 
                 collisions.Add(collision.gameObject);
                 resettime = Time.fixedDeltaTime * 1;
-                return;
+				//Debug.Log("STOPHOP");
+				return;
             }
             else if (Mathf.Abs(angle) < 75)  // if the object hits the other object directly, then they take the damage
             {
 
-                float damage = (int)(vel.magnitude * 4) / 2;
-                GetComponent<Pawn>().TakeDamage(damage, null);
+				//Debug.Log("STOPTOP");
+				float damage = (int)(vel.magnitude * 4) / 2;
+				GetComponentInParent<Pawn>().TakeDamage(damage, null);
                 GameObject dn = VFXManager.instance.PlayEffect("DamageNumber", new Vector3(transform.position.x, transform.position.y + 1, transform.position.z - .5f));
                 dn.GetComponent<DamageNumber>().SetNumber(damage);
                 dn.GetComponent<DamageNumber>().SetColor(new Color(.5f, .5f, 1f));
