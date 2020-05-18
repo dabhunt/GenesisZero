@@ -6,7 +6,7 @@ using UnityEngine;
 public class AbilityCasting : MonoBehaviour
 {
     Player player;
-    PlayerController PC;
+    PlayerController pc;
     SkillManager skillmanager;
 
     [Header("Time Dilation Ability")]
@@ -36,7 +36,7 @@ public class AbilityCasting : MonoBehaviour
     private float TotalAbilityCooldown1;
     private float ActiveTime1;
 
-    
+
     private float AbilityCasttime2;
     private float AbilityCooldown2;
     private float TotalAbilityCasttime2;
@@ -51,16 +51,16 @@ public class AbilityCasting : MonoBehaviour
     {
         player = GetComponent<Player>();
         skillmanager = player.GetSkillManager();
-        PC = GetComponent<PlayerController>();
+        pc = GetComponent<PlayerController>();
         ui = AbilityCooldownPanel.GetComponent<AbilityCD>();
         aimDir = new Vector2(0, 0);
-        
+
     }
     // Update is called once per frame
     void Update()
     {
-        aimDir = PC.worldXhair.transform.position - transform.position;
-        WorldXhair = PC.worldXhair.transform.position;
+        aimDir = pc.worldXhair.transform.position - transform.position;
+        WorldXhair = pc.worldXhair.transform.position;
         UpdateAbilities();
     }
     public void CastAbility1()
@@ -263,9 +263,10 @@ public class AbilityCasting : MonoBehaviour
 
     private void CastPulseBurst()
     {
-        player.GetComponent<PlayerController>().SetVertVel(0);
+        pc.SetVertVel(0);
         player.KnockBackForced(-aimDir + Vector2.up, 25);
-        GameObject hitbox = SpawnGameObject("PulseBurstHitbox", CastAtAngle(transform.position, aimDir, 1), GetComponent<Gun>().firePoint.rotation); hitbox.GetComponent<Hitbox>().InitializeHitbox(GetComponent<Player>().GetAbilityPower().GetValue()/2, GetComponent<Player>());
+        GameObject hitbox = SpawnGameObject("PulseBurstHitbox", CastAtAngle(pc.CenterPoint(), aimDir, 1), Quaternion.identity);
+        hitbox.GetComponent<Hitbox>().InitializeHitbox(GetComponent<Player>().GetAbilityPower().GetValue()/2, GetComponent<Player>());
         hitbox.GetComponent<Hitbox>().SetStunTime(1.2f);
         player.SetInvunerable(.5f);
         hitbox.GetComponent<Hitbox>().SetLifeTime(.15f);
@@ -275,7 +276,7 @@ public class AbilityCasting : MonoBehaviour
     {
         player.GetComponent<PlayerController>().SetVertVel(0);
         player.KnockBackForced(aimDir + Vector2.up, 25);
-        GameObject hitbox = SpawnGameObject("BurstChargeHitbox", transform.position, Quaternion.identity);
+        GameObject hitbox = SpawnGameObject("BurstChargeHitbox", pc.CenterPoint(), Quaternion.identity);
         hitbox.GetComponent<Hitbox>().InitializeHitbox(GetComponent<Player>().GetAbilityPower().GetValue(), GetComponent<Player>());
         hitbox.transform.parent = transform;
         player.SetInvunerable(.6f);
@@ -287,7 +288,7 @@ public class AbilityCasting : MonoBehaviour
         player.GetComponent<PlayerController>().SetVertVel(0);
         player.KnockBackForced(aimDir + Vector2.up, 25);
         player.GetComponent<PlayerController>().NewLayerMask(ignoreEnemiesLayerMask, FD_duration);
-        GameObject hitbox = SpawnGameObject("FireDashHitbox", CastAtAngle(transform.position, aimDir, .5f), GetComponent<Gun>().firePoint.rotation);
+        GameObject hitbox = SpawnGameObject("FireDashHitbox", CastAtAngle(pc.CenterPoint(), aimDir, .5f), GetComponent<Gun>().firePoint.rotation);
         hitbox.GetComponent<Hitbox>().InitializeHitbox(GetComponent<Player>().GetAbilityPower().GetValue()/2, GetComponent<Player>());
         hitbox.transform.parent = transform;
         player.SetInvunerable(FD_duration);
@@ -315,7 +316,7 @@ public class AbilityCasting : MonoBehaviour
 
     private void CastSpartanLaser()
     {
-        GameObject hitbox = SpawnGameObject("SpartanLaser", CastAtAngle(transform.position, aimDir, .5f), GetComponent<Gun>().firePoint.rotation);
+        GameObject hitbox = SpawnGameObject("SpartanLaser", CastAtAngle(pc.CenterPoint(), aimDir, .5f), GetComponent<Gun>().firePoint.rotation);
         SpartanLaser laser = hitbox.GetComponent<SpartanLaser>();
         UniqueEffects U = GetComponent<UniqueEffects>();
         float scale = Mathf.Pow(scaleMultiPerKill, U.GetKillCount());
@@ -323,12 +324,12 @@ public class AbilityCasting : MonoBehaviour
         float damage = U.SL_CalculateDmg();
         hitbox.GetComponent<Hitbox>().InitializeHitbox(damage, player);
     }
-    //this won't work after the changes to getmodfromstring 
+    //this won't work after the changes to getmodfromstring
     private void CastWoundSealant()
     {
         SkillObject skill = player.GetSkillManager().GetSkillFromString("Wound Sealant");
         player.GetSkillManager().RemoveSkill(skill);
-        VFXManager.instance.PlayEffect("VFX_Health",transform.position);
+        VFXManager.instance.PlayEffect("VFX_Health", pc.CenterPoint());
         player.Heal(55);
     }
     private void CastManicTitan()
@@ -345,7 +346,7 @@ public class AbilityCasting : MonoBehaviour
     {
         if (GetComponent<OverHeat>().GetHeat() > 0)
         {
-            GameObject shield = SpawnGameObject("HeatVentShield", transform.position, Quaternion.identity);
+            GameObject shield = SpawnGameObject("HeatVentShield", pc.CenterPoint(), Quaternion.identity);
             shield.transform.parent = transform;
             shield.GetComponent<Pawn>().Initialize();
             shield.GetComponent<Pawn>().UpdateStats();
@@ -357,9 +358,9 @@ public class AbilityCasting : MonoBehaviour
 
     private void CastSingularity()
     {
-        GameObject hitbox = SpawnGameObject("Sing_Projectile", CastAtAngle(transform.position, aimDir, .5f), GetComponent<Gun>().firePoint.rotation);
+        GameObject hitbox = SpawnGameObject("Sing_Projectile", CastAtAngle(pc.CenterPoint(), aimDir, .5f), GetComponent<Gun>().firePoint.rotation);
         hitbox.GetComponent<Hitbox>().InitializeHitbox(1, player);
-        hitbox.GetComponent<Projectile>().lifeTime = ((WorldXhair - (Vector2)transform.position).magnitude / hitbox.GetComponent<Projectile>().speed);
+        hitbox.GetComponent<Projectile>().lifeTime = ((WorldXhair - (Vector2)pc.CenterPoint()).magnitude / hitbox.GetComponent<Projectile>().speed);
         if (hitbox.GetComponent<EmitOnDestroy>().Emits[0] != null)
         {
             GameObject pull = hitbox.GetComponent<EmitOnDestroy>().Emits[0];

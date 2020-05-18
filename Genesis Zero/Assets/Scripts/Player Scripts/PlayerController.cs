@@ -47,6 +47,7 @@ public class PlayerController : MonoBehaviour
     [Tooltip("Canvas Crosshair (visible)")]
     public RectTransform screenXhair;
     public float gamePadSens = 15f;
+    public float radius = 70f;
     private float timeToFire = 0;
 
     [Header("Animations")]
@@ -244,6 +245,8 @@ public class PlayerController : MonoBehaviour
             moveVec = Vector3.right;
             return;
         }
+        Vector3 castOrigin = transform.position + new Vector3(0, 0.5f * characterHeight + 0.5f * characterWidth, 0);
+        Physics.SphereCast(castOrigin, 0.5f * characterWidth, Vector3.down, out groundHitInfo, verCastLength + 0.15f, immoveables, QueryTriggerInteraction.UseGlobal);
         moveVec = Vector3.Cross(groundHitInfo.normal, Vector3.forward);
     }
 
@@ -331,11 +334,9 @@ public class PlayerController : MonoBehaviour
     private void CheckGround()
     {
         Collider[] cols;
-        Vector3 halfExtends = new Vector3(0.25f * characterWidth, 0, 0);
         Vector3 origin = transform.position + Vector3.up * 0.25f * characterWidth;
         cols = Physics.OverlapSphere(origin, 0.5f * characterWidth, immoveables, QueryTriggerInteraction.UseGlobal);
 
-        //Resets jump counts, play landing sound
         if (IsBlocked(Vector3.down))
         {
             isGrounded = true;
@@ -351,6 +352,7 @@ public class PlayerController : MonoBehaviour
                     }
                 }
             }
+            //Resets jump counts, play landing sound
             terminalVel = resetTerminalVel;
             if (vertVel < 0)
             {
@@ -526,16 +528,24 @@ public class PlayerController : MonoBehaviour
      */
     private void Aim()
     {
+        //if (!Cursor.visible) Cursor.visible = true;
+
         float camZ = Mathf.Abs(camRef.transform.position.z);
         Vector3 worldXhairPos;
-        Vector3 screenXhairPos = new Vector2(Input.mousePosition.x, Input.mousePosition.y);
-
+        Vector2 screenXhairPos = new Vector2(Input.mousePosition.x, Input.mousePosition.y);
+        Vector3 offsetOrigin = transform.position + Vector3.up * 0.5f * characterHeight;
+        Vector2 charPos = camRef.WorldToScreenPoint(offsetOrigin);
         //Calculating to stop crosshair from going off screen;
         Vector3 maxBounds = camRef.ViewportToScreenPoint(new Vector3(1, 1, 0));
         Vector3 minBounds = camRef.ViewportToScreenPoint(new Vector3(0, 0, 0));
         //Setting the screenXhair position and clamping it to stay in screen
         screenXhairPos.x = Mathf.Clamp(screenXhairPos.x, minBounds.x, maxBounds.x);
         screenXhairPos.y = Mathf.Clamp(screenXhairPos.y, minBounds.y, maxBounds.y);
+        if (Vector2.Distance(screenXhairPos, charPos) < radius)
+        {
+            Vector2 direction = (screenXhairPos - charPos).normalized;
+            screenXhairPos = charPos + (direction * radius);
+        }
         screenXhair.position = screenXhairPos;
 
         //Setting position of worldXhair to match screenXhair
@@ -550,7 +560,7 @@ public class PlayerController : MonoBehaviour
             isAimingRight = false;
         if (isRolling) return;
         //rotate the gun
-        gunObject.transform.LookAt(worldXhair.transform);
+        //gunObject.transform.LookAt(worldXhair.transform);
 
         // Shoot()
         if (fireInput > 0)
@@ -601,7 +611,6 @@ public class PlayerController : MonoBehaviour
                     if (!item.collider.isTrigger)
                     {
                         isBlock = true;
-                        groundHitInfo = item;
                         break;
                     }
                 }
@@ -723,6 +732,10 @@ public class PlayerController : MonoBehaviour
     public void StopDash()
     {
         isDashing = false;
+    }
+    public Vector2 CenterPoint()
+    {
+        return (this.transform.position + new Vector3(0, characterHeight/2,0));
     }
     private void LogDebug()
     {
