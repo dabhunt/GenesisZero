@@ -16,6 +16,7 @@ public class OptionsMenu : MonoBehaviour
     private GameObject loadingScreen;
     private TMPro.TMP_Dropdown resDropdown;
     private List<Resolution> resolutions;
+    private SettingsData settingsData;
 
     public void Start()
     {
@@ -49,6 +50,35 @@ public class OptionsMenu : MonoBehaviour
         resDropdown.AddOptions(values);
         resDropdown.value = index;
         resDropdown.RefreshShownValue();
+
+        if (SaveLoadManager.instance.SettingsSaveExists())
+        {
+            settingsData = SaveLoadManager.instance.LoadSettings();
+            //Applying saved settings
+            SetMasterVolume(settingsData.masterVolume);
+            SetSFXVolume(settingsData.sfxVolume);
+            SetMusicVolume(settingsData.musicVolume);
+            MuteMaster(settingsData.muteMaster);
+            MuteSFX(settingsData.muteSFX);
+            MuteMusic(settingsData.muteMusic);
+            SetFullScreen(settingsData.fullScreen);
+            SetResolution(settingsData.resIndex);
+            //Update the visuals of the options menu
+            SetSliderValue("Master", settingsData.masterVolume);
+            SetSliderValue("Music", settingsData.musicVolume);
+            SetSliderValue("SFX", settingsData.sfxVolume);
+            SetToggleValue("Master", settingsData.muteMaster);
+            SetToggleValue("Music", settingsData.muteMusic);
+            SetToggleValue("SFX", settingsData.muteSFX);
+            resDropdown.value = settingsData.resIndex;
+            resDropdown.RefreshShownValue();
+            optionsScreen.transform.Find("Resolution").Find("FullScreen").gameObject.GetComponent<Toggle>().isOn = settingsData.fullScreen;
+        }
+        else
+        {
+            settingsData = new SettingsData();
+        }
+        optionsScreen.SetActive(false);
     }
     public void OptionsButton()
     {
@@ -66,35 +96,54 @@ public class OptionsMenu : MonoBehaviour
         {
             //if in main scene do this
         }
+        AudioManager.instance.mixer.GetFloat("masterVolume", out settingsData.masterVolume);
+        AudioManager.instance.mixer.GetFloat("sfxVolume", out settingsData.sfxVolume);
+        AudioManager.instance.mixer.GetFloat("musicVolume", out settingsData.musicVolume);
+        //Saves user preferences
+        SaveLoadManager.instance.SaveSettings(settingsData);
         optionsScreen.SetActive(false);
-
     }
 
     //Event to set master volume
     public void SetMasterVolume(float value)
     {
-        if (value >= -40f)
+        //Debug.Log("MasterVolume: " + value);
+        if (value > -40f)
+        {
             AudioManager.instance.mixer.SetFloat("masterVolume", value);
+        }
         else
+        {
             AudioManager.instance.mixer.SetFloat("masterVolume", -80f);
+        }
     }
 
     //Event to set sfx volume
     public void SetSFXVolume(float value)
     {
-        if (value >= -40f)
+        //Debug.Log("SFXVolume: " + value);
+        if (value > -40f)
+        {
             AudioManager.instance.mixer.SetFloat("sfxVolume", value);
+        }
         else
+        {
             AudioManager.instance.mixer.SetFloat("sfxVolume", -80f);
+        }
     }
 
     //Event to set music volume
     public void SetMusicVolume(float value)
     {
-        if (value >= -40f)
+        //Debug.Log("MusicVolume: " + value);
+        if (value > -40f)
+        {
             AudioManager.instance.mixer.SetFloat("musicVolume", value);
+        }
         else
+        {
             AudioManager.instance.mixer.SetFloat("musicVolume", -80f);
+        }
     }
 
     //Event for toggle mute(master)
@@ -110,6 +159,7 @@ public class OptionsMenu : MonoBehaviour
             SetInteractable("Master", true);
             SetMasterVolume(GetSliderValue("Master"));
         }
+        settingsData.muteMaster = value;
     }
 
     //Event for toggle mute(sfx)
@@ -125,6 +175,7 @@ public class OptionsMenu : MonoBehaviour
             SetInteractable("SFX", true);
             SetSFXVolume(GetSliderValue("SFX"));
         }
+        settingsData.muteSFX = value;
     }
 
     //Event for toggle mute(music)
@@ -140,6 +191,7 @@ public class OptionsMenu : MonoBehaviour
             SetInteractable("Music", true);
             SetMusicVolume(GetSliderValue("Music"));
         }
+        settingsData.muteMusic = value;
     }
 
     private float GetSliderValue(string name)
@@ -153,14 +205,30 @@ public class OptionsMenu : MonoBehaviour
         Slider slider = optionsScreen.transform.Find("AudioSettings").Find(name).gameObject.GetComponent<Slider>();
         slider.interactable = value;
     }
+    private void SetSliderValue(string name, float value)
+    {
+        float val = Mathf.Clamp(value, -40f, 0f);
+        optionsScreen.transform.Find("AudioSettings").Find(name).gameObject.GetComponent<Slider>().value = val;
+    }
 
+    private void SetToggleValue(string name, bool value)
+    {
+        optionsScreen.transform.Find("AudioSettings").Find(name).Find("Toggle").GetComponent<Toggle>().isOn = value;
+    }
     public void SetFullScreen(bool value)
     {
         Screen.fullScreen = value;
+        settingsData.fullScreen = value;
     }
     //Event to set Resolution
     public void SetResolution(int index)
     {
         Screen.SetResolution(resolutions[index].width, resolutions[index].height, Screen.fullScreen, resolutions[index].refreshRate);
+        settingsData.resIndex = index;
+    }
+
+    public SettingsData GetSettingsData()
+    {
+        return settingsData;
     }
 }

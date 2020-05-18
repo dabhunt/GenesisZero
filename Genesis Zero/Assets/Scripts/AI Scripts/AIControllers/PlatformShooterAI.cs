@@ -9,8 +9,6 @@ using UnityEngine;
  */
 public class PlatformShooterAI : AIController
 {
-    protected FakeRigidbody frb;
-
     [Header("Movement")]
     public float MoveSpeed = 10f; // Maximum movement speed
     private float targetSpeed = 0.0f;
@@ -27,7 +25,6 @@ public class PlatformShooterAI : AIController
     private float lookAngle = 0.0f; // Angle for rotating the model laterally
     public float rotateRate = 1.0f;
     public float MaxFollowHeight = 5.0f; // Maximum height above the enemy for which the target will be tracked after going out of sight
-    public float StutterRate = 10f; // Rate for stuttering the movement to match the walking animation
 
     [Header("Ground Checking")]
     public float groundCheckDistance = 1.0f;
@@ -48,16 +45,13 @@ public class PlatformShooterAI : AIController
     public float AimSpeed = 1.0f;
     public Vector3 ProjectileStart = Vector3.zero;
     private Vector3 projectileAim = Vector3.right;
+    public Transform ProjectileSource;
+    private Vector3 nextAim = Vector3.right;
 
     [Header("Difficulty")]
     public DifficultyMultiplier SpeedDifficultyMultiplier;
     public DifficultyMultiplier AimDifficultyMultiplier;
     public DifficultyMultiplier ShootRateDifficultyMultiplier;
-
-    protected void Awake()
-    {
-        frb = GetComponent<FakeRigidbody>();
-    }
 
     new protected void Start()
     {
@@ -91,12 +85,11 @@ public class PlatformShooterAI : AIController
         if (Target == null) { return; }
 
         float slopeForceFactor = Vector3.Dot(groundNormal, Vector3.left * faceDir) + 1.0f; // Adjust movement force based on slope steepness
-        float moveStutter = 1.0f;// Mathf.Round((Mathf.Sin(Time.time * StutterRate) + 1) * 0.5f);
 
         if (state == AIState.Follow || state == AIState.Charge || state == AIState.Attack || state == AIState.Cooldown)
         {
             faceDirPrev = faceDir;
-            if (faceDirChangeTime > 0.2f)
+            if (faceDirChangeTime > 0.2f && state != AIState.Attack && state != AIState.Cooldown)
             {
                 faceDir = Mathf.RoundToInt(Mathf.Sign(targetPosition.x - transform.position.x));
             }
@@ -107,6 +100,15 @@ public class PlatformShooterAI : AIController
             }
 
             targetSpeed = MoveSpeed;
+            if (state == AIState.Attack)
+            {
+                targetSpeed *= 0.5f;
+            }
+            if (state == AIState.Cooldown)
+            {
+                targetSpeed *= 0.2f;
+            }
+
             if (isGrounded && faceDir == Mathf.RoundToInt(Mathf.Sign(targetPosition.x - transform.position.x)))
             {
                 if (!edgeInFront)
@@ -114,9 +116,9 @@ public class PlatformShooterAI : AIController
                     targetSpeed = 0.0f;
                 }
 
-                if (edgeBehind)
+                if (edgeBehind && state != AIState.Attack && state != AIState.Cooldown)
                 {
-                    frb.Accelerate(Mathf.Sign(transform.position.x - targetPosition.x) * Vector3.right * Mathf.Min(GetAvoidCloseness(), AvoidAccelLimit) * Acceleration * AvoidAmount * slopeForceFactor * moveStutter * SpeedDifficultyMultiplier.GetFactor()); // Acceleration to keep away from the target
+                    frb.Accelerate(Mathf.Sign(transform.position.x - targetPosition.x) * Vector3.right * Mathf.Min(GetAvoidCloseness(), AvoidAccelLimit) * Acceleration * AvoidAmount * slopeForceFactor * SpeedDifficultyMultiplier.GetFactor()); // Acceleration to keep away from the target
                 }
             }
         }
@@ -139,7 +141,7 @@ public class PlatformShooterAI : AIController
         }
         faceDirChangeTime += Time.fixedDeltaTime;
 
-        targetSpeed *= GetSpeed().GetValue() * SpeedDifficultyMultiplier.GetFactor() * moveStutter;
+        targetSpeed *= GetSpeed().GetValue() * SpeedDifficultyMultiplier.GetFactor();
         if (Mathf.Abs(transform.position.x - targetPosition.x) < 0.5f)
         {
             targetSpeed = 0.0f;
@@ -182,15 +184,18 @@ public class PlatformShooterAI : AIController
             }
         }
 
-        projectileAim = Vector3.Slerp(projectileAim,
-            (Target.position - transform.position - ScaleVector3(new Vector3(ProjectileStart.x * faceDir, ProjectileStart.y, ProjectileStart.z))).normalized,
-            AimSpeed * AimDifficultyMultiplier.GetFactor() * Time.fixedDeltaTime);
+        if (state != AIState.Attack)
+        {
+            nextAim = (Target.position - GetProjectilePoint()).normalized;
+        }
+
+        projectileAim = Vector3.Slerp(projectileAim, nextAim, AimSpeed * AimDifficultyMultiplier.GetFactor() * Time.fixedDeltaTime);
 
         if (anim != null)
         {
             anim.SetFacing(Mathf.RoundToInt(Mathf.Sign(frb.GetVelocity().x)) == faceDir);
             anim.SetAimDirection(projectileAim.y);
-            anim.SetAttacking(state == AIState.Attack || state == AIState.Charge || state == AIState.Cooldown || state == AIState.Follow);
+            anim.SetAttacking(state == AIState.Attack || state == AIState.Charge || state == AIState.Follow);
         }
 
         // Projectile shooting logic
@@ -202,8 +207,9 @@ public class PlatformShooterAI : AIController
                 if (AttackProjectile != null)
                 {
 
-                    GameObject spawnedProjectile = Instantiate(AttackProjectile, transform.position + ScaleVector3(new Vector3(ProjectileStart.x * faceDir, ProjectileStart.y, ProjectileStart.z)),
+                    GameObject spawnedProjectile = Instantiate(AttackProjectile, GetProjectilePoint(),
                         Quaternion.LookRotation(Vector3.forward, projectileAim));
+                    spawnedProjectile.transform.parent = transform;
                     Hitbox spawnedHitbox = spawnedProjectile.GetComponent<Hitbox>();
                     if (spawnedHitbox != null)
                     {
@@ -248,9 +254,14 @@ public class PlatformShooterAI : AIController
         return projectileAim;
     }
 
-    protected void OnDrawGizmosSelected()
+    public override Vector3 GetProjectilePoint()
     {
-        base.OnDrawGizmos();
+        return ProjectileSource != null ? ProjectileSource.position : transform.position + ScaleVector3(new Vector3(ProjectileStart.x * faceDir, ProjectileStart.y, ProjectileStart.z));
+    }
+
+    protected override void OnDrawGizmosSelected()
+    {
+        base.OnDrawGizmosSelected();
         Gizmos.color = Color.magenta;
         Gizmos.DrawWireSphere(transform.position + ScaleVector3(Vector3.up * groundCheckStartHeight), ScaleFloat(groundCheckRadius));
         Gizmos.color = Color.yellow;
@@ -259,6 +270,6 @@ public class PlatformShooterAI : AIController
         Gizmos.DrawRay(trueOrigin, ScaleVector3(new Vector3(ForwardEdgeRay.x * faceDir, ForwardEdgeRay.y, ForwardEdgeRay.z)));
         Gizmos.DrawRay(trueOrigin, ScaleVector3(new Vector3(BackEdgeRay.x * faceDir, BackEdgeRay.y, BackEdgeRay.z)));
         Gizmos.color = Color.green;
-        Gizmos.DrawWireSphere(transform.position + ScaleVector3(new Vector3(ProjectileStart.x * faceDir, ProjectileStart.y, ProjectileStart.z)), ScaleFloat(0.1f));
+        Gizmos.DrawWireSphere(GetProjectilePoint(), ScaleFloat(0.1f));
     }
 }

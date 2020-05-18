@@ -12,9 +12,12 @@ public class SaveLoadManager : MonoBehaviour
     public string pFileName = "pData";
     [Tooltip("Name of file for map data")]
     public string mFileName = "mData";
+    [Tooltip("Name of file for settings data")]
+    public string sFileName = "sData";
 
     private string pPath;
     private string mPath;
+    private string sPath;
     private static bool newgame = true;
     public bool newGame
     { 
@@ -38,6 +41,7 @@ public class SaveLoadManager : MonoBehaviour
     {
         pPath = "/" + pFileName + ".dat";
         mPath = "/" + mFileName + ".dat";
+        sPath = "/" + sFileName + ".dat";
     }
 
     /* Update and save relevant data that we want to save
@@ -59,6 +63,33 @@ public class SaveLoadManager : MonoBehaviour
         mFile.Close();
     }
 
+    public void SaveSettings(SettingsData data)
+    {
+        Debug.Log("Saving Settings");
+        BinaryFormatter bf = new BinaryFormatter();
+        FileStream sFile = File.Create(Application.persistentDataPath + sPath);
+        bf.Serialize(sFile, data);
+        sFile.Close();
+    }
+
+    public SettingsData LoadSettings()
+    {
+        if (File.Exists(Application.persistentDataPath + sPath))
+        {
+            Debug.Log("Loading User Preferences");
+            BinaryFormatter bf = new BinaryFormatter();
+            FileStream file = File.Open(Application.persistentDataPath + sPath, FileMode.Open);
+            SettingsData data = bf.Deserialize(file) as SettingsData;
+            file.Close();
+            return data;
+        }
+        else
+        {
+            Debug.LogError("Settings file not found");
+            return null;
+        }
+    }
+
     /* Load saved player data from the hidden
      * binary file.
      */
@@ -69,9 +100,9 @@ public class SaveLoadManager : MonoBehaviour
             Debug.Log("Loading Character Data");
             BinaryFormatter bf = new BinaryFormatter();
             FileStream file = File.Open(Application.persistentDataPath + pPath, FileMode.Open);            
-            PlayerData playerData = bf.Deserialize(file) as PlayerData;
+            PlayerData data = bf.Deserialize(file) as PlayerData;
             file.Close();
-            return playerData;
+            return data;
         }
         else
         {
@@ -90,9 +121,9 @@ public class SaveLoadManager : MonoBehaviour
             Debug.Log("Loading MapData");
             BinaryFormatter bf = new BinaryFormatter();
             FileStream file = File.Open(Application.persistentDataPath + mPath, FileMode.Open);
-            MapData mapData = bf.Deserialize(file) as MapData;
+            MapData data = bf.Deserialize(file) as MapData;
             file.Close();
-            return mapData;
+            return data;
         }
         else
         {
@@ -149,7 +180,6 @@ public class SaveLoadManager : MonoBehaviour
         List<SkillObject> sList = sM.GetSkillObjects();
         data.skillList = new string[sList.Count];
         data.skillStacks = new int[sList.Count];
-        //data.seed = ;
         data.playerPosition[0] = player.gameObject.transform.position.x;
         data.playerPosition[1] = player.gameObject.transform.position.y;
         data.playerPosition[2] = player.gameObject.transform.position.z;
@@ -181,14 +211,16 @@ public class SaveLoadManager : MonoBehaviour
         }
         return data;
     }
-
+    
     //Checks if the save files exists
     public bool SaveExists()
     {
-        if (File.Exists(Application.persistentDataPath + pPath) /*&& File.Exists(Application.persistentDataPath + mPath)*/)
-            return true;
-        else
-            return false;
+        return (File.Exists(Application.persistentDataPath + pPath) && File.Exists(Application.persistentDataPath + mPath));
+    }
+
+    public bool SettingsSaveExists()
+    {
+        return (File.Exists(Application.persistentDataPath + sPath));
     }
 }
 
@@ -212,4 +244,17 @@ public class PlayerData
 public class MapData
 {
     public int seed;
+}
+
+[Serializable]
+public class SettingsData
+{
+    public bool muteMaster;
+    public bool muteSFX;
+    public bool muteMusic;
+    public float masterVolume;
+    public float sfxVolume;
+    public float musicVolume;
+    public int resIndex;
+    public bool fullScreen;
 }

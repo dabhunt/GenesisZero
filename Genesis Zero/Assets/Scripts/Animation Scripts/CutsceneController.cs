@@ -15,10 +15,9 @@ public class CutsceneController : MonoBehaviour
     private float InspectorFov;
     private void Start()
     {
-        Primarycanvas = GameObject.FindGameObjectWithTag("CanvasUI");
+        UpdateCanvases();
         cam = Camera.main;
         InspectorFov = cam.fieldOfView;
-        CutsceneCanvas = GameObject.FindGameObjectWithTag("CutsceneCanvas");
     }
     private void Update()
     {
@@ -35,6 +34,7 @@ public class CutsceneController : MonoBehaviour
     }
     public void Cutscene()
     {
+        UpdateCanvases();
         GameInputManager.instance.DisablePlayerControls();
         StateManager.instance.Cursorvisible = true;
         CutsceneCanvas.SetActive(true);
@@ -46,17 +46,24 @@ public class CutsceneController : MonoBehaviour
         intro.time = intro.duration;
         Reset();
     }
+    public void UpdateCanvases()
+    {
+        if (Primarycanvas == null)
+            Primarycanvas = GameObject.FindGameObjectWithTag("CanvasUI");
+        if (CutsceneCanvas == null)
+            CutsceneCanvas = GameObject.FindGameObjectWithTag("CutsceneCanvas");
+    }
     public void Reset()
     {
+        UpdateCanvases();
         StateManager.instance.Cursorvisible = false;
         if(SceneManager.GetActiveScene().name != "BossTest")
 		{
-			DOTween.To(() => cam.fieldOfView, x => cam.fieldOfView = x, InspectorFov, 3);
+			DOTween.To(() => cam.fieldOfView, x => cam.fieldOfView = x, 15, 3);
 		}
         GameInputManager.instance.EnablePlayerControls();
         GameObject.FindGameObjectWithTag("GameManagers").transform.Find("TileManager").GetComponent<DeactivateDistant>().ResetDist();
-        CutsceneCanvas.SetActive(false);
         Primarycanvas.SetActive(true);
-        GameInputManager.instance.EnablePlayerControls();
+        CutsceneCanvas.SetActive(false);
     }
 }

@@ -9,8 +9,6 @@ using UnityEngine;
  */
 public class PlatformPatrollerAI : AIController
 {
-    protected FakeRigidbody frb;
-
     [Header("Movement")]
     public float MoveSpeed = 10f; // Maximum movement speed
     public float LungeSpeed = 20f; // Lunging attack speed
@@ -47,11 +45,6 @@ public class PlatformPatrollerAI : AIController
     [Header("Difficulty")]
     public DifficultyMultiplier SpeedDifficultyMultiplier;
     public DifficultyMultiplier LungeDifficultyMultiplier;
-
-    protected void Awake()
-    {
-        frb = GetComponent<FakeRigidbody>();
-    }
 
     new protected void Start()
     {
@@ -249,9 +242,9 @@ public class PlatformPatrollerAI : AIController
         }
     }
 
-    protected void OnDrawGizmosSelected()
+    protected override void OnDrawGizmosSelected()
     {
-        base.OnDrawGizmos();
+        base.OnDrawGizmosSelected();
         Gizmos.color = Color.magenta;
         Gizmos.DrawWireSphere(transform.position + ScaleVector3(Vector3.up * groundCheckStartHeight), ScaleFloat(groundCheckRadius));
         Gizmos.color = Color.yellow;

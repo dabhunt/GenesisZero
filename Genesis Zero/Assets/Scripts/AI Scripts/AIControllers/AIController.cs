@@ -16,6 +16,7 @@ public class AIController : Pawn
     protected AIState state = AIState.Idle; // Current behavior state
     protected bool initialized = false;
 
+    protected FakeRigidbody frb;
     public float IdlePatrolIntervalMin = 1.0f; // Minimum time interval for switching between idling and patrolling
     public float IdlePatrolIntervalMax = 2.0f; // Maximum time interval for switching between idling and patrolling
     private float idlePatrolIntervalCurrent = 1.0f; // Randomly chosen interval in range
@@ -39,6 +40,14 @@ public class AIController : Pawn
 
     public DifficultyMultiplier ChargeTimeDifficultyMultiplier;
     public DifficultyMultiplier CooldownTimeDifficultyMultiplier;
+
+    public float EnemySpaceRadius = 2.0f; // Radius within which enemies will push each other away to avoid overlapping
+    public float EnemySpaceForce = 20f; // Force with which to push other enemies away when they're too close
+
+    protected virtual void Awake()
+    {
+        frb = GetComponent<FakeRigidbody>();
+    }
 
     new protected void Start()
     {
@@ -89,6 +98,7 @@ public class AIController : Pawn
             tracker.Target = Target;
         }
     }
+
     new protected void FixedUpdate()
     {
         base.FixedUpdate();
@@ -158,6 +168,25 @@ public class AIController : Pawn
             alertTrackTime = 0.0f;
         }
 
+        if (frb != null)
+        {
+            AIController[] nearEnemies = GetNearbyEnemies(EnemySpaceRadius);
+            List<FakeRigidbody> nearBodies = new List<FakeRigidbody>();
+            for (int i = 0; i < nearEnemies.Length; i++)
+            {
+                FakeRigidbody curBody = nearEnemies[i].GetComponent<FakeRigidbody>();
+                if (curBody != null)
+                {
+                    nearBodies.Add(curBody);
+                }
+            }
+
+            for (int i = 0; i < nearBodies.Count; i++)
+            {
+                Vector3 bodyDir = transform.position - nearBodies[i].transform.position;
+                frb.Accelerate(bodyDir.normalized * Mathf.Min(10f, Mathf.Pow(1.0f - bodyDir.magnitude / EnemySpaceRadius, 2.0f) * EnemySpaceForce));
+            }
+        }
         //Debug.Log(GetNearbyEnemies().Length);
     }
 
@@ -454,18 +483,27 @@ public class AIController : Pawn
      */
     public AIController[] GetNearbyEnemies()
     {
-        List<AIController> nearEnemies = new List<AIController>();
         if (BehaviorProperties != null)
         {
-            for (int i = 0; i < EnemyManager.AllEnemies.Count; i++)
+            return GetNearbyEnemies(BehaviorProperties.AlertEnemiesRadius);
+        }
+        return new AIController[0];
+    }
+
+    /**
+     * Returns an array of all enemies within the given radius
+     */
+    public AIController[] GetNearbyEnemies(float radius)
+    {
+        List<AIController> nearEnemies = new List<AIController>();
+        for (int i = 0; i < EnemyManager.AllEnemies.Count; i++)
+        {
+            AIController curEnemy = EnemyManager.AllEnemies[i];
+            if (curEnemy != null && curEnemy != this && curEnemy.gameObject.activeSelf)
             {
-                AIController curEnemy = EnemyManager.AllEnemies[i];
-                if (curEnemy != null && curEnemy != this && curEnemy.gameObject.activeSelf)
+                if ((curEnemy.transform.position - transform.position).sqrMagnitude <= radius * radius)
                 {
-                    if ((curEnemy.transform.position - transform.position).sqrMagnitude <= BehaviorProperties.AlertEnemiesRadius * BehaviorProperties.AlertEnemiesRadius)
-                    {
-                        nearEnemies.Add(curEnemy);
-                    }
+                    nearEnemies.Add(curEnemy);
                 }
             }
         }
@@ -475,7 +513,7 @@ public class AIController : Pawn
     /**
      * Draw visual representations of properties
      */
-    protected virtual void OnDrawGizmos()
+    protected virtual void OnDrawGizmosSelected()
     {
         if (!Application.isPlaying) { UpdateOrigin(); }
 
@@ -587,6 +625,14 @@ public class AIController : Pawn
             return (Target.position - transform.position).normalized;
         }
         return Vector3.right;
+    }
+
+    /**
+     * Returns the launching point for projectiles
+     */
+    public virtual Vector3 GetProjectilePoint()
+    {
+        return GetOrigin();
     }
 
     /**

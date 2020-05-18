@@ -60,6 +60,9 @@ public class VFXManager : MonoBehaviour
             if (child.gameObject.GetComponent<TrailRenderer>() != null)
             {
                 child.gameObject.GetComponent<TrailRenderer>().startColor = color;
+                child.gameObject.GetComponent<TrailRenderer>().endColor = color;
+                //child.gameObject.GetComponent<TrailRenderer>().endColor = Color.black;
+
             }
             Renderer r = child.gameObject.GetComponent<Renderer>();
             if (r != null && r.material.HasProperty("_EmissiveColor"))

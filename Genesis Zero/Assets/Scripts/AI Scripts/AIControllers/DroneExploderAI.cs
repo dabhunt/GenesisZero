@@ -9,8 +9,6 @@ using UnityEngine;
  */
 public class DroneExploderAI : AIController
 {
-    protected FakeRigidbody frb;
-
     private Vector3 lookDir = Vector3.up;
     [Header("Movement")]
     public float RotationRate = 10f; // How fast to rotate
@@ -40,11 +38,6 @@ public class DroneExploderAI : AIController
     [Header("Difficulty")]
     public DifficultyMultiplier SpeedDifficultyMultiplier;
     public DifficultyMultiplier RotationDifficultyMultiplier;
-
-    protected void Awake()
-    {
-        frb = GetComponent<FakeRigidbody>();
-    }
 
     new protected void Start()
     {

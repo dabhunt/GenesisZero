@@ -57,6 +57,7 @@ public class Restart : MonoBehaviour
     public void RestartScene()
     {
         exitingScene = true;
+        player = null;
         string scene = SceneManager.GetActiveScene().name;
 		//Load it
 		SceneManager.LoadScene(scene, LoadSceneMode.Single);
