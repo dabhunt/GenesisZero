@@ -527,16 +527,23 @@ public class PlayerController : MonoBehaviour
      */
     private void Aim()
     {
+        //if (!Cursor.visible) Cursor.visible = true;
         float camZ = Mathf.Abs(camRef.transform.position.z);
         Vector3 worldXhairPos;
-        Vector3 screenXhairPos = new Vector2(Input.mousePosition.x, Input.mousePosition.y);
-
+        Vector2 screenXhairPos = new Vector2(Input.mousePosition.x, Input.mousePosition.y);
+        Vector3 offsetOrigin = transform.position + Vector3.up * 0.5f * characterHeight;
+        Vector2 charPos = camRef.WorldToScreenPoint(offsetOrigin);
         //Calculating to stop crosshair from going off screen;
         Vector3 maxBounds = camRef.ViewportToScreenPoint(new Vector3(1, 1, 0));
         Vector3 minBounds = camRef.ViewportToScreenPoint(new Vector3(0, 0, 0));
         //Setting the screenXhair position and clamping it to stay in screen
         screenXhairPos.x = Mathf.Clamp(screenXhairPos.x, minBounds.x, maxBounds.x);
         screenXhairPos.y = Mathf.Clamp(screenXhairPos.y, minBounds.y, maxBounds.y);
+        if (Vector2.Distance(screenXhairPos, charPos) < 50f)
+        {
+            Vector2 direction = (screenXhairPos - charPos).normalized;
+            screenXhairPos = charPos + (direction * 50f);
+        }
         screenXhair.position = screenXhairPos;
 
         //Setting position of worldXhair to match screenXhair
@@ -551,7 +558,7 @@ public class PlayerController : MonoBehaviour
             isAimingRight = false;
         if (isRolling) return;
         //rotate the gun
-        gunObject.transform.LookAt(worldXhair.transform);
+        //gunObject.transform.LookAt(worldXhair.transform);
 
         // Shoot()
         if (fireInput > 0)
