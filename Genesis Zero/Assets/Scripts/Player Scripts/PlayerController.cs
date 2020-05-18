@@ -528,6 +528,7 @@ public class PlayerController : MonoBehaviour
     private void Aim()
     {
         //if (!Cursor.visible) Cursor.visible = true;
+        float radius = 50f;
         float camZ = Mathf.Abs(camRef.transform.position.z);
         Vector3 worldXhairPos;
         Vector2 screenXhairPos = new Vector2(Input.mousePosition.x, Input.mousePosition.y);
@@ -539,10 +540,10 @@ public class PlayerController : MonoBehaviour
         //Setting the screenXhair position and clamping it to stay in screen
         screenXhairPos.x = Mathf.Clamp(screenXhairPos.x, minBounds.x, maxBounds.x);
         screenXhairPos.y = Mathf.Clamp(screenXhairPos.y, minBounds.y, maxBounds.y);
-        if (Vector2.Distance(screenXhairPos, charPos) < 50f)
+        if (Vector2.Distance(screenXhairPos, charPos) < radius)
         {
             Vector2 direction = (screenXhairPos - charPos).normalized;
-            screenXhairPos = charPos + (direction * 50f);
+            screenXhairPos = charPos + (direction * radius);
         }
         screenXhair.position = screenXhairPos;
 
