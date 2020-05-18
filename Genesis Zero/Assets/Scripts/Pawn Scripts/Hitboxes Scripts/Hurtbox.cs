@@ -98,16 +98,16 @@ public class Hurtbox : MonoBehaviour
 
         //if(GetComponent<Player>()) Debug.Log(angle);
         //Debug.Log("Colliding");
-        if (GetComponent<Pawn>() && GetComponent<Pawn>().GetKnockBackForce() > 3 && ((vel.magnitude > 4 && collision.collider.isTrigger == false) || GetComponent<Pawn>().IsForcedKnockBack()))
+        if (GetComponentInParent<Pawn>() && GetComponentInParent<Pawn>().GetKnockBackForce() > 3 && ((vel.magnitude > 4 && collision.collider.isTrigger == false) || GetComponentInParent<Pawn>().IsForcedKnockBack()))
         {
-            if (GetComponent<Pawn>().IsForcedKnockBack() && Mathf.Abs(angle) < 160 && !collisions.Contains(collision.gameObject) && resettime < Time.fixedDeltaTime)
+            if (GetComponentInParent<Pawn>().IsForcedKnockBack() && Mathf.Abs(angle) < 160 && !collisions.Contains(collision.gameObject) && resettime < Time.fixedDeltaTime)
             {
-                GetComponent<Pawn>().KnockBackForced(-GetComponent<Pawn>().GetKnockBackVector(), GetComponent<Pawn>().GetKnockBackForce() / 2);
+				GetComponentInParent<Pawn>().KnockBackForced(-GetComponentInParent<Pawn>().GetKnockBackVector(), GetComponentInParent<Pawn>().GetKnockBackForce() / 2);
 
                 normal = (collision.GetContact(0).normal * 1);
-                //Debug.Log(transform.position +" - "+ GetComponent<Pawn>().GetLastPosition() +" = "+ (-(transform.position - GetComponent<Pawn>().GetLastPosition())));
-                // GetComponent<Pawn>().transform.position += -((transform.position - GetComponent<Pawn>().GetLastPosition()).normalized * (1 + GetComponent<CapsuleCollider>().radius));
-                GetComponent<Pawn>().transform.position += normal;
+				//Debug.Log(transform.position +" - "+ GetComponent<Pawn>().GetLastPosition() +" = "+ (-(transform.position - GetComponent<Pawn>().GetLastPosition())));
+				// GetComponent<Pawn>().transform.position += -((transform.position - GetComponent<Pawn>().GetLastPosition()).normalized * (1 + GetComponent<CapsuleCollider>().radius));
+				GetComponentInParent<Pawn>().transform.position += normal;
 
                 collisions.Add(collision.gameObject);
                 resettime = Time.fixedDeltaTime * 1;
@@ -125,7 +125,7 @@ public class Hurtbox : MonoBehaviour
                 Vector3 newVec = GetComponent<Rigidbody>().velocity * 1 / 2;
                 GetComponent<Rigidbody>().velocity = -newVec;
 
-                if (collision.gameObject.GetComponent<Pawn>())
+                if (collision.gameObject.GetComponentInParent<Pawn>())
                 {
                     collision.gameObject.GetComponent<Pawn>().TakeDamage(vel.magnitude * 5, null);
                     GameObject dn2 = VFXManager.instance.PlayEffect("DamageNumber", new Vector3(collision.transform.position.x, collision.transform.position.y + 1, collision.transform.position.z - .5f));
