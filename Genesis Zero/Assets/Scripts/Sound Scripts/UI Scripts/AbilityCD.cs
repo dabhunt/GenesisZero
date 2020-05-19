@@ -36,14 +36,13 @@ public class AbilityCD : MonoBehaviour
             {
                 AbilityCasting ac = player.GetComponent<AbilityCasting>();
                 cd[i] = ac.GetAbilityCooldownRatio(i);
+                //if the cooldown ratio is 0 and 
                 if (cooling[i] == true)
                 {
                     abilityBackground[i].color = defaultColor;
                     if (cd[i] >= activeCutoff)
                     {
-                        //change sprite to represent activated/ animated colors
-                        currentColor = Color.Lerp(defaultColor, activeColor, Mathf.PingPong(Time.time, 1));
-                        abilityBackground[i].color = currentColor;
+                        ActiveAnim(i);
                     }
                     else
                     {
@@ -55,6 +54,10 @@ public class AbilityCD : MonoBehaviour
                 {
                     abilityOverlay[i].color = defaultColor;
                 }
+                if (ac.IsAbilitySlotActive(i))
+                {
+                    ActiveAnim(i);
+                }
                 if (cd[i] <= 0)
                 {
                     cooling[i] = false;
@@ -62,8 +65,15 @@ public class AbilityCD : MonoBehaviour
             }
         }
     }
+    private void ActiveAnim(int num)
+    {
+        abilityOverlay[num].fillAmount = 0;
+        //change sprite to represent activated/ animated colors
+        currentColor = Color.Lerp(defaultColor, activeColor, Mathf.PingPong(Time.time, 1));
+        abilityBackground[num].color = currentColor;
+    }
     public void Cast(int num)
     {
-            cooling[num] = true;
+        cooling[num] = true;
     }
 }

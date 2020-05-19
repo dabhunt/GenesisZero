@@ -100,7 +100,7 @@ public class Gun : MonoBehaviour
         int stacks = player.GetSkillStack("Compound X") + 1;
         bool right = controller.IsAimingRight();
         //if you have just atom splitter, it will spawn 1 bullet above and below your gun based on minSpread value
-        if (ac.IsAbilityActive("Atom Splitter"))
+        if (ac.IsAbilityActive("Atom Splitter") > 0)
         {
             float ExtraBullets = 0; 
             for (int s = 0; s < stacks; s++)

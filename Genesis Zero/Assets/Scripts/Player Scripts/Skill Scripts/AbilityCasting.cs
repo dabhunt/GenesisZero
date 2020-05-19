@@ -1,7 +1,7 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
-
+using DG.Tweening;
 [RequireComponent(typeof(Player), typeof(PlayerController))]
 public class AbilityCasting : MonoBehaviour
 {
@@ -24,11 +24,13 @@ public class AbilityCasting : MonoBehaviour
     public float MT_AttackSpeedBoost = 1f;
     public float MT_CritBoost = .3f;
     [Header("Spartan Laser")]
-    public float SL_Cooldown = 6f;
+    public float SL_Cooldown = 5f;
+    public float SL_ActiveTime = 3f;
+    public float SL_chargeUp = 1f;
     //each successful kill makes the laser 20% larger
     public float scaleMultiPerKill = 1.2f;
     private bool SL_pressed = false;
-    private bool SL_charged = false;
+    private int SL_ActiveLastFrame = -1;
     [Header("FireDash")]
     public LayerMask ignoreEnemiesLayerMask;
     public float FD_duration = .5f;
@@ -39,7 +41,7 @@ public class AbilityCasting : MonoBehaviour
     private float TotalAbilityCooldown1;
     private float ActiveTime1;
 
-    
+
     private float AbilityCasttime2;
     private float AbilityCooldown2;
     private float TotalAbilityCasttime2;
@@ -57,7 +59,7 @@ public class AbilityCasting : MonoBehaviour
         pc = GetComponent<PlayerController>();
         ui = AbilityCooldownPanel.GetComponent<AbilityCD>();
         aimDir = new Vector2(0, 0);
-        
+
     }
     // Update is called once per frame
     void Update()
@@ -100,23 +102,23 @@ public class AbilityCasting : MonoBehaviour
                 CastPulseBurst();
                 break;
             case "Burst Charge":
-                InitializeAbility(4, 0,0, num);
+                InitializeAbility(4, 0, 0, num);
                 CastBurstCharge();
                 break;
             case "Overdrive":
-                InitializeAbility(17, 0,0, num);
+                InitializeAbility(17, 0, 0, num);
                 CastOverdrive(num);
                 break;
             case "Time Dilation":
-                InitializeAbility(9, 0,0, num);
+                InitializeAbility(9, 0, 0, num);
                 CastSlowDown();
                 break;
             case "Culling Blast":
-                InitializeAbility(0, 1, 8, num);
+                InitializeAbility(0, 0, 0, num);
                 CastSpartanLaser(num);
                 break;
             case "Wound Sealant":
-                InitializeAbility(100, 0,0, num);
+                InitializeAbility(100, 0, 0, num);
                 CastWoundSealant();
                 break;
             case "Atom Splitter":
@@ -171,20 +173,33 @@ public class AbilityCasting : MonoBehaviour
 
     private void InitializeAbility1(float cooldown, float casttime, float activeTime)
     {
-        AbilityCooldown1 = cooldown;
-        TotalAbilityCooldown1 = cooldown;
-        //AbilityCasttime1 = casttime;
-        //TotalAbilityCasttime1 = casttime;
-        ActiveTime1 = activeTime;
+        if (AbilityCooldown1 <= 0)
+        {
+            AbilityCooldown1 = cooldown;
+            TotalAbilityCooldown1 = cooldown;
+        }
+        if (AbilityCasttime1 <= 0)
+        {
+            AbilityCasttime1 = casttime;
+            TotalAbilityCasttime1 = casttime;
+        } 
+        if (ActiveTime1 <= 0)
+            ActiveTime1 = activeTime;
     }
 
     private void InitializeAbility2(float cooldown, float casttime, float activeTime)
     {
-        AbilityCooldown2 = cooldown;
-        TotalAbilityCooldown2 = cooldown;
-        //AbilityCasttime2 = casttime;
-        //TotalAbilityCasttime2 = casttime;
-        ActiveTime2 = activeTime;
+        if (AbilityCooldown2 <= 0) {
+            AbilityCooldown2 = cooldown;
+            TotalAbilityCooldown2 = cooldown;
+        }
+        if (AbilityCasttime2 <= 0)
+        {
+            AbilityCasttime2 = casttime;
+            TotalAbilityCasttime2 = casttime;
+        }
+        if (ActiveTime2 <= 0)
+            ActiveTime2 = activeTime;
     }
 
     private void UpdateAbilities()
@@ -199,9 +214,24 @@ public class AbilityCasting : MonoBehaviour
             AbilityCasttime2 = Mathf.Clamp(AbilityCasttime2 -= Time.deltaTime, 0, TotalAbilityCasttime2);
             AbilityCooldown2 = Mathf.Clamp(AbilityCooldown2 -= Time.deltaTime, 0, TotalAbilityCooldown2);
         }
-
-        ActiveTime1 = Mathf.Clamp(ActiveTime1 -= Time.deltaTime, 0, TotalAbilityCooldown1);
-        ActiveTime2 = Mathf.Clamp(ActiveTime2 -= Time.deltaTime, 0, TotalAbilityCooldown2);
+        //to deal with what happens when spartan laser charged up but wasn't used within the active time frame
+        int ActiveSlot = IsAbilityActive("Culling Blast");
+        if (SL_ActiveLastFrame > 0 && ActiveSlot == -1)
+        {
+            
+            
+            //OPTION 1
+            if (SL_ActiveLastFrame == 1)
+               CastAbility1();
+            else
+                CastAbility2();
+            //OPTION 2
+            //SL_pressed = false;
+            //AudioManager.instance.PlayAttachedSound("SFX_WindingDown");
+        }
+        SL_ActiveLastFrame = ActiveSlot;
+        ActiveTime1 = Mathf.Clamp(ActiveTime1 -= Time.deltaTime, 0, 30);
+        ActiveTime2 = Mathf.Clamp(ActiveTime2 -= Time.deltaTime, 0, 30);
     }
     public float GetAbilityCooldownRatio(int num)
     {
@@ -212,19 +242,20 @@ public class AbilityCasting : MonoBehaviour
         return AbilityCooldown2 / TotalAbilityCooldown2;
     }
     //check to see if an Ability is currently active by passing the name of the Ability
-    public bool IsAbilityActive(string name)
+    //returns -1 if not active, returns the slot number of the ability if the ability is active (1 or 2)
+    public int IsAbilityActive(string name)
     {
-        if (skillmanager.GetAbility1() !=null && skillmanager.GetAbility1().name == name)
+        if (skillmanager.GetAbility1() != null && skillmanager.GetAbility1().name == name)
         {
             if (ActiveTime1 > 0)
-                return true;
+                return 1;
         }
         if (skillmanager.GetAbility2() != null && skillmanager.GetAbility2().name == name)
         {
             if (ActiveTime2 > 0)
-                return true;
+                return 2;
         }
-        return false;
+        return -1;
     }
     public void ResetAbilityCooldown1()
     {
@@ -269,7 +300,7 @@ public class AbilityCasting : MonoBehaviour
         pc.SetVertVel(0);
         player.KnockBackForced(-aimDir + Vector2.up, 25);
         GameObject hitbox = SpawnGameObject("PulseBurstHitbox", CastAtAngle(pc.CenterPoint(), aimDir, 1), Quaternion.identity);
-        hitbox.GetComponent<Hitbox>().InitializeHitbox(GetComponent<Player>().GetAbilityPower().GetValue()/2, GetComponent<Player>());
+        hitbox.GetComponent<Hitbox>().InitializeHitbox(GetComponent<Player>().GetAbilityPower().GetValue() / 2, GetComponent<Player>());
         hitbox.GetComponent<Hitbox>().SetStunTime(1.2f);
         player.SetInvunerable(.5f);
         hitbox.GetComponent<Hitbox>().SetLifeTime(.15f);
@@ -283,7 +314,7 @@ public class AbilityCasting : MonoBehaviour
         hitbox.GetComponent<Hitbox>().InitializeHitbox(GetComponent<Player>().GetAbilityPower().GetValue(), GetComponent<Player>());
         hitbox.transform.parent = transform;
         player.SetInvunerable(.6f);
-        player.GetComponent<PlayerController>().Dash(.6f,FD_gravityReplacement);
+        player.GetComponent<PlayerController>().Dash(.6f, FD_gravityReplacement);
         hitbox.GetComponent<Hitbox>().SetLifeTime(.6f);
     }
     private void CastFireDash()
@@ -292,10 +323,10 @@ public class AbilityCasting : MonoBehaviour
         player.KnockBackForced(aimDir + Vector2.up, 25);
         player.GetComponent<PlayerController>().NewLayerMask(ignoreEnemiesLayerMask, FD_duration);
         GameObject hitbox = SpawnGameObject("FireDashHitbox", CastAtAngle(pc.CenterPoint(), aimDir, .5f), GetComponent<Gun>().firePoint.rotation);
-        hitbox.GetComponent<Hitbox>().InitializeHitbox(GetComponent<Player>().GetAbilityPower().GetValue()/2, GetComponent<Player>());
+        hitbox.GetComponent<Hitbox>().InitializeHitbox(GetComponent<Player>().GetAbilityPower().GetValue() / 2, GetComponent<Player>());
         hitbox.transform.parent = transform;
         player.SetInvunerable(FD_duration);
-        player.GetComponent<PlayerController>().Dash(FD_duration+.1f,FD_gravityReplacement);
+        player.GetComponent<PlayerController>().Dash(FD_duration + .1f, FD_gravityReplacement);
         hitbox.GetComponent<Hitbox>().SetLifeTime(FD_duration);
     }
     private void CastOverdrive(int num)
@@ -319,27 +350,33 @@ public class AbilityCasting : MonoBehaviour
 
     private void CastSpartanLaser(int num)
     {
-        print(" abilitycasttime1: " + AbilityCasttime1);
-        print(" abilitycasttime2: " + AbilityCasttime2);
         if (SL_pressed == false)
         {   //check if the user has pressed the ability once to start the charge up process
             SL_pressed = true;
             //set the cast time manually for this ability so that we know when it's charged up 
             if (num == 1)
-                AbilityCasttime1 = 1;
+            {
+                ui.Cast(0);
+                ActiveTime1 = SL_ActiveTime;
+            }
             else
-                AbilityCasttime2 = 1;
-            print("charging...");
+            {
+                ui.Cast(1);
+                ActiveTime2 = SL_ActiveTime;
+            }
             //GameObject chargeUp = VFXManager.instance.PlayEffectReturn("ChargeUp", GetComponent<Gun>().firePoint.position, 0, "");
             //chargeUp.transform.SetParent(this.transform);
+            AudioManager.instance.PlayAttachedSound("SFX_ChargeCulling", this.gameObject, .7f, 1, false, 0);
         }
         //if the ability has been pressed before and the casttime has reached 0
         else
         { //if the ability has charged up
-            if (SL_pressed == true && ((num == 1 && AbilityCasttime1 <= 0) || (num == 2 && AbilityCasttime2 <= 0)))   
+            if (SL_pressed == true && ((num == 1 && ActiveTime1 <= (SL_ActiveTime - SL_chargeUp)) || (num == 2 && ActiveTime2 <= (SL_ActiveTime - SL_chargeUp))))
             {
-                print("Blasting");
                 SL_pressed = false;
+                Camera.main.transform.DOShakePosition(duration: .6f, strength: .5f, vibrato: 4, randomness: 50, snapping: false, fadeOut: true);
+                AudioManager.instance.StopSound("SFX_ChargeCulling");
+                AudioManager.instance.PlayAttachedSound("SFX_LaserBlast");
                 GameObject hitbox = SpawnGameObject("SpartanLaser", CastAtAngle(pc.CenterPoint(), aimDir, .5f), GetComponent<Gun>().firePoint.rotation);
                 SpartanLaser laser = hitbox.GetComponent<SpartanLaser>();
                 UniqueEffects U = GetComponent<UniqueEffects>();
@@ -350,11 +387,17 @@ public class AbilityCasting : MonoBehaviour
                 //manually put spartan laser ability on cooldown since the initial cast can't have a cooldown
                 if (num == 1)
                 {
-                    AbilityCooldown1 = SL_Cooldown; ui.Cast(0);
+                    ActiveTime1 = 0;
+                    AbilityCooldown1 = SL_Cooldown;
+                    TotalAbilityCooldown1 = SL_Cooldown;
+                    ui.Cast(0);
                 }
                 else
                 {
-                    AbilityCooldown2 = SL_Cooldown; ui.Cast(1);
+                    ActiveTime2 = 0;
+                    AbilityCooldown2 = SL_Cooldown;
+                    TotalAbilityCooldown2 = SL_Cooldown;
+                    ui.Cast(1);
                 }
             }
         }
@@ -389,7 +432,13 @@ public class AbilityCasting : MonoBehaviour
             Destroy(shield, num == 1 ? ActiveTime1 : ActiveTime2);
         }
     }
-
+    public bool IsAbilitySlotActive(int num)
+    {
+        if (1+num == 1)
+            return ActiveTime1 > 0;
+        else
+            return ActiveTime2 > 0;
+    }
     private void CastSingularity()
     {
         GameObject hitbox = SpawnGameObject("Sing_Projectile", CastAtAngle(pc.CenterPoint(), aimDir, .5f), GetComponent<Gun>().firePoint.rotation);
