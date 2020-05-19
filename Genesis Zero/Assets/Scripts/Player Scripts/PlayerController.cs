@@ -718,7 +718,10 @@ public class PlayerController : MonoBehaviour
         yield return new WaitForSeconds(time);
         rollCooldown = 0;
     }
-
+    public Vector2 CenterPoint()
+    {
+        return (this.transform.position + new Vector3(0, characterHeight / 2, 0));
+    }
     public void SetVertVel(float vel)
     {
         vertVel = vel;
