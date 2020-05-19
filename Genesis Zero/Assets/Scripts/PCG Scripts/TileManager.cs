@@ -35,6 +35,8 @@ public class TileManager : MonoBehaviour
 	public GameObject[] cityTilePrefabs;
 	public GameObject[] enemyPrefabs;
 	public GameObject[] interactablePrefabs;
+	public GameObject levelEndCityBuilding;
+	public GameObject levelEndIndustrialBuilding;
 	
 	[Header("Enemy Spawning")]
 	public Vector2 MinMaxEnemies = new Vector2(3, 5);
@@ -67,6 +69,9 @@ public class TileManager : MonoBehaviour
 		{
 			generateBuilding(Random.Range(minBuildingWidth, maxBuildingWidth), Random.Range(minBuildingTileCount, maxBuildingTileCount), level);
 		}
+	    Vector3 spawnVector = new Vector3(1,0,0) * currentPos; //spawnVector for tiles
+		
+		GameObject endBuilding = (GameObject)GameObject.Instantiate(levelEndCityBuilding, spawnVector, Quaternion.Euler(0, 141.6f, 0));
 		//tilePrefabs = industrialTilePrefabs;
 		tilePrefabs = cityTilePrefabs;
 		//Level 2
@@ -76,7 +81,7 @@ public class TileManager : MonoBehaviour
 		{
 			generateBuilding(Random.Range(minBuildingWidth, maxBuildingWidth), Random.Range(minBuildingTileCount, maxBuildingTileCount), level);
 		}
-		
+		GameObject endBuilding2 = (GameObject)GameObject.Instantiate(levelEndCityBuilding, spawnVector, Quaternion.Euler(0, 141.6f, 0));
 		//Level 3
 		++level;
 		currentPos = levelSpacing*level + 22;
@@ -117,16 +122,22 @@ public class TileManager : MonoBehaviour
 				if (mat.transform.position.x > levelTracking)
 				{
 					GameObject newTele = Instantiate(interactablePrefabs[4]) as GameObject;
-					newTele.name = "Teleporter Level " + (teleporterInstances.Count + 1);
 					teleporterInstances.Add(newTele);
+					if (teleporterInstances.Count < 3)
+					{
+						newTele.GetComponent<Teleporter>().BossRoomOverride = true; //makes this TP go to boss room instead
+						newTele.name = "Teleporter Level " + (teleporterInstances.Count);
+						levelTracking += levelSpacing;
+						newTele.GetComponent<Teleporter>().SetDestination(new Vector2(levelTracking + 10, 40));
+						teleporterInstances[teleporterInstances.Count - 1].transform.position = mat.transform.position;
+					}
+					else 
+					{
+						newTele.name = "Teleporter to Boss Room";
+						teleporterInstances[teleporterInstances.Count - 1].transform.position = mat.transform.position;
+					}	
 					teleSpawnChance = 0;
 					iter = 0;
-					levelTracking += levelSpacing;
-					if (teleporterInstances.Count > 1) //second teleporter destination goes to boss
-						newTele.GetComponent<Teleporter>().SetDestination(new Vector2(-386, 69));
-					else
-						newTele.GetComponent<Teleporter>().SetDestination(new Vector2(levelTracking + 10, 40));
-					teleporterInstances[teleporterInstances.Count - 1].transform.position = mat.transform.position;
 				}
 
 			}

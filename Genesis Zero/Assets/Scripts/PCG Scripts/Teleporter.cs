@@ -8,7 +8,7 @@ public class Teleporter : MonoBehaviour
 	public float destinationX = -120;
 	public float destinationY = 16;
 	public float destinationZ = 0;
-
+	public bool BossRoomOverride = false;
 	//Variables for animator
 	private Transform player;
 	private GameObject buge;
@@ -45,8 +45,9 @@ public class Teleporter : MonoBehaviour
 	}
 	private void Teleport()
 	{
-
-		print("teleport");
+		if (BossRoomOverride == true)
+			player.position = StateManager.instance.BossRoomLocation;
+		
 		player.position = new Vector2(destinationX, destinationY);
 		//temporary code
 		
