@@ -64,7 +64,7 @@ public class AbilityCasting : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-        aimDir = pc.worldXhair.transform.position - transform.position;
+        aimDir = pc.worldXhair.transform.position - (Vector3)pc.CenterPoint();
         WorldXhair = pc.worldXhair.transform.position;
         UpdateAbilities();
     }
@@ -364,8 +364,9 @@ public class AbilityCasting : MonoBehaviour
                 ui.Cast(1);
                 ActiveTime2 = SL_ActiveTime;
             }
-            //GameObject chargeUp = VFXManager.instance.PlayEffectReturn("ChargeUp", GetComponent<Gun>().firePoint.position, 0, "");
-            //chargeUp.transform.SetParent(this.transform);
+            GameObject chargeUp = VFXManager.instance.PlayEffectReturn("VFX_CullingBuildUp", GetComponent<Gun>().firePoint.position, 0, "");
+            chargeUp.transform.SetParent(GetComponent<Gun>().firePoint.transform);
+            chargeUp.transform.LookAt(WorldXhair);
             AudioManager.instance.PlayAttachedSound("SFX_ChargeCulling", this.gameObject, .7f, 1, false, 0);
         }
         //if the ability has been pressed before and the casttime has reached 0
@@ -379,6 +380,10 @@ public class AbilityCasting : MonoBehaviour
                 AudioManager.instance.PlayAttachedSound("SFX_LaserBlast");
                 GameObject hitbox = SpawnGameObject("SpartanLaser", CastAtAngle(pc.CenterPoint(), aimDir, .5f), GetComponent<Gun>().firePoint.rotation);
                 SpartanLaser laser = hitbox.GetComponent<SpartanLaser>();
+                GameObject vfx_blast = VFXManager.instance.PlayEffectReturn("VFX_CullingBlast", CastAtAngle(pc.CenterPoint(), aimDir, 1f), 0, "");
+                vfx_blast.transform.SetParent(GetComponent<Gun>().firePoint.transform);
+                vfx_blast.transform.LookAt(WorldXhair);
+                //vfx_blast.transform.rotation = GetComponent<Gun>().firePoint.rotation;
                 UniqueEffects U = GetComponent<UniqueEffects>();
                 float scale = Mathf.Pow(scaleMultiPerKill, U.GetKillCount());
                 hitbox.transform.localScale = new Vector3(scale, scale, scale);

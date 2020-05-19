@@ -21,14 +21,22 @@ public class EnemyOverlayShader : MonoBehaviour
     void Start()
     {
         gameObject.GetComponent<Renderer>().material.SetFloat("_OnOff", 0);
+        gameObject.GetComponent<Renderer>().material.SetFloat("_elecOnOff", 0);
         gameObject.GetComponent<Renderer>().material.SetFloat("_LowHP", 0);
         gameObject.GetComponent<Renderer>().material.SetFloat("_DissolveEffect", 0);
         gameObject.GetComponent<Renderer>().material.SetFloat("_TimeEffect", 0);
     }
     void Update()
     {
+        bool isStunned = GetComponentInParent<Pawn>().IsStunned();
         float ratio = GetComponentInParent<Pawn>().GetHealth().GetValue() / GetComponentInParent<Pawn>().GetHealth().GetMaxValue();
         hpcurValue = GetComponentInParent<Pawn>().GetHealth().GetValue();
+
+        if (isStunned == true)
+        {
+            gameObject.GetComponent<Renderer>().material.SetFloat("_StunOnOff", 1);
+        }
+
         if (hpcurValue < hpvalueLastFrame && hpcurValue > 0)
         {
             onOffVal = -12;
