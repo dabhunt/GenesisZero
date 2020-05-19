@@ -38,7 +38,7 @@ public class BossAI : AIController
 	public float TriggerRadius;
 	public float TimeBeforeFight;
 	[HideInInspector]
-	public bool initiated, introdialogue, lookingatcamera, Wild;
+	public bool initiated, introdialogue, lookingatcamera, Wild, firsttrigger, secondtrigger;
 	private int Heat, RepeatingAttack, Attack;
 	private float actiontime = 1;
 	private float chargeuptime = .5f;
@@ -93,20 +93,21 @@ public class BossAI : AIController
 	{
 		base.Update();
 
-		if (GetDistanceToTarget() < TriggerRadius && initiated == false) {
+		if (GetDistanceToTarget() < TriggerRadius && initiated == false)
+		{
 			initiated = true;
-			Camera.main.GetComponent<BasicCameraZoom>().ChangeFieldOfView(30);
 		}
 		if (initiated)
 		{
 			PassedTime += Time.deltaTime;
-			if(introdialogue == false && PassedTime >= .85f)
+			if (introdialogue == false && PassedTime >= .85f)
 			{
 				DialogueManager.instance.TriggerDialogue("PreBoss4", false);
+				AudioManager.instance.PlaySound("SFX_BossRoar(1)");
 				introdialogue = true;
 			}
 
-			if(TimeBeforeFight > 0)
+			if (TimeBeforeFight > 0)
 			{
 				TimeBeforeFight -= Time.deltaTime;
 				if (DialogueManager.instance.IsDialoguePlaying() == false && PassedTime > 1.25f)
@@ -117,10 +118,15 @@ public class BossAI : AIController
 
 				if (TimeBeforeFight <= 0)
 				{
+					AudioManager.instance.PlaySound("SFX_BossRoar(0)");
+					camera.transform.DOShakePosition(duration: 1.25f, strength: 1, vibrato: 5, randomness: 60, snapping: false, fadeOut: true);
+					Camera.main.GetComponent<BasicCameraZoom>().ChangeFieldOfView(30);
 					GameObject canvas = GameObject.FindGameObjectWithTag("CanvasUI");
 					healthbar = canvas.transform.Find("BossHealthbar").gameObject;
 					healthbar.SetActive(true);
 					TimeBeforeFight = 0;
+					SetBossstate(State.Setting, 2);
+					animator.Play("Intro");
 					//StartCoroutine(CockBack(1.25f, Target.position - transform.position, 1));
 				}
 			}
@@ -347,6 +353,19 @@ public class BossAI : AIController
 			FlameGround.SetActive(false);
 		}
 
+		if (HealthLoss >= TotalHealth / 4 && GetComponent<BossEvents>())
+		{
+			if (firsttrigger == false) // Top quarter health
+			{
+				GetComponent<BossEvents>().SpawnFirstGoons();
+				firsttrigger = true;
+			}
+			else if(Wild && secondtrigger == false) // Bottom quarter health
+			{
+				GetComponent<BossEvents>().SpawnSecondGoons();
+				secondtrigger = true;
+			}
+		}
 		if (HealthLoss >= TotalHealth / 2)
 		{
 			action = 1;
@@ -355,6 +374,8 @@ public class BossAI : AIController
 			animator.SetTrigger("WildTrigger"); //Set wild trigger
 			FlameGround.SetActive(true);        //Set the flame ground to true/active
 			animator.SetBool("Wild", true);
+			AudioManager.instance.PlaySound("SFX_BossRoar(0)"); // Play sound Effect
+			GetComponent<BossEvents>().DestroyGameObjectsOnWild(); //Destroy top platforms
 			Wild = true;
 		}
 		else if (Heat >= 5)
@@ -432,6 +453,7 @@ public class BossAI : AIController
 				headbuttangle = ((target - transform.position).normalized * 16);
 				HeadButt(transform.position + ((target - transform.position).normalized * 16), .25f, chargeuptime);
 				Invoke("SpawnHeadbutt", chargeuptime);
+				AudioManager.instance.PlaySound("SFX_ChargeHeadSlam");
 			}
 			else if (Attack == 1)
 			{
@@ -443,6 +465,7 @@ public class BossAI : AIController
 				SpawnIndicator(transform.position, new Vector2(24, 4), target - transform.position, new Color(1, 0, 0, .1f), Vector2.zero, false, true, actiontime - .1f);
 				LookAtVectorTemp(target, actiontime - .1f);
 				Invoke("SpitFireball", actiontime - .1f);
+				AudioManager.instance.PlaySound("SFX_ChargeFireBall");
 			}
 			else
 			{
@@ -452,6 +475,7 @@ public class BossAI : AIController
 				SetBossstate(State.Pulse, actiontime);
 				SpawnIndicator(transform.position, new Vector2(18, 18), lookDir, new Color(1, 0, 0, .1f), Vector2.zero, true, false, chargeuptime);
 				Invoke("Pulse", chargeuptime);
+				AudioManager.instance.PlaySound("SFX_ChargePulse");
 			}
 
 			if (RepeatingAttack < 0)
@@ -532,7 +556,8 @@ public class BossAI : AIController
 		{
 			float minnum = Wild ? 2 : 0;
 			minnum = num == 0 ? 0 : minnum;
-			RepeatingAttack = (int)Random.Range(0, num + 1);
+			float max = Wild ? num + 2 : num;
+			RepeatingAttack = (int)Random.Range(0, max);
 		}
 		else
 		{
@@ -727,6 +752,7 @@ public class BossAI : AIController
 		Vector2 angle = (Vector2)transform.rotation.eulerAngles;
 		Quaternion rot = Quaternion.Euler(angle.x, angle.y, 0);
 		GameObject hitbox = Instantiate(FireballPrefab, transform.position, rot);
+		AudioManager.instance.PlaySound("SFX_FireExplosion", false, 0);
 	}
 
 	void SpawnHeadbutt()
@@ -757,6 +783,8 @@ public class BossAI : AIController
 		GameObject hitbox = Instantiate(PulsePrefab, transform.position, rot);
 		hitbox.transform.parent = transform;
 		hitbox.GetComponent<Hitbox>().LifeTime = .1f;
+		camera.transform.DOShakePosition(duration: .75f, strength: 1, vibrato: 5, randomness: 60, snapping: false, fadeOut: true);
+		AudioManager.instance.PlaySound("SFX_FireExplosion", false, 0);
 	}
 
 

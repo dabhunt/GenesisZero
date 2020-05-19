@@ -170,17 +170,21 @@ public class Pawn : MonoBehaviour
             {
                 Vector3 translation = knockbackvector.normalized * knockbackforce * Time.fixedDeltaTime;
                 bool colliding = false;
-                if (GetComponent<CapsuleCollider>() && GetComponent<Hurtbox>())
+                if (GetComponentInChildren<CapsuleCollider>() && GetComponent<Hurtbox>())
                 {
                     RaycastHit hit;
-                    CapsuleCollider cc = GetComponent<CapsuleCollider>();
+                    CapsuleCollider cc = GetComponentInChildren<CapsuleCollider>();
+					Debug.Log(cc);
                     Vector3 p1 = cc.center + Vector3.up * -cc.height / 2;
                     Vector3 p2 = p1 + Vector3.up * cc.height;
-                    colliding = Physics.CapsuleCast(p1, p2, cc.radius, knockbackvector, out hit, translation.magnitude);
-                    if (colliding)
+					//colliding = Physics.CapsuleCast(p1, p2, cc.radius, knockbackvector, out hit, translation.magnitude);
+					colliding = Physics.Raycast(transform.position, knockbackvector, out hit, translation.magnitude, GetComponentInParent<PlayerController>().rollingLayerMask);
+                    if (colliding && hit.collider.isTrigger == false)
                     {
-                        colliding = !hit.collider.isTrigger;
-                    }
+						Debug.Log(colliding);
+						//colliding = !hit.collider.isTrigger;
+						StopCollision(hit.normal);
+					}
                     translation = colliding ? -translation : translation;
                 }
                 if (GetComponentInParent<PlayerController>() && colliding == false)
@@ -200,6 +204,16 @@ public class Pawn : MonoBehaviour
 
         }
     }
+
+	public void StopCollision(Vector3 normal)
+	{
+		GetComponentInParent<Pawn>().KnockBackForced(-GetComponentInParent<Pawn>().GetKnockBackVector(), GetComponentInParent<Pawn>().GetKnockBackForce() / 2);
+		normal = (normal * 1);
+		GetComponentInParent<Pawn>().transform.position += normal/2;
+
+		//collisions.Add(collision.gameObject);
+		//resettime = Time.fixedDeltaTime * 1;
+	}
 
     public void UpdateStats()
     {
