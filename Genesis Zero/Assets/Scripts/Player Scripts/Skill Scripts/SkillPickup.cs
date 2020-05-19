@@ -150,6 +150,8 @@ public class SkillPickup : MonoBehaviour
     }
     public void Interact()
     {
+        if (dropped == true)
+            return;
         if (Vector2.Distance(player.transform.position, transform.position) <= pickupDist)
         {
             pressed = true;

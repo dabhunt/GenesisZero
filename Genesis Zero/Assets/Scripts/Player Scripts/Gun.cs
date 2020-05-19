@@ -55,6 +55,7 @@ public class Gun : MonoBehaviour
     private RectTransform screenXhair;
     private float spread;
     private GameObject vfx_MuzzleFlash;
+    private int shotCount = 0;
     private void Start() 
     {
         player = GetComponent<Player>();
@@ -71,7 +72,6 @@ public class Gun : MonoBehaviour
 
     public void Shoot()
     {
-        
         spreadAngle = overheat.ShootBloom();
         //print("spreadAngle: "+spreadAngle);
         Vector3 spawnpoint = new Vector3(firePoint.transform.position.x, firePoint.transform.position.y, 0);
@@ -83,6 +83,10 @@ public class Gun : MonoBehaviour
         GameObject instance = (GameObject) Instantiate(GetProjectile(crit), spawnpoint, Quaternion.identity);
         //sets the object to look towards where it should be firing
         instance.transform.LookAt(controller.worldXhair.transform);
+        //means that instantiate hitbox will not calculate crit on it's own
+        bool inheritCrit = false;
+        instance.transform.Rotate(Vector3.forward, Random.Range(-spreadAngle, spreadAngle), Space.World);
+        instance.GetComponent<Hitbox>().InitializeHitbox(player.GetDamage().GetValue(), player, inheritCrit);
         instance = ApplyModifiers(instance,crit);
         expShot = instance.GetComponent<ExplosiveShot>();
         if (expShot != null)
@@ -92,10 +96,6 @@ public class Gun : MonoBehaviour
             float multi = player.GetSkillManager().GetSkillStackAsMultiplier(("PyroTechnics"), blastRadiusBonusPerStack);
 	    	expShot.ModifyBlastRadius(multi);
         }
-        //means that instantiate hitbox will not calculate crit on it's own
-        bool inheritCrit = false;
-        instance.transform.Rotate(Vector3.forward,Random.Range(-spreadAngle, spreadAngle),Space.World);
-        instance.GetComponent<Hitbox>().InitializeHitbox(player.GetDamage().GetValue(), player, inheritCrit);
         //add 1 to stacks, because Compound X applies like a secondary stack of Atom splitter
         int stacks = player.GetSkillStack("Compound X") + 1;
         bool right = controller.IsAimingRight();
@@ -117,11 +117,12 @@ public class Gun : MonoBehaviour
                     //extra bullets have an individual chance to crit, and thus can apply the pyrotechnics AOE seperate
                     bool extraCrit = Crit();
                     GameObject extraBullet = (GameObject)Instantiate(GetProjectile(extraCrit), spawnpoint, instance.transform.rotation);
-                    extraBullet = ApplyModifiers(extraBullet,extraCrit);
                     Hitbox hit = extraBullet.GetComponent<Hitbox>();
+                    hit.InitializeHitbox(player.GetDamage().GetValue() * .65f, player, inheritCrit);
+                    extraBullet = ApplyModifiers(extraBullet,extraCrit);
                     extraBullet.transform.Rotate(Vector3.forward, angle, Space.World);
                     //extraBullet.GetComponent<Hitbox>().MaxHits += 2;
-                    hit.InitializeHitbox(player.GetDamage().GetValue()*.65f, player, inheritCrit);
+                    
                 }
             }
             //adds extra heat for each of extra bullets fired
@@ -147,6 +148,7 @@ public class Gun : MonoBehaviour
     //All generic bullet effects should go inside this function, including Crit proc / different projectiles being returned 
     public GameObject GetProjectile(bool crit)
     {
+        shotCount++;
         GameObject projectile = basicProjectile;
         if (crit)
         {
@@ -176,8 +178,19 @@ public class Gun : MonoBehaviour
                 vfx_MuzzleFlash = VFXManager.instance.ChangeColor(vfx_MuzzleFlash, stunBulletColor);
                 hit.StunTime = stunDuration + (1 - exploitStacks) * stunIncreasePerStack;
             }
-            //apply Knockback on crit if you have it
-            hit.Knockbackforce += knockBackPerStack * player.GetSkillStack("Knockback");
+            
+        }
+        if (shotCount > 2)
+        {
+            shotCount = 0;
+            //apply Knockback on 3rd shot if you have it
+            hit.Knockbackforce += knockBackPerStack * player.GetSkillStack("High Density Rounds");
+            hit.Damage *= 2f * player.GetSkillStack("Triple Threat");
+            float burnDmg = burnDamagePerStack * player.GetSkillStack("3rd Degree Burns");
+            if (burnDmg > 0)
+                hit.Burn = new Vector2(3, burnDmg);
+            if (player.GetSkillStack("Triple Threat") > 0 || burnDmg > 0)
+                projectile = VFXManager.instance.ChangeColor(projectile, Color.red);
         }
         return projectile;
     }

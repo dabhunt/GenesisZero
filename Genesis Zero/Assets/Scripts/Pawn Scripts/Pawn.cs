@@ -182,7 +182,9 @@ public class Pawn : MonoBehaviour
                     if (colliding && hit.collider.isTrigger == false)
                     {
 						Debug.Log(colliding);
-						//colliding = !hit.collider.isTrigger;
+						//print(hit.collider);
+                        colliding = !hit.collider.isTrigger;
+                        
 						StopCollision(hit.normal);
 					}
                     translation = colliding ? -translation : translation;
@@ -193,7 +195,7 @@ public class Pawn : MonoBehaviour
                 }
                 else if (GetComponentInParent<PlayerController>() && colliding == true)
                 {
-                    transform.position += translation;
+                    transform.position -= translation*2;
                 }
             }
             if (knockbackforce < 1)
