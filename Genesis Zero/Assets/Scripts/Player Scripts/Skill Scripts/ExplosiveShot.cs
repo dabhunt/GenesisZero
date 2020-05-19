@@ -23,11 +23,10 @@ public class ExplosiveShot : MonoBehaviour
     void Start()
     {
         quitting = false;
-        GameObject temp = GameObject.FindWithTag("StateManager");
-        aManager = FindObjectOfType<AudioManager>();
+        GameObject temp = StateManager.instance.gameObject;
+        aManager = AudioManager.instance;
         restartScript = temp.GetComponent<Restart>();
-        temp = GameObject.FindWithTag("Player");
-        player = temp.GetComponent<Player>();
+        player = Player.instance;
 
     }
     private void OnDestroy()

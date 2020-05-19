@@ -105,7 +105,7 @@ public class PlayerController : MonoBehaviour
         inputActions.PlayerControls.Interact.performed += ctx => interactInput = ctx.ReadValue<float>();
         defaultLayerMask = immoveables;
         resetfallSpeed = fallSpeedMult;
-        sound = FindObjectOfType<AudioManager>().GetComponent<PlayerSounds>();
+        sound = AudioManager.instance.GetComponent<PlayerSounds>();
         animator = GetComponent<Animator>();
         gun = GetComponent<Gun>();
         overheat = GetComponent<OverHeat>();

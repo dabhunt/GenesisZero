@@ -97,7 +97,7 @@ public class SkillPickup : MonoBehaviour
                     added = true;
                 }
             }
-            if ((targetIsPlayer && pressed) || (!targetIsPlayer && target.GetComponent<ModConverter>().isActive))
+            else if ((targetIsPlayer && pressed) || (!targetIsPlayer && target.GetComponent<ModConverter>().isActive))
             {  // Force pull for pickup
                 if (GetComponentInChildren<Floating>() != null)
                     Destroy(GetComponentInChildren<Floating>());
@@ -118,7 +118,7 @@ public class SkillPickup : MonoBehaviour
             return;
         if (pressed)
         {
-            if (other.GetComponentInParent<Player>() || other.GetComponent<Player>())
+            if (other.GetComponentInParent<Player>())
             {
                 Player p = other.GetComponent<Player>();
                 if (other.GetComponentInParent<Player>())
@@ -137,7 +137,6 @@ public class SkillPickup : MonoBehaviour
                         GameObject ability = p.GetSkillManager().SpawnAbility(other.transform.position, otherskill.name);
                         p.GetSkillManager().AddSkill(skill);
                         ability.GetComponent<InteractPopup>().SetText("Press [F] to Replace Ability 1");
-                        //GameObject.FindObjectOfType<SkillDisplay>().CheckUpdate();
                         added = true;
                     }
                     else

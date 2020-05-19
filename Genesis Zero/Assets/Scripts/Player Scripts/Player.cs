@@ -14,9 +14,16 @@ public class Player : Pawn
     private float MaxKeys = 3f;
     private float MaxCapsules = 5;
     private float healthPerStack = 3;
-
+    public static Player instance;
     private void Awake()
     {
+        if (instance == null)
+            instance = this;
+        else
+        {
+            Destroy(gameObject);
+            return;
+        }
         SkillManager = new SkillManager(this);
     }
     new void Start()
@@ -144,6 +151,10 @@ public class Player : Pawn
     public int GetEssencePerCapsule()
     {
         return (int)(MaxEssence / MaxCapsules);
+    }
+    public Vector2 CenterPoint()
+    {
+        return GetComponent<PlayerController>().CenterPoint();
     }
     public void SetEssence(float amount)
     {

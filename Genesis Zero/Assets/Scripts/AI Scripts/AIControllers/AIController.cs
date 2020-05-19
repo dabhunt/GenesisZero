@@ -70,10 +70,10 @@ public class AIController : Pawn
         tracker = GetComponent<ObjectTracker>();
         if (Target == null)
         {
-            GameObject playerSearch = GameObject.FindGameObjectWithTag("Player");
+            GameObject playerSearch = Player.instance.gameObject;
             if (playerSearch != null)
             {
-                SetTarget(playerSearch.transform);
+                SetTarget(playerSearch.transform.Find("Center"));
             }
         }
 

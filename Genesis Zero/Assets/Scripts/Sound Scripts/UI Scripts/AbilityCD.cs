@@ -18,7 +18,7 @@ public class AbilityCD : MonoBehaviour
     public float activeCutoff= .98f;
     void Start()
     {
-        player = FindObjectOfType<Player>();
+        player = Player.instance;
         for (int i = 0; i < 2; i++)
         {
             abilityOverlay[i].fillAmount = 0f;

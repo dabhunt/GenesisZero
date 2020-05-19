@@ -82,7 +82,7 @@ public class GodHead : MonoBehaviour
     }
     public void AfterDialogue()
     {
-        FindObjectOfType<AudioManager>().StopAllSounds();
+        AudioManager.instance.StopAllSounds();
         GameInputManager.instance.SwitchControlMap("MenuControls");
         isActive = true;
         InitializeUI();

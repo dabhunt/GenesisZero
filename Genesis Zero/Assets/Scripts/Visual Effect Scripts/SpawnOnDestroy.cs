@@ -49,7 +49,7 @@ public class SpawnOnDestroy : MonoBehaviour
         }
 
         //populate the list of potential modifier drops
-        aManager = FindObjectOfType<AudioManager>();
+        aManager = AudioManager.instance;
         if (vfxScaleMultiplier <= 0)
         {
             vfxScaleMultiplier = 1;

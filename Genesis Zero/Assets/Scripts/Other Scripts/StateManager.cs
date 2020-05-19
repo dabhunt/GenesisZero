@@ -31,7 +31,7 @@ public class StateManager : MonoBehaviour
     }
     private void Start()
     {
-        GameObject temp = GameObject.FindGameObjectWithTag("Player");
+        GameObject temp = Player.instance.gameObject;
         player = temp.GetComponent<Player>();
         if (!SaveLoadManager.instance.newGame)
         {
@@ -40,7 +40,7 @@ public class StateManager : MonoBehaviour
             SaveLoadManager.instance.ApplyPlayerData(pData, temp);
         }
 
-        temp = GameObject.FindWithTag("StateManager");
+        temp = StateManager.instance.gameObject;
         restart = temp.GetComponent<Restart>();
         canvas = GameObject.FindWithTag("CanvasUI");
         pauseMenu = canvas.transform.Find("PauseMenu").gameObject;
@@ -179,7 +179,9 @@ public class StateManager : MonoBehaviour
     public void PauseGame()
     {
         //Pauses Game
-        FindObjectOfType<AudioManager>().StopAllSounds();
+        AudioManager.instance.StopAllSounds();
+         StateManager.instance.DestroyPopUpsWithTag("Pickups");
+            StateManager.instance.DestroyPopUpsWithTag("Interactable");
         isPaused = true;
         Time.timeScale = 0f;
         canvas.transform.Find("BlackUnderUI").GetComponent<Image>().enabled = true;

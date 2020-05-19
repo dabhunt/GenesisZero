@@ -66,7 +66,7 @@ public class UniqueEffects : MonoBehaviour
         float repeatRate = 1 / checksPerSecond - (Time.deltaTime * 2);
         if (repeatRate > 0.01f)
             InvokeRepeating("CheckUniques", 0, repeatRate);
-        aManager = FindObjectOfType<AudioManager>();
+        aManager = AudioManager.instance;
     }
     public void CheckUniques() {
         //Generic Triggers based on repeated checks
