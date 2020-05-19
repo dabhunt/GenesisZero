@@ -38,7 +38,7 @@ public class BossAI : AIController
 	public float TriggerRadius;
 	public float TimeBeforeFight;
 	[HideInInspector]
-	public bool initiated, introdialogue, lookingatcamera, Wild;
+	public bool initiated, introdialogue, lookingatcamera, Wild, firsttrigger, secondtrigger;
 	private int Heat, RepeatingAttack, Attack;
 	private float actiontime = 1;
 	private float chargeuptime = .5f;
@@ -353,6 +353,19 @@ public class BossAI : AIController
 			FlameGround.SetActive(false);
 		}
 
+		if (HealthLoss >= TotalHealth / 4 && GetComponent<BossEvents>())
+		{
+			if (firsttrigger == false) // Top quarter health
+			{
+				GetComponent<BossEvents>().SpawnFirstGoons();
+				firsttrigger = true;
+			}
+			else if(Wild && secondtrigger == false) // Bottom quarter health
+			{
+				GetComponent<BossEvents>().SpawnSecondGoons();
+				secondtrigger = true;
+			}
+		}
 		if (HealthLoss >= TotalHealth / 2)
 		{
 			action = 1;
@@ -362,6 +375,7 @@ public class BossAI : AIController
 			FlameGround.SetActive(true);        //Set the flame ground to true/active
 			animator.SetBool("Wild", true);
 			AudioManager.instance.PlaySound("SFX_BossRoar(0)"); // Play sound Effect
+			GetComponent<BossEvents>().DestroyGameObjectsOnWild(); //Destroy top platforms
 			Wild = true;
 		}
 		else if (Heat >= 5)
