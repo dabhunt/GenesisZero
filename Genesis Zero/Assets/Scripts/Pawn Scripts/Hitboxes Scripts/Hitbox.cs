@@ -173,7 +173,7 @@ public class Hitbox : MonoBehaviour
                     //Debug.Log("Hit " + other.transform.root.name);
                 }
 
-                if (Source != null)
+				if (Source != null)
                 {
                     if (Critical)
                     {
@@ -181,7 +181,7 @@ public class Hitbox : MonoBehaviour
                     }
                 }
 
-                if (Knockbackforce > 0 && p.IsInvunerable() == false)
+				if (Knockbackforce > 0 && p.IsInvunerable() == false)
                 {
                     if (DirectionalKnockback && Source != null)
                     {
@@ -205,7 +205,7 @@ public class Hitbox : MonoBehaviour
                     p.Burn(Burn.x, Burn.y);
                 }
 
-                float phealth = p.GetHealth().GetValue();
+				float phealth = p.GetHealth().GetValue();
                 float damagetaken = p.TakeDamage(finaldamage, Source);
                 if (player != null)
                     player.GetComponent<Player>().GetComponent<UniqueEffects>().DamageGivenTrigger();
@@ -287,16 +287,16 @@ public class Hitbox : MonoBehaviour
     {
         this.Damage = damage;
         this.Source = source;
-        spawnposition = source.transform.position;
+		spawnposition = source.transform.position;
         if (inheritCrit)
         {
-            if ((Random.Range(0, 100) < Source.GetCritChance().GetValue() * 100))
-            {
-                Critical = true;
-                return true;
-            }
-        }
-        return false;
+			if ((Random.Range(0, 100) < Source.GetCritChance().GetValue() * 100))
+			{
+				Critical = true;
+				return true;
+			}
+		}
+		return false;
     }
 
     public bool CanDamage(Collider col)
