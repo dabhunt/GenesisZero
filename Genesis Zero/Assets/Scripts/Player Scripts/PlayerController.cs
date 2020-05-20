@@ -285,8 +285,6 @@ public class PlayerController : MonoBehaviour
     }
     public void FallFaster(float terminal)
     {
-        print("vert vel " + vertVel);
-        print("terminal "+ terminal);
         if (vertVel > terminal * .35f)
             vertVel = terminal * .35f;
         terminalVel = terminal * -1;
