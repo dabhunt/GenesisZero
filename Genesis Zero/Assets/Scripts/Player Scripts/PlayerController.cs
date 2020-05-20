@@ -454,6 +454,7 @@ public class PlayerController : MonoBehaviour
             {
                 //animator.SetTrigger("startRoll");
                 //StartCoroutine(ResetTrigger("startRoll", triggerResetTime));
+                gun.PhaseTrigger = true;
                 sound.Roll();
                 VFXManager.instance.PlayEffect("VFX_PlayerDashStart", transform.position);
                 gameObject.GetComponentInChildren<SkinnedMeshRenderer>().enabled = false; //TEMPORARY CHANGE THIS
