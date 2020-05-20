@@ -19,6 +19,7 @@ public class EndCredits : MonoBehaviour
     private Color overlay;
     private float fadeDuration;
     private TextMeshProUGUI tmp;
+    private TextMeshProUGUI tmp2;
     private Image image;
 
     private void Start()
@@ -30,6 +31,7 @@ public class EndCredits : MonoBehaviour
             cardQueue.Enqueue(objs[i]);
         }
         tmp = transform.Find("Text").gameObject.GetComponent<TextMeshProUGUI>();
+        tmp2 = transform.Find("RoleTxt").gameObject.GetComponent<TextMeshProUGUI>();
         transform.Find("Overlay").GetComponent<Image>().enabled = true;
         NextCard();
         if(GameInputManager.instance != null)
@@ -46,6 +48,8 @@ public class EndCredits : MonoBehaviour
         {
             tmp.text = cardQueue.Peek().Name;
             tmp.color = cardQueue.Peek().MainTextColor;
+            tmp2.text = cardQueue.Peek().Role;
+            tmp2.color = new Color(0.0f, 0.8f, 1.0f, 1.0f);
             fadeDuration = cardQueue.Peek().FadeDuration;
             float inactiveDuration = cardQueue.Peek().TextInactiveDuration;
             float durationOnCard = cardQueue.Peek().ShowDuration;
