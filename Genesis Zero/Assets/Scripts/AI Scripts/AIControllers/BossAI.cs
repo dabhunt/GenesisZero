@@ -38,7 +38,7 @@ public class BossAI : AIController
 	public float TriggerRadius;
 	public float TimeBeforeFight;
 	[HideInInspector]
-	public bool initiated, introdialogue, lookingatcamera, Wild, firsttrigger, secondtrigger;
+	public bool initiated, introdialogue, lookingatcamera, animationswitch, Wild, firsttrigger, secondtrigger;
 	private int Heat, RepeatingAttack, Attack;
 	private float actiontime = 1;
 	private float chargeuptime = .5f;
@@ -153,6 +153,10 @@ public class BossAI : AIController
 
 		if (bossstate == State.Setting) // CHeck if the boss is doing special animation
 		{
+			if (animationswitch == false)
+			{
+				animationswitch = true;
+			}
 			boxanimating = true;
 		}
 		else
@@ -272,6 +276,13 @@ public class BossAI : AIController
 		}
 		else
 		{
+			if (this.animator.GetCurrentAnimatorStateInfo(0).IsName("Idle") && animationswitch == true)
+			{
+				transform.position = HeadModel.transform.position;
+				transform.rotation = HeadModel.transform.rotation;
+				animationswitch = false;
+			}
+			//transform.rotation = HeadModel.transform.rotation;
 			animator.gameObject.GetComponent<SnakeBossBase>().DisableIK();
 		}
 

@@ -4,50 +4,63 @@ using UnityEngine;
 
 /**
  * Kenny Doan
- * Will destroy itself after detorying other listed gameobject
+ * Will destroy itself after detroying other listed gameobject
  * 
  */
 [RequireComponent(typeof(Collider))]
 public class DestroyOnPlayerEnter : MonoBehaviour
 {
-    public List<GameObject> Objects;
+	public List<GameObject> Objects;
 
-    public float delay;
+	public float delay;
 
-    private bool triggered;
-    // Start is called before the first frame update
-    void Start()
-    {
-        
-    }
+	private bool triggered;
 
-    // Update is called once per frame
-    void Update()
-    {
-        if (triggered && delay <= 0)
-        {
-            DestoryObjects();
-        }
-        else if(triggered)
-        {
-            delay -= Time.deltaTime;
-        }
-    }
+	public float lingertime; // Pulls player towards the center x -axis for the linger time.
+	private bool destroyed;
 
-    private void OnTriggerStay(Collider other)
-    {
-        if (Objects.Count > 0 && other.GetComponentInParent<Player>() && triggered == false)
-        {
-            triggered = true;
-        }
-    }
+	// Start is called before the first frame update
+	void Start()
+	{
 
-    private void DestoryObjects()
-    {
-        foreach (GameObject g in Objects)
-        {
-            Destroy(g);
-        }
-        Destroy(this.gameObject);
-    }
+	}
+
+	// Update is called once per frame
+	void FixedUpdate()
+	{
+		if (triggered && delay <= 0 && destroyed == false)
+		{
+			DestoryObjects();
+		}
+		else if (triggered)
+		{
+			delay -= Time.fixedDeltaTime;
+		}
+
+		if (destroyed && lingertime > 0)
+		{
+			lingertime -= Time.deltaTime;
+			Transform t = GameObject.FindGameObjectWithTag("Player").transform;
+			t.position += new Vector3((transform.position.x - t.position.x) * Time.fixedDeltaTime, 0, 0);
+		}
+
+	}
+
+	private void OnTriggerStay(Collider other)
+	{
+		if (Objects.Count > 0 && other.GetComponentInParent<Player>() && triggered == false)
+		{
+			triggered = true;
+		}
+	}
+
+	private void DestoryObjects()
+	{
+		foreach (GameObject g in Objects)
+		{
+			Destroy(g);
+		}
+		destroyed = true;
+		Destroy(this.gameObject, lingertime);
+	}
 }
