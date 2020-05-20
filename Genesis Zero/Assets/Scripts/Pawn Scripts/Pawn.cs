@@ -68,7 +68,7 @@ public class Pawn : MonoBehaviour
             }
             finaldamage -= GetFlatDamageReduction().GetValue();
             finaldamage = finaldamage - finaldamage * GetDamageReduction().GetValue();
-			Mathf.Clamp(finaldamage, 0 , 999);
+			finaldamage = Mathf.Clamp(finaldamage, 0 , 999);
 
             // Shield Damage
             if (GetShield().GetValue() > 0)
