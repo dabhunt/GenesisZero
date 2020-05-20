@@ -113,8 +113,7 @@ public class BossAI : AIController
 				if (DialogueManager.instance.IsDialoguePlaying() == false && PassedTime > 1.25f)
 				{
 					TimeBeforeFight = 0;
-				}
-				SetInvunerable(Time.deltaTime * 2);
+				}			
 
 				if (TimeBeforeFight <= 0)
 				{
@@ -128,6 +127,10 @@ public class BossAI : AIController
 					SetBossstate(State.Setting, 2);
 					animator.Play("Intro");
 					//StartCoroutine(CockBack(1.25f, Target.position - transform.position, 1));
+				}
+				else
+				{
+					SetInvunerable(Time.deltaTime * 2);
 				}
 			}
 		}

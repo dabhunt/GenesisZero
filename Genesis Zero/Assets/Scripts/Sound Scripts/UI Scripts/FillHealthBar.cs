@@ -55,6 +55,7 @@ public class FillHealthBar : MonoBehaviour
     	{
     		fillImage.enabled = true;
     	}
+        slider.maxValue = player.GetHealth().GetMaxValue();
     	// uses the player object to get info about player health
     	// fillvalue represents how filled in the healthbar is, from 0 to 100
         float curValue = player.GetHealth().GetValue();
