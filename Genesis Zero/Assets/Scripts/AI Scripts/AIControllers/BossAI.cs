@@ -95,6 +95,8 @@ public class BossAI : AIController
 
 		if (GetDistanceToTarget() < TriggerRadius && initiated == false)
 		{
+			GameInputManager.instance.DisablePlayerControls();
+			GameObject.FindGameObjectWithTag("Player").GetComponent<PlayerController>().movementInput = Vector2.zero;
 			initiated = true;
 		}
 		if (initiated)
@@ -117,6 +119,7 @@ public class BossAI : AIController
 
 				if (TimeBeforeFight <= 0)
 				{
+					GameInputManager.instance.EnablePlayerControls();
 					AudioManager.instance.PlaySound("SFX_BossRoar(0)");
 					camera.transform.DOShakePosition(duration: 1.25f, strength: 1, vibrato: 5, randomness: 60, snapping: false, fadeOut: true);
 					Camera.main.GetComponent<BasicCameraZoom>().ChangeFieldOfView(30);

@@ -41,7 +41,7 @@ public class DestroyOnPlayerEnter : MonoBehaviour
 		{
 			lingertime -= Time.deltaTime;
 			Transform t = GameObject.FindGameObjectWithTag("Player").transform;
-			t.position += new Vector3((transform.position.x - t.position.x) * Time.fixedDeltaTime, 0, 0);
+			t.position += new Vector3((transform.position.x - t.position.x) * (Time.fixedDeltaTime * 2), 0, 0);
 		}
 
 	}
