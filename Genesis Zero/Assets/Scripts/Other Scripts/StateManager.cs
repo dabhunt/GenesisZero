@@ -125,8 +125,13 @@ public class StateManager : MonoBehaviour
             }
             int i = 0;
             while (player.GetSkillManager().GetAmount() < 19 || i > 250)
-            { 
-                player.GetSkillManager().AddSkill(skillManager.GetRandomModByChance());
+            {
+                if (i == 0)
+                { //guarantee you get 2 legendary's
+                    skillManager.AddSkill(skillManager.GetRandomGolds(1)[0]);
+                    skillManager.AddSkill(skillManager.GetRandomGolds(1)[0]);
+                }
+                skillManager.AddSkill(skillManager.GetRandomModByChance());
                 i++;
             }
         }

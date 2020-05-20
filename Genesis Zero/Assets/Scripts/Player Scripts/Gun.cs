@@ -211,7 +211,7 @@ public class Gun : MonoBehaviour
             float burnDmg = burnDamagePerStack * player.GetSkillStack("3rd Degree Burns");
             if (burnDmg > 0)
                 hit.Burn = new Vector2(burnTime, burnDmg);
-            if (player.GetSkillStack("Triple Threat") > 0 || burnDmg > 0)
+            if (player.GetSkillStack("Triple Threat") > 0 || burnDmg > 0 || player.GetSkillStack("High Density Rounds") > 0)
             {
                 projectile = VFXManager.instance.ChangeMainTrail(projectile, Color.red, Color.black);
                 vfx_MuzzleFlash = VFXManager.instance.ChangeColor(vfx_MuzzleFlash, Color.red);
