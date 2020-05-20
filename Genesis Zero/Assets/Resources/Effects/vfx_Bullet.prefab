@@ -10,12 +10,12 @@ GameObject:
   m_Component:
   - component: {fileID: 3274657888610707814}
   m_Layer: 0
-  m_Name: VFX_Bullet
+  m_Name: vfx_Bullet
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!4 &3274657888610707814
 Transform:
   m_ObjectHideFlags: 0
@@ -59,7 +59,7 @@ Transform:
   m_GameObject: {fileID: 4000203397524795105}
   m_LocalRotation: {x: -0, y: -0, z: -0.7071068, w: 0.7071068}
   m_LocalPosition: {x: -0.04099989, y: 0.022, z: 0.015999794}
-  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_LocalScale: {x: 3, y: 3, z: 3}
   m_Children: []
   m_Father: {fileID: 3274657888610707814}
   m_RootOrder: 0
@@ -74,7 +74,7 @@ ParticleSystem:
   serializedVersion: 6
   lengthInSec: 0.1
   simulationSpeed: 1
-  stopAction: 0
+  stopAction: 2
   cullingMode: 0
   ringBufferMode: 0
   ringBufferLoopRange: {x: 0, y: 1}
@@ -4812,7 +4812,7 @@ Transform:
   m_GameObject: {fileID: 7760466971208222222}
   m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
   m_LocalPosition: {x: 0, y: 0, z: 0}
-  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_LocalScale: {x: 3, y: 3, z: 3}
   m_Children: []
   m_Father: {fileID: 3274657888610707814}
   m_RootOrder: 1
@@ -4921,5 +4921,5 @@ TrailRenderer:
     shadowBias: 0.5
     generateLightingData: 0
   m_MinVertexDistance: 0.1
-  m_Autodestruct: 0
+  m_Autodestruct: 1
   m_Emitting: 1
