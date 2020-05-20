@@ -207,7 +207,8 @@ public class Gun : MonoBehaviour
             shotCount = 0;
             //apply Knockback on 3rd shot if you have it
             hit.Knockbackforce += knockBackPerStack * player.GetSkillStack("High Density Rounds");
-            hit.Damage *= 2f * player.GetSkillStack("Triple Threat");
+            if (player.GetSkillStack("Triple Threat") > 0)
+                hit.Damage = player.GetDamage().GetValue() * 2f * player.GetSkillStack("Triple Threat");
             float burnDmg = burnDamagePerStack * player.GetSkillStack("3rd Degree Burns");
             if (burnDmg > 0)
                 hit.Burn = new Vector2(burnTime, burnDmg);
