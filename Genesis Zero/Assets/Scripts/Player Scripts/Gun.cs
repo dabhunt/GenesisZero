@@ -27,10 +27,13 @@ public class Gun : MonoBehaviour
     public float burnDamagePerStack = 4f;
     public float burnTime = 3f;
     [Header("6. Hardware Exploit")]
-    //in seconds
-    public float stunDuration = .4f;
-    public float stunIncreasePerStack = .2f;
+    public float stunDuration = .5f;    //in seconds
+    public float stunIncreasePerStack = .25f;
     public Color stunBulletColor;
+    [Header("7. Phase Flash")]
+    public bool PhaseTrigger = false;
+    public float PF_stunDuration = .7f;
+    public float PF_stunIncreasePerStack = .25f;
     //only reduces it's own, not others by .1
     public float reductionPerStack = .1f;
     [Header("Atom Splitter (Multishot)")]
@@ -139,6 +142,10 @@ public class Gun : MonoBehaviour
     //calling this determines if the shot will be a crit ahead of time
     private bool Crit()
     {
+        if (PhaseTrigger && player.GetSkillStack("Phase Blast") > 0)
+        {//this mod guarantees a critical hit after Phasing
+            return true;
+        }
         if (Random.Range(0, 100) < player.GetCritChance().GetValue() * 100)
         {
             return true;
@@ -160,12 +167,14 @@ public class Gun : MonoBehaviour
     public GameObject ApplyModifiers(GameObject projectile,bool crit)
     {
         Hitbox hit = projectile.GetComponent<Hitbox>();
-        if (crit)
+        Color bulletColor;
+        if (crit) 
         {//Any effects that need to apply due to crit should go here
             //apply a burn to crits if you have ignition bullets
             hit.Critical = true;
             hit.Damage = player.GetDamage().GetValue();
             projectile = VFXManager.instance.ChangeColor(projectile, CritBulletColor);
+            bulletColor = CritBulletColor;
             vfx_MuzzleFlash = VFXManager.instance.ChangeColor(vfx_MuzzleFlash, CritBulletColor);
             float burnDmg = burnDamagePerStack * player.GetSkillStack("Ignition Bullets");
             if (burnDmg > 0)
@@ -174,13 +183,26 @@ public class Gun : MonoBehaviour
             int exploitStacks = player.GetSkillStack("Hardware Exploit");
             if (exploitStacks > 0)
             {
-                projectile = VFXManager.instance.ChangeColor(projectile, stunBulletColor);
+                //projectile = VFXManager.instance.ChangeColor(projectile, stunBulletColor);
+                projectile = VFXManager.instance.ChangeInnerTrail(projectile, stunBulletColor);
+                //bulletColor = stunBulletColor;
                 vfx_MuzzleFlash = VFXManager.instance.ChangeColor(vfx_MuzzleFlash, stunBulletColor);
                 hit.StunTime = stunDuration + (1 - exploitStacks) * stunIncreasePerStack;
             }
             
         }
-        if (shotCount > 2)
+        if (PhaseTrigger) //after rolling, next shot does this
+        {
+            PhaseTrigger = false;
+            int PF_Stacks = player.GetSkillStack("Short Circuit");
+            if (PF_Stacks > 0)
+            { //modifier that shoots a stun bullet immediately after rolling
+                projectile = VFXManager.instance.ChangeInnerTrail(projectile, stunBulletColor);
+                vfx_MuzzleFlash = VFXManager.instance.ChangeColor(vfx_MuzzleFlash, stunBulletColor);
+                hit.StunTime = PF_stunDuration + (1 - PF_Stacks) * PF_stunIncreasePerStack;
+            }
+        }
+        if (shotCount > 2) //every third shot
         {
             shotCount = 0;
             //apply Knockback on 3rd shot if you have it
@@ -188,10 +210,14 @@ public class Gun : MonoBehaviour
             hit.Damage *= 2f * player.GetSkillStack("Triple Threat");
             float burnDmg = burnDamagePerStack * player.GetSkillStack("3rd Degree Burns");
             if (burnDmg > 0)
-                hit.Burn = new Vector2(3, burnDmg);
+                hit.Burn = new Vector2(burnTime, burnDmg);
             if (player.GetSkillStack("Triple Threat") > 0 || burnDmg > 0)
-                projectile = VFXManager.instance.ChangeColor(projectile, Color.red);
+            {
+                projectile = VFXManager.instance.ChangeMainTrail(projectile, Color.red, Color.black);
+                vfx_MuzzleFlash = VFXManager.instance.ChangeColor(vfx_MuzzleFlash, Color.red);
+            }
         }
+
         return projectile;
     }
     private void UpdateCrosshairBloom()
