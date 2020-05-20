@@ -68,6 +68,7 @@ public class Pawn : MonoBehaviour
             }
             finaldamage -= GetFlatDamageReduction().GetValue();
             finaldamage = finaldamage - finaldamage * GetDamageReduction().GetValue();
+			Mathf.Clamp(finaldamage, 0 , 999);
 
             // Shield Damage
             if (GetShield().GetValue() > 0)
@@ -325,6 +326,10 @@ public class Pawn : MonoBehaviour
 
     public void Burn(float time, float damage)
     {
+		if (IsInvunerable()) //Does not inflict burn if the pawn is invunerable
+		{
+			return;
+		}
         burntime = time;
         burntick = Time.deltaTime;
         burndamage = damage;
