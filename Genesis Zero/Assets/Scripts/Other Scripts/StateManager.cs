@@ -14,7 +14,7 @@ public class StateManager : MonoBehaviour
     private bool isPaused;
     public Restart restart;
     public GameObject canvas;
-    public GameObject pauseMenu;
+    private GameObject pauseMenu;
     private AsyncOperation operation;
     private GameObject optionsMenu;
     private GameObject pMenuButtons;
