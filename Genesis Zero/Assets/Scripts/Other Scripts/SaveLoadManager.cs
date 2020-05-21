@@ -152,7 +152,7 @@ public class SaveLoadManager : MonoBehaviour
         player.SetEssence(data.essence);
 
         SkillObject sObject;
-        for (int i = 0; i < data.skillList.Length; i++)
+        for (int i = 0; i < data.skillList.Count; i++)
         {
             sObject = sM.GetSkillFromString(data.skillList[i]);
             sM.AddSkill(sObject);
@@ -209,10 +209,12 @@ public class SaveLoadManager : MonoBehaviour
         {
             data.dialougePlayedCounts.Add(dialougeDict[key]);
         }
+        data.skillList = new List<string>();
+        data.skillStacks = new List<int>();
         for (int i = 0; i < sList.Count; i++)
         {
-            data.skillList[i] = sList[i].name;
-            data.skillStacks[i] = sM.GetSkillStack(sList[i].name);
+            data.skillList.Add(sList[i].name);
+            data.skillStacks.Add(sM.GetSkillStack(sList[i].name));
         }
         return data;
     }
@@ -237,8 +239,8 @@ public class PlayerData
     public float health, damage, speed, attackSpeed, flatDamageReduction, damageReduction, dodgeChance, critChance, critdamage, range, shield, weight;
     public float essence;
     public Status invunerable, stunned, burning, slowed, stunimmune;
-    public string[] skillList;
-    public int[] skillStacks;
+    public List<string> skillList;
+    public List<int> skillStacks;
     public List<string> dialougePlayedKeys;
     public List<int> dialougePlayedCounts;
     public PlayerData()
