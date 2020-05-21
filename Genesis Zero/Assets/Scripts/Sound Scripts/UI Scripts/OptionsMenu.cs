@@ -40,7 +40,7 @@ public class OptionsMenu : MonoBehaviour
         {
             if (resolutions[i].refreshRate < 60)
                 continue;
-            values.Add(resolutions[i].width + "x" + resolutions[i].height + " (" + resolutions[i].refreshRate + " hz)");
+            values.Add(resolutions[i].width + "x" + resolutions[i].height + " (" + Mathf.Ceil(resolutions[i].refreshRate) + " hz)");
             if (resolutions[i].height == Screen.currentResolution.height && resolutions[i].width == Screen.currentResolution.width)
             {
                 index = i;
