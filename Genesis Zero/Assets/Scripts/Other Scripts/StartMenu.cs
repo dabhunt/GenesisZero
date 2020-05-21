@@ -78,6 +78,8 @@ public class StartMenu : MonoBehaviour
         //hiding MainMenuScreen.
         mainMenuScreen.SetActive(false);
         loadingScreen.SetActive(true);
+        //Deletes old save files
+        SaveLoadManager.instance.DeleteSaveFiles();
         LoadScene(true);
     }
     //Onclick Event for Options Button

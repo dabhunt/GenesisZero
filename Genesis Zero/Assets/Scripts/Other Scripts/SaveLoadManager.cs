@@ -229,6 +229,16 @@ public class SaveLoadManager : MonoBehaviour
     {
         return (File.Exists(Application.persistentDataPath + sPath));
     }
+
+    public void DeleteSaveFiles()
+    {
+        if (SaveExists())
+        {
+            Debug.Log("Deleting saves");
+            File.Delete(Application.persistentDataPath + pPath);
+            File.Delete(Application.persistentDataPath + mPath);
+        }
+    }
 }
 
 [Serializable]
