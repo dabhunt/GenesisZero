@@ -50,7 +50,6 @@ public class OptionsMenu : MonoBehaviour
         resDropdown.AddOptions(values);
         resDropdown.value = index;
         resDropdown.RefreshShownValue();
-
         if (SaveLoadManager.instance.SettingsSaveExists())
         {
             settingsData = SaveLoadManager.instance.LoadSettings();
@@ -63,6 +62,19 @@ public class OptionsMenu : MonoBehaviour
             MuteMusic(settingsData.muteMusic);
             SetFullScreen(settingsData.fullScreen);
             SetResolution(settingsData.resIndex);
+        }
+        else
+        {
+            settingsData = new SettingsData();
+        }
+        optionsScreen.SetActive(false);
+    }
+
+    private void OnEnable()
+    {
+        if (SaveLoadManager.instance.SettingsSaveExists())
+        {
+            settingsData = SaveLoadManager.instance.LoadSettings();
             //Update the visuals of the options menu
             SetSliderValue("Master", settingsData.masterVolume);
             SetSliderValue("Music", settingsData.musicVolume);
@@ -74,12 +86,8 @@ public class OptionsMenu : MonoBehaviour
             resDropdown.RefreshShownValue();
             optionsScreen.transform.Find("Resolution").Find("FullScreen").gameObject.GetComponent<Toggle>().isOn = settingsData.fullScreen;
         }
-        else
-        {
-            settingsData = new SettingsData();
-        }
-        optionsScreen.SetActive(false);
     }
+
     public void OptionsButton()
     {
         canvas.transform.Find("OptionsScreen").gameObject.SetActive(true);
@@ -99,6 +107,8 @@ public class OptionsMenu : MonoBehaviour
         AudioManager.instance.mixer.GetFloat("masterVolume", out settingsData.masterVolume);
         AudioManager.instance.mixer.GetFloat("sfxVolume", out settingsData.sfxVolume);
         AudioManager.instance.mixer.GetFloat("musicVolume", out settingsData.musicVolume);
+        settingsData.fullScreen = optionsScreen.transform.Find("Resolution").Find("FullScreen").gameObject.GetComponent<Toggle>().isOn;
+        settingsData.resIndex = resDropdown.value;
         //Saves user preferences
         SaveLoadManager.instance.SaveSettings(settingsData);
         optionsScreen.SetActive(false);
@@ -218,13 +228,11 @@ public class OptionsMenu : MonoBehaviour
     public void SetFullScreen(bool value)
     {
         Screen.fullScreen = value;
-        settingsData.fullScreen = value;
     }
     //Event to set Resolution
     public void SetResolution(int index)
     {
         Screen.SetResolution(resolutions[index].width, resolutions[index].height, Screen.fullScreen, resolutions[index].refreshRate);
-        settingsData.resIndex = index;
     }
 
     public SettingsData GetSettingsData()
