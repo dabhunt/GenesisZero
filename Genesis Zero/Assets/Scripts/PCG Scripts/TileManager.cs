@@ -64,8 +64,9 @@ public class TileManager : MonoBehaviour
 		//tilePrefabs = cityTilePrefabs;
 		
 		//Level 1
-		int level = 0;
-        for (int i = 0; i < numberOfBuildings; ++i)
+		int level = 1;
+		currentPos = levelSpacing * level + 22;
+		for (int i = 0; i < numberOfBuildings; ++i)
 		{
 			generateBuilding(Random.Range(minBuildingWidth, maxBuildingWidth), Random.Range(minBuildingTileCount, maxBuildingTileCount), level);
 		}

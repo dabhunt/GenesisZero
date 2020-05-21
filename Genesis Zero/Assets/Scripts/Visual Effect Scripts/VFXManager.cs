@@ -91,14 +91,19 @@ public class VFXManager : MonoBehaviour
 
             }
             Renderer r = child.gameObject.GetComponent<Renderer>();
-            if (r != null && r.material.HasProperty("_EmissiveColor"))
-            {
-                child.gameObject.GetComponent<Renderer>().material.SetColor("_EmissiveColor", color);
-            }
-            if (r != null && r.material.HasProperty("_ShallowColor"))
-            {
-              
-                child.gameObject.GetComponent<Renderer>().material.SetColor("_ShallowColor", color);
+            if (r != null)
+            { 
+                foreach (Material mat in r.materials)
+                {
+                    if (mat.HasProperty("_EmissiveColor"))
+                    {
+                        child.gameObject.GetComponent<Renderer>().material.SetColor("_EmissiveColor", color);
+                    }
+                    if (mat.HasProperty("_ShallowColor"))
+                    {
+                        child.gameObject.GetComponent<Renderer>().material.SetColor("_ShallowColor", color);
+                    }
+                }
             }
             if (child.childCount > 0)
             {
