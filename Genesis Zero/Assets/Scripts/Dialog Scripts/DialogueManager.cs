@@ -52,6 +52,15 @@ public class DialogueManager : MonoBehaviour
         //instance.TriggerDialogue("StartDialogue");
         buge = GameObject.FindWithTag("BUG-E").GetComponent<BUGE>();
         //StateManager.instance.PauseGame();
+        
+        if (SaveLoadManager.instance.SaveExists() && !SaveLoadManager.instance.newGame)
+        {
+            PlayerData data = SaveLoadManager.instance.LoadPlayerData();
+            for (int i = 0; i < data.dialougePlayedKeys.Count; i++)
+            {
+                dialoguePlayed[data.dialougePlayedKeys[i]] = data.dialougePlayedCounts[i];
+            }
+        }
     }
 
     public bool IsDialoguePlaying()
@@ -278,5 +287,9 @@ public class DialogueManager : MonoBehaviour
     public void SetSkip(bool boo)
     {
         canSkip = boo;
+    }
+    public Dictionary<string, int> GetDialougePlayedDict()
+    {
+        return dialoguePlayed;
     }
 }

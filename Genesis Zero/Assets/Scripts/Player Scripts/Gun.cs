@@ -27,10 +27,13 @@ public class Gun : MonoBehaviour
     public float burnDamagePerStack = 4f;
     public float burnTime = 3f;
     [Header("6. Hardware Exploit")]
-    //in seconds
-    public float stunDuration = .4f;
-    public float stunIncreasePerStack = .2f;
+    public float stunDuration = .5f;    //in seconds
+    public float stunIncreasePerStack = .25f;
     public Color stunBulletColor;
+    [Header("7. Phase Flash")]
+    public bool PhaseTrigger = false;
+    public float PF_stunDuration = .7f;
+    public float PF_stunIncreasePerStack = .25f;
     //only reduces it's own, not others by .1
     public float reductionPerStack = .1f;
     [Header("Atom Splitter (Multishot)")]
@@ -55,6 +58,7 @@ public class Gun : MonoBehaviour
     private RectTransform screenXhair;
     private float spread;
     private GameObject vfx_MuzzleFlash;
+    private int shotCount = 0;
     private void Start() 
     {
         player = GetComponent<Player>();
@@ -71,7 +75,6 @@ public class Gun : MonoBehaviour
 
     public void Shoot()
     {
-        
         spreadAngle = overheat.ShootBloom();
         //print("spreadAngle: "+spreadAngle);
         Vector3 spawnpoint = new Vector3(firePoint.transform.position.x, firePoint.transform.position.y, 0);
@@ -83,6 +86,10 @@ public class Gun : MonoBehaviour
         GameObject instance = (GameObject) Instantiate(GetProjectile(crit), spawnpoint, Quaternion.identity);
         //sets the object to look towards where it should be firing
         instance.transform.LookAt(controller.worldXhair.transform);
+        //means that instantiate hitbox will not calculate crit on it's own
+        bool inheritCrit = false;
+        instance.transform.Rotate(Vector3.forward, Random.Range(-spreadAngle, spreadAngle), Space.World);
+        instance.GetComponent<Hitbox>().InitializeHitbox(player.GetDamage().GetValue(), player, inheritCrit);
         instance = ApplyModifiers(instance,crit);
         expShot = instance.GetComponent<ExplosiveShot>();
         if (expShot != null)
@@ -92,10 +99,6 @@ public class Gun : MonoBehaviour
             float multi = player.GetSkillManager().GetSkillStackAsMultiplier(("PyroTechnics"), blastRadiusBonusPerStack);
 	    	expShot.ModifyBlastRadius(multi);
         }
-        //means that instantiate hitbox will not calculate crit on it's own
-        bool inheritCrit = false;
-        instance.transform.Rotate(Vector3.forward,Random.Range(-spreadAngle, spreadAngle),Space.World);
-        instance.GetComponent<Hitbox>().InitializeHitbox(player.GetDamage().GetValue(), player, inheritCrit);
         //add 1 to stacks, because Compound X applies like a secondary stack of Atom splitter
         int stacks = player.GetSkillStack("Compound X") + 1;
         bool right = controller.IsAimingRight();
@@ -117,11 +120,12 @@ public class Gun : MonoBehaviour
                     //extra bullets have an individual chance to crit, and thus can apply the pyrotechnics AOE seperate
                     bool extraCrit = Crit();
                     GameObject extraBullet = (GameObject)Instantiate(GetProjectile(extraCrit), spawnpoint, instance.transform.rotation);
-                    extraBullet = ApplyModifiers(extraBullet,extraCrit);
                     Hitbox hit = extraBullet.GetComponent<Hitbox>();
+                    hit.InitializeHitbox(player.GetDamage().GetValue() * .65f, player, inheritCrit);
+                    extraBullet = ApplyModifiers(extraBullet,extraCrit);
                     extraBullet.transform.Rotate(Vector3.forward, angle, Space.World);
                     //extraBullet.GetComponent<Hitbox>().MaxHits += 2;
-                    hit.InitializeHitbox(player.GetDamage().GetValue()*.65f, player, inheritCrit);
+                    
                 }
             }
             //adds extra heat for each of extra bullets fired
@@ -138,6 +142,10 @@ public class Gun : MonoBehaviour
     //calling this determines if the shot will be a crit ahead of time
     private bool Crit()
     {
+        if (PhaseTrigger && player.GetSkillStack("Phase Blast") > 0)
+        {//this mod guarantees a critical hit after Phasing
+            return true;
+        }
         if (Random.Range(0, 100) < player.GetCritChance().GetValue() * 100)
         {
             return true;
@@ -147,6 +155,7 @@ public class Gun : MonoBehaviour
     //All generic bullet effects should go inside this function, including Crit proc / different projectiles being returned 
     public GameObject GetProjectile(bool crit)
     {
+        shotCount++;
         GameObject projectile = basicProjectile;
         if (crit)
         {
@@ -158,12 +167,14 @@ public class Gun : MonoBehaviour
     public GameObject ApplyModifiers(GameObject projectile,bool crit)
     {
         Hitbox hit = projectile.GetComponent<Hitbox>();
-        if (crit)
+        Color bulletColor;
+        if (crit) 
         {//Any effects that need to apply due to crit should go here
             //apply a burn to crits if you have ignition bullets
             hit.Critical = true;
             hit.Damage = player.GetDamage().GetValue();
             projectile = VFXManager.instance.ChangeColor(projectile, CritBulletColor);
+            bulletColor = CritBulletColor;
             vfx_MuzzleFlash = VFXManager.instance.ChangeColor(vfx_MuzzleFlash, CritBulletColor);
             float burnDmg = burnDamagePerStack * player.GetSkillStack("Ignition Bullets");
             if (burnDmg > 0)
@@ -172,13 +183,42 @@ public class Gun : MonoBehaviour
             int exploitStacks = player.GetSkillStack("Hardware Exploit");
             if (exploitStacks > 0)
             {
-                projectile = VFXManager.instance.ChangeColor(projectile, stunBulletColor);
+                //projectile = VFXManager.instance.ChangeColor(projectile, stunBulletColor);
+                projectile = VFXManager.instance.ChangeInnerTrail(projectile, stunBulletColor);
+                //bulletColor = stunBulletColor;
                 vfx_MuzzleFlash = VFXManager.instance.ChangeColor(vfx_MuzzleFlash, stunBulletColor);
                 hit.StunTime = stunDuration + (1 - exploitStacks) * stunIncreasePerStack;
             }
-            //apply Knockback on crit if you have it
-            hit.Knockbackforce += knockBackPerStack * player.GetSkillStack("Knockback");
+            
         }
+        if (PhaseTrigger) //after rolling, next shot does this
+        {
+            PhaseTrigger = false;
+            int PF_Stacks = player.GetSkillStack("Short Circuit");
+            if (PF_Stacks > 0)
+            { //modifier that shoots a stun bullet immediately after rolling
+                projectile = VFXManager.instance.ChangeInnerTrail(projectile, stunBulletColor);
+                vfx_MuzzleFlash = VFXManager.instance.ChangeColor(vfx_MuzzleFlash, stunBulletColor);
+                hit.StunTime = PF_stunDuration + (1 - PF_Stacks) * PF_stunIncreasePerStack;
+            }
+        }
+        if (shotCount > 2) //every third shot
+        {
+            shotCount = 0;
+            //apply Knockback on 3rd shot if you have it
+            hit.Knockbackforce += knockBackPerStack * player.GetSkillStack("High Density Rounds");
+            if (player.GetSkillStack("Triple Threat") > 0)
+                hit.Damage = player.GetDamage().GetValue() * 2f * player.GetSkillStack("Triple Threat");
+            float burnDmg = burnDamagePerStack * player.GetSkillStack("3rd Degree Burns");
+            if (burnDmg > 0)
+                hit.Burn = new Vector2(burnTime, burnDmg);
+            if (player.GetSkillStack("Triple Threat") > 0 || burnDmg > 0 || player.GetSkillStack("High Density Rounds") > 0)
+            {
+                projectile = VFXManager.instance.ChangeMainTrail(projectile, Color.red, Color.black);
+                vfx_MuzzleFlash = VFXManager.instance.ChangeColor(vfx_MuzzleFlash, Color.red);
+            }
+        }
+
         return projectile;
     }
     private void UpdateCrosshairBloom()

@@ -35,6 +35,8 @@ public class TileManager : MonoBehaviour
 	public GameObject[] cityTilePrefabs;
 	public GameObject[] enemyPrefabs;
 	public GameObject[] interactablePrefabs;
+	public GameObject levelEndCityBuilding;
+	public GameObject levelEndIndustrialBuilding;
 	
 	[Header("Enemy Spawning")]
 	public Vector2 MinMaxEnemies = new Vector2(3, 5);
@@ -62,11 +64,14 @@ public class TileManager : MonoBehaviour
 		//tilePrefabs = cityTilePrefabs;
 		
 		//Level 1
-		int level = 0;
-        for (int i = 0; i < numberOfBuildings; ++i)
+		int level = 1;
+		currentPos = levelSpacing * level + 22;
+		for (int i = 0; i < numberOfBuildings; ++i)
 		{
 			generateBuilding(Random.Range(minBuildingWidth, maxBuildingWidth), Random.Range(minBuildingTileCount, maxBuildingTileCount), level);
 		}
+		Vector3 spawnVector = new Vector3(1, 0, 0) * currentPos + new Vector3(0, -2, 0); //spawnVector for tiles
+		GameObject endBuilding = (GameObject)GameObject.Instantiate(levelEndCityBuilding, spawnVector, Quaternion.Euler(0, 141.6f, 0));
 		//tilePrefabs = industrialTilePrefabs;
 		tilePrefabs = cityTilePrefabs;
 		//Level 2
@@ -76,19 +81,20 @@ public class TileManager : MonoBehaviour
 		{
 			generateBuilding(Random.Range(minBuildingWidth, maxBuildingWidth), Random.Range(minBuildingTileCount, maxBuildingTileCount), level);
 		}
-		
+		spawnVector = new Vector3(1, 0, 0) * currentPos + new Vector3(0, -2, 0); //spawnVector for tiles
+		GameObject endBuilding2 = (GameObject)GameObject.Instantiate(levelEndCityBuilding, spawnVector, Quaternion.Euler(0, 141.6f, 0));
 		//Level 3
-		++level;
-		currentPos = levelSpacing*level + 22;
-		for (int i = 0; i < numberOfBuildings; ++i)
-		{
-			generateBuilding(Random.Range(minBuildingWidth, maxBuildingWidth), Random.Range(minBuildingTileCount, maxBuildingTileCount), level);
-		}
+		//++level;
+		//currentPos = levelSpacing*level + 22;
+		//for (int i = 0; i < numberOfBuildings; ++i)
+		//{
+			//generateBuilding(Random.Range(minBuildingWidth, maxBuildingWidth), Random.Range(minBuildingTileCount, maxBuildingTileCount), level);
+		//}
 		
 		//Placemat PCG Pass
-		bool teleporterIsSpawned = false;
+		bool AllTeleportersSpawned = false;
 		List<GameObject> teleporterInstances = new List<GameObject>();
-		float levelTracking = 0f;
+		float levelTracking = levelSpacing; //start after the scrap yard section
 		int iter = 0;
 		foreach (GameObject mat in GameObject.FindGameObjectsWithTag("Placemat"))
 		{
@@ -112,21 +118,28 @@ public class TileManager : MonoBehaviour
 				GameObject newScrap = Instantiate(interactablePrefabs[3]) as GameObject;
 				newScrap.transform.position = mat.transform.position;
 			}
-			else if (mat.name == "TeleportMat" && Random.value <= teleSpawnChance)
+			else if (mat.name == "TeleportMat" && Random.value <= teleSpawnChance && AllTeleportersSpawned == false)
 			{
 				if (mat.transform.position.x > levelTracking)
 				{
 					GameObject newTele = Instantiate(interactablePrefabs[4]) as GameObject;
-					newTele.name = "Teleporter Level " + (teleporterInstances.Count + 1);
 					teleporterInstances.Add(newTele);
+					if (teleporterInstances.Count < 2)
+					{
+						newTele.GetComponent<Teleporter>().BossRoomOverride = true; //makes this TP go to boss room instead
+						newTele.name = "Teleporter to Level " + (teleporterInstances.Count);
+						levelTracking += levelSpacing;
+						newTele.GetComponent<Teleporter>().SetDestination(new Vector2(levelTracking + 10, 40));
+						teleporterInstances[teleporterInstances.Count - 1].transform.position = mat.transform.position;
+					}
+					else 
+					{
+						newTele.name = "Teleporter to Boss Room";
+						teleporterInstances[teleporterInstances.Count - 1].transform.position = mat.transform.position;
+						AllTeleportersSpawned = true;
+					}	
 					teleSpawnChance = 0;
 					iter = 0;
-					levelTracking += levelSpacing;
-					if (teleporterInstances.Count > 1) //second teleporter destination goes to boss
-						newTele.GetComponent<Teleporter>().SetDestination(new Vector2(-386, 69));
-					else
-						newTele.GetComponent<Teleporter>().SetDestination(new Vector2(levelTracking + 10, 40));
-					teleporterInstances[teleporterInstances.Count - 1].transform.position = mat.transform.position;
 				}
 
 			}

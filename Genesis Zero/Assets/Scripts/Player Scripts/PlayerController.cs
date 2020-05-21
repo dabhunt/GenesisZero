@@ -105,7 +105,7 @@ public class PlayerController : MonoBehaviour
         inputActions.PlayerControls.Interact.performed += ctx => interactInput = ctx.ReadValue<float>();
         defaultLayerMask = immoveables;
         resetfallSpeed = fallSpeedMult;
-        sound = FindObjectOfType<AudioManager>().GetComponent<PlayerSounds>();
+        sound = AudioManager.instance.GetComponent<PlayerSounds>();
         animator = GetComponent<Animator>();
         gun = GetComponent<Gun>();
         overheat = GetComponent<OverHeat>();
@@ -285,8 +285,6 @@ public class PlayerController : MonoBehaviour
     }
     public void FallFaster(float terminal)
     {
-        print("vert vel " + vertVel);
-        print("terminal "+ terminal);
         if (vertVel > terminal * .35f)
             vertVel = terminal * .35f;
         terminalVel = terminal * -1;
@@ -454,6 +452,7 @@ public class PlayerController : MonoBehaviour
             {
                 //animator.SetTrigger("startRoll");
                 //StartCoroutine(ResetTrigger("startRoll", triggerResetTime));
+                gun.PhaseTrigger = true;
                 sound.Roll();
                 VFXManager.instance.PlayEffect("VFX_PlayerDashStart", transform.position);
                 gameObject.GetComponentInChildren<SkinnedMeshRenderer>().enabled = false; //TEMPORARY CHANGE THIS

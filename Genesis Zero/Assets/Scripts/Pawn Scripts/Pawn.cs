@@ -68,6 +68,7 @@ public class Pawn : MonoBehaviour
             }
             finaldamage -= GetFlatDamageReduction().GetValue();
             finaldamage = finaldamage - finaldamage * GetDamageReduction().GetValue();
+			finaldamage = Mathf.Clamp(finaldamage, 0 , 999);
 
             // Shield Damage
             if (GetShield().GetValue() > 0)
@@ -182,7 +183,9 @@ public class Pawn : MonoBehaviour
                     if (colliding && hit.collider.isTrigger == false)
                     {
 						Debug.Log(colliding);
-						//colliding = !hit.collider.isTrigger;
+						//print(hit.collider);
+                        colliding = !hit.collider.isTrigger;
+                        
 						StopCollision(hit.normal);
 					}
                     translation = colliding ? -translation : translation;
@@ -193,7 +196,7 @@ public class Pawn : MonoBehaviour
                 }
                 else if (GetComponentInParent<PlayerController>() && colliding == true)
                 {
-                    transform.position += translation;
+                    transform.position -= translation*2;
                 }
             }
             if (knockbackforce < 1)
@@ -323,6 +326,10 @@ public class Pawn : MonoBehaviour
 
     public void Burn(float time, float damage)
     {
+		if (IsInvunerable()) //Does not inflict burn if the pawn is invunerable
+		{
+			return;
+		}
         burntime = time;
         burntick = Time.deltaTime;
         burndamage = damage;

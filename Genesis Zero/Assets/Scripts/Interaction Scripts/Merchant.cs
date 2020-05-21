@@ -34,7 +34,7 @@ public class Merchant : MonoBehaviour
     {
         gameObjList = new List<GameObject>();
         shopObjList = new List<ShopObject>();
-        player = GameObject.FindGameObjectWithTag("Player");
+        player = Player.instance.gameObject;
         inputActions = GameInputManager.instance.GetInputActions();
         inputActions.PlayerControls.Interact.performed += ctx => interactInput = ctx.ReadValue<float>();
         skillManager = player.GetComponent<Player>().GetSkillManager();
@@ -69,13 +69,13 @@ public class Merchant : MonoBehaviour
             DialogueManager.instance.SetInteractionAfterDialogue(0);
             //incrementInteract takes an int representing type, which is 0 for merchant and adds 1.
             DialogueManager.instance.IncrementInteract(0);
-            FindObjectOfType<AudioManager>().StopAllSounds();
+            AudioManager.instance.StopAllSounds();
             StateManager.instance.PauseGame();
         }
     }
     public void AfterDialogue()
     {
-        FindObjectOfType<AudioManager>().StopAllSounds();
+        AudioManager.instance.StopAllSounds();
         GameInputManager.instance.SwitchControlMap("MenuControls");
         isActive = true;
         if (firstInteraction)

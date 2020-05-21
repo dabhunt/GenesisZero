@@ -14,10 +14,11 @@ public class StateManager : MonoBehaviour
     private bool isPaused;
     public Restart restart;
     public GameObject canvas;
-    public GameObject pauseMenu;
+    private GameObject pauseMenu;
     private AsyncOperation operation;
     private GameObject optionsMenu;
     private GameObject pMenuButtons;
+    public Vector2 BossRoomLocation = new Vector2(-717, 196.5f);
     public bool Cursorvisible = true;
     private void Awake()
     {
@@ -31,7 +32,7 @@ public class StateManager : MonoBehaviour
     }
     private void Start()
     {
-        GameObject temp = GameObject.FindGameObjectWithTag("Player");
+        GameObject temp = Player.instance.gameObject;
         player = temp.GetComponent<Player>();
         if (!SaveLoadManager.instance.newGame)
         {
@@ -40,7 +41,7 @@ public class StateManager : MonoBehaviour
             SaveLoadManager.instance.ApplyPlayerData(pData, temp);
         }
 
-        temp = GameObject.FindWithTag("StateManager");
+        temp = StateManager.instance.gameObject;
         restart = temp.GetComponent<Restart>();
         canvas = GameObject.FindWithTag("CanvasUI");
         pauseMenu = canvas.transform.Find("PauseMenu").gameObject;
@@ -76,7 +77,7 @@ public class StateManager : MonoBehaviour
         }
         if (Input.GetKeyDown(KeyCode.ScrollLock))
         {//teleport the player to the boss room
-            player.transform.position = new Vector2(-386,69);
+            player.transform.position = BossRoomLocation;
             //temporary code
             GameObject.FindWithTag("BUG-E").GetComponent<BUGE>().FollowingPlayer(true);
             //temporary code ^
@@ -124,8 +125,13 @@ public class StateManager : MonoBehaviour
             }
             int i = 0;
             while (player.GetSkillManager().GetAmount() < 19 || i > 250)
-            { 
-                player.GetSkillManager().AddSkill(skillManager.GetRandomModByChance());
+            {
+                if (i == 0)
+                { //guarantee you get 2 legendary's
+                    skillManager.AddSkill(skillManager.GetRandomGolds(1)[0]);
+                    skillManager.AddSkill(skillManager.GetRandomGolds(1)[0]);
+                }
+                skillManager.AddSkill(skillManager.GetRandomModByChance());
                 i++;
             }
         }
@@ -179,7 +185,9 @@ public class StateManager : MonoBehaviour
     public void PauseGame()
     {
         //Pauses Game
-        FindObjectOfType<AudioManager>().StopAllSounds();
+        AudioManager.instance.StopAllSounds();
+         StateManager.instance.DestroyPopUpsWithTag("Pickups");
+            StateManager.instance.DestroyPopUpsWithTag("Interactable");
         isPaused = true;
         Time.timeScale = 0f;
         canvas.transform.Find("BlackUnderUI").GetComponent<Image>().enabled = true;

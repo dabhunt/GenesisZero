@@ -22,8 +22,12 @@ public class BossIndicator : MonoBehaviour
     private Vector2 lastoffset;
     public bool Centered;
     public Color color;
+	private Color savedcolor;
 
     private bool Initialized;
+
+	[HideInInspector]
+	public bool HideFirstFrame;
 
     private float time;
     private float interval;
@@ -36,31 +40,36 @@ public class BossIndicator : MonoBehaviour
     // Start is called before the first frame update
     void Start()
     {
-        lastoffset = offset;
-        if (Initialized == false)
-        {
-            origin = image.transform.position;
-            Initialized = true;
-        }
-        size = image.sprite.rect.size;
-        scalex = targetsize.x / size.x;
-        scaley = targetsize.y / size.y;
-        image.transform.localScale = new Vector2(scalex * image.sprite.pixelsPerUnit, scaley * image.sprite.pixelsPerUnit);
-        image.transform.localEulerAngles = new Vector3(0, 0, angle);
-
-        float distance = targetsize.x / 2;
-        float offsetx = Mathf.Cos(angle) * distance;
-        float offsety = Mathf.Sin(angle) * distance;
-        if (Centered)
-        {
-            offsetx = 0;
-            offsety = 0;
-        }
-        image.transform.position = new Vector2(origin.x + offsetx + offset.x, origin.y + offsety + offset.y);
-
+		Initialize();
     }
 
-    public void SetOrigin(Vector2 pos)
+	public void Initialize()
+	{
+		lastoffset = offset;
+		if (Initialized == false)
+		{
+			origin = image.transform.position;
+			Initialized = true;
+		}
+		size = image.sprite.rect.size;
+		scalex = targetsize.x / size.x;
+		scaley = targetsize.y / size.y;
+		image.transform.localScale = new Vector2(scalex * image.sprite.pixelsPerUnit, scaley * image.sprite.pixelsPerUnit);
+		image.transform.localEulerAngles = new Vector3(0, 0, angle);
+
+		float distance = targetsize.x / 2;
+		float offsetx = Mathf.Cos(angle) * distance;
+		float offsety = Mathf.Sin(angle) * distance;
+		if (Centered)
+		{
+			offsetx = 0;
+			offsety = 0;
+		}
+		image.transform.position = new Vector2(origin.x + offsetx + offset.x, origin.y + offsety + offset.y);
+
+	}
+
+	public void SetOrigin(Vector2 pos)
     {
         origin = pos;
         size = image.sprite.rect.size;
@@ -79,6 +88,11 @@ public class BossIndicator : MonoBehaviour
         }
         image.transform.position = new Vector2(origin.x + offsetx + offset.x, origin.y + offsety + offset.y);
     }
+
+	public Vector2 GetOrigin()
+	{
+		return origin;
+	}
 
     // Update is called once per frame
     void Update()
@@ -123,6 +137,12 @@ public class BossIndicator : MonoBehaviour
         }
         time -= Time.deltaTime;
         Mathf.Clamp(time, 0, 9999);
+
+		if (HideFirstFrame)
+		{
+			color = savedcolor;
+			HideFirstFrame = false;
+		}
     }
 
     public void SetSize(Vector2 vector)
@@ -169,6 +189,12 @@ public class BossIndicator : MonoBehaviour
         SetAngle(dir);
         SetColor(color);
         SetCentered(centered);
+		if (HideFirstFrame)
+		{
+			savedcolor = color;
+			this.color = new Color(0,0,0,0);
+		}
+		Initialize();
         Initialized = true;
         this.time = time;
     }

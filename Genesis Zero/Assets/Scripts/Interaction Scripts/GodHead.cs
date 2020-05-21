@@ -82,7 +82,7 @@ public class GodHead : MonoBehaviour
     }
     public void AfterDialogue()
     {
-        FindObjectOfType<AudioManager>().StopAllSounds();
+        AudioManager.instance.StopAllSounds();
         GameInputManager.instance.SwitchControlMap("MenuControls");
         isActive = true;
         InitializeUI();
@@ -121,7 +121,7 @@ public class GodHead : MonoBehaviour
             {
                 case 1:
                     botText = "Canisters of Essence";
-                    canistersNeeded = 3;
+                    canistersNeeded = 2;
                     break;
                 case 2:
                     botText = "Canister of Essence";

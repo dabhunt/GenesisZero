@@ -12,7 +12,7 @@ public class RightClick : MonoBehaviour , IPointerEnterHandler, IPointerExitHand
     //private EventSystem eventSystem;
     private void Start()
     {
-        player = FindObjectOfType<Player>();
+        player = Player.instance;
         sManager = player.GetSkillManager();
         button = GetComponent<Button>();
     }

@@ -13,9 +13,8 @@ public class PlayerSounds : MonoBehaviour
     // Update is called once per frame
 	private void Start()
 	{
-		playerObj = GameObject.FindWithTag("Player");
-		PC = playerObj.GetComponent<PlayerController>();
-		aManager = FindObjectOfType<AudioManager>();
+		PC = Player.instance.gameObject.GetComponent<PlayerController>();
+		aManager = AudioManager.instance;
 	}
 	public void Jump()
 	{
