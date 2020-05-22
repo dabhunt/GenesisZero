@@ -165,7 +165,12 @@ public class StateManager : MonoBehaviour
             Cursor.visible = true;
         else 
             Cursor.visible = false;
-    }
+
+		if (Input.GetKeyDown(KeyCode.M))
+		{//teleport the player to the boss room
+			ChangeTimeScale(.1f, 20);
+		}
+	}
     //remove all interaction popups
     public void DestroyPopUpsWithTag(string Tag)
     {

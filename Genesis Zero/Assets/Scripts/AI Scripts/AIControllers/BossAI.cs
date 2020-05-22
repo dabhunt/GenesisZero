@@ -49,7 +49,7 @@ public class BossAI : AIController
 
 	public GameObject Healthbar;
 	private GameObject healthbar;
-	private float HealthLoss, TotalHealth, LastHealth, PassedTime;   //The amount of health the boss had before taking damage;
+	private float HealthLoss, TotalHealth, LastHealth, PassedTime, LastZDepth;   //The amount of health the boss had before taking damage;
 	public GameObject Indicator;
 	private List<GameObject> indicators;
 
@@ -62,6 +62,7 @@ public class BossAI : AIController
 	public GameObject FlameGround;
 
 	public GameObject ForwardLookObject;
+	public MiddleMan Middleman;
 	public GameObject HeadModel;
 	public Animator animator;
 
@@ -87,6 +88,7 @@ public class BossAI : AIController
 		indicators = new List<GameObject>();
 		back = Vector3.back; foward = Vector3.forward; up = Vector3.up; down = Vector3.down;
 		camera = Camera.main.gameObject;
+		LastZDepth = transform.position.z;
 	}
 
 	new protected void Update()
@@ -148,6 +150,7 @@ public class BossAI : AIController
 		// Determine the velocity of the target
 		targetmovement = Target.position - lasttargetposition;
 		lasttargetposition = Target.position;
+		LastZDepth = Mathf.Lerp(LastZDepth, zdepth, Time.fixedDeltaTime);
 
 		if (TimeBeforeFight <= 0)
 		{
@@ -200,7 +203,7 @@ public class BossAI : AIController
 				Quaternion look = Quaternion.LookRotation((ForwardLookObject.transform.position) - transform.position);
 				//transform.rotation = Quaternion.Slerp(transform.rotation, look, 2 * Time.fixedDeltaTime);
 				//transform.transform.LookAt(ForwardLookObject.transform, new Vector3(0,1,0));
-				transform.rotation = Quaternion.RotateTowards(transform.rotation, Quaternion.LookRotation((ForwardLookObject.transform.position) - transform.position), Time.fixedDeltaTime * 180);
+				transform.rotation = Quaternion.RotateTowards(transform.rotation, Quaternion.LookRotation((ForwardLookObject.transform.position) - transform.position), Time.fixedDeltaTime);
 				HeadModel.transform.rotation = transform.rotation;
 				//HeadModel.transform.rotation = Quaternion.Slerp(transform.rotation, Quaternion.LookRotation(back, up), 2 * Time.fixedDeltaTime);
 				lookposition = transform.position + transform.forward;
@@ -209,8 +212,9 @@ public class BossAI : AIController
 			else
 			{
 				Vector3 lookoffset = new Vector3(0, 0, lookDir.x > 0 ? -1f : -1f);
+				//transform.rotation = Quaternion.RotateTowards(transform.rotation, Quaternion.LookRotation(lookposition + lookoffset - transform.position), Time.fixedDeltaTime * 180);
 				transform.LookAt(lookposition + lookoffset);
-				HeadModel.transform.rotation = transform.rotation;
+				HeadModel.transform.rotation = Quaternion.Slerp(transform.rotation, Quaternion.LookRotation(back, up),Time.fixedDeltaTime);
 				//HeadModel.transform.LookAt(lookposition + lookoffset);
 				lookingatcamera = false;
 			}
@@ -234,7 +238,7 @@ public class BossAI : AIController
 				{
 					GetComponent<SphereCollider>().isTrigger = true;
 					transform.position = Vector2.MoveTowards(transform.position, movetarget.position, speed * (Vector2.Distance(transform.position, movetarget.position) * Mathf.Clamp(chargetime / 5, .5f, 4)) * Time.fixedDeltaTime);
-					if (Vector2.Distance(movetarget.position, transform.position) < 2) { chargetime = Time.fixedDeltaTime / 2; }
+					if (Vector2.Distance(movetarget.position, transform.position) < 2 && chargetime <= 1) { chargetime = Time.fixedDeltaTime / 2; }
 				}
 				else if (bossstate == State.Headbutt && headbuttdelay <= 0)
 				{
@@ -264,7 +268,7 @@ public class BossAI : AIController
 
 				if (bossstate != State.Headbutt)
 				{
-					Vector3 finalposition = Vector3.Lerp(LastPosition, new Vector3(transform.position.x, transform.position.y, zdepth), .3f);
+					Vector3 finalposition = Vector3.Lerp(LastPosition, new Vector3(transform.position.x, transform.position.y, LastZDepth), .3f);
 					LastPosition = finalposition;
 					transform.position = finalposition;
 				}
@@ -272,7 +276,7 @@ public class BossAI : AIController
 			}
 			else
 			{
-				Vector3 finalposition = Vector3.Lerp(LastPosition, new Vector3(transform.position.x, transform.position.y, zdepth), 1);
+				Vector3 finalposition = Vector3.Lerp(LastPosition, new Vector3(transform.position.x, transform.position.y, LastZDepth), 1);
 				LastPosition = finalposition;
 				transform.position = finalposition;
 			}
@@ -282,7 +286,11 @@ public class BossAI : AIController
 			if (this.animator.GetCurrentAnimatorStateInfo(0).IsName("Idle") && animationswitch == true)
 			{
 				transform.position = HeadModel.transform.position;
+				LastPosition = transform.position;
 				transform.rotation = HeadModel.transform.rotation;
+				Middleman.UpdateJoint();
+				SetBossstate(State.Repositioning, 2);
+				movetarget = GetClosestWaypointToBoss();
 				animationswitch = false;
 			}
 			//transform.rotation = HeadModel.transform.rotation;
@@ -641,6 +649,25 @@ public class BossAI : AIController
 		foreach (Transform t in Waypoints)
 		{
 			float currdist = Vector2.Distance(t.position, Target.position);
+			if (currdist < mindist)
+			{
+				min = t;
+				mindist = currdist;
+			}
+		}
+		return min;
+	}
+
+	// Returns waypoint closest to the target
+	public Transform GetClosestWaypointToBoss()
+	{
+		if (!EmptyWaypoints()) return transform;
+
+		Transform min = Waypoints[0];
+		float mindist = Vector2.Distance(min.position, transform.position);
+		foreach (Transform t in Waypoints)
+		{
+			float currdist = Vector2.Distance(t.position, transform.position);
 			if (currdist < mindist)
 			{
 				min = t;
