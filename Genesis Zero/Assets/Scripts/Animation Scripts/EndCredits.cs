@@ -1,5 +1,6 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
+using UnityEngine.SceneManagement;
 using UnityEngine;
 using DG.Tweening;
 using UnityEngine.UI;
@@ -41,7 +42,7 @@ public class EndCredits : MonoBehaviour
     {
         if (cardQueue.Count < 1)
         {
-            EndIntro();
+            ExitCredits();
             return;
         }
         else
@@ -70,7 +71,7 @@ public class EndCredits : MonoBehaviour
     {
         transform.Find("Overlay").gameObject.GetComponent<Image>().color = overlay;
         if (Input.GetKeyDown(KeyCode.Escape))
-            EndIntro();
+            ExitCredits();
     }
     //public string SplitText()
     //fade in refers to the text becoming visible, even though the overlay is technically fading out
@@ -83,12 +84,13 @@ public class EndCredits : MonoBehaviour
     {
         DOTween.To(() => overlay.a, x => overlay.a = x, 1, fadeDuration);
     }
-    public void EndIntro()
+    public void ExitCredits()
     {
         CancelInvoke();
         cardQueue.Clear();
         gameObject.SetActive(false);
         //gameObject.transform.parent.Find("BlackOverlay").GetComponent<SpriteFade>().FadeOut(4f);
+        SceneManager.LoadScene("MainMenu", LoadSceneMode.Single);
 
     }
 }
