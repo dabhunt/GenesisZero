@@ -6,7 +6,7 @@ public class DeactivateDistant : MonoBehaviour
 {
     //at what minimum distance will enemies start to deactivate
     //enemies closer than this will be reactivated
-    public float deactivateDist = 32f;
+    public float deactivateDist = 29f;
     public float updatesPerSecond=1f;
     public float enemyDistOffset = 5f;
     private float resetEnemyDist;
@@ -22,7 +22,7 @@ public class DeactivateDistant : MonoBehaviour
         resetDist = deactivateDist;
         resetEnemyDist = enemyDistOffset;
     	InvokeRepeating("Check", 1/updatesPerSecond, 1/updatesPerSecond);
-        Invoke("DelayedStart", 5);
+        Invoke("DelayedStart", 3);
     }
     private void Update()
     {
@@ -49,7 +49,6 @@ public class DeactivateDistant : MonoBehaviour
     // Check is currently called once a second, but can also be called manually when the player is teleported to prevent visual latency
     void Check()
   	{
-    	
     		//find the array of gameobjects associated with that tag
     		// if its the first check of the game, use a find by tag
     		//all other checks will use the already existing array of enemies to do this check
@@ -93,7 +92,7 @@ public class DeactivateDistant : MonoBehaviour
     }
     public void ResetDist()
     {
-        deactivateDist = resetDist;
+        deactivateDist = 29f;
     }
     public void SetDist(float num)
     {
