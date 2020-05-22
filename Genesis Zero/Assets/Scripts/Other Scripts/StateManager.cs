@@ -18,7 +18,7 @@ public class StateManager : MonoBehaviour
     private AsyncOperation operation;
     private GameObject optionsMenu;
     private GameObject pMenuButtons;
-    public Vector2 BossRoomLocation = new Vector2(-717, 196.5f);
+    public Vector2 BossRoomLocation = new Vector2(-553, 198f);
     public bool Cursorvisible = true;
     private void Awake()
     {
