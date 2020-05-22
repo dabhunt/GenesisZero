@@ -127,4 +127,12 @@ public class AIAnimationStateController : MonoBehaviour
     {
         attacking = attack;
     }
+
+    /**
+     * Triggers the die animation (if applicable)
+     */
+    public void Die()
+    {
+        anim.SetTrigger("IsDead");
+    }
 }
