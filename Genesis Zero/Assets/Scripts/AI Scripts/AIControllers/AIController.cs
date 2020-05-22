@@ -75,6 +75,15 @@ public class AIController : Pawn
             {
                 SetTarget(playerSearch.transform.Find("Center"));
             }
+            else
+            {
+                // For the test scene
+                GameObject playerObject = GameObject.Find("Player");
+                if (playerObject != null)
+                {
+                    SetTarget(playerObject.transform);
+                }
+            }
         }
 
         StartCoroutine(DelayedStart());
