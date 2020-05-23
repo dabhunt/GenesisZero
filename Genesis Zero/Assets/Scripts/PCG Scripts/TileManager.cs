@@ -234,18 +234,23 @@ public class TileManager : MonoBehaviour
 				spawnVector.z += 2;
 				height++;
 			}
-			//Instantiate & Spawn Rooftop
-			GameObject newRooftop = Instantiate(rooftopPrefabs[Random.Range(0, rooftopPrefabs.Length)]) as GameObject;
-			newRooftop.transform.SetParent(transform);
-			spawnVector.z += 5.2f;
-			newRooftop.transform.position = spawnVector;
-			Vector3 newVector = newRooftop.transform.position;
-			spawnVector.z -= 5.2f;
 			
-			// Lists of rooftop objects and building spawn vectors
-			//(Used for rooftop cleanup later)
-			roofList.Add(newRooftop);
-			vectorList.Add(newVector);
+			if (tilePrefabs == cityTilePrefabs)
+			{
+				//Instantiate & Spawn Rooftop
+				GameObject newRooftop = Instantiate(rooftopPrefabs[Random.Range(0, rooftopPrefabs.Length)]) as GameObject;
+				newRooftop.transform.SetParent(transform);
+				spawnVector.z += 5.2f;
+				newRooftop.transform.position = spawnVector;
+				Vector3 newVector = newRooftop.transform.position;
+				spawnVector.z -= 5.2f;
+			
+				// Lists of rooftop objects and building spawn vectors
+				//(Used for rooftop cleanup later)
+			
+				roofList.Add(newRooftop);
+				vectorList.Add(newVector);
+			}
 			
 			//Spawn tile and move spawnVector
 			newTile.transform.position = spawnVector;
@@ -276,20 +281,23 @@ public class TileManager : MonoBehaviour
 		}
 		
 		//Remove extra rooftops
-		for (int i = 0; i < vectorList.Count; ++i)
+		if (tilePrefabs == cityTilePrefabs)
 		{
-			GameObject roofObject = roofList[i];
-			Vector3 roofVector = roofObject.transform.position;
-			
-			int j = i + 1;
-			while (j < vectorList.Count)
+			for (int i = 0; i < vectorList.Count; ++i)
 			{
-				if (Vector3.Distance(roofVector, vectorList[j]) < 7.0)
+				GameObject roofObject = roofList[i];
+				Vector3 roofVector = roofObject.transform.position;
+			
+				int j = i + 1;
+				while (j < vectorList.Count)
 				{
-					Destroy(roofObject);
-					j = vectorList.Count;
+					if (Vector3.Distance(roofVector, vectorList[j]) < 7.0)
+					{
+						Destroy(roofObject);
+						j = vectorList.Count;
+					}
+					++j;
 				}
-				++j;
 			}
 		}
 		
