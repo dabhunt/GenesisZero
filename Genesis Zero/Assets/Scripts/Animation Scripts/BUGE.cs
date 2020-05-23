@@ -5,6 +5,7 @@ using System;
 using UnityEngine.EventSystems;
 public class BUGE : MonoBehaviour
 {
+    public static BUGE instance;
     private PlayerController playerController;
     public float MinDistance = 35;
     public float MaxDistance = 10;
@@ -37,6 +38,16 @@ public class BUGE : MonoBehaviour
     private GameObject playerObj;
     public bool followingPlayer = false;
     private GameObject flashlight;
+    private void Awake()
+    {
+        if (instance == null)
+            instance = this;
+        else
+        {
+            Destroy(gameObject);
+            return;
+        }
+    }
     void Start()
     {
         animWaypoints = new Queue<WayPoint>();

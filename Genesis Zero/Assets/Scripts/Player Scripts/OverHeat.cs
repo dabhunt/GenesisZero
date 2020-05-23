@@ -60,12 +60,6 @@ public class OverHeat : MonoBehaviour
             GetComponent<UniqueEffects>().OverHeatTrigger();
         }
     }
-    public float ShootBloom()
-    {
-    	//also adds heat because this is called whenever the player successfully fires a shot
-        Increment(heatAddedPerShot.GetValue());
-        return CalculateBloom();
-    }
     public float CalculateBloom()
     {
         coolDelay = delayBeforeCooling.GetValue();
