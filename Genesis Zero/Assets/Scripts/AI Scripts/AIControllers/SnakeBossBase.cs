@@ -50,11 +50,14 @@ public class SnakeBossBase : MonoBehaviour
         FastIKFabric[] iks = gameObject.GetComponentsInChildren<FastIKFabric>();
         foreach (FastIKFabric ik in iks)
         {
-			float laststrength = ik.SnapBackStrength;
-			ik.SnapBackStrength = 1;
-			ik.ResolveIK();
-			ik.SnapBackStrength = laststrength;
-            ik.enabled = true;
+			if (ik.enabled == false)
+			{
+				float laststrength = ik.SnapBackStrength;
+				ik.SnapBackStrength = 1;
+				ik.ResolveIK();
+				ik.SnapBackStrength = laststrength;
+				ik.enabled = true;
+			}
         }
 		Recalculate();
 	}
