@@ -20,6 +20,7 @@ public class StateManager : MonoBehaviour
     private GameObject pMenuButtons;
     public Vector2 BossRoomLocation = new Vector2(-717, 196.5f);
     public bool Cursorvisible = true;
+    public bool GameOver = false;
     private void Awake()
     {
         if (instance == null)

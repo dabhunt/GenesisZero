@@ -21,8 +21,6 @@ public class Gun : MonoBehaviour
     [Header("3. Peripheral Bullet")]
     public float minSpread = 10f;
     public float spreadMultiplier = .3f;
-    [Header("4. Peircing Bullets")]
-    public int piercesPerStack = 1;
     [Header("5. Ignition Bullets")]
     public float burnDamagePerStack = 4f;
     public float burnTime = 3f;
@@ -34,9 +32,12 @@ public class Gun : MonoBehaviour
     public bool PhaseTrigger = false;
     public float PF_stunDuration = 1f;
     public float PF_stunIncreasePerStack = .25f;
-    [Header("7. Frosted Tips")]
+    [Header("8. Frosted Tips")]
     public float FT_stunDuration = .75f;
     public float FT_stunIncreasePerStack = .25f;
+    [Header("9. Piercing Shot")]
+    public bool PlayerHurtTrigger = false;
+    public float PB_ReductionPerStack = .23f;
     //only reduces it's own, not others by .1
     public float reductionPerStack = .1f;
     [Header("Atom Splitter (Multishot)")]
@@ -226,6 +227,15 @@ public class Gun : MonoBehaviour
                 vfx_MuzzleFlash = VFXManager.instance.ChangeColor(vfx_MuzzleFlash, Color.red);
             }
         }
+        if (PlayerHurtTrigger == true)
+        {
+            print("hurt trigger");
+            int PB_stacks = player.GetSkillStack("Piercing Shot");
+            if (PB_stacks > 0)
+            {
+                hit.IgnoredDamageReduction = PB_stacks * PB_ReductionPerStack;
+            }
+        }
         if (overheat.GetHeat() < 1) //when the player's gun is cool, do this
         {
             int FT_stacks = player.GetSkillStack("Frosted Tips");
@@ -236,6 +246,10 @@ public class Gun : MonoBehaviour
                     hit.StunTime = otherStun;
                 hit.Damage *= 1+ (FT_stacks * .4f);
             }
+        }
+        if ((player.GetHealth().GetValue() / player.GetHealth().GetMaxValue()) < .33f) //at less than 33% health, you ignore 50% of Armor
+        {
+            //low health triggers
         }
         return projectile;
     }

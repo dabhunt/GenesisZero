@@ -28,6 +28,8 @@ public class EnemyOverlayShader : MonoBehaviour
     }
     void Update()
     {
+        if (GetComponentInParent<Pawn>() == null)
+            return;
         bool isStunned = GetComponentInParent<Pawn>().IsStunned();
         float ratio = GetComponentInParent<Pawn>().GetHealth().GetValue() / GetComponentInParent<Pawn>().GetHealth().GetMaxValue();
         hpcurValue = GetComponentInParent<Pawn>().GetHealth().GetValue();
