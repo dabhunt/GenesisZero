@@ -38,7 +38,7 @@ RenderSettings:
   m_ReflectionIntensity: 1
   m_CustomReflection: {fileID: 0}
   m_Sun: {fileID: 0}
-  m_IndirectSpecularColor: {r: 0.11786202, g: 0.12809087, b: 0.15670207, a: 1}
+  m_IndirectSpecularColor: {r: 0, g: 0, b: 0, a: 1}
   m_UseRadianceAmbientProbe: 0
 --- !u!157 &3
 LightmapSettings:
@@ -40437,6 +40437,16 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 4837747957038062060, guid: 60af32f031406604eab81872b55906ba,
         type: 3}
+      propertyPath: cityRoofTilePrefabs.Array.size
+      value: 5
+      objectReference: {fileID: 0}
+    - target: {fileID: 4837747957038062060, guid: 60af32f031406604eab81872b55906ba,
+        type: 3}
+      propertyPath: rooftopPrefabs.Array.size
+      value: 5
+      objectReference: {fileID: 0}
+    - target: {fileID: 4837747957038062060, guid: 60af32f031406604eab81872b55906ba,
+        type: 3}
       propertyPath: interactablePrefabs.Array.data[0]
       value: 
       objectReference: {fileID: 761995717423943829, guid: 50cbbdc141985834fbf9aceb73894fd7,
@@ -40490,24 +40500,82 @@ PrefabInstance:
     - target: {fileID: 4837747957038062060, guid: 60af32f031406604eab81872b55906ba,
         type: 3}
       propertyPath: teleIncreaseChanceEvery
-      value: 15
+      value: 10
       objectReference: {fileID: 0}
     - target: {fileID: 4837747957038062060, guid: 60af32f031406604eab81872b55906ba,
         type: 3}
       propertyPath: DontSpawnUntilAfter
-      value: 50
+      value: 30
       objectReference: {fileID: 0}
     - target: {fileID: 4837747957038062060, guid: 60af32f031406604eab81872b55906ba,
         type: 3}
       propertyPath: levelEndCityBuilding
       value: 
-      objectReference: {fileID: 1344784884892385696, guid: 3be0fe01a91dfea46819427e51219a28,
-        type: 3}
+      objectReference: {fileID: 0}
     - target: {fileID: 4837747957038062060, guid: 60af32f031406604eab81872b55906ba,
         type: 3}
       propertyPath: levelEndIndustrialBuilding
       value: 
-      objectReference: {fileID: 1344784884892385696, guid: 3be0fe01a91dfea46819427e51219a28,
+      objectReference: {fileID: 0}
+    - target: {fileID: 4837747957038062060, guid: 60af32f031406604eab81872b55906ba,
+        type: 3}
+      propertyPath: cityRoofTilePrefabs.Array.data[0]
+      value: 
+      objectReference: {fileID: 2251541370173522068, guid: d0ac53ed1f193a1418d3d7a3a78ef1ba,
+        type: 3}
+    - target: {fileID: 4837747957038062060, guid: 60af32f031406604eab81872b55906ba,
+        type: 3}
+      propertyPath: cityRoofTilePrefabs.Array.data[1]
+      value: 
+      objectReference: {fileID: 4098178496279444232, guid: 1475f8d365d8ec042bfccaaf7d0387f4,
+        type: 3}
+    - target: {fileID: 4837747957038062060, guid: 60af32f031406604eab81872b55906ba,
+        type: 3}
+      propertyPath: cityRoofTilePrefabs.Array.data[2]
+      value: 
+      objectReference: {fileID: 1927885916601372913, guid: 25170ed7936a8754592035a0eef195ff,
+        type: 3}
+    - target: {fileID: 4837747957038062060, guid: 60af32f031406604eab81872b55906ba,
+        type: 3}
+      propertyPath: cityRoofTilePrefabs.Array.data[3]
+      value: 
+      objectReference: {fileID: 6898241589168753578, guid: 459a6bc740e00804f9a4fdd1871b61f6,
+        type: 3}
+    - target: {fileID: 4837747957038062060, guid: 60af32f031406604eab81872b55906ba,
+        type: 3}
+      propertyPath: cityRoofTilePrefabs.Array.data[4]
+      value: 
+      objectReference: {fileID: 1858663657231057439, guid: 1c973a9b9528c704c8dd4d6b17da3336,
+        type: 3}
+    - target: {fileID: 4837747957038062060, guid: 60af32f031406604eab81872b55906ba,
+        type: 3}
+      propertyPath: rooftopPrefabs.Array.data[0]
+      value: 
+      objectReference: {fileID: 2251541370173522068, guid: d0ac53ed1f193a1418d3d7a3a78ef1ba,
+        type: 3}
+    - target: {fileID: 4837747957038062060, guid: 60af32f031406604eab81872b55906ba,
+        type: 3}
+      propertyPath: rooftopPrefabs.Array.data[1]
+      value: 
+      objectReference: {fileID: 4098178496279444232, guid: 1475f8d365d8ec042bfccaaf7d0387f4,
+        type: 3}
+    - target: {fileID: 4837747957038062060, guid: 60af32f031406604eab81872b55906ba,
+        type: 3}
+      propertyPath: rooftopPrefabs.Array.data[2]
+      value: 
+      objectReference: {fileID: 1927885916601372913, guid: 25170ed7936a8754592035a0eef195ff,
+        type: 3}
+    - target: {fileID: 4837747957038062060, guid: 60af32f031406604eab81872b55906ba,
+        type: 3}
+      propertyPath: rooftopPrefabs.Array.data[3]
+      value: 
+      objectReference: {fileID: 6898241589168753578, guid: 459a6bc740e00804f9a4fdd1871b61f6,
+        type: 3}
+    - target: {fileID: 4837747957038062060, guid: 60af32f031406604eab81872b55906ba,
+        type: 3}
+      propertyPath: rooftopPrefabs.Array.data[4]
+      value: 
+      objectReference: {fileID: 1858663657231057439, guid: 1c973a9b9528c704c8dd4d6b17da3336,
         type: 3}
     - target: {fileID: 8825409176370879082, guid: 60af32f031406604eab81872b55906ba,
         type: 3}
