@@ -44,6 +44,8 @@ public class AIController : Pawn
     public float EnemySpaceRadius = 2.0f; // Radius within which enemies will push each other away to avoid overlapping
     public float EnemySpaceForce = 20f; // Force with which to push other enemies away when they're too close
 
+    public UnityEvent DeathEvent;
+
     protected virtual void Awake()
     {
         frb = GetComponent<FakeRigidbody>();
@@ -70,10 +72,19 @@ public class AIController : Pawn
         tracker = GetComponent<ObjectTracker>();
         if (Target == null)
         {
-            GameObject playerSearch = Player.instance.gameObject;
+            Player playerSearch = Player.instance;
             if (playerSearch != null)
             {
                 SetTarget(playerSearch.transform.Find("Center"));
+            }
+            else
+            {
+                // For the test scene
+                GameObject playerObject = GameObject.Find("Player");
+                if (playerObject != null)
+                {
+                    SetTarget(playerObject.transform);
+                }
             }
         }
 
@@ -188,6 +199,11 @@ public class AIController : Pawn
             }
         }
         //Debug.Log(GetNearbyEnemies().Length);
+
+        if (Input.GetKey(KeyCode.Z))
+        {
+            TakeDamage(1, null);
+        }
     }
 
     /**
