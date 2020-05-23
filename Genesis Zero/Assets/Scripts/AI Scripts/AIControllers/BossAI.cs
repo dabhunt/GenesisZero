@@ -96,6 +96,11 @@ public class BossAI : AIController
 	{
 		base.Update();
 
+		if (deathtime > 1 && Input.GetKeyDown(KeyCode.Alpha0)) // Button to load to credits
+		{
+			LoadCredits();
+		}
+
 		if (GetDistanceToTarget() < TriggerRadius && initiated == false)
 		{
 			GameInputManager.instance.DisablePlayerControls();
@@ -621,6 +626,7 @@ public class BossAI : AIController
 			Image img = GameObject.FindGameObjectWithTag("CanvasUI").transform.Find("BlackUnderUI").GetComponent<Image>();
 			img.color = new Color(img.color.r, img.color.g, img.color.b, 1);
 			DialogueManager.instance.TriggerDialogue("BossEndDialogue1", false);
+			//GameInputManager.instance.DisablePlayerControls(); // Disable controls
 			deathtrigger = 3;
 		}
 		else if (deathtime >= 13 && deathtrigger == 3)
@@ -678,10 +684,6 @@ public class BossAI : AIController
 		{
 			Image img = GameObject.FindGameObjectWithTag("CanvasUI").transform.Find("BlackUnderUI").GetComponent<Image>();
 			img.color = color;
-			if (Input.GetKey(KeyCode.Alpha0))
-			{
-				LoadCredits();
-			}
 		}
 	}
 
