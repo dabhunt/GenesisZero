@@ -38,6 +38,8 @@ public class Hitbox : MonoBehaviour
 
     [Tooltip("(X: Burntime, Y: Damage per second)")]
     public Vector2 Burn = new Vector2(0, 0);
+    [Tooltip("X: Slowtime, Y: Multiplier (Ex: .7 = 30% speed reduction)")]
+    public Vector2 Slow = new Vector2(0, 0);
 
     public Collider Collider;
     public Pawn Source;         // Source is a reference to the pawn that spawned this hitbox. Optional, used if things like critchance is calculated
@@ -180,7 +182,10 @@ public class Hitbox : MonoBehaviour
                         finaldamage *= Source.GetCritDamage().GetValue();
                     }
                 }
-
+                if (Slow.x > 0 && Slow.y > 0)
+                {
+                    p.Slow(Slow.x, Slow.y);
+                }
                 if (Knockbackforce > 0 && p.IsInvunerable() == false)
                 {
                     if (DirectionalKnockback && Source != null)
