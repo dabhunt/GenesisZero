@@ -114,7 +114,7 @@ namespace DitzelGames.FastIK
             ResolveIK();
         }
 
-        private void ResolveIK()
+        public void ResolveIK()
         {
             if (Target == null)
                 return;

@@ -38,6 +38,7 @@ public class Elevator : MonoBehaviour
 	{
 		if (Input.GetKeyDown(KeyCode.F))
 		{
+
 			TriggerEvevator();
 		}
 	}
@@ -54,6 +55,10 @@ public class Elevator : MonoBehaviour
 	{
 		foreach (var button in buttons)
 		{
+			if (button.GetComponent<InteractPopup>())
+			{
+				Destroy(button.GetComponent<InteractPopup>());
+			}
 			if (Vector3.Distance(player.transform.position, button.transform.position) <= activationDistance)
 			{
 				canMove = true;

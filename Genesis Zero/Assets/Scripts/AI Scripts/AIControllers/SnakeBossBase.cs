@@ -20,8 +20,7 @@ public class SnakeBossBase : MonoBehaviour
     {
         if (!Boss.GetComponent<BossAI>().boxanimating)
         {
-			GameObject BossRoom = GameObject.FindGameObjectWithTag("BossRoom");
-			transform.position = Vector3.Lerp(transform.position, origin + new Vector3((maxoffset.x * ((Boss.transform.position.x - origin.x) / 10)), (maxoffset.y * ((Boss.transform.position.y - BossRoom.transform.position.y + BossRoom.GetComponent<BoxCollider2D>().offset.y)) / 10), 0), Time.deltaTime / 2);
+			Recalculate();
 			//GetComponent<Animator>().applyRootMotion = true;
 		}
 		else
@@ -30,6 +29,12 @@ public class SnakeBossBase : MonoBehaviour
 			//GetComponent<Animator>().applyRootMotion = false;
 		}
     }
+
+	void Recalculate()
+	{
+		GameObject BossRoom = GameObject.FindGameObjectWithTag("BossRoom");
+		transform.position = Vector3.Lerp(transform.position, origin + new Vector3((maxoffset.x * ((Boss.transform.position.x - origin.x) / 10)), (maxoffset.y * ((Boss.transform.position.y - BossRoom.transform.position.y + BossRoom.GetComponent<BoxCollider2D>().offset.y)) / 10), 0), Time.deltaTime / 2);
+	}
 
     public void DisableIK()
     {
@@ -45,7 +50,15 @@ public class SnakeBossBase : MonoBehaviour
         FastIKFabric[] iks = gameObject.GetComponentsInChildren<FastIKFabric>();
         foreach (FastIKFabric ik in iks)
         {
-            ik.enabled = true;
+			if (ik.enabled == false)
+			{
+				float laststrength = ik.SnapBackStrength;
+				ik.SnapBackStrength = 1;
+				ik.ResolveIK();
+				ik.SnapBackStrength = laststrength;
+				ik.enabled = true;
+			}
         }
-    }
+		Recalculate();
+	}
 }

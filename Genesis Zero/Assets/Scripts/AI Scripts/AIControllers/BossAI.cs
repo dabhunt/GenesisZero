@@ -33,13 +33,13 @@ public class BossAI : AIController
 	public Transform Center;
 
 	private float lookAngle = 0;
-	private float zdepth;
+	private float zdepth, deathtime;
 
 	public float TriggerRadius;
 	public float TimeBeforeFight;
 	[HideInInspector]
-	public bool initiated, introdialogue, lookingatcamera, Wild, firsttrigger, secondtrigger;
-	private int Heat, RepeatingAttack, Attack;
+	public bool initiated, introdialogue, lookingatcamera, animationswitch, Wild, firsttrigger, secondtrigger, died;
+	private int Heat, RepeatingAttack, Attack, deathtrigger;
 	private float actiontime = 1;
 	private float chargeuptime = .5f;
 
@@ -49,7 +49,7 @@ public class BossAI : AIController
 
 	public GameObject Healthbar;
 	private GameObject healthbar;
-	private float HealthLoss, TotalHealth, LastHealth, PassedTime;   //The amount of health the boss had before taking damage;
+	private float HealthLoss, TotalHealth, LastHealth, PassedTime, LastZDepth;   //The amount of health the boss had before taking damage;
 	public GameObject Indicator;
 	private List<GameObject> indicators;
 
@@ -62,10 +62,12 @@ public class BossAI : AIController
 	public GameObject FlameGround;
 
 	public GameObject ForwardLookObject;
+	public MiddleMan Middleman;
 	public GameObject HeadModel;
 	public Animator animator;
 
 	private GameObject camera;
+	private Color color;
 
 	private Vector3 back, foward, up, down;
 	protected override void Awake()
@@ -87,14 +89,22 @@ public class BossAI : AIController
 		indicators = new List<GameObject>();
 		back = Vector3.back; foward = Vector3.forward; up = Vector3.up; down = Vector3.down;
 		camera = Camera.main.gameObject;
+		LastZDepth = transform.position.z;
 	}
 
 	new protected void Update()
 	{
 		base.Update();
 
+		if (deathtime > 1 && Input.GetKeyDown(KeyCode.Alpha0)) // Button to load to credits
+		{
+			LoadCredits();
+		}
+
 		if (GetDistanceToTarget() < TriggerRadius && initiated == false)
 		{
+			GameInputManager.instance.DisablePlayerControls();
+			GameObject.FindGameObjectWithTag("Player").GetComponent<PlayerController>().movementInput = Vector2.zero;
 			initiated = true;
 		}
 		if (initiated)
@@ -113,10 +123,11 @@ public class BossAI : AIController
 				if (DialogueManager.instance.IsDialoguePlaying() == false && PassedTime > 1.25f)
 				{
 					TimeBeforeFight = 0;
-				}			
+				}
 
 				if (TimeBeforeFight <= 0)
 				{
+					GameInputManager.instance.EnablePlayerControls();
 					AudioManager.instance.PlaySound("SFX_BossRoar(0)");
 					camera.transform.DOShakePosition(duration: 1.25f, strength: 1, vibrato: 5, randomness: 60, snapping: false, fadeOut: true);
 					Camera.main.GetComponent<BasicCameraZoom>().ChangeFieldOfView(30);
@@ -145,17 +156,22 @@ public class BossAI : AIController
 		// Determine the velocity of the target
 		targetmovement = Target.position - lasttargetposition;
 		lasttargetposition = Target.position;
+		LastZDepth = Mathf.Lerp(LastZDepth, zdepth, Time.fixedDeltaTime);
 
-		if (TimeBeforeFight <= 0)
+		if (TimeBeforeFight <= 0 && IsDying() == false)
 		{
 			CheckActions(); // Checks and updates what actions the boss should do
 		}
 
 		if (bossstate == State.Setting) // CHeck if the boss is doing special animation
 		{
+			if (animationswitch == false)
+			{
+				animationswitch = true;
+			}
 			boxanimating = true;
 		}
-		else
+		else if(IsDying() == false)
 		{
 			boxanimating = false;
 		}
@@ -186,28 +202,30 @@ public class BossAI : AIController
 			//if (bossstate == State.Centering || bossstate == State.Pulse) { looktargetposition = LookForwardTarget.transform.position; }
 
 			// Set where the boss looks at, default player
-			lookposition = Vector3.Lerp(lookposition, looktargetposition, 3 * Time.fixedDeltaTime);
+			float strength = bossstate == State.Firebreath ? 10 : 3;
+			lookposition = Vector3.Lerp(lookposition, looktargetposition, strength * Time.fixedDeltaTime);
 
-			if (bossstate == State.Centering || bossstate == State.Pulse)
+			if (bossstate == State.Pulse || bossstate == State.Centering)
 			{
+				/**
 				Quaternion look = Quaternion.LookRotation((ForwardLookObject.transform.position) - transform.position);
-				//transform.rotation = Quaternion.Slerp(transform.rotation, look, 2 * Time.fixedDeltaTime);
-				//transform.transform.LookAt(ForwardLookObject.transform, new Vector3(0,1,0));
-				transform.rotation = Quaternion.RotateTowards(transform.rotation, Quaternion.LookRotation((ForwardLookObject.transform.position) - transform.position), Time.fixedDeltaTime * 180);
+				transform.rotation = Quaternion.RotateTowards(transform.rotation, Quaternion.LookRotation((ForwardLookObject.transform.position) - transform.position), Time.fixedDeltaTime);
 				HeadModel.transform.rotation = transform.rotation;
-				//HeadModel.transform.rotation = Quaternion.Slerp(transform.rotation, Quaternion.LookRotation(back, up), 2 * Time.fixedDeltaTime);
 				lookposition = transform.position + transform.forward;
+				**/
 				lookingatcamera = true;
 			}
 			else
 			{
-				Vector3 lookoffset = new Vector3(0, 0, lookDir.x > 0 ? -1f : -1f);
-				transform.LookAt(lookposition + lookoffset);
-				HeadModel.transform.rotation = transform.rotation;
-				//HeadModel.transform.LookAt(lookposition + lookoffset);
 				lookingatcamera = false;
 			}
 
+			Vector3 lookoffset = new Vector3(0, 0, lookDir.x > 0 ? -1f : -1f);
+			//transform.rotation = Quaternion.RotateTowards(transform.rotation, Quaternion.LookRotation(lookposition + lookoffset - transform.position), Time.fixedDeltaTime * 180);
+			transform.LookAt(lookposition + lookoffset);
+			HeadModel.transform.rotation = Quaternion.Slerp(transform.rotation, Quaternion.LookRotation(back, up), Time.fixedDeltaTime);
+			//HeadModel.transform.LookAt(lookposition + lookoffset);
+			
 
 			if (animating == false)
 			{
@@ -227,7 +245,7 @@ public class BossAI : AIController
 				{
 					GetComponent<SphereCollider>().isTrigger = true;
 					transform.position = Vector2.MoveTowards(transform.position, movetarget.position, speed * (Vector2.Distance(transform.position, movetarget.position) * Mathf.Clamp(chargetime / 5, .5f, 4)) * Time.fixedDeltaTime);
-					if (Vector2.Distance(movetarget.position, transform.position) < 2) { chargetime = Time.fixedDeltaTime / 2; }
+					if (Vector2.Distance(movetarget.position, transform.position) < 2 && chargetime <= 1) { chargetime = Time.fixedDeltaTime / 2; }
 				}
 				else if (bossstate == State.Headbutt && headbuttdelay <= 0)
 				{
@@ -257,7 +275,7 @@ public class BossAI : AIController
 
 				if (bossstate != State.Headbutt)
 				{
-					Vector3 finalposition = Vector3.Lerp(LastPosition, new Vector3(transform.position.x, transform.position.y, zdepth), .3f);
+					Vector3 finalposition = Vector3.Lerp(LastPosition, new Vector3(transform.position.x, transform.position.y, LastZDepth), .3f);
 					LastPosition = finalposition;
 					transform.position = finalposition;
 				}
@@ -265,19 +283,43 @@ public class BossAI : AIController
 			}
 			else
 			{
-				Vector3 finalposition = Vector3.Lerp(LastPosition, new Vector3(transform.position.x, transform.position.y, zdepth), 1);
+				Vector3 finalposition = Vector3.Lerp(LastPosition, new Vector3(transform.position.x, transform.position.y, LastZDepth), 1);
 				LastPosition = finalposition;
 				transform.position = finalposition;
 			}
 		}
 		else
 		{
+			if (this.animator.GetCurrentAnimatorStateInfo(0).IsName("Idle") && animationswitch == true)
+			{
+				transform.position = HeadModel.transform.position;
+				LastPosition = transform.position;
+				transform.rotation = HeadModel.transform.rotation;
+				Middleman.UpdateJoint();
+				SetBossstate(State.Repositioning, 2);
+				movetarget = GetClosestWaypointToBoss();
+				animationswitch = false;
+			}
+			//transform.rotation = HeadModel.transform.rotation;
 			animator.gameObject.GetComponent<SnakeBossBase>().DisableIK();
 		}
 
 		//Display Health
 		if (IsDying())
 		{
+			
+			if (died == false)
+			{
+				DisableUIExceptDialogue();
+				animator.SetTrigger("Dead");
+				KillNearbyEnemies();
+				died = true;
+				deathtrigger = 1;
+			}
+			
+
+			deathtime += Time.deltaTime;
+			boxanimating = true;
 			healthbar.SetActive(false);
 		}
 		else if (healthbar && initiated)
@@ -285,6 +327,7 @@ public class BossAI : AIController
 			healthbar.GetComponentInChildren<Slider>().value = GetHealth().GetRatio();
 		}
 
+		DeathChecks();		
 
 		//Update Indicators
 		for (int i = 0; i < indicators.Count; ++i)
@@ -300,6 +343,7 @@ public class BossAI : AIController
 
 			}
 		}
+
 		if (!GameObject.FindGameObjectWithTag("BossRoom").GetComponent<BoxCollider2D>().bounds.Contains((Vector2)transform.position))
 		{
 			Bounds bound = GameObject.FindGameObjectWithTag("BossRoom").GetComponent<BoxCollider2D>().bounds;
@@ -310,7 +354,7 @@ public class BossAI : AIController
 			}
 			else
 			{
-				Debug.Log("Stunned");
+				//Debug.Log("Stunned");
 				GetComponent<SphereCollider>().isTrigger = true;
 				if (bossstate == State.Headbutt)
 				{
@@ -351,11 +395,6 @@ public class BossAI : AIController
 			LastHealth = GetHealth().GetValue();
 		}
 
-		if (IsDying())
-		{
-			FlameGround.SetActive(false);
-		}
-
 		if (HealthLoss >= TotalHealth / 4 && GetComponent<BossEvents>())
 		{
 			if (firsttrigger == false) // Top quarter health
@@ -363,7 +402,7 @@ public class BossAI : AIController
 				GetComponent<BossEvents>().SpawnFirstGoons();
 				firsttrigger = true;
 			}
-			else if(Wild && secondtrigger == false) // Bottom quarter health
+			else if (Wild && secondtrigger == false) // Bottom quarter health
 			{
 				GetComponent<BossEvents>().SpawnSecondGoons();
 				secondtrigger = true;
@@ -478,6 +517,7 @@ public class BossAI : AIController
 				SetBossstate(State.Pulse, actiontime);
 				SpawnIndicator(transform.position, new Vector2(18, 18), lookDir, new Color(1, 0, 0, .1f), Vector2.zero, true, false, chargeuptime);
 				Invoke("Pulse", chargeuptime);
+				LookAtVectorTemp(ForwardLookObject.transform.position, actiontime);
 				AudioManager.instance.PlaySound("SFX_ChargePulse");
 			}
 
@@ -568,6 +608,85 @@ public class BossAI : AIController
 		}
 	}
 
+	public void DeathChecks()
+	{
+		FlameGround.SetActive(false);
+		if (deathtime >= 3 && deathtrigger == 1)
+		{
+			Image img = GameObject.FindGameObjectWithTag("CanvasUI").transform.Find("BlackUnderUI").GetComponent<Image>();
+			img.color = new Color(img.color.r, img.color.g, img.color.b, 0);
+			DOTween.To(() => color.a, x => color.a = x, 1, 3);
+			img.enabled = true;
+			//DialogueManager.instance.TriggerDialogue("PreBossTut1", false);
+
+			deathtrigger = 2;
+		}
+		else if (deathtime >= 6 && deathtrigger == 2)
+		{
+			Image img = GameObject.FindGameObjectWithTag("CanvasUI").transform.Find("BlackUnderUI").GetComponent<Image>();
+			img.color = new Color(img.color.r, img.color.g, img.color.b, 1);
+			DialogueManager.instance.TriggerDialogue("BossEndDialogue1", false);
+			//GameInputManager.instance.DisablePlayerControls(); // Disable controls
+			deathtrigger = 3;
+		}
+		else if (deathtime >= 13 && deathtrigger == 3)
+		{
+			DialogueManager.instance.TriggerDialogue("BossEndDialogue2", false);
+			deathtrigger = 4;
+		}
+		else if (deathtime >= 21 && deathtrigger == 4)
+		{
+			DialogueManager.instance.TriggerDialogue("BossEndDialogue3", false);
+			deathtrigger = 5;
+		}
+		else if (deathtime >= 27 && deathtrigger == 5)
+		{
+			DialogueManager.instance.TriggerDialogue("BossEndDialogue4", false);
+			deathtrigger = 6;
+		}
+		else if (deathtime >= 33 && deathtrigger == 6)
+		{
+			DialogueManager.instance.TriggerDialogue("BossEndDialogue5", false);
+			deathtrigger = 7;
+		}
+		else if (deathtime >= 33 && deathtrigger == 7)
+		{
+			DialogueManager.instance.TriggerDialogue("BossEndDialogue6", false);
+			deathtrigger = 8;
+		}
+		else if (deathtime >= 39 && deathtrigger == 8)
+		{
+			DialogueManager.instance.TriggerDialogue("BossEndDialogue7", false);
+			deathtrigger = 9;
+		}
+		else if (deathtime >= 45 && deathtrigger == 9)
+		{
+			DialogueManager.instance.TriggerDialogue("BossEndDialogue8", false);
+			deathtrigger = 10;
+		}
+		else if (deathtime >= 51 && deathtrigger == 10)
+		{
+			DialogueManager.instance.TriggerDialogue("BossEndDialogue9", false);
+			deathtrigger = 11;
+		}
+		else if (deathtime >= 57 && deathtrigger == 11)
+		{
+			DialogueManager.instance.TriggerDialogue("BossEndDialogue10", false);
+			deathtrigger = 12;
+		}
+		else if (deathtime >= 61 && deathtrigger == 12)
+		{
+			LoadCredits();
+			deathtrigger = 13;
+		}
+
+		if (deathtrigger > 1)
+		{
+			Image img = GameObject.FindGameObjectWithTag("CanvasUI").transform.Find("BlackUnderUI").GetComponent<Image>();
+			img.color = color;
+		}
+	}
+
 	public void LookAtVectorTemp(Vector3 position, float time)
 	{
 		templookposition = position;
@@ -634,6 +753,44 @@ public class BossAI : AIController
 			}
 		}
 		return min;
+	}
+
+	// Returns waypoint closest to the target
+	public Transform GetClosestWaypointToBoss()
+	{
+		if (!EmptyWaypoints()) return transform;
+
+		Transform min = Waypoints[0];
+		float mindist = Vector2.Distance(min.position, transform.position);
+		foreach (Transform t in Waypoints)
+		{
+			float currdist = Vector2.Distance(t.position, transform.position);
+			if (currdist < mindist)
+			{
+				min = t;
+				mindist = currdist;
+			}
+		}
+		return min;
+	}
+
+	public void KillNearbyEnemies()
+	{
+		GameObject[] enemies = GameObject.FindGameObjectsWithTag("Enemy");
+		foreach (GameObject e in enemies)
+		{
+			if (e.gameObject.activeSelf == true && e != this)
+			{
+				e.GetComponentInParent<Pawn>().GetHealth().SetValue(0);
+			}
+		}
+
+		Invoke("DestroyPickups", .5f);
+	}
+
+	void DestroyPickups()
+	{
+		StateManager.instance.DestroyPopUpsWithTag("Pickups");
 	}
 
 	public bool EmptyWaypoints()
@@ -807,6 +964,24 @@ public class BossAI : AIController
 		}
 		Destroy(instance, time);
 		indicators.Add(instance);
+	}
+
+	public void LoadCredits()
+	{
+		StateManager.instance.LoadCredits();
+	}
+
+	public void DisableUIExceptDialogue()
+	{
+		Transform t = GameObject.FindGameObjectWithTag("CanvasUI").transform;
+		foreach (Transform child in t)
+		{
+			if (child.name != "BlackUnderUI")
+			{
+				child.gameObject.SetActive(false);
+			}
+				
+		}
 	}
 
 	private Vector2 CastAtAngle(Vector2 position, Vector2 direction, float distance)
