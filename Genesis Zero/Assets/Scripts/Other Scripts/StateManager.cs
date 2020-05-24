@@ -139,15 +139,19 @@ public class StateManager : MonoBehaviour
         //get to next level instantly
         if (Input.GetKey(KeyCode.PageUp))
         {
-            int levelNum = TileManager.instance.curlevel;
-            float levelSpacing = TileManager.instance.levelSpacing;
-            float rng = Random.Range(1.0f, 4.0f) / 10;
-            Vector2 destination = new Vector2((levelNum+1) * levelSpacing + levelSpacing * rng, 70f);
-            //Vector2 colliderPos = GameObject.FindWithTag("CamCollider").transform.position;
-            //GameObject.FindWithTag("CamCollider").transform.position = new Vector2(colliderPos.x + levelSpacing+100, colliderPos.y);
-            GameObject.FindWithTag("Player").transform.position = destination;
-            TileManager.instance.curlevel++;
 
+            GameObject[] teles = GameObject.FindGameObjectsWithTag("Teleporter");
+            foreach (GameObject t in teles)
+            {
+                float dist = Vector2.Distance(player.transform.position, t.transform.position);
+                if (t.name.Contains("Easter") == false && dist < 750)
+                {
+                    t.GetComponent<Teleporter>().TeleportWithAnim();
+                    break;
+                }
+            }
+            //Vector2 colliderPos = GameObject.FindWithTag("CamCollider").transform.position;
+            //GameObject.FindWithTag("CamCollider").transform.position = new Vector2(colliderPos.x + levelSpacing+100, colliderPos.y)
         }
         if (Input.GetKeyDown(KeyCode.PageDown))
         {
