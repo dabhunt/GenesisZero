@@ -5,35 +5,68 @@ using UnityEngine;
 using DG.Tweening;
 using UnityEngine.UI;
 using TMPro;
+using System;
+using System.Security.Cryptography;
+using System.Diagnostics;
 
 public class EndCredits : MonoBehaviour
 {
     // Start is called before the first frame update
-
-    public Color DefaultTextColor = Color.white;
-    public Color DefaultHighlightTextColor = Color.red;
     public float DefaultShowDuration = 4f;
     public float DefaultFadeDuration = .7f;
     public float DefaultTextInactiveDuration = .7f;
+    public List<GameObject> CreditList;
+    public List<float> CreditDurations;
+    public List<float> CreditFades;
+    public List<float> CreditDelays;
 
-    private Queue<CreditCard> cardQueue;
+    private Queue<GameObject> cardQueue;
     private Color overlay;
-    private float fadeDuration;
-    private TextMeshProUGUI tmp;
-    private TextMeshProUGUI tmp2;
-    private Image image;
+    private int count = 0;
 
     private void Start()
     {
-        cardQueue = new Queue<CreditCard>();
-        CreditCard[] objs = Resources.LoadAll<CreditCard>("CreditCards");
-        for (int i = 0; i < objs.Length; i++)
+        // Queue up credits
+        cardQueue = new Queue<GameObject>();
+        foreach (GameObject s in CreditList)
         {
-            cardQueue.Enqueue(objs[i]);
+            cardQueue.Enqueue(s);
         }
-        tmp = transform.Find("Text").gameObject.GetComponent<TextMeshProUGUI>();
-        tmp2 = transform.Find("RoleTxt").gameObject.GetComponent<TextMeshProUGUI>();
         transform.Find("Overlay").GetComponent<Image>().enabled = true;
+
+        // Set default duration credit is shown
+        for (int i = 0; i < CreditDurations.Count; i++)
+        {
+            if(CreditDurations[i] <= 0)
+                CreditDurations[i] = DefaultShowDuration;
+        }
+        while (CreditDurations.Count < CreditList.Count)
+        {
+            CreditDurations.Add(DefaultShowDuration);
+        }
+
+        // Set default fade time
+        for (int i = 0; i < CreditFades.Count; i++)
+        {
+            if (CreditFades[i] <= 0)
+                CreditFades[i] = DefaultFadeDuration;
+        }
+        while (CreditFades.Count < CreditList.Count)
+        {
+            CreditFades.Add(DefaultFadeDuration);
+        }
+
+        // Set default delay between credits
+        for (int i = 0; i < CreditDelays.Count; i++)
+        {
+            if (CreditDelays[i] <= 0)
+                CreditDelays[i] = DefaultTextInactiveDuration;
+        }
+        while (CreditDelays.Count < CreditList.Count)
+        {
+            CreditDelays.Add(DefaultTextInactiveDuration);
+        }
+
         NextCard();
         if(GameInputManager.instance != null)
             GameInputManager.instance.DisablePlayerControls();
@@ -47,24 +80,10 @@ public class EndCredits : MonoBehaviour
         }
         else
         {
-            tmp.text = cardQueue.Peek().Name;
-            tmp.color = cardQueue.Peek().MainTextColor;
-            tmp2.text = cardQueue.Peek().Role;
-            tmp2.color = new Color(0.0f, 0.8f, 1.0f, 1.0f);
-            fadeDuration = cardQueue.Peek().FadeDuration;
-            float inactiveDuration = cardQueue.Peek().TextInactiveDuration;
-            float durationOnCard = cardQueue.Peek().ShowDuration;
-            if (fadeDuration == 0)
-                fadeDuration = DefaultFadeDuration;
-            if (inactiveDuration == 0)
-                inactiveDuration = DefaultTextInactiveDuration;
-            if (durationOnCard == 0)
-                durationOnCard = DefaultShowDuration;
-            cardQueue.Dequeue();
+            CreditList[count].SetActive(true);
             FadeIn();
-            Invoke("FadeOut", fadeDuration + durationOnCard);
-            Invoke("NextCard", fadeDuration + durationOnCard + fadeDuration + inactiveDuration);
-
+            Invoke("FadeOut", CreditFades[count] + CreditDurations[count]);
+            Invoke("NextCard", CreditFades[count] + CreditDurations[count] + CreditFades[count] + CreditDelays[count]);
         }
     }
     void Update()
@@ -73,24 +92,30 @@ public class EndCredits : MonoBehaviour
         if (Input.GetKeyDown(KeyCode.Escape))
             ExitCredits();
     }
-    //public string SplitText()
+
+    private void DisableCredit()
+    {
+        cardQueue.Dequeue().SetActive(false);
+        count++;
+    }
+
     //fade in refers to the text becoming visible, even though the overlay is technically fading out
     public void FadeIn()
     {
-        DOTween.To(() => overlay.a, x => overlay.a = x, 0, fadeDuration);
+        DOTween.To(() => overlay.a, x => overlay.a = x, 0, CreditFades[count]);
     }
     //fade out refers to the text becoming covered by the overlay
     public void FadeOut()
     {
-        DOTween.To(() => overlay.a, x => overlay.a = x, 1, fadeDuration);
+        DOTween.To(() => overlay.a, x => overlay.a = x, 1, CreditFades[count]);
+        Invoke("DisableCredit", CreditFades[count]);
     }
+
     public void ExitCredits()
     {
         CancelInvoke();
         cardQueue.Clear();
         gameObject.SetActive(false);
-        //gameObject.transform.parent.Find("BlackOverlay").GetComponent<SpriteFade>().FadeOut(4f);
         SceneManager.LoadScene("MainMenu", LoadSceneMode.Single);
-
     }
 }
