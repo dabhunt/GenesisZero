@@ -18,7 +18,7 @@ public class PlayerController : MonoBehaviour
     public float acceleration = 35f;
     public float jumpStrength = 12f;
     public float doubleJumpStrength = 10f;
-    public float horCastLength = 0.3f;
+    public float horCastLength = 0.45f;
     public float verCastLength = 1.05f;
     public float groundCheckPadding = 0.15f;
     public float rollDuration = 3f;
@@ -332,7 +332,7 @@ public class PlayerController : MonoBehaviour
     {
         Collider[] cols;
         Vector3 origin = transform.position + Vector3.up * 0.25f * characterWidth;
-        cols = Physics.OverlapSphere(origin, 0.5f * characterWidth, immoveables, QueryTriggerInteraction.UseGlobal);
+        cols = Physics.OverlapSphere(origin, 0.25f * characterWidth, immoveables, QueryTriggerInteraction.UseGlobal);
 
         if (IsBlocked(Vector3.down))
         {
@@ -370,7 +370,7 @@ public class PlayerController : MonoBehaviour
     private void CheckWall()
     {
         Collider[] cols;
-        Vector3 halfExtends = new Vector3(0, 0.25f * characterHeight, 0);
+        Vector3 halfExtends = new Vector3(0.1f, 0.25f * characterHeight, 0);
         Vector3 rightOrigin = transform.position + new Vector3(0.5f * characterWidth, 0.5f * characterHeight, 0);
         Vector3 leftOrigin = transform.position + new Vector3(-0.5f * characterWidth, 0.5f * characterHeight, 0);
         if (IsBlocked(Vector3.right))
@@ -588,60 +588,53 @@ public class PlayerController : MonoBehaviour
      */
     private bool IsBlocked(Vector3 dir)
     {
-        RaycastHit hit;
         bool isBlock = false;
         float halfWidth = 0.5f * characterWidth;
         float halfHeight = 0.5f * characterHeight;
         Vector3 halfExtends = new Vector3(0, 0.5f * halfHeight, 0);
-        RaycastHit[] array;
+        RaycastHit[] array = new RaycastHit[0];
 
         if (dir == Vector3.up)
         {
-            //Casting from the top of the character's head
             Vector3 castOrigin = transform.position + new Vector3(0, halfHeight - halfWidth, 0);
-            isBlock = Physics.SphereCast(castOrigin, halfWidth, Vector3.up, out hit, verCastLength, immoveables, QueryTriggerInteraction.UseGlobal);
-            if (isBlock && hit.collider.isTrigger)
-                isBlock = false;
+            array = Physics.SphereCastAll(castOrigin, halfWidth, Vector3.up, verCastLength, immoveables, QueryTriggerInteraction.UseGlobal);
         }
         else if (dir == Vector3.down)
         {
             Vector3 castOrigin = transform.position + new Vector3(0, halfHeight + halfWidth, 0);
             array = Physics.SphereCastAll(castOrigin, halfWidth, Vector3.down, verCastLength, immoveables, QueryTriggerInteraction.UseGlobal);
-            if (array.Length == 0)
-            {
-                isBlock = false;
-            }
-            else
-            {
-                foreach (var item in array)
-                {
-                    if (!item.collider.isTrigger)
-                    {
-                        isBlock = true;
-                        break;
-                    }
-                }
-            }
         }
         else if (dir == Vector3.left)
         {
             //Casting side casts from the center of the character
             Vector3 castOrigin = transform.position + new Vector3(0, halfHeight, 0);
-            isBlock = Physics.BoxCast(castOrigin, halfExtends, Vector3.left, out hit, Quaternion.identity, horCastLength, immoveables, QueryTriggerInteraction.UseGlobal);
-            if (isBlock && hit.collider.isTrigger)
-                isBlock = false;
+            array = Physics.BoxCastAll(castOrigin, halfExtends, Vector3.left, Quaternion.identity, horCastLength, immoveables, QueryTriggerInteraction.UseGlobal);
         }
         else if (dir == Vector3.right)
         {
             //Casting side casts from the center of the character
             Vector3 castOrigin = transform.position + new Vector3(0, halfHeight, 0);
-            isBlock = Physics.BoxCast(castOrigin, halfExtends, Vector3.right, out hit, Quaternion.identity, horCastLength, immoveables, QueryTriggerInteraction.UseGlobal);
-            if (isBlock && hit.collider.isTrigger)
-                isBlock = false;
+            array = Physics.BoxCastAll(castOrigin, halfExtends, Vector3.right, Quaternion.identity, horCastLength, immoveables, QueryTriggerInteraction.UseGlobal);
         }
         else
         {
             Debug.LogError("Invalid Vector used in IsBlocked");
+        }
+
+        if (array.Length == 0)
+        {
+            isBlock = false;
+        }
+        else
+        {
+            foreach (var item in array)
+            {
+                if (!item.collider.isTrigger)
+                {
+                    isBlock = true;
+                    break;
+                }
+            }
         }
         return isBlock;
     }
