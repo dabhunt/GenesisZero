@@ -186,8 +186,8 @@ public class StateManager : MonoBehaviour
     {
         //Pauses Game
         AudioManager.instance.StopAllSounds();
-         StateManager.instance.DestroyPopUpsWithTag("Pickups");
-            StateManager.instance.DestroyPopUpsWithTag("Interactable");
+        StateManager.instance.DestroyPopUpsWithTag("Pickups");
+        StateManager.instance.DestroyPopUpsWithTag("Interactable");
         isPaused = true;
         Time.timeScale = 0f;
         canvas.transform.Find("BlackUnderUI").GetComponent<Image>().enabled = true;
