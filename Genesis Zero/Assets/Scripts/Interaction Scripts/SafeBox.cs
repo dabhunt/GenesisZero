@@ -29,7 +29,7 @@ public class SafeBox : MonoBehaviour
             return;
         if (playerScript.GetKeysAmount() < 1)
         {
-            GetComponent<InteractPopup>().SetText("You need a Keycode Cracker to open this");
+            GetComponent<InteractPopup>().SetText("You need a Keycode to open this");
         }
         else
         {

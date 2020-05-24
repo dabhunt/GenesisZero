@@ -139,8 +139,8 @@ public class Pawn : MonoBehaviour
         }
         if (IsSlowed())
         {
-            speed.AddBonus(-GetSpeed().GetMaxValue() * GetSlowedStatus().GetFactor(), Time.deltaTime);
-            slowtime -= Time.deltaTime;
+            
+            //slowtime -= Time.deltaTime;
         }
         //gives the pawn stun immunity after being stunned. default value is 1.5 seconds immunity
         if (StunnedLastFrame == true && !IsStunned())
@@ -403,8 +403,10 @@ public class Pawn : MonoBehaviour
 
     public void Slow(float factor, float time)
     {
-        slowed.SetFactor(factor);
-        slowtime = time;
+        speed.AddRepeatingBonus(-GetSpeed().GetMaxValue() * factor, -GetSpeed().GetMaxValue() * factor, 1.5f, "FT_slow");
+        GameObject burnemit = VFXManager.instance.PlayEffectForDuration("VFX_Health", transform.position, time);
+        burnemit.transform.parent = transform;
+        burnemit.transform.localScale = new Vector3(1, 1, 1);
     }
 
     public bool IsStunImmune()

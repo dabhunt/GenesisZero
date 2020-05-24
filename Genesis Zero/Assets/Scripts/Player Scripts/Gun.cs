@@ -27,13 +27,16 @@ public class Gun : MonoBehaviour
     public float burnDamagePerStack = 4f;
     public float burnTime = 3f;
     [Header("6. Hardware Exploit")]
-    public float stunDuration = .5f;    //in seconds
-    public float stunIncreasePerStack = .25f;
+    public float HE_stunDuration = .5f;    //in seconds
+    public float HE_stunIncreasePerStack = .25f;
     public Color stunBulletColor;
     [Header("7. Phase Flash")]
     public bool PhaseTrigger = false;
-    public float PF_stunDuration = .7f;
+    public float PF_stunDuration = 1f;
     public float PF_stunIncreasePerStack = .25f;
+    [Header("7. Frosted Tips")]
+    public float FT_stunDuration = .75f;
+    public float FT_stunIncreasePerStack = .25f;
     //only reduces it's own, not others by .1
     public float reductionPerStack = .1f;
     [Header("Atom Splitter (Multishot)")]
@@ -75,7 +78,7 @@ public class Gun : MonoBehaviour
 
     public void Shoot()
     {
-        spreadAngle = overheat.ShootBloom();
+        spreadAngle = overheat.CalculateBloom();
         //print("spreadAngle: "+spreadAngle);
         Vector3 spawnpoint = new Vector3(firePoint.transform.position.x, firePoint.transform.position.y, 0);
         //instantiate the players next bullet, passing in the crit variable to decide what type of bullet
@@ -133,7 +136,8 @@ public class Gun : MonoBehaviour
             overheat.Increment(heatPerExtraBullets);
             overheat.GetDelayBeforeCooling().AddRepeatingBonus(.25f, .25f, .5f, "ExtraBulletCoolDelay");
         }
-
+        //also adds heat because this is called whenever the player successfully fires a shot
+        overheat.Increment(overheat.GetHeatAddedPerShot().GetValue());
     }
     private void FixedUpdate() 
     {
@@ -168,11 +172,11 @@ public class Gun : MonoBehaviour
     {
         Hitbox hit = projectile.GetComponent<Hitbox>();
         Color bulletColor;
+        hit.Damage = player.GetDamage().GetValue();
         if (crit) 
         {//Any effects that need to apply due to crit should go here
             //apply a burn to crits if you have ignition bullets
             hit.Critical = true;
-            hit.Damage = player.GetDamage().GetValue();
             projectile = VFXManager.instance.ChangeColor(projectile, CritBulletColor);
             bulletColor = CritBulletColor;
             vfx_MuzzleFlash = VFXManager.instance.ChangeColor(vfx_MuzzleFlash, CritBulletColor);
@@ -187,7 +191,9 @@ public class Gun : MonoBehaviour
                 projectile = VFXManager.instance.ChangeInnerTrail(projectile, stunBulletColor);
                 //bulletColor = stunBulletColor;
                 vfx_MuzzleFlash = VFXManager.instance.ChangeColor(vfx_MuzzleFlash, stunBulletColor);
-                hit.StunTime = stunDuration + (1 - exploitStacks) * stunIncreasePerStack;
+                float otherStun = HE_stunDuration + (1 - exploitStacks) * HE_stunIncreasePerStack;
+                if (hit.StunTime < otherStun) //if the current stun on the bullet is less than the one we would apply, apply it
+                    hit.StunTime = otherStun;
             }
             
         }
@@ -199,7 +205,9 @@ public class Gun : MonoBehaviour
             { //modifier that shoots a stun bullet immediately after rolling
                 projectile = VFXManager.instance.ChangeInnerTrail(projectile, stunBulletColor);
                 vfx_MuzzleFlash = VFXManager.instance.ChangeColor(vfx_MuzzleFlash, stunBulletColor);
-                hit.StunTime = PF_stunDuration + (1 - PF_Stacks) * PF_stunIncreasePerStack;
+                float otherStun = PF_stunDuration + (1 - PF_Stacks) * PF_stunIncreasePerStack;
+                if (hit.StunTime < otherStun) //if the current stun on the bullet is less than the one we would apply, apply it
+                    hit.StunTime = otherStun;
             }
         }
         if (shotCount > 2) //every third shot
@@ -218,7 +226,17 @@ public class Gun : MonoBehaviour
                 vfx_MuzzleFlash = VFXManager.instance.ChangeColor(vfx_MuzzleFlash, Color.red);
             }
         }
-
+        if (overheat.GetHeat() < 1) //when the player's gun is cool, do this
+        {
+            int FT_stacks = player.GetSkillStack("Frosted Tips");
+            if (FT_stacks > 0)
+            {
+                float otherStun = FT_stunDuration + (1 - FT_stacks) * FT_stunIncreasePerStack;
+                if (hit.StunTime < otherStun) //if the current stun on the bullet is less than the one we would apply, apply it
+                    hit.StunTime = otherStun;
+                hit.Damage *= 1+ (FT_stacks * .4f);
+            }
+        }
         return projectile;
     }
     private void UpdateCrosshairBloom()
