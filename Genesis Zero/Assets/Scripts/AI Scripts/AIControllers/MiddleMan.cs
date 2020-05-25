@@ -9,6 +9,7 @@ public class MiddleMan : MonoBehaviour
 	public GameObject Target;
     public GameObject Boss;
     public Vector3 maxoffset;
+	public GameObject Joint;
     private Vector2 currentoffset;
     private bool pushedback;
     private Vector3 originmaxoffset;
@@ -59,6 +60,12 @@ public class MiddleMan : MonoBehaviour
         currentoffset = Vector2.Lerp(currentoffset, localoffset, Time.deltaTime * 2);
         transform.position = Boss.transform.position + (Vector3)currentoffset + new Vector3(0, 0, maxoffset.z);
     }
+
+	public void UpdateJoint()
+	{
+		transform.position = Joint.transform.position;
+		currentoffset = Vector2.zero;
+	}
 
     void OnDrawGizmos()
     {

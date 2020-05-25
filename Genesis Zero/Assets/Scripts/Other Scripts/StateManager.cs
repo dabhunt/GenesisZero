@@ -18,7 +18,7 @@ public class StateManager : MonoBehaviour
     private AsyncOperation operation;
     private GameObject optionsMenu;
     private GameObject pMenuButtons;
-    public Vector2 BossRoomLocation = new Vector2(-717, 196.5f);
+    public Vector2 BossRoomLocation = new Vector2(-553, 198f);
     public bool Cursorvisible = true;
     public bool GameOver = false;
     private void Awake()
@@ -170,7 +170,12 @@ public class StateManager : MonoBehaviour
             Cursor.visible = true;
         else 
             Cursor.visible = false;
-    }
+
+		if (Input.GetKeyDown(KeyCode.M))
+		{//teleport the player to the boss room
+			ChangeTimeScale(.1f, 20);
+		}
+	}
     //remove all interaction popups
     public void DestroyPopUpsWithTag(string Tag)
     {
@@ -201,15 +206,19 @@ public class StateManager : MonoBehaviour
     //This unpauses game
     public void UnpauseGame()
     {
-        //UnPauses Game
-        isPaused = false;
+		//UnPauses Game
+		if (pauseMenu != null)
+		{
+			if (isPaused == true)
+			{
+				canvas.transform.Find("BlackUnderUI").GetComponent<Image>().enabled = false;
+			}
+			pauseMenu.SetActive(false);
+		}
+
+		isPaused = false;
         Time.timeScale = TimeScale;
         Time.fixedDeltaTime = 0.02f * TimeScale;
-        if (pauseMenu != null)
-        {
-            canvas.transform.Find("BlackUnderUI").GetComponent<Image>().enabled = false;
-            pauseMenu.SetActive(false);
-        }
     }
     public bool IsPaused()
     {
@@ -231,10 +240,16 @@ public class StateManager : MonoBehaviour
         StartCoroutine(LoadSceneCoroutine());
         //SceneManager.LoadScene("MainMenu", LoadSceneMode.Single);
     }
-    /* when given a transform, this recursively disables all objects below it, excluding one
+
+	public void LoadCredits()
+	{
+		StartCoroutine(LoadCreditsSceneCoroutine());
+	}
+
+	/* when given a transform, this recursively disables all objects below it, excluding one
      * This is currently used to turn off the canvas without ruining other things / needing to make a new canvas
      */
-    public void SetActiveExcludingChild(Transform t, string excludedName, bool enabled)
+	public void SetActiveExcludingChild(Transform t, string excludedName, bool enabled)
     {
         foreach (Transform child in t)
         {
@@ -262,4 +277,18 @@ public class StateManager : MonoBehaviour
             yield return null;
         }
     }
+
+	IEnumerator LoadCreditsSceneCoroutine()
+	{
+		operation = SceneManager.LoadSceneAsync("MainMenu", LoadSceneMode.Single); // Change this later to the credits
+		operation.allowSceneActivation = false;
+		while (!operation.isDone)
+		{
+			if (operation.progress >= 0.9f)
+			{
+				operation.allowSceneActivation = true;
+			}
+			yield return null;
+		}
+	}
 }

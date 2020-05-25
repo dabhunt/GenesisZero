@@ -25,7 +25,7 @@ public class VFXScript : MonoBehaviour
         {
             ps = gameObject.GetComponentInChildren<ParticleSystem>();
         }
-        if (ps.isPlaying == false && duration != 0)
+        if (ps != null && ps.isPlaying == false && duration != 0)
         {
             var main = ps.main;
             main.duration = duration;
@@ -34,9 +34,14 @@ public class VFXScript : MonoBehaviour
     }
     void Update()
     {
-        if (delay <= 0 && played == false)
+        if (ps && delay <= 0 && played == false)
         {
-            ps.Play();
+			try
+			{
+				ps.Play();
+			}
+			catch { }
+
             played = true;
         }
         else
@@ -44,7 +49,7 @@ public class VFXScript : MonoBehaviour
             delay -= Time.deltaTime;
         }
 
-        if (ps.isPlaying == false && played == true)
+        if (ps && ps.isPlaying == false && played == true)
         {
             if (emitter)
             {

@@ -62,6 +62,7 @@ public class SkillDisplay : MonoBehaviour
      */
     public void UpdateDisplay()
     {
+		//Debug.Log("Skill Update");
         List<SkillObject> skills = SkillManager.GetSkillObjects();
         foreach (GameObject sk in skilldisplay)
         {

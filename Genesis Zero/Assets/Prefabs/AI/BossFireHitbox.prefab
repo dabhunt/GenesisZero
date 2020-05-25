@@ -34,6 +34,8 @@ Transform:
   - {fileID: 7632325585769818034}
   - {fileID: 6582347738405691491}
   - {fileID: 4582178148195476982}
+  - {fileID: 3556482244739386687}
+  - {fileID: 7950509275139356090}
   m_Father: {fileID: 0}
   m_RootOrder: 0
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
@@ -67,7 +69,7 @@ MonoBehaviour:
   HurtsAllies: 1
   HurtsEnemies: 0
   Intangible: 1
-  MaxHits: 1
+  MaxHits: 2
   Knockbackforce: 3
   DirectionalKnockback: 1
   StunTime: 0
@@ -246,6 +248,150 @@ TrailRenderer:
   m_MinVertexDistance: 0.1
   m_Autodestruct: 0
   m_Emitting: 1
+--- !u!1 &2395997088871753399
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 7950509275139356090}
+  - component: {fileID: 5446882870935455559}
+  - component: {fileID: 9133387157512989117}
+  m_Layer: 12
+  m_Name: HitboxRight
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &7950509275139356090
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2395997088871753399}
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 2, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_Children: []
+  m_Father: {fileID: 5263104228351542901}
+  m_RootOrder: 4
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &5446882870935455559
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2395997088871753399}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 1e7773cfab260d141aad2bd82731dee2, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  Damage: 8
+  Critical: 0
+  HurtsAllies: 1
+  HurtsEnemies: 0
+  Intangible: 1
+  MaxHits: 2
+  Knockbackforce: 3
+  DirectionalKnockback: 1
+  StunTime: 0
+  LifeTime: 99
+  Burn: {x: 2, y: 6}
+  Collider: {fileID: 7528679365860970713}
+  Source: {fileID: 0}
+  hitEffectVFX: VFX_BulletSparks
+  VFX_ScaleReduction: 15
+--- !u!135 &9133387157512989117
+SphereCollider:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2395997088871753399}
+  m_Material: {fileID: 0}
+  m_IsTrigger: 1
+  m_Enabled: 1
+  serializedVersion: 2
+  m_Radius: 1.4
+  m_Center: {x: 0, y: 0, z: 0}
+--- !u!1 &4729712846237924153
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 3556482244739386687}
+  - component: {fileID: 90847056725580614}
+  - component: {fileID: 2902808695672848729}
+  m_Layer: 12
+  m_Name: HitboxLeft
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &3556482244739386687
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 4729712846237924153}
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: -2, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_Children: []
+  m_Father: {fileID: 5263104228351542901}
+  m_RootOrder: 3
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &90847056725580614
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 4729712846237924153}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 1e7773cfab260d141aad2bd82731dee2, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  Damage: 8
+  Critical: 0
+  HurtsAllies: 1
+  HurtsEnemies: 0
+  Intangible: 1
+  MaxHits: 2
+  Knockbackforce: 3
+  DirectionalKnockback: 1
+  StunTime: 0
+  LifeTime: 99
+  Burn: {x: 2, y: 6}
+  Collider: {fileID: 7528679365860970713}
+  Source: {fileID: 0}
+  hitEffectVFX: VFX_BulletSparks
+  VFX_ScaleReduction: 15
+--- !u!135 &2902808695672848729
+SphereCollider:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 4729712846237924153}
+  m_Material: {fileID: 0}
+  m_IsTrigger: 1
+  m_Enabled: 1
+  serializedVersion: 2
+  m_Radius: 1.4
+  m_Center: {x: 0, y: 0, z: 0}
 --- !u!1 &4975100018642655223
 GameObject:
   m_ObjectHideFlags: 0
