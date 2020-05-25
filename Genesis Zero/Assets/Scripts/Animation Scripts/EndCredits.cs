@@ -24,11 +24,15 @@ public class EndCredits : MonoBehaviour
     private Queue<GameObject> cardQueue;
     private int count = 0;
     private UnityEngine.Component[] allCredits;
+    private UnityEngine.Component[] allCreditImg;
     private Image bg;
 
     // Start is called before the first frame update
     private void Start()
     {
+        // play credit music
+        AudioManager.instance.PlayTrack(1, "Music", "CombatMusic", true, true);
+
         // reference to blackbackground
         bg = GameObject.Find("BlackOverlay").GetComponent<Image>();
 
@@ -102,6 +106,12 @@ public class EndCredits : MonoBehaviour
                 txt.color = new Color(txt.color.r, txt.color.g, txt.color.b, 0f);
             }
 
+            allCreditImg = CreditList[count].GetComponentsInChildren(typeof(Image));
+            foreach (Image img in allCreditImg)
+            {
+                img.color = new Color(img.color.r, img.color.g, img.color.b, 0f);
+            }
+
             // fading and queueing sections
             FadeIn();
             Invoke("FadeOut", CreditFades[count] + CreditDurations[count]);
@@ -110,7 +120,6 @@ public class EndCredits : MonoBehaviour
     }
     void Update()
     {
-        //transform.Find("Overlay").gameObject.GetComponent<Image>().color = overlay;
         if (Input.GetKeyDown(KeyCode.Escape))
             ExitCredits();
     }
@@ -136,20 +145,24 @@ public class EndCredits : MonoBehaviour
 
     private void FadeIn()
     {
-        //DOTween.To(() => overlay.a, x => overlay.a = x, 0, CreditFades[count]);
-
         foreach (TextMeshProUGUI txt in allCredits)
         {
             txt.DOFade(1f, CreditFades[count]);
         }
+        foreach (Image img in allCreditImg)
+        {
+            img.DOFade(1f, CreditFades[count]);
+        }
     }
     private void FadeOut()
     {
-        //DOTween.To(() => overlay.a, x => overlay.a = x, 1, CreditFades[count]);
-
         foreach (TextMeshProUGUI txt in allCredits)
         {
             txt.DOFade(0f, CreditFades[count]);
+        }
+        foreach (Image img in allCreditImg)
+        {
+            img.DOFade(0f, CreditFades[count]);
         }
         Invoke("DisableCredit", CreditFades[count]);
     }
