@@ -8,10 +8,10 @@ using TMPro;
 using System;
 using System.Security.Cryptography;
 using System.Diagnostics;
+using System.ComponentModel;
 
 public class EndCredits : MonoBehaviour
 {
-    // Start is called before the first frame update
     public float DefaultShowDuration = 4f;
     public float DefaultFadeDuration = .7f;
     public float DefaultTextInactiveDuration = .7f;
@@ -19,20 +19,25 @@ public class EndCredits : MonoBehaviour
     public List<float> CreditDurations;
     public List<float> CreditFades;
     public List<float> CreditDelays;
+    public List<bool> ShowCreditBG;
 
     private Queue<GameObject> cardQueue;
-    private Color overlay;
     private int count = 0;
+    private UnityEngine.Component[] allCredits;
+    private Image bg;
 
+    // Start is called before the first frame update
     private void Start()
     {
+        // reference to blackbackground
+        bg = GameObject.Find("BlackOverlay").GetComponent<Image>();
+
         // Queue up credits
         cardQueue = new Queue<GameObject>();
         foreach (GameObject s in CreditList)
         {
             cardQueue.Enqueue(s);
         }
-        transform.Find("Overlay").GetComponent<Image>().enabled = true;
 
         // Set default duration credit is shown
         for (int i = 0; i < CreditDurations.Count; i++)
@@ -67,6 +72,12 @@ public class EndCredits : MonoBehaviour
             CreditDelays.Add(DefaultTextInactiveDuration);
         }
 
+        // Set default bg settings
+        while (ShowCreditBG.Count < CreditList.Count)
+        {
+            ShowCreditBG.Add(false);
+        }
+
         NextCard();
         if(GameInputManager.instance != null)
             GameInputManager.instance.DisablePlayerControls();
@@ -80,7 +91,18 @@ public class EndCredits : MonoBehaviour
         }
         else
         {
+            // make credit active and determine presence of colored background
             CreditList[count].SetActive(true);
+            ShowBG();
+
+            // find all TextMeshPro components in a credit's children
+            allCredits = CreditList[count].GetComponentsInChildren(typeof(TextMeshProUGUI));
+            foreach (TextMeshProUGUI txt in allCredits)
+            {
+                txt.color = new Color(txt.color.r, txt.color.g, txt.color.b, 0f);
+            }
+
+            // fading and queueing sections
             FadeIn();
             Invoke("FadeOut", CreditFades[count] + CreditDurations[count]);
             Invoke("NextCard", CreditFades[count] + CreditDurations[count] + CreditFades[count] + CreditDelays[count]);
@@ -88,26 +110,47 @@ public class EndCredits : MonoBehaviour
     }
     void Update()
     {
-        transform.Find("Overlay").gameObject.GetComponent<Image>().color = overlay;
+        //transform.Find("Overlay").gameObject.GetComponent<Image>().color = overlay;
         if (Input.GetKeyDown(KeyCode.Escape))
             ExitCredits();
     }
 
+    // to be invoked once credit done fading out
     private void DisableCredit()
     {
         cardQueue.Dequeue().SetActive(false);
         count++;
     }
-
-    //fade in refers to the text becoming visible, even though the overlay is technically fading out
-    public void FadeIn()
+    private void ShowBG()
     {
-        DOTween.To(() => overlay.a, x => overlay.a = x, 0, CreditFades[count]);
+        // shows background if checked
+        if (ShowCreditBG[count])
+        {
+            if (bg.color.a == 0)
+                bg.DOFade(1f, CreditFades[count]);
+        }
+        else
+            if (bg.color.a > 0)
+            bg.DOFade(0f, CreditFades[count]);
     }
-    //fade out refers to the text becoming covered by the overlay
-    public void FadeOut()
+
+    private void FadeIn()
     {
-        DOTween.To(() => overlay.a, x => overlay.a = x, 1, CreditFades[count]);
+        //DOTween.To(() => overlay.a, x => overlay.a = x, 0, CreditFades[count]);
+
+        foreach (TextMeshProUGUI txt in allCredits)
+        {
+            txt.DOFade(1f, CreditFades[count]);
+        }
+    }
+    private void FadeOut()
+    {
+        //DOTween.To(() => overlay.a, x => overlay.a = x, 1, CreditFades[count]);
+
+        foreach (TextMeshProUGUI txt in allCredits)
+        {
+            txt.DOFade(0f, CreditFades[count]);
+        }
         Invoke("DisableCredit", CreditFades[count]);
     }
 
