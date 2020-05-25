@@ -62,6 +62,7 @@ public class FillHealthBar : MonoBehaviour
         
         if (curValue < valueLastFrame && curValue > 0)
         {
+            player.GetComponent<Gun>().PlayerHurtTrigger = true;
             fillImage.color = Color.white;
             DOTween.To(() => slider.value, x => slider.value = x, curValue, tweenTime);
             float pain = (valueLastFrame - curValue) / 15;

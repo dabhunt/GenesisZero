@@ -9964,10 +9964,24 @@ MonoBehaviour:
     Invert: 1
   EnemySpaceRadius: 3
   EnemySpaceForce: 50
+  DeathEvent:
+    m_PersistentCalls:
+      m_Calls:
+      - m_Target: {fileID: 142678016785247251}
+        m_MethodName: Die
+        m_Mode: 1
+        m_Arguments:
+          m_ObjectArgument: {fileID: 0}
+          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
+          m_IntArgument: 0
+          m_FloatArgument: 0
+          m_StringArgument: 
+          m_BoolArgument: 0
+        m_CallState: 2
   MoveSpeed: 5
   LungeSpeed: 8
   LungeVerticality: 0
-  Acceleration: 5
+  Acceleration: 10
   PatrolSpeed: 3
   PatrolSwitchRate: 1.5
   rotateRate: 5
@@ -9978,7 +9992,7 @@ MonoBehaviour:
   ForwardEdgeRay: {x: 1.917, y: -2.9, z: 0}
   groundCheckMask:
     serializedVersion: 2
-    m_Bits: 1
+    m_Bits: 65537
   chargeParticles: {fileID: 4068762686191278225}
   attackParticles: {fileID: 4068762687405306921}
   AttackHitbox: {fileID: 2017013749830094998, guid: 8651d118275be0e4191b258a9269d351,

@@ -51,16 +51,24 @@ public class SaveLoadManager : MonoBehaviour
     {
         Debug.Log("Saving Game");
         BinaryFormatter bf = new BinaryFormatter();
-        FileStream pFile = File.Create(Application.persistentDataPath + pPath);
-        FileStream mFile = File.Create(Application.persistentDataPath + mPath);
-        Player player = GameObject.FindGameObjectWithTag("Player").GetComponent<Player>();
-        PlayerData playerData = GetPlayerData(player);
-        MapData mapData = GetMapData();
-        //Serialize and write to the file
-        bf.Serialize(pFile, playerData);
-        pFile.Close();
-        bf.Serialize(mFile, mapData);
-        mFile.Close();
+        try
+        {
+            Player player = GameObject.FindGameObjectWithTag("Player").GetComponent<Player>();
+            PlayerData playerData = GetPlayerData(player);
+            FileStream pFile = File.Create(Application.persistentDataPath + pPath);
+            FileStream mFile = File.Create(Application.persistentDataPath + mPath);
+            MapData mapData = GetMapData();
+            //Serialize and write to the file
+            bf.Serialize(pFile, playerData);
+            pFile.Close();
+            bf.Serialize(mFile, mapData);
+            mFile.Close();
+        }
+        catch(NullReferenceException)
+        {
+            Debug.Log("Save unsucessful (player component doesn't exist)");
+            return;
+        }
     }
 
     public void SaveSettings(SettingsData data)

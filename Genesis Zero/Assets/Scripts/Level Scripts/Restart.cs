@@ -74,6 +74,7 @@ public class Restart : MonoBehaviour
     private void GameOverMenu()
     {
         StateManager.instance.Cursorvisible = true;
+        StateManager.instance.GameOver = true;
         StateManager.instance.DestroyPopUpsWithTag("Pickups");
         StateManager.instance.DestroyPopUpsWithTag("Interactable");
         pauseMenu.GetComponent<Image>().enabled = false;

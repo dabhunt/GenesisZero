@@ -5084,6 +5084,20 @@ MonoBehaviour:
     Invert: 1
   EnemySpaceRadius: 3
   EnemySpaceForce: 50
+  DeathEvent:
+    m_PersistentCalls:
+      m_Calls:
+      - m_Target: {fileID: 3739019229038373442}
+        m_MethodName: Die
+        m_Mode: 1
+        m_Arguments:
+          m_ObjectArgument: {fileID: 0}
+          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
+          m_IntArgument: 0
+          m_FloatArgument: 0
+          m_StringArgument: 
+          m_BoolArgument: 0
+        m_CallState: 2
   MoveSpeed: 10
   Acceleration: 5
   AvoidAmount: 6
@@ -5099,13 +5113,13 @@ MonoBehaviour:
   BackEdgeRay: {x: -1, y: -3.35, z: 0}
   groundCheckMask:
     serializedVersion: 2
-    m_Bits: 1
+    m_Bits: 65537
   chargeParticles: {fileID: 3414326379961094680}
   attackParticles: {fileID: 751653433110049400}
   AttackProjectile: {fileID: 6641631083453567850, guid: 4861a6201fafb454fb4a48b05424d802,
     type: 3}
   AttackLaunchInterval: 1.01
-  AimSpeed: 3
+  AimSpeed: 2.5
   ProjectileStart: {x: 0.154, y: 1.88, z: 0}
   ProjectileSource: {fileID: 702691132262387099}
   SpeedDifficultyMultiplier:
@@ -5114,7 +5128,7 @@ MonoBehaviour:
     Invert: 0
   AimDifficultyMultiplier:
     MinFactor: 0.5
-    MaxFactor: 1.5
+    MaxFactor: 1.25
     Invert: 0
   ShootRateDifficultyMultiplier:
     MinFactor: 1
@@ -5499,18 +5513,6 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   SpecialPart: 0
   damagemultipler: 1
---- !u!114 &3300087511771138429
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 7283608606636851686}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 8e658e2b109f5e44fbe56d4636183e64, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
 --- !u!114 &3516197954723719090
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -5701,6 +5703,18 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   SpecialPart: 0
   damagemultipler: 1
+--- !u!114 &3300087511771138429
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 7283608606636851686}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 8e658e2b109f5e44fbe56d4636183e64, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
 --- !u!54 &5309658403708607377
 Rigidbody:
   m_ObjectHideFlags: 0
@@ -5891,6 +5905,11 @@ PrefabInstance:
         type: 3}
       propertyPath: m_Layer
       value: 9
+      objectReference: {fileID: 0}
+    - target: {fileID: -6265906547635730760, guid: ee1312eec2bc8334482d1ecb61ddece8,
+        type: 3}
+      propertyPath: m_IsActive
+      value: 1
       objectReference: {fileID: 0}
     - target: {fileID: -6164154370521193495, guid: ee1312eec2bc8334482d1ecb61ddece8,
         type: 3}

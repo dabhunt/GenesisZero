@@ -9,13 +9,33 @@ using UnityEngine;
 public class EnemyManager : MonoBehaviour
 {
     public static List<AIController> AllEnemies = new List<AIController>();
-    public static float Difficulty = 2.0f;
+    public static float Difficulty = 1.5f;
     public static float MaxDifficulty = 4.0f;
     public static float normalizedDifficulty { get { return Difficulty / Mathf.Max(0.01f, MaxDifficulty); } } // Range form 0 to 1 indicating current difficulty factor
+                                                                                                              // Singleton instance.
+    public static EnemyManager instance = null;
 
-    private void Start()
+    // Initialize the singleton instance.
+    void Awake()
+    {
+        if (instance == null)
+            instance = this;
+        else
+        {
+            Destroy(gameObject);
+            return;
+        }
+    }
+        private void Start()
     {
         AllEnemies.Clear();
+    }
+    // Increase enemy difficulty, based on the current difficulty multiplied by the number passed in.
+    // Ex: 1.3 passed in makes enemies 30% more difficult
+    public void ModifyDifficultyMulti(float multiplier)
+    {
+        float newDificulty = Difficulty * multiplier;
+        Difficulty = Mathf.Clamp(newDificulty, 1f, MaxDifficulty);
     }
 }
 
