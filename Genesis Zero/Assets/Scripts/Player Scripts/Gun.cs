@@ -232,6 +232,7 @@ public class Gun : MonoBehaviour
             int PS_stacks = player.GetSkillStack("Piercing Shot");
             if (PS_stacks > 0)
             {
+                print("hurt trig");
                 hit.IgnoredDamageReduction = PS_stacks * PS_ReductionPerStack;
             }
             PlayerHurtTrigger = false;
