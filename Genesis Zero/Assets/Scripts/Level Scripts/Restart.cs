@@ -43,6 +43,7 @@ public class Restart : MonoBehaviour
             buge.AddComponent<AudioListener>();
             AudioManager.instance.PlaySound("SFX_GameOver", 3, 1, false, buge.transform.position);
             overlay.GetComponent<SpriteFade>().FadeIn(2f);
+            overlay.GetComponent<SpriteFade>().color = Color.black;
             gameovertext.GetComponent<TextMeshProUGUI>().color = new Color(1, 1, 1, 0);
             gameovertext.GetComponent<TextMeshProUGUI>().DOFade(1, 1.5F);
             // Show game over menu after fading in

@@ -25,7 +25,6 @@ public class PauseMenu : MonoBehaviour
             sods[i].quitting = true;
             //Destroy(sods[i]);
         }
-        print("MenuButton pressed");
         SaveLoadManager.instance.SaveGame();
         //Player.instance.GetHealth().SetValue(0);
         StateManager.instance.LoadMenu();
