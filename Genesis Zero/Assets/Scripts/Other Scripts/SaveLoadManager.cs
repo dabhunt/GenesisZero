@@ -74,7 +74,7 @@ public class SaveLoadManager : MonoBehaviour
 
     public void SaveSettings(SettingsData data)
     {
-        Debug.Log("Saving Settings");
+        Debug.Log("Saving User Preferences");
         sPath = Application.persistentDataPath + "/" + sFileName + ".dat";
         BinaryFormatter bf = new BinaryFormatter();
         FileStream sFile = File.Create(sPath);
@@ -118,7 +118,7 @@ public class SaveLoadManager : MonoBehaviour
         }
         else
         {
-            Debug.LogError("Player save file not found");
+            Debug.LogError("Player save file doesn't exist");
             return null;
         }
     }
@@ -131,7 +131,7 @@ public class SaveLoadManager : MonoBehaviour
         mPath = Application.persistentDataPath + "/" + mFileName + ".dat";
         if (File.Exists(mPath))
         {
-            Debug.Log("Loading MapData");
+            Debug.Log("Loading Map Data");
             BinaryFormatter bf = new BinaryFormatter();
             FileStream file = File.Open(mPath, FileMode.Open);
             MapData data = bf.Deserialize(file) as MapData;
@@ -140,7 +140,7 @@ public class SaveLoadManager : MonoBehaviour
         }
         else
         {
-            Debug.LogError("Map data file not found");
+            Debug.LogError("Map data file doesn't exist");
             return null;
         }
     }
@@ -236,17 +236,25 @@ public class SaveLoadManager : MonoBehaviour
     public bool SaveExists()
     {
         pPath = Application.persistentDataPath + "/" + pFileName + ".dat";
+        Debug.Log("Checking for Player data at: " + (pPath));
         mPath = Application.persistentDataPath + "/" + mFileName + ".dat";    
+        Debug.Log("Checking for Map data at: " + (mPath));
         if (File.Exists(pPath) && File.Exists(mPath))
+        {
+            Debug.Log("Save Exists");
             return true;
+        }
         else
+        {
+            Debug.Log("Save Doesn't Exist");
             return false;
+        }
     }
 
     public bool SettingsSaveExists()
     {
         sPath = Application.persistentDataPath + "/" + sFileName + ".dat";
-        Debug.Log("Searching for SettingsFile at: " + (sPath));
+        Debug.Log("Checking for SettingsFile at: " + (sPath));
         if (File.Exists(sPath))
         {
             Debug.Log("SettingsFile exist");
