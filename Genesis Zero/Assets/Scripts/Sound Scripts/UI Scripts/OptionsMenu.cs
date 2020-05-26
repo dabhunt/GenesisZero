@@ -62,20 +62,6 @@ public class OptionsMenu : MonoBehaviour
             MuteMusic(settingsData.muteMusic);
             SetFullScreen(settingsData.fullScreen);
             SetResolution(settingsData.resIndex);
-        }
-        else
-        {
-            settingsData = new SettingsData();
-        }
-        optionsScreen.SetActive(false);
-    }
-
-    private void OnEnable()
-    {
-        if (SaveLoadManager.instance.SettingsSaveExists())
-        {
-            settingsData = SaveLoadManager.instance.LoadSettings();
-            //Update the visuals of the options menu
             SetSliderValue("Master", settingsData.masterVolume);
             SetSliderValue("Music", settingsData.musicVolume);
             SetSliderValue("SFX", settingsData.sfxVolume);
@@ -86,6 +72,11 @@ public class OptionsMenu : MonoBehaviour
             resDropdown.RefreshShownValue();
             optionsScreen.transform.Find("Resolution").Find("FullScreen").gameObject.GetComponent<Toggle>().isOn = settingsData.fullScreen;
         }
+        else
+        {
+            settingsData = new SettingsData();
+        }
+        optionsScreen.SetActive(false);
     }
 
     public void OptionsButton()
