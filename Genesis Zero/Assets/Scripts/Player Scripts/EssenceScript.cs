@@ -37,12 +37,12 @@ public class EssenceScript : MonoBehaviour
                 if (GetComponent<Floating>() != null)
                 {
                     Destroy(GetComponent<Floating>());
-                    GetComponent<Animator>().SetBool("PlayerTouch", true);
+                    //GetComponent<Animator>().SetBool("PlayerTouch", true);
                 }
                 //transform.LookAt(target.transform.position);
                 speedvar = speedvar*1.1f;
                 this.transform.position = Vector3.MoveTowards(this.transform.position, transTarget, speedvar * Time.deltaTime);
-                vEffect.SetBool(boolAttribute, true);
+                //vEffect.SetBool(boolAttribute, true);
 
             }
 
