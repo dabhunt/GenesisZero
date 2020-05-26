@@ -193,7 +193,10 @@ public class Hitbox : MonoBehaviour
                 if (IgnoredDamageReduction > 0)
                 {
                     //print("dmg reduc normal" + p.GetDamageReduction().GetValue());
-                    p.GetDamageReduction().AddRepeatingBonus(IgnoredDamageReduction, IgnoredDamageReduction, .3f, "IgnoredDamageReduction");
+                    print("dmg reduct 1:"+p.GetDamageReduction().GetValue()); //.3 instead
+                    p.GetDamageReduction().AddRepeatingBonus(-IgnoredDamageReduction, -IgnoredDamageReduction, 5f, "IgnoredDamageReduction"+this.GetInstanceID());
+                    p.UpdateStats();
+                    print("dmg reduct 2:" + p.GetDamageReduction().GetValue()); //.3 instead
                 }
                 if (Knockbackforce > 0 && p.IsInvunerable() == false)
                 {
