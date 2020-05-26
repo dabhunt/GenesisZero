@@ -42,7 +42,7 @@ public class SaveLoadManager : MonoBehaviour
         pPath = "/" + pFileName + ".dat";
         mPath = "/" + mFileName + ".dat";
         sPath = "/" + sFileName + ".dat";
-        if(!CorrectVersion())
+        if(SaveExists() && !CorrectVersion())
             DeleteSaveFiles();
     }
 
