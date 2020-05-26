@@ -47,11 +47,12 @@ public class OptionsMenu : MonoBehaviour
         }
         resDropdown.ClearOptions();
         resDropdown.AddOptions(values);
-        resDropdown.value = 3;
+        resDropdown.value = index;
         resDropdown.RefreshShownValue();
         if (SaveLoadManager.instance.SettingsSaveExists())
         {
             settingsData = SaveLoadManager.instance.LoadSettings();
+            Debug.Log("Applying Settings");
             //Applying saved settings
             SetMasterVolume(settingsData.masterVolume);
             SetSFXVolume(settingsData.sfxVolume);
@@ -222,11 +223,7 @@ public class OptionsMenu : MonoBehaviour
     //Event to set Resolution
     public void SetResolution(int index)
     {
+        //Debug.Log("Changing res to: " + resolutions[index].width + " x " + resolutions[index].height);
         Screen.SetResolution(resolutions[index].width, resolutions[index].height, Screen.fullScreen, resolutions[index].refreshRate);
-    }
-
-    public SettingsData GetSettingsData()
-    {
-        return settingsData;
     }
 }
