@@ -42,6 +42,8 @@ public class SaveLoadManager : MonoBehaviour
         pPath = "/" + pFileName + ".dat";
         mPath = "/" + mFileName + ".dat";
         sPath = "/" + sFileName + ".dat";
+        if(!CorrectVersion())
+            DeleteSaveFiles();
     }
 
     /* Update and save relevant data that we want to save
@@ -176,6 +178,7 @@ public class SaveLoadManager : MonoBehaviour
     {
         MapData data = new MapData();
         //data.seed = TileManager.instance.GetSeed();
+        data.version = Application.version;
         return data;
     }
     /* Returns a SaveData object with the most updated
@@ -247,6 +250,15 @@ public class SaveLoadManager : MonoBehaviour
             File.Delete(Application.persistentDataPath + mPath);
         }
     }
+
+    //return true if save files are not correct version
+    public bool CorrectVersion()
+    {
+        MapData data = LoadMapData();
+        if (data.version == null)
+            return false;
+        return (data.version == Application.version);
+    }
 }
 
 [Serializable]
@@ -270,6 +282,7 @@ public class PlayerData
 public class MapData
 {
     public int seed;
+    public string version;
 }
 
 [Serializable]
