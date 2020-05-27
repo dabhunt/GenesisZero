@@ -349,11 +349,11 @@ public class BossAI : AIController
 			}
 		}
 
-		if (!GameObject.FindGameObjectWithTag("BossRoom").GetComponent<BoxCollider2D>().bounds.Contains((Vector2)transform.position))
+		if (!(GameObject.FindGameObjectWithTag("BossRoom").GetComponent<BoxCollider2D>().bounds.Contains((Vector2)transform.position) || GameObject.FindGameObjectWithTag("BossRoom").GetComponent<BoxCollider2D>().bounds.Contains((Vector2)transform.Find("Hitbox 2").position)))
 		{
 			Bounds bound = GameObject.FindGameObjectWithTag("BossRoom").GetComponent<BoxCollider2D>().bounds;
 			transform.position = Vector2.Lerp(transform.position, bound.center, Time.fixedDeltaTime);
-			if (bound.Contains(transform.position))
+			if (bound.Contains(transform.position) && bound.Contains(transform.Find("Hitbox 2").position))
 			{
 				GetComponent<SphereCollider>().isTrigger = false;
 			}
@@ -921,7 +921,7 @@ public class BossAI : AIController
 		Vector2 angle = (Vector2)transform.rotation.eulerAngles;
 		Quaternion rot = Quaternion.Euler(angle.x, angle.y, 0);
 		GameObject hitbox = Instantiate(FireballPrefab, transform.position, rot);
-		AudioManager.instance.PlaySound("SFX_FireExplosion", false, 0);
+		AudioManager.instance.PlaySound("SFX_Fireball", false, 0);
 	}
 
 	void SpawnHeadbutt()
@@ -929,7 +929,7 @@ public class BossAI : AIController
 		Vector2 angle = (Vector2)transform.rotation.eulerAngles;
 		Quaternion rot = Quaternion.Euler(angle.x, angle.y, 0);
 		GameObject hitbox = Instantiate(HeadbuttPrefab, transform.position, rot);
-		hitbox.transform.position += Vector3.forward * 2.5f;
+		hitbox.transform.position += Vector3.forward * 3f;
 		hitbox.transform.parent = transform;
 		hitbox.GetComponent<Hitbox>().LifeTime = .25f;
 		GetComponent<SphereCollider>().isTrigger = true;
