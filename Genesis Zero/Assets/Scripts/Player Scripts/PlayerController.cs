@@ -21,6 +21,8 @@ public class PlayerController : MonoBehaviour
     public float horCastLength = 0.45f;
     public float verCastLength = 1.05f;
     public float groundCheckPadding = 0.15f;
+    [Header("Phase Dash")]
+    public Color phaseColor = Color.black;
     public float rollDuration = 3f;
     public float rollSpeedMult = 1.5f;
     public float rollCooldownDuration = 3.0f;
@@ -388,7 +390,6 @@ public class PlayerController : MonoBehaviour
                         transform.position = Vector3.Lerp(transform.position, transform.position + Vector3.left * 0.1f, 25 * Time.fixedDeltaTime);
                     }
                 }
-                
             }
         }
         if (IsBlocked(Vector3.left))
@@ -458,9 +459,16 @@ public class PlayerController : MonoBehaviour
                 gun.PhaseTrigger = true;
                 sound.Roll();
                 //VFXManager.instance.PlayEffect("VFX_PlayerDashStart", transform.position);
-                VFXManager.instance.PlayEffectOnObject("VFX_PlayerDashStart", this.gameObject, new Vector2(0,1));
+
+                GameObject dashstart = VFXManager.instance.PlayEffectOnObject("VFX_PlayerDashStart", this.gameObject, new Vector2(0,1));
                 gameObject.GetComponentInChildren<SkinnedMeshRenderer>().enabled = false; //TEMPORARY CHANGE THIS
-                VFXManager.instance.PlayEffectForDuration("VFX_PlayerDashEffect", transform.position, rollDuration).transform.parent = transform;
+                GameObject dash = VFXManager.instance.PlayEffectForDuration("VFX_PlayerDashEffect", transform.position, rollDuration);
+                dash.transform.SetParent(transform);
+                if (phaseColor != Color.black)
+                {
+                    VFXManager.instance.ChangeColor(dashstart, phaseColor);
+                    VFXManager.instance.ChangeColor(dash, phaseColor);
+                }
                 //Select roll direction based on crosshair position and input
                 if (movementInput.x != 0)
                     rollDirection = movementInput.x > 0 ? 1 : -1;
@@ -471,7 +479,6 @@ public class PlayerController : MonoBehaviour
                 NewLayerMask(rollingLayerMask, rollDuration);
                 timeRolled = 0;
                 //lastRollingPosition = transform.position;
-
                 //Rotate the character depending on roll direction
                 if (rollDirection < 0 && isFacingRight)
                 {

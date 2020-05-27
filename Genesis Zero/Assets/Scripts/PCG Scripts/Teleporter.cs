@@ -26,7 +26,6 @@ public class Teleporter : MonoBehaviour
 		ani = GetComponent<Animator>();
 		canvas = GameObject.FindGameObjectWithTag("CanvasUI");
 		InvokeRepeating("portalAnimation", 1f, .5f);
-
 	}
 	private void OnTriggerEnter(Collider other)
 	{

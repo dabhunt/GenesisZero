@@ -24,20 +24,18 @@ public class VFXScript : MonoBehaviour
         ps = gameObject.GetComponentsInChildren<ParticleSystem>();
         foreach (ParticleSystem p in ps)
         {
-            if (p != null && p.isPlaying == false)
+            if (p != null)
             {
-                var main = p.main;
-                if (duration != 0)
-                {
-                    main.duration = duration;
-                }
+                
                 if (longestDur < p.main.duration)
                 {
+                    print("duration" + p.main.duration);
                     longestDur = p.main.duration; //set longestDur
                 }
             }
         }
-        Invoke("Kill", longestDur);
+        print("longest" + longestDur);
+        Invoke("Kill", longestDur+delay);
         played = false;
     }
     private void Kill()

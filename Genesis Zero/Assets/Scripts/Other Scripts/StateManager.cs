@@ -18,7 +18,7 @@ public class StateManager : MonoBehaviour
     private AsyncOperation operation;
     private GameObject optionsMenu;
     private GameObject pMenuButtons;
-    public Vector2 BossRoomLocation = new Vector2(-553, 198f);
+    public Vector2 BossRoomLocation = new Vector2(-533, 173f);
     public bool Cursorvisible = true;
     public bool GameOver = false;
     public bool InTutorial = true;
