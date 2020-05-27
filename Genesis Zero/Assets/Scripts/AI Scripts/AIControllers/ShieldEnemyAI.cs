@@ -79,8 +79,10 @@ public class ShieldEnemyAI : AIController
 
         if (state == AIState.Follow || state == AIState.Charge)
         {
+            aimLocked = state == AIState.Charge && GetStateTime() > BehaviorProperties.AttackChargeTime * 0.5f;
+
             faceDirPrev = faceDir;
-            if (faceDirChangeTime > 0.2f)
+            if (faceDirChangeTime > 0.2f && !aimLocked)
             {
                 faceDir = Mathf.RoundToInt(Mathf.Sign(targetPosition.x - transform.position.x));
             }
@@ -210,7 +212,7 @@ public class ShieldEnemyAI : AIController
 
             //if (Vector3.Dot(normalizedTargetDir, Vector3.up) > 0)
             //{
-            Vector3 lungeDir = (new Vector3(normalizedTargetDir.x, normalizedTargetDir.y * LungeVerticality, 0.0f) + Vector3.up * Mathf.Abs(Vector3.Dot(normalizedTargetDir, Vector3.right)) * LungeVerticality).normalized;
+            Vector3 lungeDir = (new Vector3(Mathf.Abs(normalizedTargetDir.x) * faceDir, normalizedTargetDir.y * LungeVerticality, 0.0f) + Vector3.up * Mathf.Abs(Vector3.Dot(normalizedTargetDir, Vector3.right)) * LungeVerticality).normalized;
             //}
             frb.AddVelocity(lungeDir * LungeSpeed * LungeDifficultyMultiplier.GetFactor());
             SpawnAttackHitbox();

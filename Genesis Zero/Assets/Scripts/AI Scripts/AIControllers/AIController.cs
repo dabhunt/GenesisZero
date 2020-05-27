@@ -631,6 +631,9 @@ public class AIController : Pawn
         }
     }
 
+    protected Vector3 currentAimDir = Vector3.right;
+    protected bool aimLocked = false;
+
     /**
      * Returns the aim direction to the target for enemies that shoot
      */
@@ -638,7 +641,11 @@ public class AIController : Pawn
     {
         if (Target != null)
         {
-            return (Target.position - transform.position).normalized;
+            if (!aimLocked)
+            {
+                currentAimDir = (Target.position - GetOrigin()).normalized;
+            }
+            return currentAimDir;
         }
         return Vector3.right;
     }
