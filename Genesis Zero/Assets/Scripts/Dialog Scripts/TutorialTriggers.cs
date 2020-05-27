@@ -14,14 +14,14 @@ public class TutorialTriggers : MonoBehaviour
     }
     public void CheckTriggers()
     {
-        if (player != null && BUGE.instance.followingPlayer == true)
+        if (player != null && BUGE.instance.followingPlayer == true && StateManager.instance.InTutorial)
         {
             if (DialogueManager.instance.GetDialoguePlayedAmount("BUG-E_Heatbar") < 1 && player.GetComponent<OverHeat>().GetHeat() >= player.GetComponent<OverHeat>().GetMaxHeat()*.6)
-                DialogueManager.instance.TriggerDialogue("BUG-E_Heatbar");
+                DialogueManager.instance.TriggerDialogue("BUG-E_Heatbar", true);
             if (DialogueManager.instance.GetDialoguePlayedAmount("BUG-E_Modifiers") < 1 && Player.instance.GetSkillManager().GetModAmount() > 0)
-                DialogueManager.instance.TriggerDialogue("BUG-E_Modifiers");
+                DialogueManager.instance.TriggerDialogue("BUG-E_Modifiers", true);
             if (DialogueManager.instance.GetDialoguePlayedAmount("BUG-E_Phasing") < 1 && Player.instance.GetHealth().GetValue() < Player.instance.GetHealth().GetMaxValue())
-                DialogueManager.instance.TriggerDialogue("BUG-E_Phasing");
+                DialogueManager.instance.TriggerDialogue("BUG-E_Phasing", true);
         }
     }
     // Update is called once per frame

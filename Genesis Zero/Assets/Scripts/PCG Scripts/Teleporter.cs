@@ -65,6 +65,7 @@ public class Teleporter : MonoBehaviour
 	}
 	private void Teleport()
 	{
+		StateManager.instance.InTutorial = false;
 		if (BossRoomOverride == true)
 			player.position = StateManager.instance.BossRoomLocation;
 		

@@ -21,6 +21,7 @@ public class StateManager : MonoBehaviour
     public Vector2 BossRoomLocation = new Vector2(-553, 198f);
     public bool Cursorvisible = true;
     public bool GameOver = false;
+    public bool InTutorial = true;
     private void Awake()
     {
         if (instance == null)

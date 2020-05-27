@@ -661,6 +661,11 @@ public class PlayerController : MonoBehaviour
         // if (FacingRight==1)
         // xSpeed *= -1;
         float animspeed = movementInput.x * FacingSign;
+        GameObject indic = transform.Find("Center").Find("PhaseIndicator").gameObject;
+        if (rollCooldown == 0)
+            indic.SetActive(true);
+        else
+            indic.SetActive(false);
         animator.SetFloat("xSpeed",animspeed);
         animator.SetFloat("ySpeed", ySpeed);
         animator.SetBool("isGrounded", isGrounded);
