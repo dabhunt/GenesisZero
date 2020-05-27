@@ -288,6 +288,7 @@ public class PlayerController : MonoBehaviour
         if (vertVel > terminal * .35f)
             vertVel = terminal * .35f;
         terminalVel = terminal * -1;
+        transform.Find("Center").Find("Down").gameObject.SetActive(true);
     }
     /* This function is used to update the jump cycle and its behavior
      */
@@ -336,7 +337,9 @@ public class PlayerController : MonoBehaviour
 
         if (IsBlocked(Vector3.down))
         {
+
             isGrounded = true;
+            transform.Find("Center").Find("Down").gameObject.SetActive(false);
             if (cols.Length != 0)
             {
                 foreach (var col in cols)
