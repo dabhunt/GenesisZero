@@ -313,7 +313,7 @@ public class BossAI : AIController
 				DisableUIExceptDialogue();
 				animator.SetTrigger("Dead");
 				Camera.main.GetComponent<BasicCameraZoom>().ChangeFieldOfViewTemporary(45, 1);
-				animator.Play("BossDeath");
+				//animator.Play("BossDeath");
 				KillNearbyEnemies();
 				died = true;
 				deathtrigger = 1;
@@ -420,7 +420,7 @@ public class BossAI : AIController
 			SetInvunerable(1f);
 			HealthLoss = 0;
 			animator.SetTrigger("WildTrigger"); //Set wild trigger
-			animator.Play("Wild");
+			//animator.Play("Wild");
 			FlameGround.SetActive(true);        //Set the flame ground to true/active
 			animator.SetBool("Wild", true);
 			Camera.main.GetComponent<BasicCameraZoom>().ChangeFieldOfViewTemporary(45, 1);
