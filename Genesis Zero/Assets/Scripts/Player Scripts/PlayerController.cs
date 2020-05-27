@@ -457,7 +457,8 @@ public class PlayerController : MonoBehaviour
                 //StartCoroutine(ResetTrigger("startRoll", triggerResetTime));
                 gun.PhaseTrigger = true;
                 sound.Roll();
-                VFXManager.instance.PlayEffect("VFX_PlayerDashStart", transform.position);
+                //VFXManager.instance.PlayEffect("VFX_PlayerDashStart", transform.position);
+                VFXManager.instance.PlayEffectOnObject("VFX_PlayerDashStart", this.gameObject, new Vector2(0,1));
                 gameObject.GetComponentInChildren<SkinnedMeshRenderer>().enabled = false; //TEMPORARY CHANGE THIS
                 VFXManager.instance.PlayEffectForDuration("VFX_PlayerDashEffect", transform.position, rollDuration).transform.parent = transform;
                 //Select roll direction based on crosshair position and input
