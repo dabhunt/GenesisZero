@@ -164,14 +164,6 @@ public class VFXManager : MonoBehaviour
 
         return effect;
     }
-    public void PlayEffectOnObject(string name, GameObject obj, Vector3 offset)
-    {
-        GameObject effect = Instantiate(Resources.Load<GameObject>("Effects/" + name), Vector2.zero, Quaternion.identity);
-        Transform tEffect = effect.transform;
-        effect.transform.SetParent(obj.transform);
-        effect.transform.localPosition = offset;
-        VFXScript vfx = effect.GetComponent<VFXScript>();
-    }
 
     public GameObject PlayEffect(string name, Vector3 position, float delay)
     {

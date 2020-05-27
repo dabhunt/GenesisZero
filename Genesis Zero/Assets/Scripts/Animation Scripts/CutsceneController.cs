@@ -65,10 +65,5 @@ public class CutsceneController : MonoBehaviour
         GameObject.FindGameObjectWithTag("GameManagers").transform.Find("TileManager").GetComponent<DeactivateDistant>().ResetDist();
         Primarycanvas.SetActive(true);
         CutsceneCanvas.SetActive(false);
-        Invoke("AfterDelay", 1f);
-    }
-    public void AfterDelay() //after updating to 2020, sometimes input manager doesn't register that it should start taking inputs again, this is the backup
-    {
-        GameInputManager.instance.EnablePlayerControls();
     }
 }
