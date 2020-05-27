@@ -68,7 +68,7 @@ public class Pawn : MonoBehaviour
             }
             finaldamage -= GetFlatDamageReduction().GetValue();
             finaldamage = finaldamage - finaldamage * GetDamageReduction().GetValue();
-			finaldamage = Mathf.Clamp(finaldamage, 0 , 999);
+            finaldamage = Mathf.Clamp(finaldamage, 0, 999);
 
             // Shield Damage
             if (GetShield().GetValue() > 0)
@@ -175,19 +175,19 @@ public class Pawn : MonoBehaviour
                 {
                     RaycastHit hit;
                     CapsuleCollider cc = GetComponentInChildren<CapsuleCollider>();
-					Debug.Log(cc);
+                    Debug.Log(cc);
                     Vector3 p1 = cc.center + Vector3.up * -cc.height / 2;
                     Vector3 p2 = p1 + Vector3.up * cc.height;
-					//colliding = Physics.CapsuleCast(p1, p2, cc.radius, knockbackvector, out hit, translation.magnitude);
-					colliding = Physics.Raycast(transform.position, knockbackvector, out hit, translation.magnitude, GetComponentInParent<PlayerController>().rollingLayerMask);
+                    //colliding = Physics.CapsuleCast(p1, p2, cc.radius, knockbackvector, out hit, translation.magnitude);
+                    colliding = Physics.Raycast(transform.position, knockbackvector, out hit, translation.magnitude, GetComponentInParent<PlayerController>().rollingLayerMask);
                     if (colliding && hit.collider.isTrigger == false)
                     {
-						Debug.Log(colliding);
-						//print(hit.collider);
+                        Debug.Log(colliding);
+                        //print(hit.collider);
                         colliding = !hit.collider.isTrigger;
-                        
-						StopCollision(hit.normal);
-					}
+
+                        StopCollision(hit.normal);
+                    }
                     translation = colliding ? -translation : translation;
                 }
                 if (GetComponentInParent<PlayerController>() && colliding == false)
@@ -196,7 +196,7 @@ public class Pawn : MonoBehaviour
                 }
                 else if (GetComponentInParent<PlayerController>() && colliding == true)
                 {
-                    transform.position -= translation*2;
+                    transform.position -= translation * 2;
                 }
             }
             if (knockbackforce < 1)
@@ -208,15 +208,15 @@ public class Pawn : MonoBehaviour
         }
     }
 
-	public void StopCollision(Vector3 normal)
-	{
-		GetComponentInParent<Pawn>().KnockBackForced(-GetComponentInParent<Pawn>().GetKnockBackVector(), GetComponentInParent<Pawn>().GetKnockBackForce() / 2);
-		normal = (normal * 1);
-		GetComponentInParent<Pawn>().transform.position += normal/2;
+    public void StopCollision(Vector3 normal)
+    {
+        GetComponentInParent<Pawn>().KnockBackForced(-GetComponentInParent<Pawn>().GetKnockBackVector(), GetComponentInParent<Pawn>().GetKnockBackForce() / 2);
+        normal = (normal * 1);
+        GetComponentInParent<Pawn>().transform.position += normal / 2;
 
-		//collisions.Add(collision.gameObject);
-		//resettime = Time.fixedDeltaTime * 1;
-	}
+        //collisions.Add(collision.gameObject);
+        //resettime = Time.fixedDeltaTime * 1;
+    }
 
     public void UpdateStats()
     {
@@ -326,10 +326,10 @@ public class Pawn : MonoBehaviour
 
     public void Burn(float time, float damage)
     {
-		if (IsInvunerable()) //Does not inflict burn if the pawn is invunerable
-		{
-			return;
-		}
+        if (IsInvunerable()) //Does not inflict burn if the pawn is invunerable
+        {
+            return;
+        }
         burntime = time;
         burntick = Time.deltaTime;
         burndamage = damage;
@@ -479,13 +479,26 @@ public class Pawn : MonoBehaviour
         {
             if (!GetComponent<Player>() && gameObject.tag == "Enemy")
             {
-                GameObject.FindGameObjectWithTag("Player").GetComponent<Player>().TriggerEffectOnKill();
+                GameObject playerSearch = GameObject.FindGameObjectWithTag("Player");
+                if (playerSearch != null)
+                {
+                    Player playerComponent = playerSearch.GetComponent<Player>();
+                    if (playerComponent != null)
+                    {
+                        playerComponent.TriggerEffectOnKill();
+                    }
+                }
             }
 
             //Allow the animator to control when the object is destroyed
             if (!HasAnimationEventController)
             {
                 StartCoroutine(DeathSequence());
+            }
+
+            if (this is AIController)
+            {
+                GetComponent<AIController>().DeathEvent.Invoke();
             }
         }
     }

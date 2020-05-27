@@ -30,7 +30,8 @@ public class Hitbox : MonoBehaviour
 
     //[HideInInspector]
     public float StunTime = 0;
-
+    [Tooltip("Percentage of Damage Reduction to ignore on the enemy it hits. Ex: .25 = 25% of damage reduction ignored")]
+    public float IgnoredDamageReduction = 0;
     [HideInInspector]
     public float LifeTime = 99;
     public delegate void OnKill();
@@ -65,7 +66,10 @@ public class Hitbox : MonoBehaviour
     // Start is called before the first frame update
     void Start()
     {
-        player = GameObject.FindGameObjectWithTag("Player");
+        if (StateManager.instance.GameOver == true)
+            return;
+        player = Player.instance.gameObject;
+
         //colliders.Clear();
         state = State.Active;
         if (GetComponent<Collider>() == null)
@@ -185,6 +189,11 @@ public class Hitbox : MonoBehaviour
                 if (Slow.x > 0 && Slow.y > 0)
                 {
                     p.Slow(Slow.x, Slow.y);
+                }
+                if (IgnoredDamageReduction > 0)
+                {
+                    //print("dmg reduc normal" + p.GetDamageReduction().GetValue());
+                    p.GetDamageReduction().AddRepeatingBonus(IgnoredDamageReduction, IgnoredDamageReduction, .3f, "IgnoredDamageReduction");
                 }
                 if (Knockbackforce > 0 && p.IsInvunerable() == false)
                 {

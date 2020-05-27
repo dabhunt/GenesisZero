@@ -7,7 +7,7 @@ using DG.Tweening;
 public class SpriteFade : MonoBehaviour
 {
     // Start is called before the first frame update
-    Color color;
+    public Color color;
     public bool startVisible = false;
     public bool FadeOutAtStart = false;
     public float tweenBack = .75f;
