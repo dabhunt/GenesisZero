@@ -163,7 +163,7 @@ public class BossAI : AIController
 			CheckActions(); // Checks and updates what actions the boss should do
 		}
 
-		if (bossstate == State.Setting) // CHeck if the boss is doing special animation
+		if (bossstate == State.Setting) // Check if the boss is doing special animation
 		{
 			if (animationswitch == false)
 			{
@@ -171,7 +171,7 @@ public class BossAI : AIController
 			}
 			boxanimating = true;
 		}
-		else if(IsDying() == false)
+		else if(IsDying() == false && bossstate != State.Setting)
 		{
 			boxanimating = false;
 		}
@@ -312,6 +312,7 @@ public class BossAI : AIController
 			{
 				DisableUIExceptDialogue();
 				animator.SetTrigger("Dead");
+				Camera.main.GetComponent<BasicCameraZoom>().ChangeFieldOfViewTemporary(45, 1);
 				animator.Play("BossDeath");
 				KillNearbyEnemies();
 				died = true;
@@ -328,7 +329,10 @@ public class BossAI : AIController
 			healthbar.GetComponentInChildren<Slider>().value = GetHealth().GetRatio();
 		}
 
-		DeathChecks();		
+		if (IsDying())
+		{
+			DeathChecks();
+		}
 
 		//Update Indicators
 		for (int i = 0; i < indicators.Count; ++i)
@@ -413,11 +417,13 @@ public class BossAI : AIController
 		{
 			action = 1;
 			SetBossstate(State.Setting, 4f);
+			SetInvunerable(1f);
 			HealthLoss = 0;
 			animator.SetTrigger("WildTrigger"); //Set wild trigger
 			animator.Play("Wild");
 			FlameGround.SetActive(true);        //Set the flame ground to true/active
 			animator.SetBool("Wild", true);
+			Camera.main.GetComponent<BasicCameraZoom>().ChangeFieldOfViewTemporary(45, 1);
 			AudioManager.instance.PlaySound("SFX_BossRoar(0)"); // Play sound Effect
 			GetComponent<BossEvents>().DestroyGameObjectsOnWild(); //Destroy top platforms
 			boxanimating = true;
@@ -426,8 +432,8 @@ public class BossAI : AIController
 		else if (Heat >= 5)
 		{
 			action = 2;
-			bossstate = State.Setting;
-			chargetime = Time.fixedDeltaTime / 2;
+			//bossstate = State.Setting;
+			//chargetime = Time.fixedDeltaTime / 2;
 			Heat = 0;
 			animator.SetTrigger("Overheating");
 		}
