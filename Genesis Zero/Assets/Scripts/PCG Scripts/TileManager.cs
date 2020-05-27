@@ -238,7 +238,7 @@ public class TileManager : MonoBehaviour
 			//Spawn Enemy
 			if (Random.value <= SpawnChance)
 			{
-				int i = Random.Range((int)MinMaxEnemies.x, (int)MinMaxEnemies.y);
+				int i = Random.Range((int)MinMaxEnemies.x, (int)MinMaxEnemies.y+levelNumber-1);
 				spawnVector.y += 3;
 				spawnVector.x -= 11;
 				spawnVector.z -= 2;

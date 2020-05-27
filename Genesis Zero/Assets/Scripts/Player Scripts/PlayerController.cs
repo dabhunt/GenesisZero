@@ -152,7 +152,7 @@ public class PlayerController : MonoBehaviour
         float multiplier = isGrounded ? 1 : airControlMult;
         float startVel = currentSpeed;
         maxSpeed = GetComponent<Player>().GetSpeed().GetValue();
-        if (isRolling) return;
+        if (isRolling || isDashing) return;
         if (isGrounded)
         {
             //Play running sound if player's moving on the ground
@@ -257,7 +257,7 @@ public class PlayerController : MonoBehaviour
         if (ctx.performed)
         {
             if (!inputActions.PlayerControls.enabled) return;
-            if (isRolling || isDashing) return;
+            if (isRolling) return;
             if (isGrounded && jumpCount < 2) return;
             jumpPressedTime = jumpBufferTime;
             if (!isJumping && jumpCount > 0)
@@ -331,8 +331,8 @@ public class PlayerController : MonoBehaviour
     private void CheckGround()
     {
         Collider[] cols;
-        Vector3 origin = transform.position + Vector3.up * 0.25f * characterWidth;
-        cols = Physics.OverlapSphere(origin, 0.25f * characterWidth, immoveables, QueryTriggerInteraction.UseGlobal);
+        Vector3 origin = transform.position - Vector3.up * 0.020f;
+        cols = Physics.OverlapSphere(origin, 0.075f, immoveables, QueryTriggerInteraction.UseGlobal);
 
         if (IsBlocked(Vector3.down))
         {
@@ -591,7 +591,7 @@ public class PlayerController : MonoBehaviour
         bool isBlock = false;
         float halfWidth = 0.5f * characterWidth;
         float halfHeight = 0.5f * characterHeight;
-        Vector3 halfExtends = new Vector3(0, 0.5f * halfHeight, 0);
+        Vector3 halfExtends = new Vector3(0.1f, 0.5f * halfHeight, 0);
         RaycastHit[] array = new RaycastHit[0];
 
         if (dir == Vector3.up)
