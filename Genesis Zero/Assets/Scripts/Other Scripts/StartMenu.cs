@@ -16,17 +16,13 @@ public class StartMenu : MonoBehaviour
     private GameObject menuButtons;
     private GameObject optionsScreen;
     private GameObject loadingScreen;
-    private TMPro.TMP_Dropdown resDropdown;
-    private List<Resolution> resolutions;
 
     public void Start()
     {
-        List<string> values;
         //Caching some canvas groups
         mainMenuScreen = canvas.transform.Find("MainMenuScreen").gameObject;
         loadingScreen = canvas.transform.Find("LoadingScreen").gameObject;
         optionsScreen = canvas.transform.Find("OptionsScreen").gameObject;
-        resDropdown = optionsScreen.transform.Find("Resolution").GetComponent<TMPro.TMP_Dropdown>();
         loadBar = loadingScreen.transform.Find("LoadBar").gameObject.GetComponent<Slider>();
         loadPercentage = loadBar.transform.Find("LoadPercentage").gameObject.GetComponent<Text>();
         menuButtons = mainMenuScreen.transform.Find("Buttons").gameObject;
@@ -40,29 +36,7 @@ public class StartMenu : MonoBehaviour
         {
             conbttn.SetActive(false);
         }
-
         Cursor.visible = true;
-        //Populating Resolution list
-        Resolution[] options = Screen.resolutions;
-        resolutions = new List<Resolution>(options);
-        values = new List<string>();
-        resolutions.Reverse();
-
-        int index = 0;
-        for (int i = 0; i < resolutions.Count; i++)
-        {
-            if (resolutions[i].refreshRate < 60)
-                continue;
-            values.Add(resolutions[i].width + "x" + resolutions[i].height + " (" + resolutions[i].refreshRate + " hz)");
-            if (resolutions[i].height == Screen.currentResolution.height && resolutions[i].width == Screen.currentResolution.width)
-            {
-                index = i;
-            }
-        }
-        resDropdown.ClearOptions();
-        resDropdown.AddOptions(values);
-        resDropdown.value = index;
-        resDropdown.RefreshShownValue();
     }
 
     public void ContinueButton()

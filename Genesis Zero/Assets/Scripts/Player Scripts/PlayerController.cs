@@ -152,7 +152,7 @@ public class PlayerController : MonoBehaviour
         float multiplier = isGrounded ? 1 : airControlMult;
         float startVel = currentSpeed;
         maxSpeed = GetComponent<Player>().GetSpeed().GetValue();
-        if (isRolling) return;
+        if (isRolling || isDashing) return;
         if (isGrounded)
         {
             //Play running sound if player's moving on the ground
@@ -257,7 +257,7 @@ public class PlayerController : MonoBehaviour
         if (ctx.performed)
         {
             if (!inputActions.PlayerControls.enabled) return;
-            if (isRolling || isDashing) return;
+            if (isRolling) return;
             if (isGrounded && jumpCount < 2) return;
             jumpPressedTime = jumpBufferTime;
             if (!isJumping && jumpCount > 0)
@@ -288,6 +288,7 @@ public class PlayerController : MonoBehaviour
         if (vertVel > terminal * .35f)
             vertVel = terminal * .35f;
         terminalVel = terminal * -1;
+        transform.Find("Center").Find("Down").gameObject.SetActive(true);
     }
     /* This function is used to update the jump cycle and its behavior
      */
@@ -331,12 +332,14 @@ public class PlayerController : MonoBehaviour
     private void CheckGround()
     {
         Collider[] cols;
-        Vector3 origin = transform.position + Vector3.up * 0.25f * characterWidth;
-        cols = Physics.OverlapSphere(origin, 0.25f * characterWidth, immoveables, QueryTriggerInteraction.UseGlobal);
+        Vector3 origin = transform.position - Vector3.up * 0.020f;
+        cols = Physics.OverlapSphere(origin, 0.075f, immoveables, QueryTriggerInteraction.UseGlobal);
 
         if (IsBlocked(Vector3.down))
         {
+
             isGrounded = true;
+            transform.Find("Center").Find("Down").gameObject.SetActive(false);
             if (cols.Length != 0)
             {
                 foreach (var col in cols)
@@ -454,7 +457,8 @@ public class PlayerController : MonoBehaviour
                 //StartCoroutine(ResetTrigger("startRoll", triggerResetTime));
                 gun.PhaseTrigger = true;
                 sound.Roll();
-                VFXManager.instance.PlayEffect("VFX_PlayerDashStart", transform.position);
+                //VFXManager.instance.PlayEffect("VFX_PlayerDashStart", transform.position);
+                VFXManager.instance.PlayEffectOnObject("VFX_PlayerDashStart", this.gameObject, new Vector2(0,1));
                 gameObject.GetComponentInChildren<SkinnedMeshRenderer>().enabled = false; //TEMPORARY CHANGE THIS
                 VFXManager.instance.PlayEffectForDuration("VFX_PlayerDashEffect", transform.position, rollDuration).transform.parent = transform;
                 //Select roll direction based on crosshair position and input
@@ -591,7 +595,7 @@ public class PlayerController : MonoBehaviour
         bool isBlock = false;
         float halfWidth = 0.5f * characterWidth;
         float halfHeight = 0.5f * characterHeight;
-        Vector3 halfExtends = new Vector3(0, 0.5f * halfHeight, 0);
+        Vector3 halfExtends = new Vector3(0.1f, 0.5f * halfHeight, 0);
         RaycastHit[] array = new RaycastHit[0];
 
         if (dir == Vector3.up)

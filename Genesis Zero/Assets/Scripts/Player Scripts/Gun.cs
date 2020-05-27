@@ -37,7 +37,7 @@ public class Gun : MonoBehaviour
     public float FT_stunIncreasePerStack = .25f;
     [Header("9. Piercing Shot")]
     public bool PlayerHurtTrigger = false;
-    public float PB_ReductionPerStack = .23f;
+    public float PS_ReductionPerStack = .2f;
     //only reduces it's own, not others by .1
     public float reductionPerStack = .1f;
     [Header("Atom Splitter (Multishot)")]
@@ -201,12 +201,12 @@ public class Gun : MonoBehaviour
         if (PhaseTrigger) //after rolling, next shot does this
         {
             PhaseTrigger = false;
-            int PF_Stacks = player.GetSkillStack("Short Circuit");
-            if (PF_Stacks > 0)
+            int SC_Stacks = player.GetSkillStack("Short Circuit");
+            if (SC_Stacks > 0)
             { //modifier that shoots a stun bullet immediately after rolling
                 projectile = VFXManager.instance.ChangeInnerTrail(projectile, stunBulletColor);
                 vfx_MuzzleFlash = VFXManager.instance.ChangeColor(vfx_MuzzleFlash, stunBulletColor);
-                float otherStun = PF_stunDuration + (1 - PF_Stacks) * PF_stunIncreasePerStack;
+                float otherStun = PF_stunDuration + (1 - SC_Stacks) * PF_stunIncreasePerStack;
                 if (hit.StunTime < otherStun) //if the current stun on the bullet is less than the one we would apply, apply it
                     hit.StunTime = otherStun;
             }
@@ -229,12 +229,13 @@ public class Gun : MonoBehaviour
         }
         if (PlayerHurtTrigger == true)
         {
-            print("hurt trigger");
-            int PB_stacks = player.GetSkillStack("Piercing Shot");
-            if (PB_stacks > 0)
+            int PS_stacks = player.GetSkillStack("Piercing Shot");
+            if (PS_stacks > 0)
             {
-                hit.IgnoredDamageReduction = PB_stacks * PB_ReductionPerStack;
+                print("hurt trig");
+                hit.IgnoredDamageReduction = PS_stacks * PS_ReductionPerStack;
             }
+            PlayerHurtTrigger = false;
         }
         if (overheat.GetHeat() < 1) //when the player's gun is cool, do this
         {

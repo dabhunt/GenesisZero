@@ -28,7 +28,6 @@ public class OptionsMenu : MonoBehaviour
         }
         optionsScreen = canvas.transform.Find("OptionsScreen").gameObject;
         resDropdown = optionsScreen.transform.Find("Resolution").GetComponent<TMPro.TMP_Dropdown>();
-
         //Populating Resolution list
         Resolution[] options = Screen.resolutions;
         resolutions = new List<Resolution>(options);
@@ -48,7 +47,7 @@ public class OptionsMenu : MonoBehaviour
         }
         resDropdown.ClearOptions();
         resDropdown.AddOptions(values);
-        resDropdown.value = index;
+        resDropdown.value = 3;
         resDropdown.RefreshShownValue();
         if (SaveLoadManager.instance.SettingsSaveExists())
         {
@@ -62,20 +61,6 @@ public class OptionsMenu : MonoBehaviour
             MuteMusic(settingsData.muteMusic);
             SetFullScreen(settingsData.fullScreen);
             SetResolution(settingsData.resIndex);
-        }
-        else
-        {
-            settingsData = new SettingsData();
-        }
-        optionsScreen.SetActive(false);
-    }
-
-    private void OnEnable()
-    {
-        if (SaveLoadManager.instance.SettingsSaveExists())
-        {
-            settingsData = SaveLoadManager.instance.LoadSettings();
-            //Update the visuals of the options menu
             SetSliderValue("Master", settingsData.masterVolume);
             SetSliderValue("Music", settingsData.musicVolume);
             SetSliderValue("SFX", settingsData.sfxVolume);
@@ -86,6 +71,7 @@ public class OptionsMenu : MonoBehaviour
             resDropdown.RefreshShownValue();
             optionsScreen.transform.Find("Resolution").Find("FullScreen").gameObject.GetComponent<Toggle>().isOn = settingsData.fullScreen;
         }
+        optionsScreen.SetActive(false);
     }
 
     public void OptionsButton()
@@ -95,6 +81,7 @@ public class OptionsMenu : MonoBehaviour
     //Onclick Event for BackButton(options menu)
     public void OptionsBackButton()
     {
+        settingsData = new SettingsData();
         if (SceneManager.GetActiveScene().name == "MainMenu")
         {
             mainMenuScreen.transform.Find("Buttons").gameObject.SetActive(true);
@@ -109,6 +96,9 @@ public class OptionsMenu : MonoBehaviour
         AudioManager.instance.mixer.GetFloat("musicVolume", out settingsData.musicVolume);
         settingsData.fullScreen = optionsScreen.transform.Find("Resolution").Find("FullScreen").gameObject.GetComponent<Toggle>().isOn;
         settingsData.resIndex = resDropdown.value;
+        settingsData.muteMaster = GetToggleValue("Master");
+        settingsData.muteSFX = GetToggleValue("SFX");
+        settingsData.muteMusic = GetToggleValue("Music");
         //Saves user preferences
         SaveLoadManager.instance.SaveSettings(settingsData);
         optionsScreen.SetActive(false);
@@ -169,7 +159,6 @@ public class OptionsMenu : MonoBehaviour
             SetInteractable("Master", true);
             SetMasterVolume(GetSliderValue("Master"));
         }
-        settingsData.muteMaster = value;
     }
 
     //Event for toggle mute(sfx)
@@ -185,7 +174,6 @@ public class OptionsMenu : MonoBehaviour
             SetInteractable("SFX", true);
             SetSFXVolume(GetSliderValue("SFX"));
         }
-        settingsData.muteSFX = value;
     }
 
     //Event for toggle mute(music)
@@ -201,13 +189,11 @@ public class OptionsMenu : MonoBehaviour
             SetInteractable("Music", true);
             SetMusicVolume(GetSliderValue("Music"));
         }
-        settingsData.muteMusic = value;
     }
 
     private float GetSliderValue(string name)
     {
-        float volume = optionsScreen.transform.Find("AudioSettings").Find(name).gameObject.GetComponent<Slider>().value;
-        return volume;
+        return optionsScreen.transform.Find("AudioSettings").Find(name).gameObject.GetComponent<Slider>().value;
     }
 
     private void SetInteractable(string name, bool value)
@@ -224,6 +210,10 @@ public class OptionsMenu : MonoBehaviour
     private void SetToggleValue(string name, bool value)
     {
         optionsScreen.transform.Find("AudioSettings").Find(name).Find("Toggle").GetComponent<Toggle>().isOn = value;
+    }
+    private bool GetToggleValue(string name)
+    {
+        return optionsScreen.transform.Find("AudioSettings").Find(name).Find("Toggle").GetComponent<Toggle>().isOn;
     }
     public void SetFullScreen(bool value)
     {
