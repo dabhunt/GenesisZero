@@ -280,7 +280,7 @@ public class StateManager : MonoBehaviour
 
 	IEnumerator LoadCreditsSceneCoroutine()
 	{
-		operation = SceneManager.LoadSceneAsync("MainMenu", LoadSceneMode.Single); // Change this later to the credits
+		operation = SceneManager.LoadSceneAsync("Credits", LoadSceneMode.Single); // Change this later to the credits
 		operation.allowSceneActivation = false;
 		while (!operation.isDone)
 		{
