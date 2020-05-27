@@ -29,12 +29,10 @@ public class VFXScript : MonoBehaviour
                 
                 if (longestDur < p.main.duration)
                 {
-                    print("duration" + p.main.duration);
                     longestDur = p.main.duration; //set longestDur
                 }
             }
         }
-        print("longest" + longestDur);
         Invoke("Kill", longestDur+delay);
         played = false;
     }
