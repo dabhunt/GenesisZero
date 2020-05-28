@@ -110,9 +110,9 @@ public class AIController : Pawn
         }
     }
 
-    new protected void FixedUpdate()
+    new protected void Update()
     {
-        base.FixedUpdate();
+        base.Update();
         if (!initialized) { return; }
 
         UpdateOrigin();
@@ -162,7 +162,7 @@ public class AIController : Pawn
 
         if (alertTracking)
         {
-            alertTrackTime += Time.fixedDeltaTime;
+            alertTrackTime += Time.deltaTime;
             if (targetVisible)
             {
                 alertTracking = false;
@@ -178,6 +178,12 @@ public class AIController : Pawn
         {
             alertTrackTime = 0.0f;
         }
+    }
+
+    new protected void FixedUpdate()
+    {
+        base.FixedUpdate();
+        if (!initialized) { return; }
 
         if (frb != null)
         {
@@ -200,6 +206,7 @@ public class AIController : Pawn
         }
         //Debug.Log(GetNearbyEnemies().Length);
 
+        Debug.LogWarning("Remove this:");
         if (Input.GetKey(KeyCode.Z))
         {
             TakeDamage(1, null);
@@ -289,7 +296,7 @@ public class AIController : Pawn
             }
         }
 
-        stateTime += Time.fixedDeltaTime * stateTimeFactor;
+        stateTime += Time.deltaTime * stateTimeFactor;
     }
 
     /**

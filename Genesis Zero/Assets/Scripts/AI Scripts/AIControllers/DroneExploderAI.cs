@@ -79,6 +79,12 @@ public class DroneExploderAI : AIController
         {
             frb.Accelerate((transform.position - wallPoint).normalized * (1.0f - (transform.position - wallPoint).magnitude / WallCheckDistance) * WallAvoidForce);
         }
+    }
+
+    new protected void Update()
+    {
+        base.Update();
+        if (Target == null) { return; }
 
         // Particles to show charge and attack states (for testing)
         if (chargeParticles != null)

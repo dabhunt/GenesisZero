@@ -53,11 +53,6 @@ public class PlatformPatrollerAI : AIController
         patrolCycleOffset = Random.value * Mathf.PI;
     }
 
-    new protected void Update()
-    {
-        base.Update();
-    }
-
     protected override void SetTarget(Transform tr)
     {
         base.SetTarget(tr);
@@ -140,9 +135,15 @@ public class PlatformPatrollerAI : AIController
         {
             frb.Accelerate(Vector3.right * (targetSpeed * faceDir - frb.GetVelocity().x) * Acceleration * slopeForceFactor); // Accelerate toward the target
         }
+    }
+
+    new protected void Update()
+    {
+        base.Update();
+        if (Target == null) { return; }
 
         // Smoothly rotate to face target
-        lookAngle = Mathf.Lerp(lookAngle, -faceDir * Mathf.PI * 0.5f + Mathf.PI * 0.5f, rotateRate * Time.fixedDeltaTime);
+        lookAngle = Mathf.Lerp(lookAngle, -faceDir * Mathf.PI * 0.5f + Mathf.PI * 0.5f, rotateRate * Time.deltaTime);
         Vector3 lookDir = new Vector3(Mathf.Sin(lookAngle), 0.0f, Mathf.Cos(lookAngle));
         transform.rotation = Quaternion.LookRotation(lookDir, Vector3.up);
 
