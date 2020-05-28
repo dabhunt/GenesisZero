@@ -9,58 +9,43 @@ using UnityEngine;
  */
 public class VFXScript : MonoBehaviour
 {
-    private ParticleSystem ps;
+    private ParticleSystem[] ps;
     private bool played;
     public float delay;
     public GameObject emitter;
 
     [HideInInspector]
     public float duration = 0;
-
+    [HideInInspector]
+    public float longestDur = 0;
     // Use this for initialization
     void Start()
     {
-        ps = gameObject.GetComponent<ParticleSystem>();
-        if (ps == null)
+        ps = gameObject.GetComponentsInChildren<ParticleSystem>();
+        foreach (ParticleSystem p in ps)
         {
-            ps = gameObject.GetComponentInChildren<ParticleSystem>();
+            if (p != null)
+            {
+                
+                if (longestDur < p.main.duration)
+                {
+                    longestDur = p.main.duration; //set longestDur
+                }
+            }
         }
-        if (ps != null && ps.isPlaying == false && duration != 0)
-        {
-            var main = ps.main;
-            main.duration = duration;
-        }
+        Invoke("Kill", longestDur+delay);
         played = false;
     }
-    void Update()
+    private void Kill()
     {
-        if (ps && delay <= 0 && played == false)
+        played = true;
+        if (emitter)
         {
-			try
-			{
-				ps.Play();
-			}
-			catch { }
-
-            played = true;
+            GameObject effect = Instantiate(emitter, ps[0].transform.position, Quaternion.identity);
         }
-        else
-        {
-            delay -= Time.deltaTime;
-        }
-
-        if (ps && ps.isPlaying == false && played == true)
-        {
-            if (emitter)
-            {
-                GameObject effect = Instantiate(emitter, ps.transform.position, Quaternion.identity);
-            }
-            Destroy(gameObject);
-        }
+        Destroy(gameObject);
     }
-
-    /**
-     * Sets the gameobject that gets emitted by the the VFX when it is destroyed
+    /**Sets the gameobject that gets emitted by the the VFX when it is destroyed
      */
     public void SetEmitter(GameObject emit)
     {

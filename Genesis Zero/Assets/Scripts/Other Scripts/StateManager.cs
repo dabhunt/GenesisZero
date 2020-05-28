@@ -18,9 +18,10 @@ public class StateManager : MonoBehaviour
     private AsyncOperation operation;
     private GameObject optionsMenu;
     private GameObject pMenuButtons;
-    public Vector2 BossRoomLocation = new Vector2(-553, 198f);
+    public Vector2 BossRoomLocation = new Vector2(-533, 173f);
     public bool Cursorvisible = true;
     public bool GameOver = false;
+    public bool InTutorial = true;
     private void Awake()
     {
         if (instance == null)
@@ -202,6 +203,14 @@ public class StateManager : MonoBehaviour
         Time.timeScale = 0f;
         canvas.transform.Find("BlackUnderUI").GetComponent<Image>().enabled = true;
     }
+    //pass true to pause the game or false to unpause
+    public void Pause(bool truthy)
+    {
+        if (truthy)
+            PauseGame();
+        else
+            UnpauseGame();
+    }
 
     //This unpauses game
     public void UnpauseGame()
@@ -280,7 +289,7 @@ public class StateManager : MonoBehaviour
 
 	IEnumerator LoadCreditsSceneCoroutine()
 	{
-		operation = SceneManager.LoadSceneAsync("MainMenu", LoadSceneMode.Single); // Change this later to the credits
+		operation = SceneManager.LoadSceneAsync("Credits", LoadSceneMode.Single); // Change this later to the credits
 		operation.allowSceneActivation = false;
 		while (!operation.isDone)
 		{

@@ -26,7 +26,6 @@ public class Teleporter : MonoBehaviour
 		ani = GetComponent<Animator>();
 		canvas = GameObject.FindGameObjectWithTag("CanvasUI");
 		InvokeRepeating("portalAnimation", 1f, .5f);
-
 	}
 	private void OnTriggerEnter(Collider other)
 	{
@@ -65,6 +64,7 @@ public class Teleporter : MonoBehaviour
 	}
 	private void Teleport()
 	{
+		StateManager.instance.InTutorial = false;
 		if (BossRoomOverride == true)
 			player.position = StateManager.instance.BossRoomLocation;
 		

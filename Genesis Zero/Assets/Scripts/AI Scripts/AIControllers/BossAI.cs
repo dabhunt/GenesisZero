@@ -312,6 +312,7 @@ public class BossAI : AIController
 			{
 				DisableUIExceptDialogue();
 				animator.SetTrigger("Dead");
+				animator.Play("BossDeath");
 				KillNearbyEnemies();
 				died = true;
 				deathtrigger = 1;
@@ -411,13 +412,15 @@ public class BossAI : AIController
 		if (HealthLoss >= TotalHealth / 2)
 		{
 			action = 1;
-			SetBossstate(State.Setting, 4);
+			SetBossstate(State.Setting, 4f);
 			HealthLoss = 0;
 			animator.SetTrigger("WildTrigger"); //Set wild trigger
+			animator.Play("Wild");
 			FlameGround.SetActive(true);        //Set the flame ground to true/active
 			animator.SetBool("Wild", true);
 			AudioManager.instance.PlaySound("SFX_BossRoar(0)"); // Play sound Effect
 			GetComponent<BossEvents>().DestroyGameObjectsOnWild(); //Destroy top platforms
+			boxanimating = true;
 			Wild = true;
 		}
 		else if (Heat >= 5)
