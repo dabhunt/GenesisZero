@@ -40,8 +40,7 @@ public class PlatformShooterAI : AIController
     public ParticleSystem chargeParticles;
     public ParticleSystem attackParticles;
     public GameObject AttackProjectile;
-    public float AttackLaunchInterval = 1.0f;
-    private float attackLaunchTime = 0.0f;
+    private bool hasAttacked = false;
     public float AimSpeed = 1.0f;
     public Vector3 ProjectileStart = Vector3.zero;
     private Vector3 projectileAim = Vector3.right;
@@ -51,7 +50,6 @@ public class PlatformShooterAI : AIController
     [Header("Difficulty")]
     public DifficultyMultiplier SpeedDifficultyMultiplier;
     public DifficultyMultiplier AimDifficultyMultiplier;
-    public DifficultyMultiplier ShootRateDifficultyMultiplier;
 
     new protected void Start()
     {
@@ -202,9 +200,9 @@ public class PlatformShooterAI : AIController
         // Projectile shooting logic
         if (state == AIState.Attack)
         {
-            if (attackLaunchTime <= 0)
+            if (!hasAttacked)
             {
-                attackLaunchTime = AttackLaunchInterval * ShootRateDifficultyMultiplier.GetFactor();
+                hasAttacked = true;
                 if (AttackProjectile != null)
                 {
 
@@ -221,10 +219,8 @@ public class PlatformShooterAI : AIController
         }
         else
         {
-            attackLaunchTime = 0.0f;
+            hasAttacked = false;
         }
-
-        attackLaunchTime = Mathf.Max(0.0f, attackLaunchTime - Time.fixedDeltaTime);
     }
 
     /**
