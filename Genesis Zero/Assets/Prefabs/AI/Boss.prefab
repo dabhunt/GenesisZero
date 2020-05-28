@@ -147,8 +147,19 @@ MonoBehaviour:
     MinFactor: 0.5
     MaxFactor: 1.5
     Invert: 0
+  HealthDifficultyMultiplier:
+    MinFactor: 1
+    MaxFactor: 1
+    Invert: 0
+  DamageDifficultyMultiplier:
+    MinFactor: 1
+    MaxFactor: 1
+    Invert: 0
   EnemySpaceRadius: 2
   EnemySpaceForce: 20
+  DeathEvent:
+    m_PersistentCalls:
+      m_Calls: []
   animating: 0
   boxanimating: 0
   lookDir: {x: 0, y: 1, z: 0}
@@ -166,9 +177,11 @@ MonoBehaviour:
   initiated: 0
   introdialogue: 0
   lookingatcamera: 0
+  animationswitch: 0
   Wild: 0
   firsttrigger: 0
   secondtrigger: 0
+  died: 0
   Healthbar: {fileID: 3000837979160815169, guid: b49dcb067d09967418bd65807d4cbe6b,
     type: 3}
   Indicator: {fileID: 2725547454958836629, guid: 98b518dbdb97000418cefbb399e5f23f,
@@ -181,6 +194,7 @@ MonoBehaviour:
     type: 3}
   FlameGround: {fileID: 0}
   ForwardLookObject: {fileID: 0}
+  Middleman: {fileID: 0}
   HeadModel: {fileID: 0}
   animator: {fileID: 0}
 --- !u!114 &2037691598
@@ -278,6 +292,7 @@ MonoBehaviour:
     type: 3}
   minionB1: {fileID: 751653433366621662, guid: 98cebdfd2df96c042aa7cc6718dd4b56, type: 3}
   minionB2: {fileID: 751653433366621662, guid: 98cebdfd2df96c042aa7cc6718dd4b56, type: 3}
+  DestroyedOnWild: []
   Spawnpoint1: {fileID: 0}
   Spawnpoint2: {fileID: 0}
 --- !u!1 &2265170161945419281

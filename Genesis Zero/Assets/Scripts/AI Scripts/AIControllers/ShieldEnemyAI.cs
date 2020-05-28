@@ -233,7 +233,7 @@ public class ShieldEnemyAI : AIController
             Hitbox spawnedHitbox = spawnedHitboxObj.GetComponent<Hitbox>();
             spawnedHitbox.DirectionalKnockback = true;
             spawnedHitbox.Knockbackforce = 20f;
-            spawnedHitbox.InitializeHitbox(GetDamage().GetValue(), this);
+            spawnedHitbox.InitializeHitbox(GetDamage().GetValue() * DamageDifficultyMultiplier.GetFactor(), this);
             spawnedHitbox.SetLifeTime(1);
         }
     }
