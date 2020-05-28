@@ -146,6 +146,7 @@ public class AbilityCasting : MonoBehaviour
                 CastManicTitan();
                 break;
         }
+        EndBonus();
         GetComponent<UniqueEffects>().AfterAbilityTrigger();
     }
 
@@ -378,15 +379,17 @@ public class AbilityCasting : MonoBehaviour
                 Camera.main.transform.DOShakePosition(duration: .6f, strength: .5f, vibrato: 4, randomness: 50, snapping: false, fadeOut: true);
                 AudioManager.instance.StopSound("SFX_ChargeCulling");
                 AudioManager.instance.PlayAttachedSound("SFX_LaserBlast");
-                GameObject hitbox = SpawnGameObject("SpartanLaser", CastAtAngle(pc.CenterPoint(), aimDir, .5f), GetComponent<Gun>().firePoint.rotation);
+                GameObject hitbox = SpawnGameObject("SpartanLaser", GetComponent<Gun>().firePoint.position, GetComponent<Gun>().firePoint.rotation);
                 SpartanLaser laser = hitbox.GetComponent<SpartanLaser>();
-                GameObject vfx_blast = VFXManager.instance.PlayEffectReturn("VFX_CullingBlast", CastAtAngle(pc.CenterPoint(), aimDir, 1f), 0, "");
+                hitbox.transform.SetParent(GetComponent<Gun>().firePoint);
+                GameObject vfx_blast = VFXManager.instance.PlayEffectReturn("VFX_CullingBlast", GetComponent<Gun>().firePoint.position, 0, "");
                 vfx_blast.transform.SetParent(GetComponent<Gun>().firePoint.transform);
                 vfx_blast.transform.LookAt(WorldXhair);
-                //vfx_blast.transform.rotation = GetComponent<Gun>().firePoint.rotation;
+               // vfx_blast.transform.rotation = GetComponent<Gun>().firePoint.rotation;
                 UniqueEffects U = GetComponent<UniqueEffects>();
                 float scale = Mathf.Pow(scaleMultiPerKill, U.GetKillCount());
                 hitbox.transform.localScale = new Vector3(scale, scale, scale);
+                vfx_blast.transform.localScale = new Vector3(scale, scale, scale);
                 float damage = U.SL_CalculateDmg();
                 hitbox.GetComponent<Hitbox>().InitializeHitbox(damage, player);
                 //manually put spartan laser ability on cooldown since the initial cast can't have a cooldown
@@ -443,6 +446,19 @@ public class AbilityCasting : MonoBehaviour
             return ActiveTime1 > 0;
         else
             return ActiveTime2 > 0;
+    }
+    //used for one off bonuses to ability power. 
+    //for example, the modifier that gives x2 ability power on your next ability after phasing
+    public void SetBonusMulti(float multiplier)
+    {
+        float ap = player.GetAbilityPower().GetValue();
+        float bonus = ap * multiplier - ap;
+        player.GetAbilityPower().AddRepeatingBonus(bonus,bonus, 4f, "TemporaryAbilityMultiplier");
+        player.UpdateStats();
+    }
+    public void EndBonus()
+    {
+        player.GetAbilityPower().EndRepeatingBonus("TemporaryAbilityMultiplier");
     }
     private void CastSingularity()
     {

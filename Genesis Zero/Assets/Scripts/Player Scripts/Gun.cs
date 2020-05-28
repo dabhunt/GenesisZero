@@ -125,7 +125,7 @@ public class Gun : MonoBehaviour
                     bool extraCrit = Crit();
                     GameObject extraBullet = (GameObject)Instantiate(GetProjectile(extraCrit), spawnpoint, instance.transform.rotation);
                     Hitbox hit = extraBullet.GetComponent<Hitbox>();
-                    hit.InitializeHitbox(player.GetDamage().GetValue() * .65f, player, inheritCrit);
+                    hit.InitializeHitbox(player.GetAbilityPower().GetValue()*.4f, player, inheritCrit);
                     extraBullet = ApplyModifiers(extraBullet,extraCrit);
                     extraBullet.transform.Rotate(Vector3.forward, angle, Space.World);
                     //extraBullet.GetComponent<Hitbox>().MaxHits += 2;

@@ -300,7 +300,7 @@ public class UniqueEffects : MonoBehaviour
     {
         aManager.PlaySoundOneShot("SFX_AOE");
         float AP = player.GetAbilityPower().GetValue();
-        return Mathf.Clamp(AP + SL_bonusPerKill * SL_killCount, AP, SL_maxDmg);
+        return Mathf.Clamp(AP*1.5f + SL_bonusPerKill * SL_killCount, AP, SL_maxDmg);
     }
     public int GetKillCount()
     {
