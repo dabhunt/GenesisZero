@@ -420,10 +420,11 @@ public class BossAI : AIController
 			SetInvunerable(1f);
 			HealthLoss = 0;
 			animator.SetTrigger("WildTrigger"); //Set wild trigger
-			//animator.Play("Wild");
+			Invoke("BurnGround", 1f);
 			FlameGround.SetActive(true);        //Set the flame ground to true/active
 			animator.SetBool("Wild", true);
-			Camera.main.GetComponent<BasicCameraZoom>().ChangeFieldOfViewTemporary(45, 1);
+			camera.transform.DOShakePosition(duration: 2.4f, strength: 1, vibrato: 5, randomness: 60, snapping: false, fadeOut: true);
+			Camera.main.GetComponent<BasicCameraZoom>().ChangeFieldOfViewTemporary(45, 1.1f);
 			AudioManager.instance.PlaySound("SFX_BossRoar(0)"); // Play sound Effect
 			GetComponent<BossEvents>().DestroyGameObjectsOnWild(); //Destroy top platforms
 			boxanimating = true;
@@ -954,6 +955,11 @@ public class BossAI : AIController
 		hitbox.GetComponent<Hitbox>().LifeTime = .1f;
 		camera.transform.DOShakePosition(duration: .75f, strength: 1, vibrato: 5, randomness: 60, snapping: false, fadeOut: true);
 		AudioManager.instance.PlaySound("SFX_FireExplosion", false, 0);
+	}
+
+	void BurnGround()
+	{
+		FlameGround.SetActive(true);
 	}
 
 

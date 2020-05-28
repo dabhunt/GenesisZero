@@ -226,8 +226,11 @@ public class Hitbox : MonoBehaviour
 				if (damagetaken >= phealth)
 					if (killDelegate != null) killDelegate();
 
-				Vector3 dnpos = new Vector3(p.transform.position.x, p.transform.position.y + p.GetComponent<Collider>().bounds.size.y/2, p.transform.position.z - 4f);
-				if (Vector3.Distance(dnpos, transform.position) <= 3)
+				float offset = (p.GetComponent<Collider>()) ? p.GetComponent<Collider>().bounds.size.y / 2 : 0;
+				offset = (offset == 0 && p.GetComponentInChildren<Collider>()) ? p.GetComponentInChildren<Collider>().bounds.size.y / 2 : 0;
+				offset = Mathf.Clamp(offset, 1, 6);
+				Vector3 dnpos = new Vector3(p.transform.position.x - 1, p.transform.position.y + 1 + offset, p.transform.position.z - 4f);
+				if (Vector2.Distance(dnpos, transform.position) <= 4)
 				{
 					dnpos = new Vector3(transform.position.x - 1, transform.position.y + 1, transform.position.z - 4f);
 				}
@@ -252,6 +255,7 @@ public class Hitbox : MonoBehaviour
 				}
 				if ((p.GetComponent<Player>() && p.GetComponent<PlayerController>().IsRolling() && damagetaken <= 0) || p.IsDying())
 				{
+					//Debug.Log("Nonoe");
 					emit.GetComponent<DamageNumber>().SetColor(new Color(0, 0, 0, 0));
 				}
 				if (hitEffectVFX != "")
