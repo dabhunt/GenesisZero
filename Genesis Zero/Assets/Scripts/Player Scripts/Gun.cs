@@ -117,9 +117,10 @@ public class Gun : MonoBehaviour
                     //if it's divisible by 2, then reverse the value of the min offset to go below the gun instead of above
                     ExtraBullets++;
                     //multiply by -1 to alternate placing extra bullets on top vs underneath cursor
+                    spreadAngle = Mathf.Clamp(spreadAngle, 1, 360);
                     if ((i + 1) % 2 == 0)
                         spreadAngle *= -1;
-                    float angle = minSpread + spreadAngle + minSpread*(spreadAngle*spreadMultiplier)*(s+1);
+                    float angle = spreadAngle + minSpread*((spreadAngle)*spreadMultiplier)*(s+1);
                     if (!right) { angle *= -1;}
                     //extra bullets have an individual chance to crit, and thus can apply the pyrotechnics AOE seperate
                     bool extraCrit = Crit();

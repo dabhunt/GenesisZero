@@ -228,8 +228,8 @@ public class ShieldEnemyAI : AIController
             spawnedHitboxObj.localPosition = AttackHitboxStart;
             spawnedHitboxObj.localRotation = Quaternion.identity;
             Hitbox spawnedHitbox = spawnedHitboxObj.GetComponent<Hitbox>();
-            spawnedHitbox.DirectionalKnockback = true;
-            spawnedHitbox.Knockbackforce = 20f;
+            spawnedHitbox.DirectionalKnockback = false;
+            spawnedHitbox.Knockbackforce = 15f;
             spawnedHitbox.InitializeHitbox(GetDamage().GetValue(), this);
             spawnedHitbox.SetLifeTime(1);
         }

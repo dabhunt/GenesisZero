@@ -8,7 +8,7 @@ public class AbilityCasting : MonoBehaviour
     Player player;
     PlayerController pc;
     SkillManager skillmanager;
-
+    public bool PhaseTrigger = false;
     [Header("Time Dilation Ability")]
     public float timeScale = .5f;
     public float TS_effectDuration = 3.2f;
@@ -146,7 +146,6 @@ public class AbilityCasting : MonoBehaviour
                 CastManicTitan();
                 break;
         }
-        EndBonus();
         GetComponent<UniqueEffects>().AfterAbilityTrigger();
     }
 
@@ -305,6 +304,7 @@ public class AbilityCasting : MonoBehaviour
         hitbox.GetComponent<Hitbox>().SetStunTime(1.2f);
         player.SetInvunerable(.5f);
         hitbox.GetComponent<Hitbox>().SetLifeTime(.15f);
+        EndBonus();
     }
 
     private void CastBurstCharge()
@@ -312,11 +312,13 @@ public class AbilityCasting : MonoBehaviour
         player.GetComponent<PlayerController>().SetVertVel(0);
         player.KnockBackForced(aimDir + Vector2.up, 25);
         GameObject hitbox = SpawnGameObject("BurstChargeHitbox", pc.CenterPoint(), Quaternion.identity);
+        print("ability power in burst charge:"+ GetComponent<Player>().GetAbilityPower().GetValue());
         hitbox.GetComponent<Hitbox>().InitializeHitbox(GetComponent<Player>().GetAbilityPower().GetValue(), GetComponent<Player>());
         hitbox.transform.parent = transform;
         player.SetInvunerable(.6f);
         player.GetComponent<PlayerController>().Dash(.6f, FD_gravityReplacement);
         hitbox.GetComponent<Hitbox>().SetLifeTime(.6f);
+        EndBonus();
     }
     private void CastFireDash()
     {
@@ -329,6 +331,7 @@ public class AbilityCasting : MonoBehaviour
         player.SetInvunerable(FD_duration);
         player.GetComponent<PlayerController>().Dash(FD_duration + .1f, FD_gravityReplacement);
         hitbox.GetComponent<Hitbox>().SetLifeTime(FD_duration);
+        EndBonus();
     }
     private void CastOverdrive(int num)
     {
@@ -407,6 +410,7 @@ public class AbilityCasting : MonoBehaviour
                     TotalAbilityCooldown2 = SL_Cooldown;
                     ui.Cast(1);
                 }
+                EndBonus();
             }
         }
     }
@@ -447,18 +451,10 @@ public class AbilityCasting : MonoBehaviour
         else
             return ActiveTime2 > 0;
     }
-    //used for one off bonuses to ability power. 
-    //for example, the modifier that gives x2 ability power on your next ability after phasing
-    public void SetBonusMulti(float multiplier)
-    {
-        float ap = player.GetAbilityPower().GetValue();
-        float bonus = ap * multiplier - ap;
-        player.GetAbilityPower().AddRepeatingBonus(bonus,bonus, 4f, "TemporaryAbilityMultiplier");
-        player.UpdateStats();
-    }
     public void EndBonus()
     {
-        player.GetAbilityPower().EndRepeatingBonus("TemporaryAbilityMultiplier");
+        player.GetAbilityPower().EndRepeatingBonus("PS_TempAbilityMultiplier");
+        GetComponent<UniqueEffects>().ResetPhaseTrigger();
     }
     private void CastSingularity()
     {
@@ -474,6 +470,7 @@ public class AbilityCasting : MonoBehaviour
             GameObject explosion = hitbox.GetComponent<EmitOnDestroy>().Emits[0].GetComponent<EmitOnDestroy>().Emits[0];
             explosion.GetComponent<Hitbox>().InitializeHitbox(player.GetAbilityPowerAmount()*.8f, player);
         }
+        EndBonus();
     }
     private GameObject SpawnGameObject(string name, Vector2 position, Quaternion quat)
     {

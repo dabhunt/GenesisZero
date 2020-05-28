@@ -7,6 +7,7 @@ public class UniqueEffects : MonoBehaviour
 {
     //this script contains non bullet related unique effects of modifiers outside the data structure of stats
     //if this is 2, it checks twice per second
+    public bool PhaseTrigger = false;
     public float checksPerSecond = 4f;
     [Header("Music Cross Fade durations")]
     public float fadeIn = 3f;
@@ -14,6 +15,9 @@ public class UniqueEffects : MonoBehaviour
     public float durationUntilDecay = 6f;
     //these are all done in multipliers, not in flat amounts
     // 1.1 = 10% increase, .9f = 10% reduction
+    [Header("Power Surge")]
+    public float PS_APmulti = 2;
+    private float PreBonusAP = 0;
     [Header("Adrenaline Rush")]
     public float coolReductionPerStack = .5f;
     public float coolReductionSingleStack = 1;
@@ -81,6 +85,12 @@ public class UniqueEffects : MonoBehaviour
         SuperHeatedEssence();
         ThermiteCore();
         MusicTimer();
+        if (PhaseTrigger)
+        {
+            print("Phase triggered");
+            PowerSurge();
+        }
+        player.UpdateStats();
     }
     private void Update()
     {
@@ -132,7 +142,7 @@ public class UniqueEffects : MonoBehaviour
 
     public void AbilityTrigger()
     {
-
+       //before abilities are casted in AC
     }
     //this is done after the ability so that heat vent shield isn't useless
     public void AfterAbilityTrigger()
@@ -280,6 +290,26 @@ public class UniqueEffects : MonoBehaviour
             player.GetAttackSpeed().AddRepeatingBonus(currentAttackSpeed, currentAttackSpeed, 1 / checksPerSecond, "ChemicalAccelerant_AS");
             player.GetCritChance().AddRepeatingBonus(currentCritChance, currentCritChance, 1 / checksPerSecond, "ChemicalAccelerant_CC");
         }
+    }
+    private void PowerSurge()
+    {
+        int stacks = player.GetSkillStack("Power Surge");
+        if (stacks > 0)
+        {
+            float ap;
+            if (PreBonusAP == 0) //if prebonus has not been set, set it to current ap value
+                PreBonusAP = player.GetAbilityPower().GetValue();
+            ap = PreBonusAP;
+            float bonus = ap * (PS_APmulti-1+stacks) - ap;
+            player.GetAbilityPower().AddRepeatingBonus(bonus, 0, 1/checksPerSecond, "PS_TempAbilityMultiplier");
+            print("Power Surge bonus is: " + bonus);
+            print("Total AP is: " + player.GetAbilityPower().GetValue());
+        }
+    }
+    public void ResetPhaseTrigger()
+    {
+        PhaseTrigger = false;
+        PreBonusAP = 0;
     }
     //Bullets deal bonus damage, based on how much heat you have, up to a cap of 35% more damage
     //Player has a constant 35% more heat per shot fired.

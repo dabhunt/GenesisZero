@@ -35,7 +35,7 @@ public class StateManager : MonoBehaviour
     private void Start()
     {
         GameObject temp = Player.instance.gameObject;
-        player = temp.GetComponent<Player>();
+        player = Player.instance;
         if (!SaveLoadManager.instance.newGame)
         {
             PlayerData pData = SaveLoadManager.instance.LoadPlayerData();
@@ -215,8 +215,13 @@ public class StateManager : MonoBehaviour
     //This unpauses game
     public void UnpauseGame()
     {
-		//UnPauses Game
-		if (pauseMenu != null)
+        if (Player.instance != null) //if there is a player
+        { 
+            if (Player.instance.IsInteracting == true)
+                return; //don't unpause if the player is interacting
+        }
+        //UnPauses Game
+        if (pauseMenu != null)
 		{
 			if (isPaused == true)
 			{

@@ -218,9 +218,9 @@ public class DialogueManager : MonoBehaviour
         //if the type of interaction needs an unpause
         if (currentType == -1)
         {
-            StateManager.instance.UnpauseGame();
             if (GetPlayer() != null)
                 player.IsInteracting = false;
+            StateManager.instance.UnpauseGame();
         }
         Cursor.visible = false;
         if (deQueueOnFinish)

@@ -457,6 +457,7 @@ public class PlayerController : MonoBehaviour
                 //animator.SetTrigger("startRoll");
                 //StartCoroutine(ResetTrigger("startRoll", triggerResetTime));
                 gun.PhaseTrigger = true;
+                GetComponent<UniqueEffects>().PhaseTrigger = true;
                 sound.Roll();
                 //VFXManager.instance.PlayEffect("VFX_PlayerDashStart", transform.position);
 
