@@ -53,11 +53,6 @@ public class PlatformPatrollerAI : AIController
         patrolCycleOffset = Random.value * Mathf.PI;
     }
 
-    new protected void Update()
-    {
-        base.Update();
-    }
-
     protected override void SetTarget(Transform tr)
     {
         base.SetTarget(tr);
@@ -79,8 +74,10 @@ public class PlatformPatrollerAI : AIController
 
         if (state == AIState.Follow || state == AIState.Charge || state == AIState.Cooldown)
         {
+            aimLocked = state == AIState.Charge && GetStateTime() > BehaviorProperties.AttackChargeTime * 0.5f;
+
             faceDirPrev = faceDir;
-            if (faceDirChangeTime > 0.2f)
+            if (faceDirChangeTime > 0.2f && !aimLocked)
             {
                 faceDir = Mathf.RoundToInt(Mathf.Sign(targetPosition.x - transform.position.x));
             }
@@ -138,9 +135,15 @@ public class PlatformPatrollerAI : AIController
         {
             frb.Accelerate(Vector3.right * (targetSpeed * faceDir - frb.GetVelocity().x) * Acceleration * slopeForceFactor); // Accelerate toward the target
         }
+    }
+
+    new protected void Update()
+    {
+        base.Update();
+        if (Target == null) { return; }
 
         // Smoothly rotate to face target
-        lookAngle = Mathf.Lerp(lookAngle, -faceDir * Mathf.PI * 0.5f + Mathf.PI * 0.5f, rotateRate * Time.fixedDeltaTime);
+        lookAngle = Mathf.Lerp(lookAngle, -faceDir * Mathf.PI * 0.5f + Mathf.PI * 0.5f, rotateRate * Time.deltaTime);
         Vector3 lookDir = new Vector3(Mathf.Sin(lookAngle), 0.0f, Mathf.Cos(lookAngle));
         transform.rotation = Quaternion.LookRotation(lookDir, Vector3.up);
 
@@ -210,10 +213,16 @@ public class PlatformPatrollerAI : AIController
 
             //if (Vector3.Dot(normalizedTargetDir, Vector3.up) > 0)
             //{
-            Vector3 lungeDir = (normalizedTargetDir + Vector3.up * Mathf.Abs(Vector3.Dot(normalizedTargetDir, Vector3.right)) * LungeVerticality).normalized;
+            Vector3 lungeDir = (new Vector3(Mathf.Abs(normalizedTargetDir.x) * faceDir, normalizedTargetDir.y, 0.0f) + Vector3.up * Mathf.Abs(Vector3.Dot(normalizedTargetDir, Vector3.right)) * LungeVerticality).normalized;
             //}
             frb.AddVelocity(lungeDir * LungeSpeed * LungeDifficultyMultiplier.GetFactor());
         }
+    }
+
+    public override Vector3 GetAimDirection()
+    {
+        Vector3 aimDir = base.GetAimDirection();
+        return (new Vector3(Mathf.Abs(aimDir.x) * faceDir, aimDir.y, 0.0f) + Vector3.up * Mathf.Abs(Vector3.Dot(aimDir, Vector3.right)) * LungeVerticality).normalized;
     }
 
     /**

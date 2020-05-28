@@ -40,8 +40,7 @@ public class PlatformShooterAI : AIController
     public ParticleSystem chargeParticles;
     public ParticleSystem attackParticles;
     public GameObject AttackProjectile;
-    public float AttackLaunchInterval = 1.0f;
-    private float attackLaunchTime = 0.0f;
+    private bool hasAttacked = false;
     public float AimSpeed = 1.0f;
     public Vector3 ProjectileStart = Vector3.zero;
     private Vector3 projectileAim = Vector3.right;
@@ -51,7 +50,6 @@ public class PlatformShooterAI : AIController
     [Header("Difficulty")]
     public DifficultyMultiplier SpeedDifficultyMultiplier;
     public DifficultyMultiplier AimDifficultyMultiplier;
-    public DifficultyMultiplier ShootRateDifficultyMultiplier;
 
     new protected void Start()
     {
@@ -59,11 +57,6 @@ public class PlatformShooterAI : AIController
         faceDir = Mathf.RoundToInt(Mathf.Sign(Random.value - 0.5f));
         projectileAim = Vector3.right * faceDir;
         patrolCycleOffset = Random.value * Mathf.PI;
-    }
-
-    new protected void Update()
-    {
-        base.Update();
     }
 
     protected override void SetTarget(Transform tr)
@@ -147,9 +140,15 @@ public class PlatformShooterAI : AIController
             targetSpeed = 0.0f;
         }
         frb.Accelerate(Vector3.right * (targetSpeed * faceDir - frb.GetVelocity().x) * Acceleration * slopeForceFactor); // Accelerate toward the target
+    }
+
+    new protected void Update()
+    {
+        base.Update();
+        if (Target == null) { return; }
 
         // Smoothly rotate to face target
-        lookAngle = Mathf.Lerp(lookAngle, -faceDir * Mathf.PI * 0.5f + Mathf.PI * 0.5f, rotateRate * Time.fixedDeltaTime);
+        lookAngle = Mathf.Lerp(lookAngle, -faceDir * Mathf.PI * 0.5f + Mathf.PI * 0.5f, rotateRate * Time.deltaTime);
         Vector3 lookDir = new Vector3(Mathf.Sin(lookAngle), 0.0f, Mathf.Cos(lookAngle));
         transform.rotation = Quaternion.LookRotation(lookDir, Vector3.up);
 
@@ -189,7 +188,7 @@ public class PlatformShooterAI : AIController
             nextAim = (Target.position - GetProjectilePoint()).normalized;
         }
 
-        projectileAim = Vector3.Slerp(projectileAim, nextAim, AimSpeed * AimDifficultyMultiplier.GetFactor() * Time.fixedDeltaTime);
+        projectileAim = Vector3.Slerp(projectileAim, nextAim, AimSpeed * AimDifficultyMultiplier.GetFactor() * Time.deltaTime);
 
         if (anim != null)
         {
@@ -201,9 +200,9 @@ public class PlatformShooterAI : AIController
         // Projectile shooting logic
         if (state == AIState.Attack)
         {
-            if (attackLaunchTime <= 0)
+            if (!hasAttacked)
             {
-                attackLaunchTime = AttackLaunchInterval * ShootRateDifficultyMultiplier.GetFactor();
+                hasAttacked = true;
                 if (AttackProjectile != null)
                 {
 
@@ -220,10 +219,8 @@ public class PlatformShooterAI : AIController
         }
         else
         {
-            attackLaunchTime = 0.0f;
+            hasAttacked = false;
         }
-
-        attackLaunchTime = Mathf.Max(0.0f, attackLaunchTime - Time.fixedDeltaTime);
     }
 
     /**
