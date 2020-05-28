@@ -87,7 +87,6 @@ public class UniqueEffects : MonoBehaviour
         MusicTimer();
         if (PhaseTrigger)
         {
-            print("Phase triggered");
             PowerSurge();
         }
         player.UpdateStats();
@@ -302,8 +301,6 @@ public class UniqueEffects : MonoBehaviour
             ap = PreBonusAP;
             float bonus = ap * (PS_APmulti-1+stacks) - ap;
             player.GetAbilityPower().AddRepeatingBonus(bonus, 0, 1/checksPerSecond, "PS_TempAbilityMultiplier");
-            print("Power Surge bonus is: " + bonus);
-            print("Total AP is: " + player.GetAbilityPower().GetValue());
         }
     }
     public void ResetPhaseTrigger()
