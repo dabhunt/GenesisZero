@@ -37,7 +37,8 @@ public class EnemyOverlayShader : MonoBehaviour
         if (isStunned == true)
         {
             gameObject.GetComponent<Renderer>().material.SetFloat("_StunOnOff", 1);
-        } else
+        }
+        else
         {
             gameObject.GetComponent<Renderer>().material.SetFloat("_StunOnOff", 0);
         }
@@ -63,7 +64,10 @@ public class EnemyOverlayShader : MonoBehaviour
         {
             if (!DeathSFXPlayed)
             {
-                AudioManager.instance.PlayRandomSFXType("EnemyDeath", this.gameObject, .9f, 1.2f, 7f);
+                if (AudioManager.instance != null)
+                {
+                    AudioManager.instance.PlayRandomSFXType("EnemyDeath", this.gameObject, .9f, 1.2f, 7f);
+                }
                 DeathSFXPlayed = true;
             }
             if (!dissolveComplete)
