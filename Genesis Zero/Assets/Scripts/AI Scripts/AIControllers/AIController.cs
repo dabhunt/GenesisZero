@@ -205,12 +205,6 @@ public class AIController : Pawn
             }
         }
         //Debug.Log(GetNearbyEnemies().Length);
-
-        Debug.LogWarning("Remove this:");
-        if (Input.GetKey(KeyCode.Z))
-        {
-            TakeDamage(1, null);
-        }
     }
 
     /**
