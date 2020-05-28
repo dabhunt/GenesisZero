@@ -175,14 +175,14 @@ public class Pawn : MonoBehaviour
                 {
                     RaycastHit hit;
                     CapsuleCollider cc = GetComponentInChildren<CapsuleCollider>();
-                    //Debug.Log(cc);
+                    Debug.Log(cc);
                     Vector3 p1 = cc.center + Vector3.up * -cc.height / 2;
                     Vector3 p2 = p1 + Vector3.up * cc.height;
                     //colliding = Physics.CapsuleCast(p1, p2, cc.radius, knockbackvector, out hit, translation.magnitude);
                     colliding = Physics.Raycast(transform.position, knockbackvector, out hit, translation.magnitude, GetComponentInParent<PlayerController>().rollingLayerMask);
                     if (colliding && hit.collider.isTrigger == false)
                     {
-                        //Debug.Log(colliding);
+                        Debug.Log(colliding);
                         //print(hit.collider);
                         colliding = !hit.collider.isTrigger;
 

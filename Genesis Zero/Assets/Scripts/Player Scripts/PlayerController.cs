@@ -21,8 +21,6 @@ public class PlayerController : MonoBehaviour
     public float horCastLength = 0.45f;
     public float verCastLength = 1.05f;
     public float groundCheckPadding = 0.15f;
-    [Header("Phase Dash")]
-    public Color phaseColor = Color.black;
     public float rollDuration = 3f;
     public float rollSpeedMult = 1.5f;
     public float rollCooldownDuration = 3.0f;
@@ -154,7 +152,7 @@ public class PlayerController : MonoBehaviour
         float multiplier = isGrounded ? 1 : airControlMult;
         float startVel = currentSpeed;
         maxSpeed = GetComponent<Player>().GetSpeed().GetValue();
-        if (isRolling || isDashing) return;
+        if (isRolling) return;
         if (isGrounded)
         {
             //Play running sound if player's moving on the ground
@@ -259,7 +257,7 @@ public class PlayerController : MonoBehaviour
         if (ctx.performed)
         {
             if (!inputActions.PlayerControls.enabled) return;
-            if (isRolling) return;
+            if (isRolling || isDashing) return;
             if (isGrounded && jumpCount < 2) return;
             jumpPressedTime = jumpBufferTime;
             if (!isJumping && jumpCount > 0)
@@ -290,7 +288,6 @@ public class PlayerController : MonoBehaviour
         if (vertVel > terminal * .35f)
             vertVel = terminal * .35f;
         terminalVel = terminal * -1;
-        transform.Find("Center").Find("Down").gameObject.SetActive(true);
     }
     /* This function is used to update the jump cycle and its behavior
      */
@@ -334,14 +331,12 @@ public class PlayerController : MonoBehaviour
     private void CheckGround()
     {
         Collider[] cols;
-        Vector3 origin = transform.position - Vector3.up * 0.020f;
-        cols = Physics.OverlapSphere(origin, 0.075f, immoveables, QueryTriggerInteraction.UseGlobal);
+        Vector3 origin = transform.position + Vector3.up * 0.25f * characterWidth;
+        cols = Physics.OverlapSphere(origin, 0.25f * characterWidth, immoveables, QueryTriggerInteraction.UseGlobal);
 
         if (IsBlocked(Vector3.down))
         {
-
             isGrounded = true;
-            transform.Find("Center").Find("Down").gameObject.SetActive(false);
             if (cols.Length != 0)
             {
                 foreach (var col in cols)
@@ -390,6 +385,7 @@ public class PlayerController : MonoBehaviour
                         transform.position = Vector3.Lerp(transform.position, transform.position + Vector3.left * 0.1f, 25 * Time.fixedDeltaTime);
                     }
                 }
+                
             }
         }
         if (IsBlocked(Vector3.left))
@@ -458,17 +454,9 @@ public class PlayerController : MonoBehaviour
                 //StartCoroutine(ResetTrigger("startRoll", triggerResetTime));
                 gun.PhaseTrigger = true;
                 sound.Roll();
-                //VFXManager.instance.PlayEffect("VFX_PlayerDashStart", transform.position);
-
-                GameObject dashstart = VFXManager.instance.PlayEffectOnObject("VFX_PlayerDashStart", this.gameObject, new Vector2(0,1));
+                VFXManager.instance.PlayEffect("VFX_PlayerDashStart", transform.position);
                 gameObject.GetComponentInChildren<SkinnedMeshRenderer>().enabled = false; //TEMPORARY CHANGE THIS
-                GameObject dash = VFXManager.instance.PlayEffectForDuration("VFX_PlayerDashEffect", transform.position, rollDuration);
-                dash.transform.SetParent(transform);
-                if (phaseColor != Color.black)
-                {
-                    VFXManager.instance.ChangeColor(dashstart, phaseColor);
-                    VFXManager.instance.ChangeColor(dash, phaseColor);
-                }
+                VFXManager.instance.PlayEffectForDuration("VFX_PlayerDashEffect", transform.position, rollDuration).transform.parent = transform;
                 //Select roll direction based on crosshair position and input
                 if (movementInput.x != 0)
                     rollDirection = movementInput.x > 0 ? 1 : -1;
@@ -479,6 +467,7 @@ public class PlayerController : MonoBehaviour
                 NewLayerMask(rollingLayerMask, rollDuration);
                 timeRolled = 0;
                 //lastRollingPosition = transform.position;
+
                 //Rotate the character depending on roll direction
                 if (rollDirection < 0 && isFacingRight)
                 {
@@ -602,7 +591,7 @@ public class PlayerController : MonoBehaviour
         bool isBlock = false;
         float halfWidth = 0.5f * characterWidth;
         float halfHeight = 0.5f * characterHeight;
-        Vector3 halfExtends = new Vector3(0.1f, 0.5f * halfHeight, 0);
+        Vector3 halfExtends = new Vector3(0, 0.5f * halfHeight, 0);
         RaycastHit[] array = new RaycastHit[0];
 
         if (dir == Vector3.up)
@@ -668,11 +657,6 @@ public class PlayerController : MonoBehaviour
         // if (FacingRight==1)
         // xSpeed *= -1;
         float animspeed = movementInput.x * FacingSign;
-        GameObject indic = transform.Find("Center").Find("PhaseIndicator").gameObject;
-        if (rollCooldown == 0)
-            indic.SetActive(true);
-        else
-            indic.SetActive(false);
         animator.SetFloat("xSpeed",animspeed);
         animator.SetFloat("ySpeed", ySpeed);
         animator.SetBool("isGrounded", isGrounded);

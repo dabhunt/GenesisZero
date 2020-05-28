@@ -35,10 +35,9 @@ public class DamageNumber : MonoBehaviour
     // Sets the display of the text given the number
     public void SetNumber(float num)
     {
-        num *= 10;
         damage = (int)num;
         number.text = damage + "";
-        number.fontSize += Mathf.Clamp((int)(number.fontSize * damage / 1000), 0, number.fontSize);
+        number.fontSize += Mathf.Clamp((int)(number.fontSize * damage / 100), 0, number.fontSize);
     }
 
     // Sets the display of the text given the number, if critcal, gives a ! sign
