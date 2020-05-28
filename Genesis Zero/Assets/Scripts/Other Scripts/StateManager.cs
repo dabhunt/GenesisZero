@@ -203,6 +203,14 @@ public class StateManager : MonoBehaviour
         Time.timeScale = 0f;
         canvas.transform.Find("BlackUnderUI").GetComponent<Image>().enabled = true;
     }
+    //pass true to pause the game or false to unpause
+    public void Pause(bool truthy)
+    {
+        if (truthy)
+            PauseGame();
+        else
+            UnpauseGame();
+    }
 
     //This unpauses game
     public void UnpauseGame()
