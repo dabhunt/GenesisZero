@@ -212,7 +212,7 @@ public class PlatformShooterAI : AIController
                     Hitbox spawnedHitbox = spawnedProjectile.GetComponent<Hitbox>();
                     if (spawnedHitbox != null)
                     {
-                        spawnedHitbox.InitializeHitbox(GetDamage().GetValue(), this);
+                        spawnedHitbox.InitializeHitbox(GetDamage().GetValue() * DamageDifficultyMultiplier.GetFactor(), this);
                     }
                 }
             }

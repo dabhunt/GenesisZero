@@ -66,9 +66,18 @@ public class Hitbox : MonoBehaviour
     // Start is called before the first frame update
     void Start()
     {
-        if (StateManager.instance.GameOver == true)
-            return;
-        player = Player.instance.gameObject;
+        if (StateManager.instance != null)
+        {
+            if (StateManager.instance.GameOver == true)
+            {
+                return;
+            }
+        }
+
+        if (Player.instance != null)
+        {
+            player = Player.instance.gameObject;
+        }
 
         //colliders.Clear();
         state = State.Active;
@@ -249,7 +258,7 @@ public class Hitbox : MonoBehaviour
                 {
                     GameObject vfx = VFXManager.instance.PlayEffect(hitEffectVFX, new Vector3(transform.position.x, transform.position.y, transform.position.z), 0f, Mathf.Clamp(damagetaken / VFX_ScaleReduction, .2f, 3.5f));
                 }
-               
+
                 hittargets.Add(other.transform.root.gameObject);
                 hit = true;
                 --MaxHits;

@@ -21,35 +21,46 @@ public class Restart : MonoBehaviour
     void Start()
     {
         player = GameObject.FindWithTag("Player");
-    	exitingScene = false;
+        exitingScene = false;
         //player = temp.GetComponent<Player>();
         canvas = GameObject.FindWithTag("CanvasUI");
-        pauseMenu = canvas.transform.Find("PauseMenu").gameObject;
-        gameovertext = canvas.transform.Find("Gameover").gameObject;
-        resume = pauseMenu.transform.Find("Buttons").transform.Find("Continue").gameObject;
-        overlay = canvas.transform.Find("BlackOverlay").gameObject;
+        if (canvas != null)
+        {
+            pauseMenu = canvas.transform.Find("PauseMenu").gameObject;
+            gameovertext = canvas.transform.Find("Gameover").gameObject;
+            overlay = canvas.transform.Find("BlackOverlay").gameObject;
+            if (pauseMenu != null)
+            {
+                resume = pauseMenu.transform.Find("Buttons").transform.Find("Continue").gameObject;
+            }
+        }
     }
     void Update()
     {
-    	//if player is dead, restart the scene
-    	if (player == null && dead == false)
+        //if player is dead, restart the scene
+        if (player == null && dead == false)
         {
             // Play gameover music/fade out any playing tracks
             // AudioManager.instance.PlayTrack(1, "Music", "GameOver", false, true);
             dead = true;
             // Fade to black
-            overlay.SetActive(true);
+            if (overlay != null) { overlay.SetActive(true); }
             GameObject buge = GameObject.FindWithTag("BUG-E");
             buge.AddComponent<AudioListener>();
             AudioManager.instance.PlaySound("SFX_GameOver", 3, 1, false, buge.transform.position);
-            overlay.GetComponent<SpriteFade>().FadeIn(2f);
-            gameovertext.GetComponent<TextMeshProUGUI>().color = new Color(1, 1, 1, 0);
-            gameovertext.GetComponent<TextMeshProUGUI>().DOFade(1, 1.5F);
+            if (overlay != null) { overlay.GetComponent<SpriteFade>().FadeIn(2f); }
+            if (gameovertext != null)
+            {
+                gameovertext.GetComponent<TextMeshProUGUI>().color = new Color(1, 1, 1, 0);
+                gameovertext.GetComponent<TextMeshProUGUI>().DOFade(1, 1.5F);
+            }
             // Show game over menu after fading in
             StartCoroutine("ExecuteAfterTime", 2.5f);
-        } else{
-    		exitingScene = false;
-    	}
+        }
+        else
+        {
+            exitingScene = false;
+        }
 
     }
 
@@ -59,8 +70,8 @@ public class Restart : MonoBehaviour
         exitingScene = true;
         player = null;
         string scene = SceneManager.GetActiveScene().name;
-		//Load it
-		SceneManager.LoadScene(scene, LoadSceneMode.Single);
+        //Load it
+        SceneManager.LoadScene(scene, LoadSceneMode.Single);
     }
     void OnApplicationQuit()
     {
@@ -68,7 +79,7 @@ public class Restart : MonoBehaviour
     }
     public bool ExitingScene()
     {
-    	return exitingScene;
+        return exitingScene;
     }
 
     private void GameOverMenu()
@@ -77,9 +88,9 @@ public class Restart : MonoBehaviour
         StateManager.instance.GameOver = true;
         StateManager.instance.DestroyPopUpsWithTag("Pickups");
         StateManager.instance.DestroyPopUpsWithTag("Interactable");
-        pauseMenu.GetComponent<Image>().enabled = false;
-        resume.SetActive(false);
-        pauseMenu.SetActive(true);
+        if (pauseMenu != null) { pauseMenu.GetComponent<Image>().enabled = false; }
+        if (resume != null) { resume.SetActive(false); }
+        if (pauseMenu != null) { pauseMenu.SetActive(true); };
     }
 
     // function to delay code written after it
