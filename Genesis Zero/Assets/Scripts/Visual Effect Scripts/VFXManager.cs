@@ -65,8 +65,8 @@ public class VFXManager : MonoBehaviour
     }
     public GameObject ChangeInnerTrail(GameObject vfx, Color color)
     {
-        GameObject trail = vfx.transform.Find("vfx_Bullet").Find("Bullet").gameObject;
-        if (trail == null || trail.GetComponent<ParticleSystem>() == null)
+        GameObject trail = vfx.transform.Find("vfx_Bullet").gameObject;
+        if (trail == null || trail.transform.Find("Bullet").gameObject == null || trail.GetComponent<ParticleSystem>() == null)
             return vfx;
         var parTrail = trail.GetComponent<ParticleSystem>().trails;
         parTrail.colorOverTrail = NewGradient(color, color);

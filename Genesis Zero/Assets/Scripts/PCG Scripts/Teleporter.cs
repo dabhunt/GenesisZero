@@ -53,10 +53,20 @@ public class Teleporter : MonoBehaviour
 		canvas.transform.Find("BlackOverlay").GetComponent<SpriteFade>().FadeIn(toWhite);
 		Invoke("CallTeleportFromAnimation", toWhite);
 	}
+	private void SkipTutorial()
+	{
+		SkillManager sk = Player.instance.GetSkillManager();
+		sk.AddSkill(sk.GetRandomAbility());
+		while (sk.GetRandomGoldsFromPlayer(1).Count < 1 && sk.GetPlayerMods().Count < 5) // if the player has a legendary OR 4 mods, stop rolling
+			sk.AddSkill(sk.GetRandomModsByChance(1)[0]);
+		DialogueManager.instance.TriggerDialogue("BUG-E_SkipTut");
+	}
 	private void CallTeleportFromAnimation()
 	{
 		Invoke("AfterTele",stayWhite);
 		Teleport();
+		if (this.name.Contains("Skip"))
+			SkipTutorial();
 	}
 	public void AfterTele()
 	{
@@ -99,8 +109,6 @@ public class Teleporter : MonoBehaviour
 				ani.SetBool("Close",true);
 				ani.SetBool("Open",false);
 			}
-
-
 	}
     protected virtual void OnDrawGizmos()
 	{
