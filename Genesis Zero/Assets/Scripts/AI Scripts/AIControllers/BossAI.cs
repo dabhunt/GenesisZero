@@ -312,12 +312,9 @@ public class BossAI : AIController
 			{
 				DisableUIExceptDialogue();
 				animator.SetTrigger("Dead");
-<<<<<<< HEAD
 				Camera.main.GetComponent<BasicCameraZoom>().ChangeFieldOfViewTemporary(45, 1);
 				//animator.Play("BossDeath");
-=======
 				animator.Play("BossDeath");
->>>>>>> parent of 7b08626f... Upgrade
 				KillNearbyEnemies();
 				died = true;
 				deathtrigger = 1;
@@ -423,11 +420,8 @@ public class BossAI : AIController
 			Invoke("BurnGround", 1f);
 			FlameGround.SetActive(true);        //Set the flame ground to true/active
 			animator.SetBool("Wild", true);
-<<<<<<< HEAD
 			camera.transform.DOShakePosition(duration: 2.4f, strength: 1, vibrato: 5, randomness: 60, snapping: false, fadeOut: true);
 			Camera.main.GetComponent<BasicCameraZoom>().ChangeFieldOfViewTemporary(45, 1.1f);
-=======
->>>>>>> parent of 7b08626f... Upgrade
 			AudioManager.instance.PlaySound("SFX_BossRoar(0)"); // Play sound Effect
 			GetComponent<BossEvents>().DestroyGameObjectsOnWild(); //Destroy top platforms
 			boxanimating = true;

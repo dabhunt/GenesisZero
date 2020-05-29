@@ -60,6 +60,10 @@ public class Teleporter : MonoBehaviour
 		while (sk.GetRandomGoldsFromPlayer(1).Count < 1 && sk.GetPlayerMods().Count < 5) // if the player has a legendary OR 4 mods, stop rolling
 			sk.AddSkill(sk.GetRandomModsByChance(1)[0]);
 		DialogueManager.instance.TriggerDialogue("BUG-E_SkipTut");
+		Destroy(gameObject.GetComponent<FindingBuge>());
+		GetComponent<InteractPopup>().SetInteractable(false);
+		GetComponent<InteractPopup>().DestroyPopUp();
+		GetComponent<InteractPopup>().SetText("Right Click to Interact");
 	}
 	private void CallTeleportFromAnimation()
 	{
