@@ -76,7 +76,7 @@ public class Teleporter : MonoBehaviour
 	{
 		StateManager.instance.InTutorial = false;
 		if (BossRoomOverride == true)
-			player.position = StateManager.instance.BossRoomLocation;
+			player.position = StateManager.instance.GetBossRoomLocation();
 		
 		player.position = new Vector2(destinationX, destinationY);
 		//temporary code
