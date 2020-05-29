@@ -18,7 +18,7 @@ public class StateManager : MonoBehaviour
     private AsyncOperation operation;
     private GameObject optionsMenu;
     private GameObject pMenuButtons;
-    private Vector2 BossRoomLocation = new Vector2(-533, 173f);
+    public Vector2 BossRoomLocation = new Vector2(-533, 173f);
     public bool Cursorvisible = true;
     public bool GameOver = false;
     public bool InTutorial = true;
@@ -48,10 +48,6 @@ public class StateManager : MonoBehaviour
         canvas = GameObject.FindWithTag("CanvasUI");
         pauseMenu = canvas.transform.Find("PauseMenu").gameObject;
         optionsMenu = canvas.transform.Find("OptionsScreen").gameObject;
-    }
-    public Vector2 GetBossRoomLocation()
-    {
-        return BossRoomLocation;
     }
     private void Update()
     {
