@@ -236,7 +236,7 @@ public class PlatformPatrollerAI : AIController
             spawnedHitboxObj.localPosition = AttackHitboxStart;
             spawnedHitboxObj.localRotation = Quaternion.identity;
             Hitbox spawnedHitbox = spawnedHitboxObj.GetComponent<Hitbox>();
-            spawnedHitbox.InitializeHitbox(GetDamage().GetValue(), this);
+            spawnedHitbox.InitializeHitbox(GetDamage().GetValue() * DamageDifficultyMultiplier.GetFactor(), this);
         }
     }
 

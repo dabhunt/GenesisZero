@@ -33,7 +33,7 @@ public class SimplePlayerMove : Pawn
             frb.AddVelocity(Vector3.up * JumpSpeed);
         }
 
-        if (Input.GetKeyDown(KeyCode.Space))
+        if (Input.GetKey(KeyCode.Space))
         {
             AIController[] allEnemies = FindObjectsOfType<AIController>();
             AIController closestEnemy = null;

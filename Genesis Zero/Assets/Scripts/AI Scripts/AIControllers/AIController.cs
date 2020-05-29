@@ -40,6 +40,8 @@ public class AIController : Pawn
 
     public DifficultyMultiplier ChargeTimeDifficultyMultiplier;
     public DifficultyMultiplier CooldownTimeDifficultyMultiplier;
+    public DifficultyMultiplier HealthDifficultyMultiplier;
+    public DifficultyMultiplier DamageDifficultyMultiplier;
 
     public float EnemySpaceRadius = 2.0f; // Radius within which enemies will push each other away to avoid overlapping
     public float EnemySpaceForce = 20f; // Force with which to push other enemies away when they're too close
@@ -569,7 +571,7 @@ public class AIController : Pawn
         {
             AlertAndFollow(source.transform);
         }
-        return base.TakeDamage(amount, source);
+        return base.TakeDamage(amount * HealthDifficultyMultiplier.GetFactor(), source);
     }
 
     /**
@@ -601,8 +603,11 @@ public class AIController : Pawn
                 alertPoint = target.position;
                 alertTracking = true;
                 //AudioManager.instance.PlayRandomSFXType("Enemy", this.gameObject);
-                print("enemy SFX");
-                AudioManager.instance.PlayRandomSFXType("EnemyNearby", this.gameObject, .2f);
+                //print("enemy SFX");
+                if (AudioManager.instance != null)
+                {
+                    AudioManager.instance.PlayRandomSFXType("EnemyNearby", this.gameObject, .2f);
+                }
                 if (alertOthers)
                 {
                     AlertNearbyEnemies(target);
