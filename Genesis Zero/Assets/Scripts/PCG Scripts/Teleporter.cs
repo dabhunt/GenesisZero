@@ -10,8 +10,8 @@ public class Teleporter : MonoBehaviour
 	public float destinationZ = 0;
 	public bool BossRoomOverride = false;
 	//Variables for animator
-	public float toWhite = .3f;
-	public float stayWhite = .3f;
+	public float toWhite = .5f;
+	public float stayWhite = .6f;
 	public float fadeWhite = 1f;
 	private Transform player;
 	private GameObject buge;
