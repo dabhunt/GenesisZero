@@ -163,7 +163,7 @@ public class BossAI : AIController
 			CheckActions(); // Checks and updates what actions the boss should do
 		}
 
-		if (bossstate == State.Setting) // Check if the boss is doing special animation
+		if (bossstate == State.Setting) // CHeck if the boss is doing special animation
 		{
 			if (animationswitch == false)
 			{
@@ -171,7 +171,7 @@ public class BossAI : AIController
 			}
 			boxanimating = true;
 		}
-		else if(IsDying() == false && bossstate != State.Setting)
+		else if(IsDying() == false)
 		{
 			boxanimating = false;
 		}
@@ -312,8 +312,12 @@ public class BossAI : AIController
 			{
 				DisableUIExceptDialogue();
 				animator.SetTrigger("Dead");
+<<<<<<< HEAD
 				Camera.main.GetComponent<BasicCameraZoom>().ChangeFieldOfViewTemporary(45, 1);
 				//animator.Play("BossDeath");
+=======
+				animator.Play("BossDeath");
+>>>>>>> parent of 7b08626f... Upgrade
 				KillNearbyEnemies();
 				died = true;
 				deathtrigger = 1;
@@ -329,10 +333,7 @@ public class BossAI : AIController
 			healthbar.GetComponentInChildren<Slider>().value = GetHealth().GetRatio();
 		}
 
-		if (IsDying())
-		{
-			DeathChecks();
-		}
+		DeathChecks();		
 
 		//Update Indicators
 		for (int i = 0; i < indicators.Count; ++i)
@@ -417,14 +418,16 @@ public class BossAI : AIController
 		{
 			action = 1;
 			SetBossstate(State.Setting, 4f);
-			SetInvunerable(1f);
 			HealthLoss = 0;
 			animator.SetTrigger("WildTrigger"); //Set wild trigger
 			Invoke("BurnGround", 1f);
 			FlameGround.SetActive(true);        //Set the flame ground to true/active
 			animator.SetBool("Wild", true);
+<<<<<<< HEAD
 			camera.transform.DOShakePosition(duration: 2.4f, strength: 1, vibrato: 5, randomness: 60, snapping: false, fadeOut: true);
 			Camera.main.GetComponent<BasicCameraZoom>().ChangeFieldOfViewTemporary(45, 1.1f);
+=======
+>>>>>>> parent of 7b08626f... Upgrade
 			AudioManager.instance.PlaySound("SFX_BossRoar(0)"); // Play sound Effect
 			GetComponent<BossEvents>().DestroyGameObjectsOnWild(); //Destroy top platforms
 			boxanimating = true;
@@ -433,8 +436,8 @@ public class BossAI : AIController
 		else if (Heat >= 5)
 		{
 			action = 2;
-			//bossstate = State.Setting;
-			//chargetime = Time.fixedDeltaTime / 2;
+			bossstate = State.Setting;
+			chargetime = Time.fixedDeltaTime / 2;
 			Heat = 0;
 			animator.SetTrigger("Overheating");
 		}
