@@ -171,7 +171,7 @@ public class BossAI : AIController
 			}
 			boxanimating = true;
 		}
-		else if(IsDying() == false)
+		else if (IsDying() == false)
 		{
 			boxanimating = false;
 		}
@@ -225,7 +225,7 @@ public class BossAI : AIController
 			transform.LookAt(lookposition + lookoffset);
 			HeadModel.transform.rotation = Quaternion.Slerp(transform.rotation, Quaternion.LookRotation(back, up), Time.fixedDeltaTime);
 			//HeadModel.transform.LookAt(lookposition + lookoffset);
-			
+
 
 			if (animating == false)
 			{
@@ -307,19 +307,16 @@ public class BossAI : AIController
 		//Display Health
 		if (IsDying())
 		{
-			
 			if (died == false)
 			{
 				DisableUIExceptDialogue();
 				animator.SetTrigger("Dead");
 				Camera.main.GetComponent<BasicCameraZoom>().ChangeFieldOfViewTemporary(45, 1);
-				//animator.Play("BossDeath");
 				animator.Play("BossDeath");
 				KillNearbyEnemies();
 				died = true;
 				deathtrigger = 1;
 			}
-			
 
 			deathtime += Time.deltaTime;
 			boxanimating = true;
@@ -330,7 +327,7 @@ public class BossAI : AIController
 			healthbar.GetComponentInChildren<Slider>().value = GetHealth().GetRatio();
 		}
 
-		DeathChecks();		
+		DeathChecks();
 
 		//Update Indicators
 		for (int i = 0; i < indicators.Count; ++i)
@@ -992,7 +989,7 @@ public class BossAI : AIController
 			{
 				child.gameObject.SetActive(false);
 			}
-				
+
 		}
 	}
 

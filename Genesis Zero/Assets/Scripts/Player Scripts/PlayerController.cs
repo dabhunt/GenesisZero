@@ -715,6 +715,10 @@ public class PlayerController : MonoBehaviour
     {
         return isAimingRight;
     }
+	public bool IsRolling()
+	{
+		return isRolling;
+	}
 
     private IEnumerator ResetTrigger(string trigger, float time)
     {
