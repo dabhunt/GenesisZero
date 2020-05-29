@@ -10,8 +10,8 @@ public class Teleporter : MonoBehaviour
 	public float destinationZ = 0;
 	public bool BossRoomOverride = false;
 	//Variables for animator
-	public float toWhite = .3f;
-	public float stayWhite = .3f;
+	public float toWhite = .5f;
+	public float stayWhite = .6f;
 	public float fadeWhite = 1f;
 	private Transform player;
 	private GameObject buge;
@@ -26,7 +26,6 @@ public class Teleporter : MonoBehaviour
 		ani = GetComponent<Animator>();
 		canvas = GameObject.FindGameObjectWithTag("CanvasUI");
 		InvokeRepeating("portalAnimation", 1f, .5f);
-
 	}
 	private void OnTriggerEnter(Collider other)
 	{
@@ -54,10 +53,20 @@ public class Teleporter : MonoBehaviour
 		canvas.transform.Find("BlackOverlay").GetComponent<SpriteFade>().FadeIn(toWhite);
 		Invoke("CallTeleportFromAnimation", toWhite);
 	}
+	private void SkipTutorial()
+	{
+		SkillManager sk = Player.instance.GetSkillManager();
+		sk.AddSkill(sk.GetRandomAbility());
+		while (sk.GetRandomGoldsFromPlayer(1).Count < 1 && sk.GetPlayerMods().Count < 5) // if the player has a legendary OR 4 mods, stop rolling
+			sk.AddSkill(sk.GetRandomModsByChance(1)[0]);
+		DialogueManager.instance.TriggerDialogue("BUG-E_SkipTut");
+	}
 	private void CallTeleportFromAnimation()
 	{
 		Invoke("AfterTele",stayWhite);
 		Teleport();
+		if (this.name.Contains("Skip"))
+			SkipTutorial();
 	}
 	public void AfterTele()
 	{
@@ -65,8 +74,9 @@ public class Teleporter : MonoBehaviour
 	}
 	private void Teleport()
 	{
+		StateManager.instance.InTutorial = false;
 		if (BossRoomOverride == true)
-			player.position = StateManager.instance.BossRoomLocation;
+			player.position = StateManager.instance.GetBossRoomLocation();
 		
 		player.position = new Vector2(destinationX, destinationY);
 		//temporary code
@@ -99,8 +109,6 @@ public class Teleporter : MonoBehaviour
 				ani.SetBool("Close",true);
 				ani.SetBool("Open",false);
 			}
-
-
 	}
     protected virtual void OnDrawGizmos()
 	{

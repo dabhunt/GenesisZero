@@ -18,9 +18,10 @@ public class StateManager : MonoBehaviour
     private AsyncOperation operation;
     private GameObject optionsMenu;
     private GameObject pMenuButtons;
-    public Vector2 BossRoomLocation = new Vector2(-553, 198f);
+    private Vector2 BossRoomLocation = new Vector2(-533, 173f);
     public bool Cursorvisible = true;
     public bool GameOver = false;
+    public bool InTutorial = true;
     private void Awake()
     {
         if (instance == null)
@@ -34,7 +35,7 @@ public class StateManager : MonoBehaviour
     private void Start()
     {
         GameObject temp = Player.instance.gameObject;
-        player = temp.GetComponent<Player>();
+        player = Player.instance;
         if (!SaveLoadManager.instance.newGame)
         {
             PlayerData pData = SaveLoadManager.instance.LoadPlayerData();
@@ -176,6 +177,10 @@ public class StateManager : MonoBehaviour
 			ChangeTimeScale(.1f, 20);
 		}
 	}
+    public Vector2 GetBossRoomLocation()
+    {
+        return BossRoomLocation;
+    }
     //remove all interaction popups
     public void DestroyPopUpsWithTag(string Tag)
     {
@@ -202,12 +207,25 @@ public class StateManager : MonoBehaviour
         Time.timeScale = 0f;
         canvas.transform.Find("BlackUnderUI").GetComponent<Image>().enabled = true;
     }
+    //pass true to pause the game or false to unpause
+    public void Pause(bool truthy)
+    {
+        if (truthy)
+            PauseGame();
+        else
+            UnpauseGame();
+    }
 
     //This unpauses game
     public void UnpauseGame()
     {
-		//UnPauses Game
-		if (pauseMenu != null)
+        if (Player.instance != null) //if there is a player
+        { 
+            if (Player.instance.IsInteracting == true)
+                return; //don't unpause if the player is interacting
+        }
+        //UnPauses Game
+        if (pauseMenu != null)
 		{
 			if (isPaused == true)
 			{

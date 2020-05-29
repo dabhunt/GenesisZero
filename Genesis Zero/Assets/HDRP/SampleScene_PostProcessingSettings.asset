@@ -41,6 +41,9 @@ MonoBehaviour:
     m_Value: 1
     min: 0
     max: 20
+  cameraMotionBlur:
+    m_OverrideState: 0
+    m_Value: 1
   m_SampleCount:
     m_OverrideState: 0
     m_Value: 8
@@ -61,10 +64,10 @@ MonoBehaviour:
   m_AdvancedMode: 0
   shadows:
     m_OverrideState: 1
-    m_Value: {x: 0.77323055, y: 1, z: 0.8641055, w: 0.11884557}
+    m_Value: {x: 0.77323055, y: 1, z: 0.8641055, w: -0.30891433}
   midtones:
     m_OverrideState: 1
-    m_Value: {x: 0.98110074, y: 0.9964374, z: 1, w: -0.4215146}
+    m_Value: {x: 0.98110074, y: 0.9964374, z: 1, w: -0.54508036}
   highlights:
     m_OverrideState: 0
     m_Value: {x: 0.8203536, y: 1, z: 0.72701573, w: 1}
@@ -255,7 +258,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 2d08ce26990eb1a4a9177b860541e702, type: 3}
   m_Name: Exposure
   m_EditorClassIdentifier: 
-  active: 0
+  active: 1
   m_AdvancedMode: 0
   mode:
     m_OverrideState: 0
@@ -267,7 +270,7 @@ MonoBehaviour:
     m_OverrideState: 0
     m_Value: 1
   fixedExposure:
-    m_OverrideState: 0
+    m_OverrideState: 1
     m_Value: 0
   compensation:
     m_OverrideState: 0
@@ -521,11 +524,11 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 9c1bfcd0f0fa7b8468f281d6bbbaf320, type: 3}
   m_Name: LensDistortion
   m_EditorClassIdentifier: 
-  active: 0
+  active: 1
   m_AdvancedMode: 0
   intensity:
     m_OverrideState: 0
-    m_Value: 0.454
+    m_Value: -0.18
     min: -1
     max: 1
   xMultiplier:

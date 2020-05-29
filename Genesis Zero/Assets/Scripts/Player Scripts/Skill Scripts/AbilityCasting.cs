@@ -8,7 +8,7 @@ public class AbilityCasting : MonoBehaviour
     Player player;
     PlayerController pc;
     SkillManager skillmanager;
-
+    public bool PhaseTrigger = false;
     [Header("Time Dilation Ability")]
     public float timeScale = .5f;
     public float TS_effectDuration = 3.2f;
@@ -304,6 +304,7 @@ public class AbilityCasting : MonoBehaviour
         hitbox.GetComponent<Hitbox>().SetStunTime(1.2f);
         player.SetInvunerable(.5f);
         hitbox.GetComponent<Hitbox>().SetLifeTime(.15f);
+        EndBonus();
     }
 
     private void CastBurstCharge()
@@ -311,11 +312,13 @@ public class AbilityCasting : MonoBehaviour
         player.GetComponent<PlayerController>().SetVertVel(0);
         player.KnockBackForced(aimDir + Vector2.up, 25);
         GameObject hitbox = SpawnGameObject("BurstChargeHitbox", pc.CenterPoint(), Quaternion.identity);
+        print("ability power in burst charge:"+ GetComponent<Player>().GetAbilityPower().GetValue());
         hitbox.GetComponent<Hitbox>().InitializeHitbox(GetComponent<Player>().GetAbilityPower().GetValue(), GetComponent<Player>());
         hitbox.transform.parent = transform;
         player.SetInvunerable(.6f);
         player.GetComponent<PlayerController>().Dash(.6f, FD_gravityReplacement);
         hitbox.GetComponent<Hitbox>().SetLifeTime(.6f);
+        EndBonus();
     }
     private void CastFireDash()
     {
@@ -328,6 +331,7 @@ public class AbilityCasting : MonoBehaviour
         player.SetInvunerable(FD_duration);
         player.GetComponent<PlayerController>().Dash(FD_duration + .1f, FD_gravityReplacement);
         hitbox.GetComponent<Hitbox>().SetLifeTime(FD_duration);
+        EndBonus();
     }
     private void CastOverdrive(int num)
     {
@@ -378,15 +382,17 @@ public class AbilityCasting : MonoBehaviour
                 Camera.main.transform.DOShakePosition(duration: .6f, strength: .5f, vibrato: 4, randomness: 50, snapping: false, fadeOut: true);
                 AudioManager.instance.StopSound("SFX_ChargeCulling");
                 AudioManager.instance.PlayAttachedSound("SFX_LaserBlast");
-                GameObject hitbox = SpawnGameObject("SpartanLaser", CastAtAngle(pc.CenterPoint(), aimDir, .5f), GetComponent<Gun>().firePoint.rotation);
+                GameObject hitbox = SpawnGameObject("SpartanLaser", GetComponent<Gun>().firePoint.position, GetComponent<Gun>().firePoint.rotation);
                 SpartanLaser laser = hitbox.GetComponent<SpartanLaser>();
-                GameObject vfx_blast = VFXManager.instance.PlayEffectReturn("VFX_CullingBlast", CastAtAngle(pc.CenterPoint(), aimDir, 1f), 0, "");
+                hitbox.transform.SetParent(GetComponent<Gun>().firePoint);
+                GameObject vfx_blast = VFXManager.instance.PlayEffectReturn("VFX_CullingBlast", GetComponent<Gun>().firePoint.position, 0, "");
                 vfx_blast.transform.SetParent(GetComponent<Gun>().firePoint.transform);
                 vfx_blast.transform.LookAt(WorldXhair);
-                //vfx_blast.transform.rotation = GetComponent<Gun>().firePoint.rotation;
+               // vfx_blast.transform.rotation = GetComponent<Gun>().firePoint.rotation;
                 UniqueEffects U = GetComponent<UniqueEffects>();
                 float scale = Mathf.Pow(scaleMultiPerKill, U.GetKillCount());
                 hitbox.transform.localScale = new Vector3(scale, scale, scale);
+                vfx_blast.transform.localScale = new Vector3(scale, scale, scale);
                 float damage = U.SL_CalculateDmg();
                 hitbox.GetComponent<Hitbox>().InitializeHitbox(damage, player);
                 //manually put spartan laser ability on cooldown since the initial cast can't have a cooldown
@@ -404,6 +410,7 @@ public class AbilityCasting : MonoBehaviour
                     TotalAbilityCooldown2 = SL_Cooldown;
                     ui.Cast(1);
                 }
+                EndBonus();
             }
         }
     }
@@ -444,6 +451,11 @@ public class AbilityCasting : MonoBehaviour
         else
             return ActiveTime2 > 0;
     }
+    public void EndBonus()
+    {
+        player.GetAbilityPower().EndRepeatingBonus("PS_TempAbilityMultiplier");
+        GetComponent<UniqueEffects>().ResetPhaseTrigger();
+    }
     private void CastSingularity()
     {
         GameObject hitbox = SpawnGameObject("Sing_Projectile", CastAtAngle(pc.CenterPoint(), aimDir, .5f), GetComponent<Gun>().firePoint.rotation);
@@ -458,6 +470,7 @@ public class AbilityCasting : MonoBehaviour
             GameObject explosion = hitbox.GetComponent<EmitOnDestroy>().Emits[0].GetComponent<EmitOnDestroy>().Emits[0];
             explosion.GetComponent<Hitbox>().InitializeHitbox(player.GetAbilityPowerAmount()*.8f, player);
         }
+        EndBonus();
     }
     private GameObject SpawnGameObject(string name, Vector2 position, Quaternion quat)
     {

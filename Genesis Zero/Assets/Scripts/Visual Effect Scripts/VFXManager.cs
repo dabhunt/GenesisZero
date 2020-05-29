@@ -52,6 +52,8 @@ public class VFXManager : MonoBehaviour
     public GameObject ChangeMainTrail(GameObject vfx, Color startColor, Color endColor)
     {
         GameObject trail = vfx.transform.Find("vfx_Bullet").Find("Trail").gameObject;
+        if (trail == null)
+            trail = vfx.transform.Find("Trail").gameObject;
         if (trail == null || trail.GetComponent<TrailRenderer>() == null)
             return vfx;
         //color.black is treated like a null since you can't pass null colors
@@ -63,8 +65,8 @@ public class VFXManager : MonoBehaviour
     }
     public GameObject ChangeInnerTrail(GameObject vfx, Color color)
     {
-        GameObject trail = vfx.transform.Find("vfx_Bullet").Find("Bullet").gameObject;
-        if (trail == null || trail.GetComponent<ParticleSystem>() == null)
+        GameObject trail = vfx.transform.Find("vfx_Bullet").gameObject;
+        if (trail == null || trail.transform.Find("Bullet").gameObject == null || trail.GetComponent<ParticleSystem>() == null)
             return vfx;
         var parTrail = trail.GetComponent<ParticleSystem>().trails;
         parTrail.colorOverTrail = NewGradient(color, color);
@@ -162,6 +164,15 @@ public class VFXManager : MonoBehaviour
             vfx.SetEmitter(emit);
         }
 
+        return effect;
+    }
+    public GameObject PlayEffectOnObject(string name, GameObject obj, Vector3 offset)
+    {
+        GameObject effect = Instantiate(Resources.Load<GameObject>("Effects/" + name), Vector2.zero, Quaternion.identity);
+        Transform tEffect = effect.transform;
+        effect.transform.SetParent(obj.transform);
+        effect.transform.localPosition = offset;
+        VFXScript vfx = effect.GetComponent<VFXScript>();
         return effect;
     }
 

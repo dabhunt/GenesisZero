@@ -44,7 +44,7 @@ public class AIChargeWarning : MonoBehaviour
         }
     }
 
-    private void FixedUpdate()
+    private void Update()
     {
         if (controller == null) { Destroy(gameObject); }
         if (controller.BehaviorProperties == null) { return; }

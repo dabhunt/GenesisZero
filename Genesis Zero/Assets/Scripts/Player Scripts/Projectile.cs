@@ -11,7 +11,7 @@ public class Projectile : MonoBehaviour
     public float lifeTime = 1f;
     [Tooltip("Don't set to true, if the porjectile is already large")]
     public bool accurate = true;
-
+    //public LayerMask ignoreMask;
     private Vector3 direction;
     private Rigidbody rb;
 
@@ -64,7 +64,8 @@ public class Projectile : MonoBehaviour
         if (GetComponent<SphereCollider>())
         {
             SphereCollider col = GetComponent<SphereCollider>();
-            bool hitdetect = Physics.SphereCast(transform.position, col.radius, transform.forward, out hit, (speed * 1f * Time.fixedDeltaTime));
+            LayerMask hitmask = LayerMask.GetMask("Default", "Allies", "Enemies", "IgnorableColliders");
+            bool hitdetect = Physics.SphereCast(transform.position, col.radius, transform.forward, out hit, (speed * 1f * Time.fixedDeltaTime), hitmask);
             if (hitdetect && hit.collider != col && (hit.collider.gameObject.GetComponent<BodyPart>() || !hit.collider.isTrigger) && hit.collider.tag != "Hitbox")
             {
                 Vector3 dir = speed * transform.forward * Time.fixedDeltaTime;

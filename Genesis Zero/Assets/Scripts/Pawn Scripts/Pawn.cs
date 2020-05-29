@@ -179,7 +179,7 @@ public class Pawn : MonoBehaviour
                     Vector3 p1 = cc.center + Vector3.up * -cc.height / 2;
                     Vector3 p2 = p1 + Vector3.up * cc.height;
                     //colliding = Physics.CapsuleCast(p1, p2, cc.radius, knockbackvector, out hit, translation.magnitude);
-                    colliding = Physics.Raycast(transform.position, knockbackvector, out hit, translation.magnitude, GetComponentInParent<PlayerController>().rollingLayerMask);
+                    colliding = Physics.Raycast(Player.instance.CenterPoint(), knockbackvector, out hit, translation.magnitude, GetComponentInParent<PlayerController>().rollingLayerMask);
                     if (colliding && hit.collider.isTrigger == false)
                     {
                         //Debug.Log(colliding);

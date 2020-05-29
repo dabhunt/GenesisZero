@@ -36,7 +36,16 @@ public class SimpleTooltip : MonoBehaviour, IPointerEnterHandler, IPointerExitHa
 
         // Always make sure there's a style loaded
         if (!simpleTooltipStyle)
+        {
             simpleTooltipStyle = Resources.Load<SimpleTooltipStyle>("STDefault");
+            HideTooltip();
+        }
+        Invoke("DelayedStart", 1.5f);
+    }
+    private void DelayedStart()
+    {
+        ShowTooltip();
+        HideTooltip();
     }
 
     private void Update()

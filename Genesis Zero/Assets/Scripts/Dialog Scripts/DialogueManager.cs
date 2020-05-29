@@ -51,7 +51,6 @@ public class DialogueManager : MonoBehaviour
         instance.EndDialogue();
         //instance.TriggerDialogue("StartDialogue");
         buge = GameObject.FindWithTag("BUG-E").GetComponent<BUGE>();
-        //StateManager.instance.PauseGame();
         
         if (SaveLoadManager.instance.SaveExists() && !SaveLoadManager.instance.newGame)
         {
@@ -117,6 +116,7 @@ public class DialogueManager : MonoBehaviour
         if (GetPlayer() != null)
             player.IsInteracting = true;
         StartDialogue(dialogue);
+        StateManager.instance.Pause(pauseGame);
     }
     public void TriggerDialogue(string name, bool pauseGame)
     {
@@ -218,9 +218,9 @@ public class DialogueManager : MonoBehaviour
         //if the type of interaction needs an unpause
         if (currentType == -1)
         {
-            StateManager.instance.UnpauseGame();
             if (GetPlayer() != null)
                 player.IsInteracting = false;
+            StateManager.instance.UnpauseGame();
         }
         Cursor.visible = false;
         if (deQueueOnFinish)

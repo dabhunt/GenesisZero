@@ -78,12 +78,12 @@ public class BUGE : MonoBehaviour
                 ClearWayPoints();
                 if (EventSystem.current.IsPointerOverGameObject())
                 {
-                    AddWayPoint(playerController.screenXhair.transform.position+new Vector3(0,1f,0), -1);
+                    //AddWayPoint(playerController.screenXhair.transform.position+new Vector3(0,1f,0), -1);
                     //play UI_Essence txt, don't pause, and dequeue on completion
-                    DialogueManager.instance.TriggerDialogue("UI_Essence", false, true);
-                    LookAtObj = new GameObject();
-                    LookAtObj.transform.position = animWaypoints.Peek().Destination;
-                    LookAt(LookAtObj, 5);
+                    //DialogueManager.instance.TriggerDialogue("UI_Essence", false, true);
+                    //LookAtObj = new GameObject();
+                    //LookAtObj.transform.position = animWaypoints.Peek().Destination;
+                    //LookAt(LookAtObj, 5);
                     //print("blocked by UI: screnXhair.Z " + playerController.screenXhair.transform.position.z);
                 }
                 else
