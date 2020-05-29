@@ -31,7 +31,7 @@ public class EndCredits : MonoBehaviour
     private void Start()
     {
         // play credit music
-        AudioManager.instance.PlayFadeInTrack(1, "Music", "CombatMusic", true, 5.0f);
+        AudioManager.instance.PlayFadeInTrack(1, "Music", "Foundry_Fast", true, 5.0f);
 
         // reference to blackbackground
         bg = GameObject.Find("BlackOverlay").GetComponent<Image>();
