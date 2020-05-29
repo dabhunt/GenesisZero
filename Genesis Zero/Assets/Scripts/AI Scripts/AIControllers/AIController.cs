@@ -110,9 +110,9 @@ public class AIController : Pawn
         }
     }
 
-    new protected void FixedUpdate()
+    new protected void Update()
     {
-        base.FixedUpdate();
+        base.Update();
         if (!initialized) { return; }
 
         UpdateOrigin();
@@ -162,7 +162,7 @@ public class AIController : Pawn
 
         if (alertTracking)
         {
-            alertTrackTime += Time.fixedDeltaTime;
+            alertTrackTime += Time.deltaTime;
             if (targetVisible)
             {
                 alertTracking = false;
@@ -178,6 +178,12 @@ public class AIController : Pawn
         {
             alertTrackTime = 0.0f;
         }
+    }
+
+    new protected void FixedUpdate()
+    {
+        base.FixedUpdate();
+        if (!initialized) { return; }
 
         if (frb != null)
         {
@@ -199,11 +205,6 @@ public class AIController : Pawn
             }
         }
         //Debug.Log(GetNearbyEnemies().Length);
-
-        if (Input.GetKey(KeyCode.Z))
-        {
-            TakeDamage(1, null);
-        }
     }
 
     /**
@@ -289,7 +290,7 @@ public class AIController : Pawn
             }
         }
 
-        stateTime += Time.fixedDeltaTime * stateTimeFactor;
+        stateTime += Time.deltaTime * stateTimeFactor;
     }
 
     /**
@@ -631,6 +632,9 @@ public class AIController : Pawn
         }
     }
 
+    protected Vector3 currentAimDir = Vector3.right;
+    protected bool aimLocked = false;
+
     /**
      * Returns the aim direction to the target for enemies that shoot
      */
@@ -638,7 +642,11 @@ public class AIController : Pawn
     {
         if (Target != null)
         {
-            return (Target.position - transform.position).normalized;
+            if (!aimLocked)
+            {
+                currentAimDir = (Target.position - GetOrigin()).normalized;
+            }
+            return currentAimDir;
         }
         return Vector3.right;
     }
