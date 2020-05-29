@@ -281,7 +281,7 @@ public class Hitbox : MonoBehaviour
         }
         return false;
     }
-     * IMPORTANT FUNCTION, if hitbox is spawned from instantiate, this function should be called to initalize the hitbox with a source
+     /* IMPORTANT FUNCTION, if hitbox is spawned from instantiate, this function should be called to initalize the hitbox with a source
      * If no source is set, offensive stats like critchance will not be applied to the hitbox. Returns true, if the hitbox crits
      */
 	public bool InitializeHitbox(float damage, Pawn source)
