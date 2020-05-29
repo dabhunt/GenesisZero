@@ -327,7 +327,10 @@ public class BossAI : AIController
 			healthbar.GetComponentInChildren<Slider>().value = GetHealth().GetRatio();
 		}
 
-		DeathChecks();
+		if (IsDying())
+		{
+			DeathChecks();
+		}
 
 		//Update Indicators
 		for (int i = 0; i < indicators.Count; ++i)
