@@ -20,6 +20,7 @@ public class OptionsMenu : MonoBehaviour
 
     public void Start()
     {
+        Debug.Log("Options Start");
         List<string> values;
         canvas = GameObject.FindGameObjectWithTag("CanvasUI").GetComponent<Canvas>();
         if (SceneManager.GetActiveScene().name == "MainMenu")
@@ -40,18 +41,19 @@ public class OptionsMenu : MonoBehaviour
             if (resolutions[i].refreshRate < 60)
                 continue;
             values.Add(resolutions[i].width + "x" + resolutions[i].height + " (" + resolutions[i].refreshRate + " hz)");
-            if (resolutions[i].height == Screen.currentResolution.height && resolutions[i].width == Screen.currentResolution.width)
+            if (resolutions[i].height == Screen.height && resolutions[i].width == Screen.width)
             {
                 index = i;
             }
         }
         resDropdown.ClearOptions();
         resDropdown.AddOptions(values);
-        resDropdown.value = 3;
+        resDropdown.value = index;
         resDropdown.RefreshShownValue();
         if (SaveLoadManager.instance.SettingsSaveExists())
         {
             settingsData = SaveLoadManager.instance.LoadSettings();
+            Debug.Log("Applying Settings");
             //Applying saved settings
             SetMasterVolume(settingsData.masterVolume);
             SetSFXVolume(settingsData.sfxVolume);
@@ -218,15 +220,14 @@ public class OptionsMenu : MonoBehaviour
     public void SetFullScreen(bool value)
     {
         Screen.fullScreen = value;
+        //Screen.SetResolution(Screen.currentResolution.width, Screen.currentResolution.height, Screen.fullScreen, Screen.currentResolution.refreshRate);
     }
     //Event to set Resolution
     public void SetResolution(int index)
     {
+        if (index > resolutions.Count || index < 0)
+            index = 0;
+        Debug.Log("Changing res to: " + resolutions[index].width + " x " + resolutions[index].height);
         Screen.SetResolution(resolutions[index].width, resolutions[index].height, Screen.fullScreen, resolutions[index].refreshRate);
-    }
-
-    public SettingsData GetSettingsData()
-    {
-        return settingsData;
     }
 }

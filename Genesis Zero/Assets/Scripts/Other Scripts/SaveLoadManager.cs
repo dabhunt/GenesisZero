@@ -39,9 +39,6 @@ public class SaveLoadManager : MonoBehaviour
 
     private void Start()
     {
-        pPath = "/" + pFileName + ".dat";
-        mPath = "/" + mFileName + ".dat";
-        sPath = "/" + sFileName + ".dat";
         if(SaveExists() && !CorrectVersion())
             DeleteSaveFiles();
     }
@@ -52,13 +49,15 @@ public class SaveLoadManager : MonoBehaviour
     public void SaveGame()
     {
         Debug.Log("Saving Game");
+        pPath = Application.persistentDataPath + "/" + pFileName + ".dat";
+        mPath = Application.persistentDataPath + "/" + mFileName + ".dat";
         BinaryFormatter bf = new BinaryFormatter();
         try
         {
             Player player = GameObject.FindGameObjectWithTag("Player").GetComponent<Player>();
             PlayerData playerData = GetPlayerData(player);
-            FileStream pFile = File.Create(Application.persistentDataPath + pPath);
-            FileStream mFile = File.Create(Application.persistentDataPath + mPath);
+            FileStream pFile = File.Create(pPath);
+            FileStream mFile = File.Create(mPath);
             MapData mapData = GetMapData();
             //Serialize and write to the file
             bf.Serialize(pFile, playerData);
@@ -75,20 +74,22 @@ public class SaveLoadManager : MonoBehaviour
 
     public void SaveSettings(SettingsData data)
     {
-        Debug.Log("Saving Settings");
+        Debug.Log("Saving User Preferences");
+        sPath = Application.persistentDataPath + "/" + sFileName + ".dat";
         BinaryFormatter bf = new BinaryFormatter();
-        FileStream sFile = File.Create(Application.persistentDataPath + sPath);
+        FileStream sFile = File.Create(sPath);
         bf.Serialize(sFile, data);
         sFile.Close();
     }
 
     public SettingsData LoadSettings()
     {
-        if (File.Exists(Application.persistentDataPath + sPath))
+        sPath = Application.persistentDataPath + "/" + sFileName + ".dat";
+        if (File.Exists(sPath))
         {
             Debug.Log("Loading User Preferences");
             BinaryFormatter bf = new BinaryFormatter();
-            FileStream file = File.Open(Application.persistentDataPath + sPath, FileMode.Open);
+            FileStream file = File.Open(sPath, FileMode.Open);
             SettingsData data = bf.Deserialize(file) as SettingsData;
             file.Close();
             return data;
@@ -105,18 +106,19 @@ public class SaveLoadManager : MonoBehaviour
      */
     public PlayerData LoadPlayerData()
     {
-        if (File.Exists(Application.persistentDataPath + pPath))
+        pPath = Application.persistentDataPath + "/" + pFileName + ".dat";
+        if (File.Exists(pPath))
         {
             Debug.Log("Loading Character Data");
             BinaryFormatter bf = new BinaryFormatter();
-            FileStream file = File.Open(Application.persistentDataPath + pPath, FileMode.Open);            
+            FileStream file = File.Open(pPath, FileMode.Open);            
             PlayerData data = bf.Deserialize(file) as PlayerData;
             file.Close();
             return data;
         }
         else
         {
-            Debug.LogError("Player save file not found");
+            Debug.LogError("Player save file doesn't exist");
             return null;
         }
     }
@@ -126,18 +128,19 @@ public class SaveLoadManager : MonoBehaviour
      */
     public MapData LoadMapData()
     {
-        if (File.Exists(Application.persistentDataPath + mPath))
+        mPath = Application.persistentDataPath + "/" + mFileName + ".dat";
+        if (File.Exists(mPath))
         {
-            Debug.Log("Loading MapData");
+            Debug.Log("Loading Map Data");
             BinaryFormatter bf = new BinaryFormatter();
-            FileStream file = File.Open(Application.persistentDataPath + mPath, FileMode.Open);
+            FileStream file = File.Open(mPath, FileMode.Open);
             MapData data = bf.Deserialize(file) as MapData;
             file.Close();
             return data;
         }
         else
         {
-            Debug.LogError("Map data file not found");
+            Debug.LogError("Map data file doesn't exist");
             return null;
         }
     }
@@ -168,7 +171,6 @@ public class SaveLoadManager : MonoBehaviour
             sM.AddSkill(sObject);
             sM.SetCountByName(data.skillList[i], data.skillStacks[i]);
         }
-
         playerObj.transform.position = new Vector3(data.playerPosition[0], data.playerPosition[1], data.playerPosition[2]);
     }
 
@@ -233,12 +235,36 @@ public class SaveLoadManager : MonoBehaviour
     //Checks if the save files exists
     public bool SaveExists()
     {
-        return (File.Exists(Application.persistentDataPath + pPath) && File.Exists(Application.persistentDataPath + mPath));
+        pPath = Application.persistentDataPath + "/" + pFileName + ".dat";
+        Debug.Log("Checking for Player data at: " + (pPath));
+        mPath = Application.persistentDataPath + "/" + mFileName + ".dat";    
+        Debug.Log("Checking for Map data at: " + (mPath));
+        if (File.Exists(pPath) && File.Exists(mPath))
+        {
+            Debug.Log("Save Exists");
+            return true;
+        }
+        else
+        {
+            Debug.Log("Save Doesn't Exist");
+            return false;
+        }
     }
 
     public bool SettingsSaveExists()
     {
-        return (File.Exists(Application.persistentDataPath + sPath));
+        sPath = Application.persistentDataPath + "/" + sFileName + ".dat";
+        Debug.Log("Checking for SettingsFile at: " + (sPath));
+        if (File.Exists(sPath))
+        {
+            Debug.Log("SettingsFile exist");
+            return true;
+        }
+        else
+        {
+            Debug.Log("SettingsFile doesn't exist");
+            return false;
+        }
     }
 
     public void DeleteSaveFiles()
@@ -246,8 +272,8 @@ public class SaveLoadManager : MonoBehaviour
         if (SaveExists())
         {
             Debug.Log("Deleting saves");
-            File.Delete(Application.persistentDataPath + pPath);
-            File.Delete(Application.persistentDataPath + mPath);
+            File.Delete(pPath);
+            File.Delete(mPath);
         }
     }
 
