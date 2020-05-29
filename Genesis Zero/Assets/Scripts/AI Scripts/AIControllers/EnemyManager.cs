@@ -11,31 +11,28 @@ public class EnemyManager : MonoBehaviour
     public static List<AIController> AllEnemies = new List<AIController>();
     public static float Difficulty = .5f;
     public static float MaxDifficulty = 4.0f;
-    public static float NormalizedDifficulty { get { return Difficulty / Mathf.Max(0.01f, MaxDifficulty); } } // Range form 0 to 1 indicating current difficulty factor
-
-    public static EnemyManager instance = null; // Singleton instance.
+    public static float normalizedDifficulty { get { return Difficulty / Mathf.Max(0.01f, MaxDifficulty); } } // Range form 0 to 1 indicating current difficulty factor
+                                                                                                              // Singleton instance.
+    public static EnemyManager instance = null;
 
     // Initialize the singleton instance.
-    private void Awake()
+    void Awake()
     {
         if (instance == null)
-        {
             instance = this;
-        }
         else
         {
             Destroy(gameObject);
+            return;
         }
     }
-
-    private void Start()
+        private void Start()
     {
         AllEnemies.Clear();
     }
-
     // Increase enemy difficulty, based on the current difficulty multiplied by the number passed in.
     // Ex: 1.3 passed in makes enemies 30% more difficult
-    public static void ModifyDifficultyMulti(float multiplier)
+    public void ModifyDifficultyMulti(float multiplier)
     {
         float newDificulty = Difficulty * multiplier;
         Difficulty = Mathf.Clamp(newDificulty, 1f, MaxDifficulty);
@@ -52,6 +49,6 @@ public class DifficultyMultiplier
 
     public float GetFactor()
     {
-        return Invert ? Mathf.Lerp(MaxFactor, MinFactor, EnemyManager.NormalizedDifficulty) : Mathf.Lerp(MinFactor, MaxFactor, EnemyManager.NormalizedDifficulty);
+        return Invert ? Mathf.Lerp(MaxFactor, MinFactor, EnemyManager.normalizedDifficulty) : Mathf.Lerp(MinFactor, MaxFactor, EnemyManager.normalizedDifficulty);
     }
 }

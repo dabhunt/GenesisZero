@@ -57,7 +57,7 @@ public class AIChargeWarning : MonoBehaviour
             if (StayAtProjectilePoint)
             {
                 Vector3 targetDir = UseAiAim ? controller.GetAimDirection() : (controller.Target.position - controller.GetProjectilePoint()).normalized;
-                transform.position = controller != null ? controller.GetProjectilePoint() : transform.position;
+                transform.position = controller.GetProjectilePoint();
                 transform.rotation = Quaternion.LookRotation(Vector3.forward, new Vector3(-targetDir.y, targetDir.x, 0.0f));
             }
             else

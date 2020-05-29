@@ -80,7 +80,7 @@ public class Teleporter : MonoBehaviour
 		
 		player.position = new Vector2(destinationX, destinationY);
 		//temporary code
-		EnemyManager.ModifyDifficultyMulti(1.3f);
+		EnemyManager.instance.ModifyDifficultyMulti(1.3f);
 		//temporary code ^
 		buge.transform.position = player.position;
 		buge.GetComponent<BUGE>().FollowingPlayer(true);
