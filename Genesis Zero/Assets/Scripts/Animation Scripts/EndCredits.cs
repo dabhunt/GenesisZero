@@ -31,10 +31,11 @@ public class EndCredits : MonoBehaviour
     private void Start()
     {
         // play credit music
-        AudioManager.instance.PlayTrack(1, "Music", "CombatMusic", true, true);
+        AudioManager.instance.PlayFadeInTrack(1, "Music", "CombatMusic", true, 5.0f);
 
         // reference to blackbackground
         bg = GameObject.Find("BlackOverlay").GetComponent<Image>();
+        bg.enabled = true;
 
         // Queue up credits
         cardQueue = new Queue<GameObject>();
@@ -90,7 +91,10 @@ public class EndCredits : MonoBehaviour
     {
         if (cardQueue.Count < 1)
         {
-            ExitCredits();
+            if (bg.color.a == 0)
+                bg.DOFade(1f, CreditFades[count-1]);
+            AudioManager.instance.FadeOutChannel(1, CreditFades[count - 1]);
+            Invoke("ExitCredits", CreditFades[count - 1]);
             return;
         }
         else
@@ -139,7 +143,7 @@ public class EndCredits : MonoBehaviour
                 bg.DOFade(1f, CreditFades[count]);
         }
         else
-            if (bg.color.a > 0)
+            if (bg.color.a == 1)
             bg.DOFade(0f, CreditFades[count]);
     }
 
