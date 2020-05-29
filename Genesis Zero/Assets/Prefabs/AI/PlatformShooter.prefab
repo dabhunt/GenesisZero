@@ -5144,6 +5144,14 @@ MonoBehaviour:
     MinFactor: 0.5
     MaxFactor: 1.3
     Invert: 1
+  HealthDifficultyMultiplier:
+    MinFactor: 0.5
+    MaxFactor: 1.5
+    Invert: 1
+  DamageDifficultyMultiplier:
+    MinFactor: 0.5
+    MaxFactor: 1.5
+    Invert: 0
   EnemySpaceRadius: 3
   EnemySpaceForce: 50
   DeathEvent:
@@ -5181,7 +5189,6 @@ MonoBehaviour:
   attackParticles: {fileID: 751653433110049400}
   AttackProjectile: {fileID: 6641631083453567850, guid: 4861a6201fafb454fb4a48b05424d802,
     type: 3}
-  AttackLaunchInterval: 1.01
   AimSpeed: 2.5
   ProjectileStart: {x: 0.154, y: 1.88, z: 0}
   ProjectileSource: {fileID: 702691132262387099}
@@ -5193,10 +5200,6 @@ MonoBehaviour:
     MinFactor: 0.5
     MaxFactor: 1.25
     Invert: 0
-  ShootRateDifficultyMultiplier:
-    MinFactor: 1
-    MaxFactor: 1
-    Invert: 1
 --- !u!114 &4884162759698704238
 MonoBehaviour:
   m_ObjectHideFlags: 0
