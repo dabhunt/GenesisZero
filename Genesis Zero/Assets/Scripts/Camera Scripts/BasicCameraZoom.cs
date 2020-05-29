@@ -11,6 +11,9 @@ public class BasicCameraZoom : MonoBehaviour
     private float target;
     private bool spanding;
     private bool reset;
+	private float time;
+	private float savedpov;
+	private float savedmax;
     // Use this for initialization
     void Start()
     {
@@ -21,18 +24,28 @@ public class BasicCameraZoom : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-        if (Input.GetAxis("Mouse ScrollWheel") < 0)
+        if (Input.GetAxis("Mouse ScrollWheel") < 0 && time <= 0)
         {
             target += zoomSpeed;
             target = Mathf.Clamp(target, fovMin, fovMax);
             myCamera.fieldOfView = target;
         }
-        if (Input.GetAxis("Mouse ScrollWheel") > 0)
+        if (Input.GetAxis("Mouse ScrollWheel") > 0 && time <= 0)
         {
             target -= zoomSpeed;
             target = Mathf.Clamp(target, fovMin, fovMax);
             myCamera.fieldOfView = target;
         }
+
+		if (time > 0)
+		{
+			time -= Time.deltaTime;
+			if (time <= 0)
+			{
+				fovMax = savedmax;
+				ChangeFieldOfView(savedpov);
+			}
+		}
   
     }
 
@@ -48,7 +61,22 @@ public class BasicCameraZoom : MonoBehaviour
         }
     }
 
-    IEnumerator Spandout(float time, float start, float target, bool spanding)
+	public void ChangeFieldOfViewTemporary(float field, float time)
+	{
+		if (spanding == false)
+		{
+			savedmax = fovMax;
+			if (field > fovMax)
+			{
+				fovMax = field;
+			}
+			this.time = time;
+			savedpov = myCamera.fieldOfView;
+			StartCoroutine(Spandout(.25f, myCamera.fieldOfView, field, spanding));
+		}
+	}
+
+	IEnumerator Spandout(float time, float start, float target, bool spanding)
     {
         spanding = true;
         for (float f = 0; f <= time; f += Time.fixedDeltaTime)

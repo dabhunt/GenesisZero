@@ -281,78 +281,76 @@ public class Hitbox : MonoBehaviour
         }
         return false;
     }
-
-    /**
      * IMPORTANT FUNCTION, if hitbox is spawned from instantiate, this function should be called to initalize the hitbox with a source
      * If no source is set, offensive stats like critchance will not be applied to the hitbox. Returns true, if the hitbox crits
      */
-    public bool InitializeHitbox(float damage, Pawn source)
-    {
-        this.Damage = damage;
-        this.Source = source;
-        spawnposition = source.transform.position;
-        if (Random.Range(0, 100) < Source.GetCritChance().GetValue() * 100)
-        {
-            Critical = true;
-            return true;
-        }
-        return false;
-    }
-    //this overload provides the option to initialize without inheriting crit,
-    //which is useful for certain mods that are crit dependant and need to initialize a different bullet depending on if something crits
-    public bool InitializeHitbox(float damage, Pawn source, bool inheritCrit)
-    {
-        this.Damage = damage;
-        this.Source = source;
-        spawnposition = source.transform.position;
-        if (inheritCrit)
-        {
-            if ((Random.Range(0, 100) < Source.GetCritChance().GetValue() * 100))
-            {
-                Critical = true;
-                return true;
-            }
-        }
-        return false;
-    }
+	public bool InitializeHitbox(float damage, Pawn source)
+	{
+		this.Damage = damage;
+		this.Source = source;
+		spawnposition = source.transform.position;
+		if (Random.Range(0, 100) < Source.GetCritChance().GetValue() * 100)
+		{
+			Critical = true;
+			return true;
+		}
+		return false;
+	}
+	//this overload provides the option to initialize without inheriting crit,
+	//which is useful for certain mods that are crit dependant and need to initialize a different bullet depending on if something crits
+	public bool InitializeHitbox(float damage, Pawn source, bool inheritCrit)
+	{
+		this.Damage = damage;
+		this.Source = source;
+		spawnposition = source.transform.position;
+		if (inheritCrit)
+		{
+			if ((Random.Range(0, 100) < Source.GetCritChance().GetValue() * 100))
+			{
+				Critical = true;
+				return true;
+			}
+		}
+		return false;
+	}
 
-    public bool CanDamage(Collider col)
-    {
-        //Debug.Log(col.gameObject.layer +" "+ LayerMask.NameToLayer("Allies"));
-        if ((HurtsAllies && col.gameObject.layer == LayerMask.NameToLayer("Allies")) || (HurtsEnemies && col.gameObject.layer == LayerMask.NameToLayer("Enemies")))
-        {
-            //Debug.Log("CanHurt");
-            return true;
-        }
-        return false;
-    }
+	public bool CanDamage(Collider col)
+	{
+		//Debug.Log(col.gameObject.layer +" "+ LayerMask.NameToLayer("Allies"));
+		if ((HurtsAllies && col.gameObject.layer == LayerMask.NameToLayer("Allies")) || (HurtsEnemies && col.gameObject.layer == LayerMask.NameToLayer("Enemies")))
+		{
+			//Debug.Log("CanHurt");
+			return true;
+		}
+		return false;
+	}
 
-    public void SetStunTime(float time)
-    {
-        StunTime = time;
-    }
+	public void SetStunTime(float time)
+	{
+		StunTime = time;
+	}
 
-    public void SetLifeTime(float time)
-    {
-        LifeTime = time;
-    }
+	public void SetLifeTime(float time)
+	{
+		LifeTime = time;
+	}
 
-    private void OnDrawGizmos()
-    {
-        Gizmos.color = Color.red;
-        Collider col = GetComponent<Collider>();
-        if (col.GetComponent<SphereCollider>() != null)
-        {
-            //Debug.Log("C");
-            Gizmos.DrawWireSphere(col.transform.TransformPoint(col.GetComponent<SphereCollider>().center), col.GetComponent<SphereCollider>().radius);
-        }
+	private void OnDrawGizmos()
+	{
+		Gizmos.color = Color.red;
+		Collider col = GetComponent<Collider>();
+		if (col.GetComponent<SphereCollider>() != null)
+		{
+			//Debug.Log("C");
+			Gizmos.DrawWireSphere(col.transform.TransformPoint(col.GetComponent<SphereCollider>().center), col.GetComponent<SphereCollider>().radius);
+		}
 
-        if (col.GetComponent<BoxCollider>() != null)
-        {
-            //Debug.Log(col.GetComponent<BoxCollider>().center);
-            Gizmos.DrawWireCube(col.transform.TransformPoint(col.GetComponent<BoxCollider>().center), col.GetComponent<BoxCollider>().size);
-        }
+		if (col.GetComponent<BoxCollider>() != null)
+		{
+			//Debug.Log(col.GetComponent<BoxCollider>().center);
+			Gizmos.DrawWireCube(col.transform.TransformPoint(col.GetComponent<BoxCollider>().center), col.GetComponent<BoxCollider>().size);
+		}
 
-    }
+	}
 
 }

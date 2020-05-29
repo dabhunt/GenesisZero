@@ -163,7 +163,7 @@ public class BossAI : AIController
 			CheckActions(); // Checks and updates what actions the boss should do
 		}
 
-		if (bossstate == State.Setting) // CHeck if the boss is doing special animation
+		if (bossstate == State.Setting) // Check if the boss is doing special animation
 		{
 			if (animationswitch == false)
 			{
@@ -171,7 +171,7 @@ public class BossAI : AIController
 			}
 			boxanimating = true;
 		}
-		else if(IsDying() == false)
+		else if(IsDying() == false && bossstate != State.Setting)
 		{
 			boxanimating = false;
 		}
@@ -312,7 +312,8 @@ public class BossAI : AIController
 			{
 				DisableUIExceptDialogue();
 				animator.SetTrigger("Dead");
-				animator.Play("BossDeath");
+				Camera.main.GetComponent<BasicCameraZoom>().ChangeFieldOfViewTemporary(45, 1);
+				//animator.Play("BossDeath");
 				KillNearbyEnemies();
 				died = true;
 				deathtrigger = 1;
@@ -328,7 +329,10 @@ public class BossAI : AIController
 			healthbar.GetComponentInChildren<Slider>().value = GetHealth().GetRatio();
 		}
 
-		DeathChecks();		
+		if (IsDying())
+		{
+			DeathChecks();
+		}
 
 		//Update Indicators
 		for (int i = 0; i < indicators.Count; ++i)
@@ -345,11 +349,11 @@ public class BossAI : AIController
 			}
 		}
 
-		if (!GameObject.FindGameObjectWithTag("BossRoom").GetComponent<BoxCollider2D>().bounds.Contains((Vector2)transform.position))
+		if (!(GameObject.FindGameObjectWithTag("BossRoom").GetComponent<BoxCollider2D>().bounds.Contains((Vector2)transform.position) || GameObject.FindGameObjectWithTag("BossRoom").GetComponent<BoxCollider2D>().bounds.Contains((Vector2)transform.Find("Hitbox 2").position)))
 		{
 			Bounds bound = GameObject.FindGameObjectWithTag("BossRoom").GetComponent<BoxCollider2D>().bounds;
 			transform.position = Vector2.Lerp(transform.position, bound.center, Time.fixedDeltaTime);
-			if (bound.Contains(transform.position))
+			if (bound.Contains(transform.position) && bound.Contains(transform.Find("Hitbox 2").position))
 			{
 				GetComponent<SphereCollider>().isTrigger = false;
 			}
@@ -413,11 +417,14 @@ public class BossAI : AIController
 		{
 			action = 1;
 			SetBossstate(State.Setting, 4f);
+			SetInvunerable(1f);
 			HealthLoss = 0;
 			animator.SetTrigger("WildTrigger"); //Set wild trigger
-			animator.Play("Wild");
+			Invoke("BurnGround", 1f);
 			FlameGround.SetActive(true);        //Set the flame ground to true/active
 			animator.SetBool("Wild", true);
+			camera.transform.DOShakePosition(duration: 2.4f, strength: 1, vibrato: 5, randomness: 60, snapping: false, fadeOut: true);
+			Camera.main.GetComponent<BasicCameraZoom>().ChangeFieldOfViewTemporary(45, 1.1f);
 			AudioManager.instance.PlaySound("SFX_BossRoar(0)"); // Play sound Effect
 			GetComponent<BossEvents>().DestroyGameObjectsOnWild(); //Destroy top platforms
 			boxanimating = true;
@@ -426,8 +433,8 @@ public class BossAI : AIController
 		else if (Heat >= 5)
 		{
 			action = 2;
-			bossstate = State.Setting;
-			chargetime = Time.fixedDeltaTime / 2;
+			//bossstate = State.Setting;
+			//chargetime = Time.fixedDeltaTime / 2;
 			Heat = 0;
 			animator.SetTrigger("Overheating");
 		}
@@ -915,7 +922,7 @@ public class BossAI : AIController
 		Vector2 angle = (Vector2)transform.rotation.eulerAngles;
 		Quaternion rot = Quaternion.Euler(angle.x, angle.y, 0);
 		GameObject hitbox = Instantiate(FireballPrefab, transform.position, rot);
-		AudioManager.instance.PlaySound("SFX_FireExplosion", false, 0);
+		AudioManager.instance.PlaySound("SFX_Fireball", false, 0);
 	}
 
 	void SpawnHeadbutt()
@@ -923,7 +930,7 @@ public class BossAI : AIController
 		Vector2 angle = (Vector2)transform.rotation.eulerAngles;
 		Quaternion rot = Quaternion.Euler(angle.x, angle.y, 0);
 		GameObject hitbox = Instantiate(HeadbuttPrefab, transform.position, rot);
-		hitbox.transform.position += Vector3.forward * 2.5f;
+		hitbox.transform.position += Vector3.forward * 3f;
 		hitbox.transform.parent = transform;
 		hitbox.GetComponent<Hitbox>().LifeTime = .25f;
 		GetComponent<SphereCollider>().isTrigger = true;
@@ -948,6 +955,11 @@ public class BossAI : AIController
 		hitbox.GetComponent<Hitbox>().LifeTime = .1f;
 		camera.transform.DOShakePosition(duration: .75f, strength: 1, vibrato: 5, randomness: 60, snapping: false, fadeOut: true);
 		AudioManager.instance.PlaySound("SFX_FireExplosion", false, 0);
+	}
+
+	void BurnGround()
+	{
+		FlameGround.SetActive(true);
 	}
 
 
