@@ -33,6 +33,7 @@ public class PlayerController : MonoBehaviour
 
     [Header("Physics")]
     public float gravity = 18f;
+    private float resetGravity;
     public float terminalVel = 24f;
 
     public float fallSpeedMult = 1.45f;
@@ -117,6 +118,7 @@ public class PlayerController : MonoBehaviour
         player = GetComponent<Player>();
         camRef = Camera.main;
         worldXhair.transform.position = transform.position;
+        resetGravity = gravity;
     }
 
     private void Update()
@@ -742,7 +744,10 @@ public class PlayerController : MonoBehaviour
     {
         vertVel = vel;
     }
-
+    public float GetNormalGravity()
+    {
+        return resetGravity;
+    }
     public void Dash(float duration)
     {
         isDashing = true;

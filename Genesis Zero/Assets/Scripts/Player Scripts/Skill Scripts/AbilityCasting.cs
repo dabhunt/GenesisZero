@@ -57,6 +57,7 @@ public class AbilityCasting : MonoBehaviour
     private AbilityCD ui;
     private Vector2 aimDir;
     private Vector2 WorldXhair;
+    public bool cooldownCheatOn = false;
     // Start is called before the first frame update
     void Start()
     {
@@ -179,7 +180,7 @@ public class AbilityCasting : MonoBehaviour
 
     private void InitializeAbility1(float cooldown, float casttime, float activeTime)
     {
-        if (AbilityCooldown1 <= 0)
+        if (AbilityCooldown1 <= 0 && !cooldownCheatOn)
         {
             AbilityCooldown1 = cooldown;
             TotalAbilityCooldown1 = cooldown;
@@ -195,7 +196,7 @@ public class AbilityCasting : MonoBehaviour
 
     private void InitializeAbility2(float cooldown, float casttime, float activeTime)
     {
-        if (AbilityCooldown2 <= 0) {
+        if (AbilityCooldown2 <= 0 && !cooldownCheatOn) {
             AbilityCooldown2 = cooldown;
             TotalAbilityCooldown2 = cooldown;
         }

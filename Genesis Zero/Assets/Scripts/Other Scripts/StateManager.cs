@@ -79,106 +79,11 @@ public class StateManager : MonoBehaviour
                 }
             }
         }
-        if (Input.GetKeyDown(KeyCode.ScrollLock))
-        {//teleport the player to the boss room
-            player.transform.position = BossRoomLocation;
-            //temporary code
-            GameObject.FindWithTag("BUG-E").GetComponent<BUGE>().FollowingPlayer(true);
-            //temporary code ^
-            GameObject.FindWithTag("BUG-E").transform.position = player.transform.position;
-            //DialogueManager.instance.TriggerDialogue("Boss");
-        }
-        //temporary cheat codes to get mods
-        if (Input.GetKey(KeyCode.Backslash))
-        {
-            GameObject.FindWithTag("BUG-E").GetComponent<BUGE>().FollowingPlayer(true);
-            string skillStr = player.GetSkillManager().GetRandomMod().name;
-            player.GetSkillManager().SpawnMod(new Vector3(player.transform.position.x+2, player.transform.position.y+5, 0), skillStr);
-        }
-        if (Input.GetKey(KeyCode.End))
-        {
-            player.GetHealth().SetValue(0);
-        }
-        if (Input.GetKeyDown(KeyCode.Home))
-        {
-            if (player.GetHealth().GetMaxValue() >= 9999)
-            {
-                player.GetHealth().SetMaxValue(100);
-            }
-            else
-            {
-                player.SetEssence(player.GetMaxEssenceAmount());
-                player.SetKeys(3);
-                player.GetHealth().SetMaxValue(9999);
-            }
-
-        }
-        if (Input.GetKeyDown(KeyCode.Insert))
-        {
-            
-            //give the player 1 random Ability for the first slot
-            
-            SkillManager skillManager = player.GetSkillManager();
-            skillManager.clearSkills();
-            player.GetSkillManager().AddSkill(player.GetSkillManager().GetRandomAbility());
-            SkillObject secondAbility = skillManager.GetRandomAbility();
-            //give the player a second ability, that isn't the same as the first
-            while (skillManager.GetAbilityAmount() < 2)
-            {
-                player.GetSkillManager().AddSkill(player.GetSkillManager().GetRandomAbility());
-            }
-            int i = 0;
-            while (player.GetSkillManager().GetAmount() < 19 || i > 250)
-            {
-                if (i == 0)
-                { //guarantee you get 2 legendary's
-                    skillManager.AddSkill(skillManager.GetRandomGolds(1)[0]);
-                    skillManager.AddSkill(skillManager.GetRandomGolds(1)[0]);
-                }
-                skillManager.AddSkill(skillManager.GetRandomModByChance());
-                i++;
-            }
-        }
-        //get to next level instantly
-        if (Input.GetKey(KeyCode.PageUp))
-        {
-
-            GameObject[] teles = GameObject.FindGameObjectsWithTag("Teleporter");
-            foreach (GameObject t in teles)
-            {
-                float dist = Vector2.Distance(player.transform.position, t.transform.position);
-                if (t.name.Contains("Easter") == false && dist < 750)
-                {
-                    t.GetComponent<Teleporter>().TeleportWithAnim();
-                    break;
-                }
-            }
-            //Vector2 colliderPos = GameObject.FindWithTag("CamCollider").transform.position;
-            //GameObject.FindWithTag("CamCollider").transform.position = new Vector2(colliderPos.x + levelSpacing+100, colliderPos.y)
-        }
-        if (Input.GetKeyDown(KeyCode.PageDown))
-        {
-            List<SkillObject> list = player.GetSkillManager().GetAllAbilities();
-            for (int i = 0; i < list.Count; i++)
-            {
-                Vector3 newVec = new Vector3(player.transform.position.x + i * 3f, player.transform.position.y + 1, 0); 
-                player.GetSkillManager().SpawnAbility(newVec, list[i].name);
-            }
-        }
-        if (Input.GetKeyDown(KeyCode.Backspace)) 
-        {
-            restart.RestartScene();
-        }
-        if (isPaused == true || Cursorvisible )
+        if (isPaused == true || Cursorvisible)
             Cursor.visible = true;
-        else 
+        else
             Cursor.visible = false;
-
-		if (Input.GetKeyDown(KeyCode.M))
-		{//teleport the player to the boss room
-			ChangeTimeScale(.1f, 20);
-		}
-	}
+    }
     public Vector2 GetBossRoomLocation()
     {
         return BossRoomLocation;
