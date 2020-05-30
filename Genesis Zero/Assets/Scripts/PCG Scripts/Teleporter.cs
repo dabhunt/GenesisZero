@@ -51,6 +51,10 @@ public class Teleporter : MonoBehaviour
 	{
 		canvas.transform.Find("BlackOverlay").GetComponent<SpriteFade>().color = Color.white;
 		canvas.transform.Find("BlackOverlay").GetComponent<SpriteFade>().FadeIn(toWhite);
+		Camera cam = Camera.main;
+		cam.GetComponentInParent<CinemachineBrain>().enabled = false;
+		cam.transform.position = new Vector3(player.transform.position.x, cam.transform.position.y, cam.transform.position.z);
+		//GameObject.FindGameObjectWithTag("CMcam").GetComponent<CinemachineVirtualCamera>().enabled = false;
 		Invoke("CallTeleportFromAnimation", toWhite);
 	}
 	private void SkipTutorial()
@@ -83,12 +87,13 @@ public class Teleporter : MonoBehaviour
 			player.position = StateManager.instance.GetBossRoomLocation();
 		Player.instance.Heal(50);
 		player.position = new Vector2(destinationX, destinationY);
-		//temporary code
 		EnemyManager.ModifyDifficultyMulti(1.3f);
-		//temporary code ^
+		Camera.main.GetComponentInParent<CinemachineBrain>().enabled = true;
 		buge.transform.position = player.position;
 		buge.GetComponent<BUGE>().FollowingPlayer(true);
-		//Camera.main.GetComponent<CinemachineBrain>().
+
+		//Camera.main.transform.position = new Vector2(player.transform.position.x, player.transform.position.y);
+		//Camera.main.GetComponent<CinemachineBrain>().enabled = true;
 		//Camera.main.transform.position = new Vector3(player.position.x, player.position.y, -35.6f);
 		//GameObject.FindWithTag("CamCollider").transform.position = new Vector2(destinationX, GameObject.FindWithTag("CamCollider").transform.position.y);
 		TileManager.instance.playerOnlevel++;

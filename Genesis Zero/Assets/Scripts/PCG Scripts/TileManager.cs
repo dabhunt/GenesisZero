@@ -139,8 +139,6 @@ public class TileManager : MonoBehaviour
 				if (curMatLevel > LastMatLevel)
 				{ //guarantee the creation of a teleporter on each level
 					newestTele = NewTeleporter(mat);
-					print("new tele: "+ newestTele.name);
-					print("curmatlevel" + curMatLevel);
 				}
 				if (Random.value <= teleSpawnChance)
 				{ //if it passes the spawnchance, update the position

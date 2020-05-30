@@ -43,6 +43,7 @@ public class RightClick : MonoBehaviour , IPointerEnterHandler, IPointerExitHand
         //destroy the mod after 3 seconds to prevent abuse
         mod.AddComponent<DestroyAfterXTime>().time = 3;
         mod.GetComponent<SkillPickup>().SetDropped(true);
+        mod.AddComponent<InactiveFlag>();
         Destroy(mod.GetComponent<InteractPopup>());
     }
 }
