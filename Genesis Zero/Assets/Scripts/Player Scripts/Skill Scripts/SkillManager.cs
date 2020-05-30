@@ -175,6 +175,8 @@ public class SkillManager
     {
         int multi = IsAdding ? 1 : -1;
         player.GetHealth().AddMaxValue(skill.health * multi);
+        if (player.GetHealth().GetValue() < 1)
+            player.GetHealth().SetValue(1);
         player.GetDamage().AddMaxValue(skill.damage * multi);
         player.GetSpeed().AddMaxValue(skill.speed * multi);
         player.GetAttackSpeed().AddMaxValue(skill.attackspeed * multi);

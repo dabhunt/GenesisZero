@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.SceneManagement;
 using UnityEngine.UI;
+using DG.Tweening;
 using UnityEngine.Rendering.PostProcessing;
 
 public class StateManager : MonoBehaviour
@@ -22,6 +23,7 @@ public class StateManager : MonoBehaviour
     public bool Cursorvisible = true;
     public bool GameOver = false;
     public bool InTutorial = true;
+    private float tweenduration = 0;
     private void Awake()
     {
         if (instance == null)
@@ -275,7 +277,21 @@ public class StateManager : MonoBehaviour
                 child.gameObject.SetActive(enabled);
         }
     }
-
+    public void TintScreenForDuration(Color color, float duration, float tweenduration, float endAlpha)
+    {
+        print("tint func runs");
+        Image overlay = canvas.transform.Find("BlackUnderUI").GetComponent<Image>();
+        overlay.color = new Color(color.r, color.g, color.b, 0);
+        this.tweenduration = tweenduration;
+        overlay.enabled = true;
+        overlay.DOFade(endAlpha, tweenduration);
+        Invoke("FadeOut", duration-tweenduration);
+    }
+    private void FadeOut()
+    {
+        Image overlay = canvas.transform.Find("BlackUnderUI").GetComponent<Image>();
+        overlay.DOFade(0, tweenduration);
+    }
     public void ToggleOptionsMenu(bool toggle)
     {
         //pauseMenu.SetActive(!toggle);

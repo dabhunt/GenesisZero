@@ -81,10 +81,10 @@ public class InteractInterface : MonoBehaviour
             return null;
         //evaluates the distance between the player and each object of this tag
         GameObject closest = objects[0];
-        float shortest = Vector2.Distance(player.transform.position, objects[0].transform.position);
+        float shortest = Vector2.Distance(Player.instance.CenterPoint(), objects[0].transform.position);
         for (int i = 0; i < objects.Count; i++)
         {
-            float dist = Vector2.Distance(player.transform.position, objects[i].transform.position);
+            float dist = Vector2.Distance(Player.instance.CenterPoint(), objects[i].transform.position);
             if (dist < shortest)
             {
                 //if the Inactiveflag component is on the script, it ignores it
