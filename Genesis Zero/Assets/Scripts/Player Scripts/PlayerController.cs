@@ -276,7 +276,6 @@ public class PlayerController : MonoBehaviour
             }
             else if (isJumping && jumpCount > 0)
             {
-                Debug.Log("DJump");
                 jumpCount--;
                 isJumping = true;
                 vertVel = doubleJumpStrength;
@@ -464,6 +463,8 @@ public class PlayerController : MonoBehaviour
                 //VFXManager.instance.PlayEffect("VFX_PlayerDashStart", transform.position);
 
                 GameObject dashstart = VFXManager.instance.PlayEffectOnObject("VFX_PlayerDashStart", this.gameObject, new Vector2(0,1));
+                if (IsFacingRight() == false)
+                    dashstart.transform.Rotate(new Vector3(0, 180, 0));
                 gameObject.GetComponentInChildren<SkinnedMeshRenderer>().enabled = false; //TEMPORARY CHANGE THIS
                 GameObject dash = VFXManager.instance.PlayEffectForDuration("VFX_PlayerDashEffect", transform.position, rollDuration);
                 dash.transform.SetParent(transform);

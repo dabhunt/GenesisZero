@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
-
+using Cinemachine;
 public class Teleporter : MonoBehaviour
 {
 	public float destinationX = -120;
@@ -81,16 +81,17 @@ public class Teleporter : MonoBehaviour
 		StateManager.instance.InTutorial = false;
 		if (BossRoomOverride == true)
 			player.position = StateManager.instance.GetBossRoomLocation();
-		
+		Player.instance.Heal(50);
 		player.position = new Vector2(destinationX, destinationY);
 		//temporary code
 		EnemyManager.ModifyDifficultyMulti(1.3f);
 		//temporary code ^
 		buge.transform.position = player.position;
 		buge.GetComponent<BUGE>().FollowingPlayer(true);
+		//Camera.main.GetComponent<CinemachineBrain>().
 		//Camera.main.transform.position = new Vector3(player.position.x, player.position.y, -35.6f);
 		//GameObject.FindWithTag("CamCollider").transform.position = new Vector2(destinationX, GameObject.FindWithTag("CamCollider").transform.position.y);
-		TileManager.instance.curlevel++;
+		TileManager.instance.playerOnlevel++;
 	}
 	public void SetDestination(Vector2 destination)
 	{

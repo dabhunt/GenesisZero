@@ -179,7 +179,7 @@ public class SaveLoadManager : MonoBehaviour
     private MapData GetMapData()
     {
         MapData data = new MapData();
-        //data.seed = TileManager.instance.GetSeed();
+        data.seed = TileManager.instance.GetSeed();
         data.version = Application.version;
         return data;
     }

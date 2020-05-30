@@ -68,6 +68,7 @@ public class SkillDisplay : MonoBehaviour
         {
             Destroy(sk.gameObject);
         }
+
         skilldisplay.Clear();
         int modnum = 0;
         for (int i = 0; i < skills.Count; i++)

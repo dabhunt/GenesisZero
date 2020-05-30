@@ -16,7 +16,7 @@ public class TutorialTriggers : MonoBehaviour
     {
         if (player != null && BUGE.instance.followingPlayer == true && StateManager.instance.InTutorial)
         {
-            if (DialogueManager.instance.GetDialoguePlayedAmount("BUG-E_Heatbar") < 1 && player.GetComponent<OverHeat>().GetHeat() >= player.GetComponent<OverHeat>().GetMaxHeat()*.6)
+            if (DialogueManager.instance.GetDialoguePlayedAmount("BUG-E_Heatbar") < 1 && player.GetComponent<OverHeat>().GetHeat() >= player.GetComponent<OverHeat>().GetMaxHeat()*.4f)
                 DialogueManager.instance.TriggerDialogue("BUG-E_Heatbar", true);
             if (DialogueManager.instance.GetDialoguePlayedAmount("BUG-E_Modifiers") < 1 && Player.instance.GetSkillManager().GetModAmount() > 0)
                 DialogueManager.instance.TriggerDialogue("BUG-E_Modifiers", true);
