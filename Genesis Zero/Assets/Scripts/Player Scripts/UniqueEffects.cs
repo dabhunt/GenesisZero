@@ -90,6 +90,7 @@ public class UniqueEffects : MonoBehaviour
             PowerSurge();
         }
         player.UpdateStats();
+        StatDisplay.instance.UpdateStats();
     }
     private void Update()
     {

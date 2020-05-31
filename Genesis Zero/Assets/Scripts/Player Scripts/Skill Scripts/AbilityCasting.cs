@@ -10,8 +10,14 @@ public class AbilityCasting : MonoBehaviour
     SkillManager skillmanager;
     public bool PhaseTrigger = false;
     [Header("Time Dilation Ability")]
-    public float timeScale = .5f;
+    public Color TS_screenTint = Color.blue;
+    public float TS_alpha = .03f;
+    public float TS_tweenTime = .4f;
+    public float timeScale = .4f;
     public float TS_effectDuration = 3.2f;
+    public float TS_offset = 1;
+
+
     [Header("Multi Shot Ability (Active)")]
     //how long the effect lasts
     public float MS_ActiveTime = 5f;
@@ -51,6 +57,7 @@ public class AbilityCasting : MonoBehaviour
     private AbilityCD ui;
     private Vector2 aimDir;
     private Vector2 WorldXhair;
+    public bool cooldownCheatOn = false;
     // Start is called before the first frame update
     void Start()
     {
@@ -110,7 +117,7 @@ public class AbilityCasting : MonoBehaviour
                 CastOverdrive(num);
                 break;
             case "Time Dilation":
-                InitializeAbility(9, 0, 0, num);
+                InitializeAbility(7, 0, TS_effectDuration-TS_offset, num);
                 CastSlowDown();
                 break;
             case "Culling Blast":
@@ -130,15 +137,15 @@ public class AbilityCasting : MonoBehaviour
             case "Heat Vent Shield":
                 if (player.GetOverHeat().GetHeat() < 1)
                     return; //prevent player from using shield at 0 heat, since it does nothing
-                InitializeAbility(6, 0, 4, num);
+                InitializeAbility(5, 0, 4, num);
                 CastHeatShield(num);
                 break;
             case "Fire Dash":
-                InitializeAbility(4, 0, 0, num);
+                InitializeAbility(5, 0, 0, num);
                 CastFireDash();
                 break;
             case "Singularity":
-                InitializeAbility(7, 0, 0, num);
+                InitializeAbility(5, 0, 0, num);
                 CastSingularity();
                 break;
             case "Manic Titan":
@@ -173,7 +180,7 @@ public class AbilityCasting : MonoBehaviour
 
     private void InitializeAbility1(float cooldown, float casttime, float activeTime)
     {
-        if (AbilityCooldown1 <= 0)
+        if (AbilityCooldown1 <= 0 && !cooldownCheatOn)
         {
             AbilityCooldown1 = cooldown;
             TotalAbilityCooldown1 = cooldown;
@@ -189,7 +196,7 @@ public class AbilityCasting : MonoBehaviour
 
     private void InitializeAbility2(float cooldown, float casttime, float activeTime)
     {
-        if (AbilityCooldown2 <= 0) {
+        if (AbilityCooldown2 <= 0 && !cooldownCheatOn) {
             AbilityCooldown2 = cooldown;
             TotalAbilityCooldown2 = cooldown;
         }
@@ -218,8 +225,6 @@ public class AbilityCasting : MonoBehaviour
         int ActiveSlot = IsAbilityActive("Culling Blast");
         if (SL_ActiveLastFrame > 0 && ActiveSlot == -1)
         {
-            
-            
             //OPTION 1
             if (SL_ActiveLastFrame == 1)
                CastAbility1();
@@ -349,7 +354,8 @@ public class AbilityCasting : MonoBehaviour
     private void CastSlowDown()
     {
         StateManager.instance.ChangeTimeScale(timeScale, TS_effectDuration);
-        VFXManager.instance.TimeEffect(TS_effectDuration, 1);
+        VFXManager.instance.TimeEffect(TS_effectDuration-TS_offset, 1);
+        StateManager.instance.TintScreenForDuration(TS_screenTint,TS_effectDuration-TS_offset, TS_tweenTime, TS_alpha);
     }
 
     private void CastSpartanLaser(int num)
@@ -458,9 +464,9 @@ public class AbilityCasting : MonoBehaviour
     }
     private void CastSingularity()
     {
-        GameObject hitbox = SpawnGameObject("Sing_Projectile", CastAtAngle(pc.CenterPoint(), aimDir, .5f), GetComponent<Gun>().firePoint.rotation);
+        GameObject hitbox = SpawnGameObject("Sing_Projectile", GetComponent<Gun>().firePoint.position, GetComponent<Gun>().firePoint.rotation);
         hitbox.GetComponent<Hitbox>().InitializeHitbox(1, player);
-        hitbox.GetComponent<Projectile>().lifeTime = ((WorldXhair - (Vector2)pc.CenterPoint()).magnitude / hitbox.GetComponent<Projectile>().speed);
+        hitbox.GetComponent<Projectile>().lifeTime = ((WorldXhair - (Vector2)GetComponent<Gun>().firePoint.position).magnitude / hitbox.GetComponent<Projectile>().speed);
         if (hitbox.GetComponent<EmitOnDestroy>().Emits[0] != null)
         {
             GameObject pull = hitbox.GetComponent<EmitOnDestroy>().Emits[0];
@@ -468,7 +474,7 @@ public class AbilityCasting : MonoBehaviour
         if (hitbox.GetComponent<EmitOnDestroy>().Emits[0].GetComponent<EmitOnDestroy>().Emits[0] != null)
         {
             GameObject explosion = hitbox.GetComponent<EmitOnDestroy>().Emits[0].GetComponent<EmitOnDestroy>().Emits[0];
-            explosion.GetComponent<Hitbox>().InitializeHitbox(player.GetAbilityPowerAmount()*.8f, player);
+            explosion.GetComponent<Hitbox>().InitializeHitbox(player.GetAbilityPowerAmount()*1, player);
         }
         EndBonus();
     }

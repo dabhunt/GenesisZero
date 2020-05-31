@@ -23,7 +23,7 @@ public class FindingBuge : MonoBehaviour
 	{
 		if (StateManager.instance.InTutorial && Input.GetKeyDown(KeyCode.F))
 		{
-			GetComponent<BUGE>().followingPlayer = true;
+			GetComponent<BUGE>().FollowingPlayer(true);
 			//play starting dialogue and pause the game with true param
 			DialogueManager.instance.TriggerDialogue("StartDialogue", true, false);
 			Destroy(gameObject.GetComponent<FindingBuge>());

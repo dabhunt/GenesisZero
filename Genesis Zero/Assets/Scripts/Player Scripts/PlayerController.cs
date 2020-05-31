@@ -33,6 +33,7 @@ public class PlayerController : MonoBehaviour
 
     [Header("Physics")]
     public float gravity = 18f;
+    private float resetGravity;
     public float terminalVel = 24f;
 
     public float fallSpeedMult = 1.45f;
@@ -79,6 +80,8 @@ public class PlayerController : MonoBehaviour
     private float jumpPressedTime;
     private float timeRolled = 0;
     private float rollCooldown = 0;
+    private float lastPressed = 0;
+    private float dJumpDelay = 0.15f;
     private int rollDirection;
     private Gun gun;
 
@@ -86,6 +89,7 @@ public class PlayerController : MonoBehaviour
     private Animator animator;
     private bool isGrounded;
     private bool isJumping;
+    private bool isDoubleJumping;
     private bool isRolling;
     private bool isDashing;
     private bool isFacingRight = true;
@@ -114,6 +118,7 @@ public class PlayerController : MonoBehaviour
         player = GetComponent<Player>();
         camRef = Camera.main;
         worldXhair.transform.position = transform.position;
+        resetGravity = gravity;
     }
 
     private void Update()
@@ -258,24 +263,22 @@ public class PlayerController : MonoBehaviour
     {
         if (ctx.performed)
         {
+            if (Time.time - lastPressed < dJumpDelay) return;
             if (!inputActions.PlayerControls.enabled) return;
             if (isRolling) return;
             if (isGrounded && jumpCount < 2) return;
             jumpPressedTime = jumpBufferTime;
-            if (!isJumping && jumpCount > 0)
+            if (!isJumping && jumpCount > 1)
             {
+                lastPressed = Time.time;
                 jumpCount--;
-                //animator.SetTrigger("startJump");
                 sound.Jump();
-                //StartCoroutine(ResetTrigger("startJump", triggerResetTime));
                 isJumping = true;
                 vertVel = jumpStrength;
             }
-            else if (!isGrounded && jumpCount > 0)
+            else if (isJumping && jumpCount > 0)
             {
                 jumpCount--;
-                //animator.SetTrigger("startDoubleJump");
-                //StartCoroutine(ResetTrigger("startDoubleJump", triggerResetTime));
                 isJumping = true;
                 vertVel = doubleJumpStrength;
                 if (isFacingRight && movementInput.x <= 0)
@@ -462,6 +465,8 @@ public class PlayerController : MonoBehaviour
                 //VFXManager.instance.PlayEffect("VFX_PlayerDashStart", transform.position);
 
                 GameObject dashstart = VFXManager.instance.PlayEffectOnObject("VFX_PlayerDashStart", this.gameObject, new Vector2(0,1));
+                if (IsFacingRight() == false)
+                    dashstart.transform.Rotate(new Vector3(0, 180, 0));
                 gameObject.GetComponentInChildren<SkinnedMeshRenderer>().enabled = false; //TEMPORARY CHANGE THIS
                 GameObject dash = VFXManager.instance.PlayEffectForDuration("VFX_PlayerDashEffect", transform.position, rollDuration);
                 dash.transform.SetParent(transform);
@@ -739,7 +744,10 @@ public class PlayerController : MonoBehaviour
     {
         vertVel = vel;
     }
-
+    public float GetNormalGravity()
+    {
+        return resetGravity;
+    }
     public void Dash(float duration)
     {
         isDashing = true;

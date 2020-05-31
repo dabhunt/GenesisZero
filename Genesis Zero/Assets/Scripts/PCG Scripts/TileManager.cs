@@ -24,11 +24,9 @@ public class TileManager : MonoBehaviour
 	public float merchantSpawnChance = .2f;
 	public float scrapConverterSpawnChance = .2f;
 	[Header("Teleporter Spawning")]
-	public float teleSpawnChance = .00f;//3.0%
-	public float teleIncreasePerIteration = .03f;//1% increase each time
-	public int teleIncreaseChanceEvery = 10;//every 10 cubbies the chance of a teleporter spawning increases
+	public float teleSpawnChance = .03f;
 	public int DontSpawnUntilAfter = 30;//the minimum amount of cubbies that must be passed before a teleporter can spawn
-	
+	public float ForceTeleSpawnDist = 15; // a teleporter mat less than this distance away from the end building will forcibly spawn a teleporter
 	[Header("Prefab Containers")]
 	private GameObject[] tilePrefabs;
 	public GameObject[] industrialTilePrefabs;
@@ -42,12 +40,15 @@ public class TileManager : MonoBehaviour
 	public Vector2 MinMaxEnemies = new Vector2(3, 5);
 	[Range(0, 1)]
 	public float SpawnChance = .1f;
-	
+	public int playerOnlevel = 0;
 	//Private Variables
 	private float currentPos = 22.0f;
 	private float tileLength = 22.0f;
 	private float tileHeight = 6.5f;
-	public int curlevel = 0;
+	private int seedValue;
+	private float levelTracking;
+	private List<GameObject> endBuildings;
+	private List<GameObject> teleporterInstances;
 	private void Awake()
 	{
 		if (instance == null)
@@ -60,9 +61,19 @@ public class TileManager : MonoBehaviour
 	}
 	private void Start()
     {
+		endBuildings = new List<GameObject>();
 		tilePrefabs = industrialTilePrefabs;
 		//tilePrefabs = cityTilePrefabs;
-		
+		if (SaveLoadManager.instance.newGame == true)
+		{
+
+			seedValue = Random.Range(0, 9999999);
+			Random.InitState(seedValue);
+		}
+		else
+		{
+			seedValue = SaveLoadManager.instance.LoadMapData().seed;
+		}
 		//Level 1
 		int level = 1;
 		currentPos = levelSpacing * level + 22;
@@ -72,6 +83,7 @@ public class TileManager : MonoBehaviour
 		}
 		Vector3 spawnVector = new Vector3(1, 0, 0) * currentPos + new Vector3(0, -2, 0); //spawnVector for tiles
 		GameObject endBuilding = (GameObject)GameObject.Instantiate(levelEndCityBuilding, spawnVector, Quaternion.Euler(0, 141.6f, 0));
+		
 		//tilePrefabs = industrialTilePrefabs;
 		tilePrefabs = cityTilePrefabs;
 		//Level 2
@@ -88,14 +100,17 @@ public class TileManager : MonoBehaviour
 		//currentPos = levelSpacing*level + 22;
 		//for (int i = 0; i < numberOfBuildings; ++i)
 		//{
-			//generateBuilding(Random.Range(minBuildingWidth, maxBuildingWidth), Random.Range(minBuildingTileCount, maxBuildingTileCount), level);
+		//generateBuilding(Random.Range(minBuildingWidth, maxBuildingWidth), Random.Range(minBuildingTileCount, maxBuildingTileCount), level);
 		//}
-		
+
 		//Placemat PCG Pass
-		bool AllTeleportersSpawned = false;
-		List<GameObject> teleporterInstances = new List<GameObject>();
-		float levelTracking = levelSpacing; //start after the scrap yard section
-		int iter = 0;
+		levelTracking = levelSpacing;
+		//bool AllTeleportersSpawned = false;
+		teleporterInstances = new List<GameObject>();
+		int curMatLevel = Mathf.RoundToInt(levelSpacing/1000);
+		int LastMatLevel = 0;
+		GameObject newestTele = null;
+
 		foreach (GameObject mat in GameObject.FindGameObjectsWithTag("Placemat"))
 		{
 			if (mat.name == "GodHeadMat" && Random.value <= godHeadSpawnChance) //Case 1: God Heads
@@ -118,49 +133,54 @@ public class TileManager : MonoBehaviour
 				GameObject newScrap = Instantiate(interactablePrefabs[3]) as GameObject;
 				newScrap.transform.position = mat.transform.position;
 			}
-			else if (mat.name == "TeleportMat" && Random.value <= teleSpawnChance && AllTeleportersSpawned == false)
+			else if (mat.name == "TeleportMat")
 			{
-				if (mat.transform.position.x > levelTracking)
-				{
-					GameObject newTele = Instantiate(interactablePrefabs[4]) as GameObject;
-					teleporterInstances.Add(newTele);
-					if (teleporterInstances.Count < 2)
-					{
-						newTele.GetComponent<Teleporter>().BossRoomOverride = true; //makes this TP go to boss room instead
-						newTele.name = "Teleporter to Level " + (teleporterInstances.Count);
-						levelTracking += levelSpacing;
-						newTele.GetComponent<Teleporter>().SetDestination(new Vector2(levelTracking + 10, 40));
-						teleporterInstances[teleporterInstances.Count - 1].transform.position = mat.transform.position;
-					}
-					else 
-					{
-						newTele.name = "Teleporter to Boss Room";
-						teleporterInstances[teleporterInstances.Count - 1].transform.position = mat.transform.position;
-						AllTeleportersSpawned = true;
-					}	
-					teleSpawnChance = 0;
-					iter = 0;
+				curMatLevel = Mathf.FloorToInt(mat.transform.position.x / levelSpacing);
+				if (curMatLevel > LastMatLevel)
+				{ //guarantee the creation of a teleporter on each level
+					newestTele = NewTeleporter(mat);
 				}
-
+				if (Random.value <= teleSpawnChance)
+				{ //if it passes the spawnchance, update the position
+					newestTele.transform.position = mat.transform.position;
+				}
+				LastMatLevel = curMatLevel;
 			}
-			iter ++;
-			if (mat.transform.position.x < levelTracking) //if we aren't on the next level yet, don't increase iter
-				iter = 0; //keeps track of how many cubbies have been checked on this level
-			//if the iteration exceeds the don't spawnuntilnumber, and iter is divisible by teleIncrease, increase the spawnchance of teleporters
-			if (iter >= DontSpawnUntilAfter && iter % teleIncreaseChanceEvery == 0)
-				teleSpawnChance += teleIncreasePerIteration;
+			//if (newestTele != null && newestTele.GetComponent<Teleporter>().BossRoomOverride == true)
+					//AllTeleportersSpawned = true; // if a teleporter with bossroom override has spawned, there are no more portals to make
+			
 		}
-		
 		//this should be turned on later to disable the prefab gameobject
 		//portalPrefab.SetActive(false);
     }
+	public int GetSeed()
+	{
+		return seedValue;
+	}
+	private GameObject NewTeleporter(GameObject mat)
+	{
+		GameObject newTele = Instantiate(interactablePrefabs[4]) as GameObject;
+		teleporterInstances.Add(newTele);
+		if (teleporterInstances.Count < 2)
+		{
+			newTele.name = "Teleporter in Level " + (teleporterInstances.Count);
+			levelTracking += levelSpacing;
+			newTele.GetComponent<Teleporter>().SetDestination(new Vector2(levelTracking + 5, 40));
+			teleporterInstances[teleporterInstances.Count - 1].transform.position = mat.transform.position;
+		}
+		else
+		{
+			newTele.name = "Teleporter to Boss Room";
+			teleporterInstances[teleporterInstances.Count - 1].transform.position = mat.transform.position;
+			newTele.GetComponent<Teleporter>().BossRoomOverride = true; //makes this TP go to boss room instead
+		}
+		return newTele;
+	}
+	public void SetSeed(int num)
+	{
+		seedValue = num;
+	}
 
-    // Update is called once per frame
-    private void Update()
-    {
-        
-    }
-	
 	private void generateBuilding(int width, int TileCount, int levelNumber)
 	{
 		//Variables

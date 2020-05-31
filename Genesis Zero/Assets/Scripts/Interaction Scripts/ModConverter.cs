@@ -71,6 +71,7 @@ public class ModConverter : MonoBehaviour
         InteractPopup iPop = GetComponent<InteractPopup>();
         iPop.DestroyPopUp();
         Destroy(iPop);
+        this.transform.Find("Light").gameObject.SetActive(false);
         //play breaking down animation?
         return newMod;
     }

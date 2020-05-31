@@ -13,7 +13,7 @@ public class Player : Pawn
     private float MaxEssence = 50f;
     private float MaxKeys = 3f;
     private float MaxCapsules = 5;
-    private float healthPerStack = 3;
+    private float healthPerStack = 4;
     public static Player instance;
     private void Awake()
     {
