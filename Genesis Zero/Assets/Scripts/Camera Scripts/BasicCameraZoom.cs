@@ -96,7 +96,7 @@ public class BasicCameraZoom : MonoBehaviour
                 reset = false;
                 break;
             }
-            myCamera.fieldOfView = start + ((target - start) * f / time);
+            myCamera.fieldOfView = Mathf.Clamp(start + ((target - start) * f / time), fovMin, fovMax);
             yield return new WaitForSeconds(Time.fixedDeltaTime);
         }
         spanding = false;
