@@ -288,6 +288,7 @@ public class PlayerController : MonoBehaviour
                 jumpCount--;
                 isJumping = true;
                 vertVel = doubleJumpStrength;
+				VFXManager.instance.PlayEffect("VFX_DoubleJump", transform.position + new Vector3(0, .5f, 0));
                 if (isFacingRight && movementInput.x <= 0)
                     currentSpeed = 0;
                 if (!isFacingRight && movementInput.x >= 0)
