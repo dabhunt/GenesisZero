@@ -21,6 +21,7 @@ public class PlayerController : MonoBehaviour
     public float horCastLength = 0.45f;
     public float verCastLength = 1.05f;
     public float groundCheckPadding = 0.15f;
+    public float jumpingHitboxHeight = 1f;
     [Header("Phase Dash")]
     public Color phaseColor = Color.black;
     public float rollDuration = 3f;
@@ -84,6 +85,9 @@ public class PlayerController : MonoBehaviour
     private float dJumpDelay = 0.15f;
     private int rollDirection;
     private Gun gun;
+    private float currentHitboxHeight;
+    private Vector3 currentHitBoxCenter;
+    private CapsuleCollider hurtBoxCol;
 
     //Animation/States Variables
     private Animator animator;
@@ -119,6 +123,9 @@ public class PlayerController : MonoBehaviour
         camRef = Camera.main;
         worldXhair.transform.position = transform.position;
         resetGravity = gravity;
+        hurtBoxCol = gameObject.GetComponent<Hurtbox>().colliders[0].GetComponent<CapsuleCollider>();
+        currentHitboxHeight = hurtBoxCol.height;
+        currentHitBoxCenter = hurtBoxCol.center;
     }
 
     private void Update()
@@ -263,7 +270,6 @@ public class PlayerController : MonoBehaviour
     {
         if (ctx.performed)
         {
-            if (Time.time - lastPressed < dJumpDelay) return;
             if (!inputActions.PlayerControls.enabled) return;
             if (isRolling) return;
             if (isGrounded && jumpCount < 2) return;
@@ -278,6 +284,7 @@ public class PlayerController : MonoBehaviour
             }
             else if (isJumping && jumpCount > 0)
             {
+                if (Time.time - lastPressed < dJumpDelay) return;
                 jumpCount--;
                 isJumping = true;
                 vertVel = doubleJumpStrength;
@@ -342,8 +349,9 @@ public class PlayerController : MonoBehaviour
 
         if (IsBlocked(Vector3.down))
         {
-
             isGrounded = true;
+            hurtBoxCol.center = currentHitBoxCenter;
+            hurtBoxCol.height = currentHitboxHeight;
             transform.Find("Center").Find("Down").gameObject.SetActive(false);
             if (cols.Length != 0)
             {
@@ -371,6 +379,8 @@ public class PlayerController : MonoBehaviour
         }
         else
         {
+            hurtBoxCol.center = Vector3.zero;
+            hurtBoxCol.height = jumpingHitboxHeight;
             isGrounded = false;
         }
     }
