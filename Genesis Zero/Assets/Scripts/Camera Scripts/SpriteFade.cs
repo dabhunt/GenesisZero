@@ -8,6 +8,7 @@ public class SpriteFade : MonoBehaviour
 {
     // Start is called before the first frame update
     public Color color;
+    private Color resetColor;
     public bool startVisible = false;
     public bool FadeOutAtStart = false;
     public float tweenBack = .75f;
@@ -26,6 +27,7 @@ public class SpriteFade : MonoBehaviour
             color.a = 1;
             FadeOut(6);
         }
+        resetColor = color;
     }
     void Update()
     {
@@ -50,6 +52,10 @@ public class SpriteFade : MonoBehaviour
     public void TweenBack()
     {
         DOTween.To(() => color.a, x => color.a = x, 0, tweenBack*.9f);
+    }
+    public void ResetColor()
+    {
+        color = resetColor;
     }
     public void HurtTween(float hurtamount)
     {

@@ -479,7 +479,7 @@ public class Pawn : MonoBehaviour
         {
             if (!GetComponent<Player>() && gameObject.tag == "Enemy")
             {
-                GameObject playerSearch = GameObject.FindGameObjectWithTag("Player");
+                GameObject playerSearch = Player.instance.gameObject;
                 if (playerSearch != null)
                 {
                     Player playerComponent = playerSearch.GetComponent<Player>();
@@ -489,7 +489,11 @@ public class Pawn : MonoBehaviour
                     }
                 }
             }
-
+            Collider[] cols = this.GetComponentsInChildren<Collider>();
+            for (int i= 0; i < cols.Length; i++)
+            {
+                cols[i].isTrigger = true;
+            }
             //Allow the animator to control when the object is destroyed
             if (!HasAnimationEventController)
             {

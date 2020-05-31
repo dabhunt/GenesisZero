@@ -25,7 +25,7 @@ public class Teleporter : MonoBehaviour
 		player = GameObject.FindWithTag("Player").transform;    //Grabs the player transform position to use in the rest of the script.
 		ani = GetComponent<Animator>();
 		canvas = GameObject.FindGameObjectWithTag("CanvasUI");
-		InvokeRepeating("portalAnimation", 1f, .5f);
+		InvokeRepeating("portalAnimation", 1f, .3f);
 	}
 	private void OnTriggerEnter(Collider other)
 	{
@@ -65,9 +65,9 @@ public class Teleporter : MonoBehaviour
 			sk.AddSkill(sk.GetRandomModsByChance(1)[0]);
 		DialogueManager.instance.TriggerDialogue("BUG-E_SkipTut");
 		Destroy(gameObject.GetComponent<FindingBuge>());
-		GetComponent<InteractPopup>().SetInteractable(false);
-		GetComponent<InteractPopup>().DestroyPopUp();
-		GetComponent<InteractPopup>().SetText("Right Click to Interact");
+		buge.GetComponent<InteractPopup>().SetInteractable(false);
+		buge.GetComponent<InteractPopup>().DestroyPopUp();
+		buge.GetComponent<InteractPopup>().SetText("Right Click to Interact");
 	}
 	private void CallTeleportFromAnimation()
 	{

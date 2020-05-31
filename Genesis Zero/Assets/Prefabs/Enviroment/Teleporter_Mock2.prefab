@@ -60,6 +60,7 @@ MeshRenderer:
   m_LightProbeUsage: 1
   m_ReflectionProbeUsage: 1
   m_RayTracingMode: 2
+  m_RayTraceProcedural: 0
   m_RenderingLayerMask: 1
   m_RendererPriority: 0
   m_Materials:
@@ -84,6 +85,7 @@ MeshRenderer:
   m_SortingLayerID: 0
   m_SortingLayer: 0
   m_SortingOrder: 0
+  m_AdditionalVertexStreams: {fileID: 0}
 --- !u!65 &8225314491067982794
 BoxCollider:
   m_ObjectHideFlags: 0
@@ -112,7 +114,12 @@ MonoBehaviour:
   destinationX: -120
   destinationY: 16
   destinationZ: 0
-  portalactivedistance: 9.5
+  BossRoomOverride: 0
+  toWhite: 0.5
+  stayWhite: 0.6
+  fadeWhite: 1
+  portalactivedistance: 11
+  canvas: {fileID: 0}
 --- !u!73398921 &2426870143308676216
 VFXRenderer:
   m_ObjectHideFlags: 0
@@ -128,6 +135,7 @@ VFXRenderer:
   m_LightProbeUsage: 0
   m_ReflectionProbeUsage: 0
   m_RayTracingMode: 0
+  m_RayTraceProcedural: 0
   m_RenderingLayerMask: 1
   m_RendererPriority: 0
   m_Materials:
