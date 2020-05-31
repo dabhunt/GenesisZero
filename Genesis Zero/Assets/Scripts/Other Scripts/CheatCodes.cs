@@ -31,8 +31,12 @@ public class CheatCodes : MonoBehaviour
     {
         if (Input.GetKeyDown(KeyCode.PageDown))
         {
-            CheatPanel.SetActive(!CheatPanel.activeSelf);
+            ToggleCheats();
         }
+    }
+    public void ToggleCheats()
+    {
+        CheatPanel.SetActive(!CheatPanel.activeSelf);
     }
     public void NextLevel()
     {
