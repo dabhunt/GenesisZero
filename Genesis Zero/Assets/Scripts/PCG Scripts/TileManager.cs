@@ -120,13 +120,16 @@ public class TileManager : MonoBehaviour
 		int iter = 0;
 		foreach (GameObject mat in GameObject.FindGameObjectsWithTag("Placemat"))
 		{
-			curMatLevel = Mathf.FloorToInt(mat.transform.position.x / levelSpacing);
-			if (curMatLevel > 0)
+			
+			curMatLevel = Mathf.FloorToInt(mat.transform.position.x / levelSpacing); //convert X position to what level we are on
+			//print("mat.transform: " + mat.transform.position.x + " = curmatlevel: " + curMatLevel);
+			if (mat.transform.position.x > levelSpacing)
 			{
 				if (mat.name == "GodHeadMat" && Random.value <= godHeadSpawnChance) //Case 1: God Heads
 				{
 					GameObject newGodHead = Instantiate(interactablePrefabs[0]) as GameObject;
 					newGodHead.transform.position = mat.transform.position;
+					newGodHead.transform.SetParent(mat.transform.parent);
 				}
 				else if (mat.name == "ChestMat" || mat.name == "MerchantMat" || mat.name == "ScrapMat")
 				{
@@ -139,21 +142,22 @@ public class TileManager : MonoBehaviour
 						{
 							newInteractable = Instantiate(interactablePrefabs[5]) as GameObject; // replace with Guidance Arrow
 							newInteractable.name = "Guidance Arrow";
-							newInteractable.transform.position = mat.transform.position;
 							guideArrows[curMatLevel - 1].Add(newInteractable); //keep track of guide arrows so that they can point at the teleporter properly
 						}
+						newInteractable.transform.position = mat.transform.position;
+						newInteractable.transform.SetParent(mat.transform.parent);
 					}
 				}
 				else if (mat.name == "TeleportMat")
 				{
-					print("curmatlevel: " + curMatLevel);
+					//print("curmatlevel: " + curMatLevel);
 					if (curMatLevel > LastMatLevel)//guarantees the creation of a teleporter on each level
 					{
 						if (curMatLevel > 1)
 						{
 							foreach (GameObject arrow in guideArrows[curMatLevel - 2])
 							{
-								print("curmatlevel: " + curMatLevel);
+								//print("curmatlevel: " + curMatLevel);
 								if (arrow != null)
 									arrow.transform.LookAt(newestTele.transform); //make all arrows point at the tele for the level just finished
 							}

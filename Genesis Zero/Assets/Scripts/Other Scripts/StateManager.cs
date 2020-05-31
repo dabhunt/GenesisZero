@@ -203,6 +203,17 @@ public class StateManager : MonoBehaviour
         //pauseMenu.SetActive(!toggle);
         optionsMenu.SetActive(toggle);
     }
+    public void RecursiveLayerChange(Transform t, string layerName)
+    {
+        foreach (Transform child in t)
+        {
+            this.gameObject.layer = LayerMask.NameToLayer("Dead");
+            if (child.childCount > 0)
+            {
+                RecursiveLayerChange(child, layerName);
+            }
+        }
+    }
 
     IEnumerator LoadSceneCoroutine()
     {

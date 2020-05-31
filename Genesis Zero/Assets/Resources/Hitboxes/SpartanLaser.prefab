@@ -197,12 +197,12 @@ MonoBehaviour:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 7446024088350224124}
-  m_Enabled: 0
+  m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 44b85e418aaf68e47a7cc38911576e23, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  Detachment: {fileID: 7504852634243103965}
+  Detachment: {fileID: 2535268997365539691}
   DestroyAfterXTime: 3
 --- !u!114 &2899899730627199396
 MonoBehaviour:
@@ -557,6 +557,11 @@ PrefabInstance:
   m_Modification:
     m_TransformParent: {fileID: 7446024088350224067}
     m_Modifications:
+    - target: {fileID: 703955719258545258, guid: 2e075625b543cd9488ac5cf5a093675e,
+        type: 3}
+      propertyPath: CollisionModule.enabled
+      value: 0
+      objectReference: {fileID: 0}
     - target: {fileID: 1548267920269512354, guid: 2e075625b543cd9488ac5cf5a093675e,
         type: 3}
       propertyPath: m_Materials.Array.size
@@ -622,6 +627,11 @@ PrefabInstance:
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0
       objectReference: {fileID: 0}
+    - target: {fileID: 2492623175311261720, guid: 2e075625b543cd9488ac5cf5a093675e,
+        type: 3}
+      propertyPath: CollisionModule.collidesWith.m_Bits
+      value: 66049
+      objectReference: {fileID: 0}
     - target: {fileID: 3393425947291100959, guid: 2e075625b543cd9488ac5cf5a093675e,
         type: 3}
       propertyPath: m_Materials.Array.size
@@ -632,10 +642,20 @@ PrefabInstance:
       propertyPath: moveWithTransform
       value: 0
       objectReference: {fileID: 0}
+    - target: {fileID: 3462921649683136053, guid: 2e075625b543cd9488ac5cf5a093675e,
+        type: 3}
+      propertyPath: CollisionModule.collidesWith.m_Bits
+      value: 66049
+      objectReference: {fileID: 0}
     - target: {fileID: 4197167696166835703, guid: 2e075625b543cd9488ac5cf5a093675e,
         type: 3}
       propertyPath: m_Materials.Array.size
       value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 4197167696166835720, guid: 2e075625b543cd9488ac5cf5a093675e,
+        type: 3}
+      propertyPath: CollisionModule.collidesWith.m_Bits
+      value: 66049
       objectReference: {fileID: 0}
     - target: {fileID: 6382238725743974682, guid: 2e075625b543cd9488ac5cf5a093675e,
         type: 3}
@@ -652,6 +672,12 @@ PrefabInstance:
 --- !u!4 &7408429119418604602 stripped
 Transform:
   m_CorrespondingSourceObject: {fileID: 1759925763168302162, guid: 2e075625b543cd9488ac5cf5a093675e,
+    type: 3}
+  m_PrefabInstance: {fileID: 9132319419222943848}
+  m_PrefabAsset: {fileID: 0}
+--- !u!1 &2535268997365539691 stripped
+GameObject:
+  m_CorrespondingSourceObject: {fileID: 6742893149395864323, guid: 2e075625b543cd9488ac5cf5a093675e,
     type: 3}
   m_PrefabInstance: {fileID: 9132319419222943848}
   m_PrefabAsset: {fileID: 0}
