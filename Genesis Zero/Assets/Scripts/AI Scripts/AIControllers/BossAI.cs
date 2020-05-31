@@ -314,7 +314,7 @@ public class BossAI : AIController
 				DisableUIExceptDialogue();
 				SetBossstate(State.Setting, 20f);
 				animator.SetTrigger("Dead");
-				Camera.main.GetComponent<BasicCameraZoom>().ChangeFieldOfViewTemporary(45, 1);
+				Camera.main.GetComponent<BasicCameraZoom>().ChangeFieldOfViewTemporary(45, 1, .25f);
 				KillNearbyEnemies();
 				died = true;
 				deathtrigger = 1;
@@ -423,7 +423,7 @@ public class BossAI : AIController
 			FlameGround.SetActive(true);        //Set the flame ground to true/active
 			animator.SetBool("Wild", true);
 			camera.transform.DOShakePosition(duration: 2.4f, strength: 1, vibrato: 5, randomness: 60, snapping: false, fadeOut: true);
-			Camera.main.GetComponent<BasicCameraZoom>().ChangeFieldOfViewTemporary(45, 1.1f);
+			Camera.main.GetComponent<BasicCameraZoom>().ChangeFieldOfViewTemporary(45, 1.1f, .25f);
 			AudioManager.instance.PlaySound("SFX_BossRoar(0)"); // Play sound Effect
 			GetComponent<BossEvents>().DestroyGameObjectsOnWild(); //Destroy top platforms
 			if (WildVFX)
