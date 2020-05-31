@@ -134,6 +134,7 @@ public class StateManager : MonoBehaviour
         //UnPauses Game
         if (pauseMenu != null)
 		{
+            print("unpausing");
 			if (isPaused == true)
 			{
 				canvas.transform.Find("BlackUnderUI").GetComponent<Image>().enabled = false;

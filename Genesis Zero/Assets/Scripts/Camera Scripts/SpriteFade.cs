@@ -43,6 +43,7 @@ public class SpriteFade : MonoBehaviour
     {
         TweenParams tParms = new TweenParams().SetEase(Ease.InExpo);
         DOTween.To(() => color.a, x => color.a = x, 0, seconds);
+        Invoke("ResetColor", seconds);
     }
     //optional secondary variable, if you want to fade the game out slightly during the gameover state
     public void Fade(float seconds, float opacity)
@@ -55,14 +56,11 @@ public class SpriteFade : MonoBehaviour
     }
     public void ResetColor()
     {
-        color = resetColor;
+        color = new Color(resetColor.r, resetColor.g, resetColor.b, color.a);
     }
     public void HurtTween(float hurtamount)
     {
         DOTween.To(() => color.a, x => color.a = x, hurtamount, tweenBack/2);
         Invoke("TweenBack", tweenBack/2);
     }
-
-
-
 }
