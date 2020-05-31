@@ -47,6 +47,7 @@ TrailRenderer:
   m_LightProbeUsage: 0
   m_ReflectionProbeUsage: 0
   m_RayTracingMode: 0
+  m_RayTraceProcedural: 0
   m_RenderingLayerMask: 1
   m_RendererPriority: 0
   m_Materials:
@@ -288,6 +289,8 @@ MonoBehaviour:
   m_FilterSizeTraced: 16
   m_SunLightConeAngle: 0.5
   m_LightShadowRadius: 0.5
+  m_SemiTransparentShadow: 0
+  m_ColorShadow: 1
   m_EvsmExponent: 15
   m_EvsmLightLeakBias: 0
   m_EvsmVarianceBias: 0.00001
@@ -350,6 +353,7 @@ GameObject:
   - component: {fileID: 6641631083453567849}
   - component: {fileID: -7445150402578483573}
   - component: {fileID: 6715079778417504245}
+  - component: {fileID: -9122697575561002007}
   m_Layer: 12
   m_Name: TestProjectile
   m_TagString: Untagged
@@ -397,10 +401,11 @@ MeshRenderer:
   m_LightProbeUsage: 1
   m_ReflectionProbeUsage: 1
   m_RayTracingMode: 2
+  m_RayTraceProcedural: 0
   m_RenderingLayerMask: 1
   m_RendererPriority: 0
   m_Materials:
-  - {fileID: 2100000, guid: 7fba5b76cd48d4847b128886675b30f7, type: 2}
+  - {fileID: 2100000, guid: 9bdde1fe991cbbb40a28056696cf16f8, type: 2}
   m_StaticBatchInfo:
     firstSubMesh: 0
     subMeshCount: 0
@@ -421,6 +426,7 @@ MeshRenderer:
   m_SortingLayerID: 0
   m_SortingLayer: 0
   m_SortingOrder: 0
+  m_AdditionalVertexStreams: {fileID: 0}
 --- !u!114 &6641631083453567849
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -459,8 +465,10 @@ MonoBehaviour:
   Knockbackforce: 2
   DirectionalKnockback: 1
   StunTime: 0
+  IgnoredDamageReduction: 0
   LifeTime: 99
   Burn: {x: 0, y: 0}
+  Slow: {x: 0, y: 0}
   Collider: {fileID: 6715079778417504245}
   Source: {fileID: 0}
   hitEffectVFX: VFX_BulletSparks
@@ -478,6 +486,20 @@ SphereCollider:
   serializedVersion: 2
   m_Radius: 0.5
   m_Center: {x: 0, y: 0, z: 0}
+--- !u!114 &-9122697575561002007
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 6641631083453567850}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 44b85e418aaf68e47a7cc38911576e23, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  Detachment: {fileID: 1035244967867147967}
+  DestroyAfterXTime: 3
 --- !u!1 &8677302286165533950
 GameObject:
   m_ObjectHideFlags: 0
@@ -504,7 +526,7 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 8677302286165533950}
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 0, y: 0, z: -0.136}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
   m_LocalScale: {x: 0.8, y: 0.8, z: 1}
   m_Children: []
   m_Father: {fileID: 6641631083453567846}
@@ -533,10 +555,11 @@ MeshRenderer:
   m_LightProbeUsage: 1
   m_ReflectionProbeUsage: 1
   m_RayTracingMode: 2
+  m_RayTraceProcedural: 0
   m_RenderingLayerMask: 1
   m_RendererPriority: 0
   m_Materials:
-  - {fileID: 2100000, guid: cec9e6545cfb04f4e8334a830b842bc8, type: 2}
+  - {fileID: 2100000, guid: 7fba5b76cd48d4847b128886675b30f7, type: 2}
   m_StaticBatchInfo:
     firstSubMesh: 0
     subMeshCount: 0
@@ -557,3 +580,4 @@ MeshRenderer:
   m_SortingLayerID: 0
   m_SortingLayer: 0
   m_SortingOrder: 0
+  m_AdditionalVertexStreams: {fileID: 0}
