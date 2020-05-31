@@ -37,7 +37,7 @@ public class TileManager : MonoBehaviour
 	public GameObject levelEndIndustrialBuilding;
 	
 	[Header("Enemy Spawning")]
-	public Vector2 MinMaxEnemies = new Vector2(3, 5);
+	public Vector2 MinMaxEnemies = new Vector2(1, 2);
 	[Range(0, 1)]
 	public float SpawnChance = .1f;
 	public int playerOnlevel = 0;
@@ -190,7 +190,6 @@ public class TileManager : MonoBehaviour
 		int floorWidth = width; //Total width of current floor in tiles (x axis)
 		int shift = width; // Equals 0 when floor is complete
 		int height = 1; //Current building height (# of floors)
-		
 		//Create Building
 		spawnVector.z += 2; //Initialize spawnVector Z position
 		
@@ -210,7 +209,6 @@ public class TileManager : MonoBehaviour
 				newTile.transform.SetParent(transform);
 				newTile.transform.localRotation = Quaternion.Euler(0, 180, 0);
 			}
-
 			//Transform Position & Update
 			if (shift <= 0)
 			{

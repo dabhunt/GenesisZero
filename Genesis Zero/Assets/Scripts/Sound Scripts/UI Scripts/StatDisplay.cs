@@ -18,7 +18,7 @@ public class StatDisplay : MonoBehaviour
     public TextMeshProUGUI AS;
     public TextMeshProUGUI CC;
     private bool Abbreviations = false;
-    private bool Hidden = false;
+    private bool Hidden = true;
     private void Awake()
     {
         if (instance == null)
@@ -31,7 +31,7 @@ public class StatDisplay : MonoBehaviour
     }
     void Start()
     {
-       
+       ToggleHideStats();
     }
     public void ToggleHideStats()
     {
@@ -43,11 +43,11 @@ public class StatDisplay : MonoBehaviour
         transform.Find("Display").gameObject.SetActive(Hidden);
         if (Hidden)
         {
-            this.GetComponent<RectTransform>().sizeDelta = new Vector2(75f, 9);
+            this.GetComponent<Image>().color = new Color(0, 0, 0, 0);
         }
         else
         {
-            this.GetComponent<RectTransform>().sizeDelta = new Vector2(196.3f, 100);
+            this.GetComponent<Image>().color = new Color(1, 1, 1, 1);
         }
     }
     public void UpdateStats()
