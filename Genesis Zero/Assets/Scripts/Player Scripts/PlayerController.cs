@@ -248,6 +248,14 @@ public class PlayerController : MonoBehaviour
         Debug.DrawLine(castOrigin, castOrigin + Vector3.down * verCastLength, Color.red);
     }
 
+    private void OnDrawGizmos() 
+    {
+        Vector3 point0 = transform.position + Vector3.up * 0.5f * characterHeight;
+        Vector3 point1 = transform.position;
+        Gizmos.DrawSphere(point0, 0.05f);
+        Gizmos.DrawSphere(point1, 0.05f);
+    }
+
     /* This function is called in Move()
      * to calculate the move vector in order to deal with ramps and such
      */
@@ -282,8 +290,9 @@ public class PlayerController : MonoBehaviour
                 isJumping = true;
                 vertVel = jumpStrength;
             }
-            else if (isJumping && jumpCount > 0)
+            else if (!isGrounded && jumpCount > 0)
             {
+                if (vertVel <= 0.5f) lastPressed = dJumpDelay;
                 if (Time.time - lastPressed < dJumpDelay) return;
                 jumpCount--;
                 isJumping = true;
@@ -344,9 +353,10 @@ public class PlayerController : MonoBehaviour
     private void CheckGround()
     {
         Collider[] cols;
-        Vector3 origin = transform.position - Vector3.up * 0.020f;
-        cols = Physics.OverlapSphere(origin, 0.075f, immoveables, QueryTriggerInteraction.UseGlobal);
-
+        Vector3 point0 = transform.position + Vector3.up * 0.5f * characterHeight;
+        Vector3 point1 = transform.position;
+        //cols = Physics.OverlapSphere(origin, 0.075f, immoveables, QueryTriggerInteraction.UseGlobal);
+        cols = Physics.OverlapCapsule(point0, point1, 0.05f, immoveables, QueryTriggerInteraction.UseGlobal);
         if (IsBlocked(Vector3.down))
         {
             isGrounded = true;
