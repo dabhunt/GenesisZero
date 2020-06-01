@@ -323,15 +323,11 @@ public class BossAI : AIController
 			deathtime += Time.deltaTime;
 			boxanimating = true;
 			healthbar.SetActive(false);
+			DeathChecks();
 		}
 		else if (healthbar && initiated)
 		{
 			healthbar.GetComponentInChildren<Slider>().value = GetHealth().GetRatio();
-		}
-
-		if (IsDying())
-		{
-			DeathChecks();
 		}
 
 		//Update Indicators
