@@ -203,6 +203,15 @@ public class StateManager : MonoBehaviour
         //pauseMenu.SetActive(!toggle);
         optionsMenu.SetActive(toggle);
     }
+    //returns the area the player is in: 0 for scrap yard, 1 for refinery, 2 for city, and 3 for boss room
+    public int GetCurrentPlayerLevel()
+    {
+        if (Player.instance.transform.position.x < -200)
+            return 3; // player is in boss room
+        int level = Mathf.FloorToInt(Player.instance.transform.position.x / TileManager.instance.levelSpacing);
+        Mathf.Clamp(level, 0, 3);
+        return level;
+    }
     public void RecursiveLayerChange(Transform t, string layerName)
     {
         foreach (Transform child in t)

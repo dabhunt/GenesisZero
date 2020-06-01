@@ -91,7 +91,8 @@ public class Teleporter : MonoBehaviour
 		Camera.main.GetComponentInParent<CinemachineBrain>().enabled = true;
 		buge.transform.position = player.position;
 		buge.GetComponent<BUGE>().FollowingPlayer(true);
-
+		int level = StateManager.instance.GetCurrentPlayerLevel();
+		AudioManager.instance.PlaySongsForLevel(level);
 		//Camera.main.transform.position = new Vector2(player.transform.position.x, player.transform.position.y);
 		//Camera.main.GetComponent<CinemachineBrain>().enabled = true;
 		//Camera.main.transform.position = new Vector3(player.position.x, player.position.y, -35.6f);
