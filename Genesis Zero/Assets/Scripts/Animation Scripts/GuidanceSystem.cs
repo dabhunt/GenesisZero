@@ -18,7 +18,6 @@ public class GuidanceSystem : MonoBehaviour
         player = GameObject.FindWithTag("Player");
         buge = GameObject.FindWithTag("BUG-E");
         teleporter = GameObject.FindWithTag("Teleporter");
-
     }
     public void CheckDist()
     {

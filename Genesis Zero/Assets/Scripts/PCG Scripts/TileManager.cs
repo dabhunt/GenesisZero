@@ -23,10 +23,12 @@ public class TileManager : MonoBehaviour
 	public float chestSpawnChance = .2f;
 	public float merchantSpawnChance = .2f;
 	public float scrapConverterSpawnChance = .2f;
+	public float guideArrowSpawnChance = .12f;
+	private float[] interactableSpawnChances;
 	[Header("Teleporter Spawning")]
 	public float teleSpawnChance = .03f;
-	public int DontSpawnUntilAfter = 30;//the minimum amount of cubbies that must be passed before a teleporter can spawn
-	public float ForceTeleSpawnDist = 15; // a teleporter mat less than this distance away from the end building will forcibly spawn a teleporter
+	public int dontSpawnUntilAfter = 30;//the minimum amount of cubbies that must be passed before a teleporter can spawn
+	//public float ForceTeleSpawnDist = 15; // a teleporter mat less than this distance away from the end building will forcibly spawn a teleporter
 	[Header("Prefab Containers")]
 	private GameObject[] tilePrefabs;
 	public GameObject[] industrialTilePrefabs;
@@ -37,7 +39,7 @@ public class TileManager : MonoBehaviour
 	public GameObject levelEndIndustrialBuilding;
 	
 	[Header("Enemy Spawning")]
-	public Vector2 MinMaxEnemies = new Vector2(3, 5);
+	public Vector2 MinMaxEnemies = new Vector2(1, 2);
 	[Range(0, 1)]
 	public float SpawnChance = .1f;
 	public int playerOnlevel = 0;
@@ -49,6 +51,7 @@ public class TileManager : MonoBehaviour
 	private float levelTracking;
 	private List<GameObject> endBuildings;
 	private List<GameObject> teleporterInstances;
+	List<List<GameObject>> guideArrows = new List<List<GameObject>>();
 	private void Awake()
 	{
 		if (instance == null)
@@ -61,13 +64,16 @@ public class TileManager : MonoBehaviour
 	}
 	private void Start()
     {
+		guideArrows.Add(new List<GameObject>());//level 1 arrows
+		guideArrows.Add(new List<GameObject>());//level 2
+		interactableSpawnChances = new[]{ godHeadSpawnChance, chestSpawnChance, merchantSpawnChance, scrapConverterSpawnChance, teleSpawnChance, guideArrowSpawnChance};
 		endBuildings = new List<GameObject>();
 		tilePrefabs = industrialTilePrefabs;
 		//tilePrefabs = cityTilePrefabs;
 		if (SaveLoadManager.instance.newGame == true)
 		{
 
-			seedValue = Random.Range(0, 9999999);
+			seedValue = Random.Range(0, 999999);
 			Random.InitState(seedValue);
 		}
 		else
@@ -107,51 +113,75 @@ public class TileManager : MonoBehaviour
 		levelTracking = levelSpacing;
 		//bool AllTeleportersSpawned = false;
 		teleporterInstances = new List<GameObject>();
-		int curMatLevel = Mathf.RoundToInt(levelSpacing/1000);
+		int curMatLevel = 0; 
+
 		int LastMatLevel = 0;
 		GameObject newestTele = null;
-
+		int iter = 0;
 		foreach (GameObject mat in GameObject.FindGameObjectsWithTag("Placemat"))
 		{
-			if (mat.name == "GodHeadMat" && Random.value <= godHeadSpawnChance) //Case 1: God Heads
-			{
-				GameObject newGodHead = Instantiate(interactablePrefabs[0]) as GameObject;
-				newGodHead.transform.position = mat.transform.position;
-			}
-			else if (mat.name == "ChestMat" && Random.value <= chestSpawnChance) //Case 2: Chests/Safes
-			{
-				GameObject newChest = Instantiate(interactablePrefabs[1]) as GameObject;
-				newChest.transform.position = mat.transform.position;
-			}
-			else if (mat.name == "MerchantMat" && Random.value <= merchantSpawnChance) //Case 3: Merchants
-			{
-				GameObject newMerchant = Instantiate(interactablePrefabs[2]) as GameObject;
-				newMerchant.transform.position = mat.transform.position;
-			}
-			else if (mat.name == "ScrapMat" && Random.value <= scrapConverterSpawnChance) //Case 4: Scrap Convertors
-			{
-				GameObject newScrap = Instantiate(interactablePrefabs[3]) as GameObject;
-				newScrap.transform.position = mat.transform.position;
-			}
-			else if (mat.name == "TeleportMat")
-			{
-				curMatLevel = Mathf.FloorToInt(mat.transform.position.x / levelSpacing);
-				if (curMatLevel > LastMatLevel)
-				{ //guarantee the creation of a teleporter on each level
-					newestTele = NewTeleporter(mat);
-				}
-				if (Random.value <= teleSpawnChance)
-				{ //if it passes the spawnchance, update the position
-					newestTele.transform.position = mat.transform.position;
-				}
-				LastMatLevel = curMatLevel;
-			}
-			//if (newestTele != null && newestTele.GetComponent<Teleporter>().BossRoomOverride == true)
-					//AllTeleportersSpawned = true; // if a teleporter with bossroom override has spawned, there are no more portals to make
 			
+			curMatLevel = Mathf.FloorToInt(mat.transform.position.x / levelSpacing); //convert X position to what level we are on
+			//print("mat.transform: " + mat.transform.position.x + " = curmatlevel: " + curMatLevel);
+			if (mat.transform.position.x > levelSpacing)
+			{
+				if (mat.name == "GodHeadMat" && Random.value <= godHeadSpawnChance) //Case 1: God Heads
+				{
+					GameObject newGodHead = Instantiate(interactablePrefabs[0]) as GameObject;
+					newGodHead.transform.position = mat.transform.position;
+					newGodHead.transform.SetParent(mat.transform.parent);
+				}
+				else if (mat.name == "ChestMat" || mat.name == "MerchantMat" || mat.name == "ScrapMat")
+				{
+					int rng = Random.Range(1, 5); //get num from 1 to 4 to choose what may spawn here, since all are roughly the same space requirement
+					if (Random.value <= interactableSpawnChances[rng])
+					{
+						//if it didn't pass the random check, try again
+						GameObject newInteractable;
+						if (rng == 4)
+						{
+							newInteractable = Instantiate(interactablePrefabs[5]) as GameObject; // replace with Guidance Arrow
+							newInteractable.name = "Guidance Arrow";
+							newInteractable.transform.position = mat.transform.position + new Vector3(0, 2, -2);
+							guideArrows[curMatLevel - 1].Add(newInteractable); //keep track of guide arrows so that they can point at the teleporter properly
+						}
+						else
+						{
+							newInteractable = Instantiate(interactablePrefabs[rng]) as GameObject;
+							newInteractable.transform.position = mat.transform.position;
+						}
+						
+						newInteractable.transform.SetParent(mat.transform.parent);
+					}
+				}
+				else if (mat.name == "TeleportMat")
+				{
+					//print("curmatlevel: " + curMatLevel);
+					if (curMatLevel > LastMatLevel)//guarantees the creation of a teleporter on each level
+					{
+						if (curMatLevel > 1)
+						{
+							foreach (GameObject arrow in guideArrows[curMatLevel - 2])
+							{
+								//print("curmatlevel: " + curMatLevel);
+								if (arrow != null)
+									arrow.transform.LookAt(newestTele.transform); //make all arrows point at the tele for the level just finished
+							}
+						}
+						newestTele = NewTeleporter(mat);
+						iter = 0; //reset iter upon reaching the next level
+					}
+					//if less than this number of cubbies have been checked, force the teleporter to have it's position updated regardless of rng.
+					//this prevents the teleporter from ever spawning in the first building.
+					if (iter < dontSpawnUntilAfter || Random.value <= teleSpawnChance)
+					{ 
+						newestTele.transform.position = mat.transform.position;
+					}
+					LastMatLevel = curMatLevel;
+				}
+				iter++; //keep track of how many cubbies are checked
+			}
 		}
-		//this should be turned on later to disable the prefab gameobject
-		//portalPrefab.SetActive(false);
     }
 	public int GetSeed()
 	{
@@ -190,10 +220,8 @@ public class TileManager : MonoBehaviour
 		int floorWidth = width; //Total width of current floor in tiles (x axis)
 		int shift = width; // Equals 0 when floor is complete
 		int height = 1; //Current building height (# of floors)
-		
 		//Create Building
 		spawnVector.z += 2; //Initialize spawnVector Z position
-		
 		while (end > 0)
 		{
 			//Create new tile and set parent to TileManager
@@ -210,7 +238,6 @@ public class TileManager : MonoBehaviour
 				newTile.transform.SetParent(transform);
 				newTile.transform.localRotation = Quaternion.Euler(0, 180, 0);
 			}
-
 			//Transform Position & Update
 			if (shift <= 0)
 			{

@@ -41,12 +41,14 @@ public class InteractInterface : MonoBehaviour
     {
         if (Input.GetKeyDown(KeyCode.F))
         {
+            print("isInteracting = " + player.GetComponent<Player>().IsInteracting);
             if (player.GetComponent<Player>().IsInteracting == true)
                 return;
             //determine which interactable / pickup is closest, and perform interact
             string[] strArray = { "Interactable", "Pickups" };
             GameObject obj = ClosestTaggedObj(strArray);
             //if the closestObject is too far away, it returns null
+            print("it's skipping the bool check I.I");
             if (obj == null)
             {
                 AudioManager.instance.PlaySound("SFX_Nope");

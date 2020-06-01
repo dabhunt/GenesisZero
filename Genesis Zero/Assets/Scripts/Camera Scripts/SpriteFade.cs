@@ -8,6 +8,7 @@ public class SpriteFade : MonoBehaviour
 {
     // Start is called before the first frame update
     public Color color;
+    private Color resetColor;
     public bool startVisible = false;
     public bool FadeOutAtStart = false;
     public float tweenBack = .75f;
@@ -26,6 +27,7 @@ public class SpriteFade : MonoBehaviour
             color.a = 1;
             FadeOut(6);
         }
+        resetColor = color;
     }
     void Update()
     {
@@ -41,6 +43,7 @@ public class SpriteFade : MonoBehaviour
     {
         TweenParams tParms = new TweenParams().SetEase(Ease.InExpo);
         DOTween.To(() => color.a, x => color.a = x, 0, seconds);
+        Invoke("ResetColor", seconds);
     }
     //optional secondary variable, if you want to fade the game out slightly during the gameover state
     public void Fade(float seconds, float opacity)
@@ -51,12 +54,13 @@ public class SpriteFade : MonoBehaviour
     {
         DOTween.To(() => color.a, x => color.a = x, 0, tweenBack*.9f);
     }
+    public void ResetColor()
+    {
+        color = new Color(resetColor.r, resetColor.g, resetColor.b, color.a);
+    }
     public void HurtTween(float hurtamount)
     {
         DOTween.To(() => color.a, x => color.a = x, hurtamount, tweenBack/2);
         Invoke("TweenBack", tweenBack/2);
     }
-
-
-
 }

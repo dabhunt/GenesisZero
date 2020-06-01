@@ -18,7 +18,7 @@ public class SnakeBossBase : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-        if (!Boss.GetComponent<BossAI>().boxanimating)
+        if (Boss != null && !Boss.GetComponent<BossAI>().boxanimating)
         {
 			Recalculate();
 			//GetComponent<Animator>().applyRootMotion = true;

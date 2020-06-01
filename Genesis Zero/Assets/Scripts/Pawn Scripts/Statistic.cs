@@ -54,7 +54,6 @@ public class Statistic
     {
         return currentamount + bonuses;
     }
-
     /**
      * Sets the value of the statistic
      */

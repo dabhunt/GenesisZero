@@ -89,7 +89,6 @@ public class Merchant : MonoBehaviour
             merchantUI.gameObject.SetActive(true);
         }
     }
-
     public void Select(InputAction.CallbackContext ctx)
     {
         if (ctx.performed)
@@ -165,7 +164,6 @@ public class Merchant : MonoBehaviour
         //Destroy the "Press F to interact popup"
         merchantUI = (RectTransform) canvasRef.transform.Find("MerchantUI");
         shopItemsParent = merchantUI.gameObject.transform.Find("ShopItemParent").gameObject;
-
         //load all shopitems from resources
         Object[] temp = Resources.LoadAll("ShopItems");
         for (int i = 0; i < temp.Length; i++)
@@ -173,7 +171,6 @@ public class Merchant : MonoBehaviour
             //cast as shopObject type and add each to the list
             shopObjList.Add((ShopObject)temp[i]);
         }
-        
         //using the already created template gameobject which is correctly positioned, make the rest
         int num = 0;
         //used to prevent duplicate mods from appearing in the shop
@@ -191,7 +188,7 @@ public class Merchant : MonoBehaviour
                 }
                 duplicatePrevention = mod;
                 child.transform.Find("Icon").GetComponent<Image>().sprite = mod.Icon;
-                child.transform.Find("Cost").GetComponent<Text>().text = "x"+(1 + mod.Rarity).ToString();
+                child.transform.Find("Cost").GetComponent<Text>().text = "x"+(mod.Rarity).ToString();
                 child.transform.Find("Name").GetComponent<Text>().text = mod.name;
             }
             //if it's anything but a modifier, use the shopObject data from the asset
