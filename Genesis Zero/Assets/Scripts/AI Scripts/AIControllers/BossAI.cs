@@ -413,7 +413,7 @@ public class BossAI : AIController
 				secondtrigger = true;
 			}
 		}
-		if (HealthLoss >= TotalHealth / 2)
+		if (HealthLoss >= TotalHealth / 2 && GetHealth().GetValue() > 0)
 		{
 			action = 1;
 			SetBossstate(State.Setting, 2.5f);
