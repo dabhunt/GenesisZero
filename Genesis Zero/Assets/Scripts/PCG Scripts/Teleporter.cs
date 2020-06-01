@@ -25,7 +25,7 @@ public class Teleporter : MonoBehaviour
 		player = GameObject.FindWithTag("Player").transform;    //Grabs the player transform position to use in the rest of the script.
 		ani = GetComponent<Animator>();
 		canvas = GameObject.FindGameObjectWithTag("CanvasUI");
-		InvokeRepeating("portalAnimation", 1f, .5f);
+		InvokeRepeating("portalAnimation", 1f, .3f);
 	}
 	private void OnTriggerEnter(Collider other)
 	{
@@ -65,9 +65,9 @@ public class Teleporter : MonoBehaviour
 			sk.AddSkill(sk.GetRandomModsByChance(1)[0]);
 		DialogueManager.instance.TriggerDialogue("BUG-E_SkipTut");
 		Destroy(gameObject.GetComponent<FindingBuge>());
-		GetComponent<InteractPopup>().SetInteractable(false);
-		GetComponent<InteractPopup>().DestroyPopUp();
-		GetComponent<InteractPopup>().SetText("Right Click to Interact");
+		buge.GetComponent<InteractPopup>().SetInteractable(false);
+		buge.GetComponent<InteractPopup>().DestroyPopUp();
+		buge.GetComponent<InteractPopup>().SetText("Right Click to Interact");
 	}
 	private void CallTeleportFromAnimation()
 	{
@@ -91,7 +91,8 @@ public class Teleporter : MonoBehaviour
 		Camera.main.GetComponentInParent<CinemachineBrain>().enabled = true;
 		buge.transform.position = player.position;
 		buge.GetComponent<BUGE>().FollowingPlayer(true);
-
+		int level = StateManager.instance.GetCurrentPlayerLevel();
+		AudioManager.instance.PlaySongsForLevel(level);
 		//Camera.main.transform.position = new Vector2(player.transform.position.x, player.transform.position.y);
 		//Camera.main.GetComponent<CinemachineBrain>().enabled = true;
 		//Camera.main.transform.position = new Vector3(player.position.x, player.position.y, -35.6f);

@@ -17,7 +17,7 @@ public class AudioManager : MonoBehaviour
 	public AudioSource Primary;
 	public AudioSource Secondary;
 	public AudioSource Tertiary;
-
+	public float SongPairTransitionTime = 1.5f;
 	public AudioMixer mixer;
 	List<Sound> Soundlist = new List<Sound>();
 	List<string> SFXNames = new List<string>();
@@ -62,9 +62,9 @@ public class AudioManager : MonoBehaviour
 			SFXNames.Add(temp[i].name);
 		}
 		//PlayFadeInTrack(1, "Music", "AmbientMusic", true, 5f);
-		SetVolumeMusic(.7f);
-		PlayFadeInTrack(1, "Music", "AmbientMusic", true, 7f);
-		PlayTrack(2, "Music", "CombatMusic", true, true, 0, 1);
+		SetVolumeMusic(.6f);
+		PlayFadeInTrack(1, "Music", "Scrapyard_Slow", true, 7f);
+		PlayTrack(2, "Music", "Scrapyard_Fast", true, true, 0, 1);
 	}
 	// Update is called once per frame
 	void Update()
@@ -271,7 +271,52 @@ public class AudioManager : MonoBehaviour
 		Secondary.Stop();
 		Tertiary.Stop();
 	}
+	public void PlaySongsForLevel(int level)
+	{
+		switch (level)
+		{
+			case 0:
+				StartCoroutine(NewSongPairing("Scrapyard_Slow", "Scrapyard_Fast", SongPairTransitionTime));
+				break;
+			case 1:
+				StartCoroutine(NewSongPairing("City_Slow", "City_Fast", SongPairTransitionTime));
+				break;
+			case 2:
+				StartCoroutine(NewSongPairing("Foundry_Slow", "Foundry_Fast", SongPairTransitionTime));
+				break;
+			case 3:
+				StartCoroutine(NewSongPairing("Elevator_Slow", "Boss_Fast", SongPairTransitionTime));
+				break;
+		}
+	}
+	IEnumerator NewSongPairing(string slowsong, string combatsong, float fadeOutDuration)
+	{
+		//if (Primary.volume < .1f) //if channel 1 is not audible, use
+		//{
+		//	PlayFadeInTrack(1, "Music", slowsong, true, 1f);
+		//	PlayTrack(3, "Music", combatsong, true, false, 0, 1);
+		//}
+		//if (Secondary.volume < .1f) //if channel 2 is not audible, use it
+		//{
+		//	PlayFadeInTrack(2, "Music", slowsong, true, 1f);
+		//	PlayTrack(3, "Music", combatsong, true, false, 0, 1);
+		//
+		//(audioSource.time);
+		FadeChannel(1, 0 , fadeOutDuration);
+		FadeChannel(2, 0 , fadeOutDuration);
+		yield return StartCoroutine(WaitForRealSeconds(fadeOutDuration)); //wait until the other songs have faded out
+		PlayFadeInTrack(1, "Music", slowsong, true, 6f);
+		PlayTrack(2, "Music", combatsong, true, true, 0, 1);
+	}
 
+	public static IEnumerator WaitForRealSeconds(float delay)
+	{
+		float start = Time.realtimeSinceStartup;
+		while (Time.realtimeSinceStartup < start + delay)
+		{
+			yield return null;
+		}
+	}
 	//--------------------------------------------------
 
 	public void PauseChannel(int channel)

@@ -92,7 +92,7 @@ public class DeactivateDistant : MonoBehaviour
     }
     public void ResetDist()
     {
-        deactivateDist = 29f;
+        deactivateDist = 35f;
     }
     public void SetDist(float num)
     {

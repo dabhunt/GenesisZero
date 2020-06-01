@@ -206,9 +206,8 @@ public class PlatformShooterAI : AIController
                 if (AttackProjectile != null)
                 {
 
-                    GameObject spawnedProjectile = Instantiate(AttackProjectile, GetProjectilePoint(),
-                        Quaternion.LookRotation(Vector3.forward, projectileAim));
-                    spawnedProjectile.transform.parent = transform;
+                    GameObject spawnedProjectile = Instantiate(AttackProjectile, ProjectileSource.transform.position,
+                        Quaternion.LookRotation(GetAimDirection()));
                     Hitbox spawnedHitbox = spawnedProjectile.GetComponent<Hitbox>();
                     if (spawnedHitbox != null)
                     {

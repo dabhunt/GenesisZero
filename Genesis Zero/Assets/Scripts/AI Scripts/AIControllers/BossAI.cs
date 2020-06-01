@@ -60,6 +60,7 @@ public class BossAI : AIController
 	public GameObject HeadbuttPrefab;
 	public GameObject PulsePrefab;
 	public GameObject FlameGround;
+	public GameObject WildVFX;
 
 	public GameObject ForwardLookObject;
 	public MiddleMan Middleman;
@@ -135,7 +136,7 @@ public class BossAI : AIController
 					healthbar = canvas.transform.Find("BossHealthbar").gameObject;
 					healthbar.SetActive(true);
 					TimeBeforeFight = 0;
-					SetBossstate(State.Setting, 2);
+					SetBossstate(State.Setting, 1.25f);
 					animator.Play("Intro");
 					//StartCoroutine(CockBack(1.25f, Target.position - transform.position, 1));
 				}
@@ -290,7 +291,8 @@ public class BossAI : AIController
 		}
 		else
 		{
-			if (this.animator.GetCurrentAnimatorStateInfo(0).IsName("Idle") && animationswitch == true)
+			//this.animator.GetCurrentAnimatorStateInfo(0).IsName("Idle") && 
+			if (animationswitch == true && bossstate != State.Setting)
 			{
 				transform.position = HeadModel.transform.position;
 				LastPosition = transform.position;
@@ -310,9 +312,9 @@ public class BossAI : AIController
 			if (died == false)
 			{
 				DisableUIExceptDialogue();
+				SetBossstate(State.Setting, 20f);
 				animator.SetTrigger("Dead");
-				Camera.main.GetComponent<BasicCameraZoom>().ChangeFieldOfViewTemporary(45, 1);
-				animator.Play("BossDeath");
+				Camera.main.GetComponent<BasicCameraZoom>().ChangeFieldOfViewTemporary(45, 1, .25f);
 				KillNearbyEnemies();
 				died = true;
 				deathtrigger = 1;
@@ -414,16 +416,20 @@ public class BossAI : AIController
 		if (HealthLoss >= TotalHealth / 2)
 		{
 			action = 1;
-			SetBossstate(State.Setting, 4f);
+			SetBossstate(State.Setting, 2.5f);
 			HealthLoss = 0;
 			animator.SetTrigger("WildTrigger"); //Set wild trigger
 			Invoke("BurnGround", 1f);
 			FlameGround.SetActive(true);        //Set the flame ground to true/active
 			animator.SetBool("Wild", true);
 			camera.transform.DOShakePosition(duration: 2.4f, strength: 1, vibrato: 5, randomness: 60, snapping: false, fadeOut: true);
-			Camera.main.GetComponent<BasicCameraZoom>().ChangeFieldOfViewTemporary(45, 1.1f);
+			Camera.main.GetComponent<BasicCameraZoom>().ChangeFieldOfViewTemporary(45, 1.1f, .25f);
 			AudioManager.instance.PlaySound("SFX_BossRoar(0)"); // Play sound Effect
 			GetComponent<BossEvents>().DestroyGameObjectsOnWild(); //Destroy top platforms
+			if (WildVFX)
+			{
+				Invoke("WildVFXSpawn", .5f);
+			}
 			boxanimating = true;
 			Wild = true;
 		}
@@ -927,7 +933,7 @@ public class BossAI : AIController
 		Vector2 angle = (Vector2)transform.rotation.eulerAngles;
 		Quaternion rot = Quaternion.Euler(angle.x, angle.y, 0);
 		GameObject hitbox = Instantiate(HeadbuttPrefab, transform.position, rot);
-		hitbox.transform.position += Vector3.forward * 3f;
+		hitbox.transform.position += Vector3.forward * 0; //Fix this later.
 		hitbox.transform.parent = transform;
 		hitbox.GetComponent<Hitbox>().LifeTime = .25f;
 		GetComponent<SphereCollider>().isTrigger = true;
@@ -957,6 +963,12 @@ public class BossAI : AIController
 	void BurnGround()
 	{
 		FlameGround.SetActive(true);
+	}
+
+	void WildVFXSpawn()
+	{
+		GameObject emit = Instantiate(WildVFX, HeadModel.transform.position, Quaternion.identity);
+		//emit.transform.parent = HeadModel.transform;
 	}
 
 

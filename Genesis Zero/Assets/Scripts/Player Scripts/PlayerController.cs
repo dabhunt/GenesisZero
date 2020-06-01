@@ -21,6 +21,7 @@ public class PlayerController : MonoBehaviour
     public float horCastLength = 0.45f;
     public float verCastLength = 1.05f;
     public float groundCheckPadding = 0.15f;
+    public float jumpingHitboxHeight = 1f;
     [Header("Phase Dash")]
     public Color phaseColor = Color.black;
     public float rollDuration = 3f;
@@ -84,6 +85,9 @@ public class PlayerController : MonoBehaviour
     private float dJumpDelay = 0.15f;
     private int rollDirection;
     private Gun gun;
+    private float currentHitboxHeight;
+    private Vector3 currentHitBoxCenter;
+    private CapsuleCollider hurtBoxCol;
 
     //Animation/States Variables
     private Animator animator;
@@ -119,6 +123,9 @@ public class PlayerController : MonoBehaviour
         camRef = Camera.main;
         worldXhair.transform.position = transform.position;
         resetGravity = gravity;
+        hurtBoxCol = gameObject.GetComponent<Hurtbox>().colliders[0].GetComponent<CapsuleCollider>();
+        currentHitboxHeight = hurtBoxCol.height;
+        currentHitBoxCenter = hurtBoxCol.center;
     }
 
     private void Update()
@@ -241,6 +248,14 @@ public class PlayerController : MonoBehaviour
         Debug.DrawLine(castOrigin, castOrigin + Vector3.down * verCastLength, Color.red);
     }
 
+    private void OnDrawGizmos() 
+    {
+        Vector3 point0 = transform.position + Vector3.up * 0.5f * characterHeight;
+        Vector3 point1 = transform.position;
+        Gizmos.DrawSphere(point0, 0.05f);
+        Gizmos.DrawSphere(point1, 0.05f);
+    }
+
     /* This function is called in Move()
      * to calculate the move vector in order to deal with ramps and such
      */
@@ -263,7 +278,6 @@ public class PlayerController : MonoBehaviour
     {
         if (ctx.performed)
         {
-            if (Time.time - lastPressed < dJumpDelay) return;
             if (!inputActions.PlayerControls.enabled) return;
             if (isRolling) return;
             if (isGrounded && jumpCount < 2) return;
@@ -276,11 +290,14 @@ public class PlayerController : MonoBehaviour
                 isJumping = true;
                 vertVel = jumpStrength;
             }
-            else if (isJumping && jumpCount > 0)
+            else if (!isGrounded && jumpCount > 0)
             {
+                if (vertVel <= 0.5f) lastPressed = dJumpDelay;
+                if (Time.time - lastPressed < dJumpDelay) return;
                 jumpCount--;
                 isJumping = true;
                 vertVel = doubleJumpStrength;
+				VFXManager.instance.PlayEffect("VFX_DoubleJump", transform.position + new Vector3(0, .5f, 0));
                 if (isFacingRight && movementInput.x <= 0)
                     currentSpeed = 0;
                 if (!isFacingRight && movementInput.x >= 0)
@@ -337,13 +354,15 @@ public class PlayerController : MonoBehaviour
     private void CheckGround()
     {
         Collider[] cols;
-        Vector3 origin = transform.position - Vector3.up * 0.020f;
-        cols = Physics.OverlapSphere(origin, 0.075f, immoveables, QueryTriggerInteraction.UseGlobal);
-
+        Vector3 point0 = transform.position + Vector3.up * 0.5f * characterHeight;
+        Vector3 point1 = transform.position;
+        //cols = Physics.OverlapSphere(origin, 0.075f, immoveables, QueryTriggerInteraction.UseGlobal);
+        cols = Physics.OverlapCapsule(point0, point1, 0.05f, immoveables, QueryTriggerInteraction.UseGlobal);
         if (IsBlocked(Vector3.down))
         {
-
             isGrounded = true;
+            hurtBoxCol.center = currentHitBoxCenter;
+            hurtBoxCol.height = currentHitboxHeight;
             transform.Find("Center").Find("Down").gameObject.SetActive(false);
             if (cols.Length != 0)
             {
@@ -371,6 +390,8 @@ public class PlayerController : MonoBehaviour
         }
         else
         {
+            hurtBoxCol.center = Vector3.zero;
+            hurtBoxCol.height = jumpingHitboxHeight;
             isGrounded = false;
         }
     }

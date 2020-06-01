@@ -61,7 +61,7 @@ public class BasicCameraZoom : MonoBehaviour
         }
     }
 
-    public void ChangeFieldOfViewTemporary(float field, float time)
+    public void ChangeFieldOfViewTemporary(float field, float time, float duration)
     {
         if (spanding == false)
         {
@@ -72,9 +72,19 @@ public class BasicCameraZoom : MonoBehaviour
             }
             this.time = time;
             savedpov = myCamera.fieldOfView;
-            StartCoroutine(Spandout(.25f, myCamera.fieldOfView, field, spanding));
+            StartCoroutine(Spandout(duration, myCamera.fieldOfView, field, spanding));
         }
     }
+
+	public void StopTempFieldOfViewChange()
+	{
+		time = 0;
+		if (time <= 0)
+		{
+			fovMax = savedmax;
+			ChangeFieldOfView(savedpov);
+		}
+	}
 
     IEnumerator Spandout(float time, float start, float target, bool spanding)
     {
@@ -86,7 +96,7 @@ public class BasicCameraZoom : MonoBehaviour
                 reset = false;
                 break;
             }
-            myCamera.fieldOfView = start + ((target - start) * f / time);
+            myCamera.fieldOfView = Mathf.Clamp(start + ((target - start) * f / time), fovMin, fovMax);
             yield return new WaitForSeconds(Time.fixedDeltaTime);
         }
         spanding = false;
