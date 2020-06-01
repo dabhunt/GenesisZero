@@ -51,8 +51,10 @@ public class VFXManager : MonoBehaviour
     //use Color.black to not change the color
     public GameObject ChangeMainTrail(GameObject vfx, Color startColor, Color endColor)
     {
-        GameObject trail = vfx.transform.Find("Trail").gameObject;
-        if (trail == null)
+        GameObject trail;
+        if (vfx.transform.Find("Trail") != null) // if 
+           trail = vfx.transform.Find("Trail").gameObject;
+        else
             trail = vfx.transform.Find("vfx_Bullet").Find("Trail").gameObject;
         if (trail == null || trail.GetComponent<TrailRenderer>() == null)
             return vfx;
