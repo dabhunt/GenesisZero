@@ -136,15 +136,21 @@ public class TileManager : MonoBehaviour
 					int rng = Random.Range(1, 5); //get num from 1 to 4 to choose what may spawn here, since all are roughly the same space requirement
 					if (Random.value <= interactableSpawnChances[rng])
 					{
-
-						GameObject newInteractable = Instantiate(interactablePrefabs[rng]) as GameObject;
+						//if it didn't pass the random check, try again
+						GameObject newInteractable;
 						if (rng == 4)
 						{
 							newInteractable = Instantiate(interactablePrefabs[5]) as GameObject; // replace with Guidance Arrow
 							newInteractable.name = "Guidance Arrow";
+							newInteractable.transform.position = mat.transform.position + new Vector3(0, 2, -2);
 							guideArrows[curMatLevel - 1].Add(newInteractable); //keep track of guide arrows so that they can point at the teleporter properly
 						}
-						newInteractable.transform.position = mat.transform.position;
+						else
+						{
+							newInteractable = Instantiate(interactablePrefabs[rng]) as GameObject;
+							newInteractable.transform.position = mat.transform.position;
+						}
+						
 						newInteractable.transform.SetParent(mat.transform.parent);
 					}
 				}

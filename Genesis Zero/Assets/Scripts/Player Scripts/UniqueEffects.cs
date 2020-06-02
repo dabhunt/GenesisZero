@@ -165,10 +165,6 @@ public class UniqueEffects : MonoBehaviour
 	}
 	public void DamageGivenTrigger()
 	{
-		if (MusicDecay <= 0)
-		{
-			Camera.main.GetComponent<BasicCameraZoom>().ChangeFieldOfViewTemporary(22, 40, .5f);
-		}
 		MusicDecay = durationUntilDecay;
 		EnterCombatMusic();
 	}
@@ -189,16 +185,17 @@ public class UniqueEffects : MonoBehaviour
 		{
 			incombat = true;
 		}
+		Camera.main.GetComponent<BasicCameraZoom>().ChangeFieldOfViewTemporary(22, 40, .5f);
 		AudioManager.instance.CrossFadeChannels(1, 5.0f, 2, fadeIn);
 		//AudioManager.instance.CrossFadeChannels(2, "Music", "CombatMusic", true, 15);
 	}
 	public void ExitCombatMusic()
 	{
 		if (incombat == true)
-		{
-			Camera.main.GetComponent<BasicCameraZoom>().StopTempFieldOfViewChange();
+		{	
 			incombat = false;
 		}
+		Camera.main.GetComponent<BasicCameraZoom>().StopTempFieldOfViewChange();
 		AudioManager.instance.CrossFadeChannels(2, 5.0f, 1, fadeOut);
 	}
 	void StackDecayTimer()

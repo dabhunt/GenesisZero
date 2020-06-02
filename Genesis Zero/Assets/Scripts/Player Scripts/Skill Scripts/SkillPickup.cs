@@ -6,10 +6,11 @@ public class SkillPickup : MonoBehaviour
 {
     [Header("Mod or Ability")]
     public SkillObject skill;
+    public bool RandomOfSameRarity = true;
     private bool added;
     private bool isMod;
     private bool pressed;
-    private float pickupDist = 2.5f;
+    private float pickupDist = 3f;
     private float speedvar = 4f;
     private GameObject target;
     private Player player;
@@ -19,8 +20,8 @@ public class SkillPickup : MonoBehaviour
     // Start is called before the first frame update
     void Start()
     {
-        target = GameObject.FindGameObjectWithTag("Player");
-        player = target.GetComponent<Player>();
+        target = Player.instance.gameObject;
+        player = Player.instance;
         if (skill == null)
         {
             skill = player.GetSkillManager().GetRandomModByChance();
@@ -28,6 +29,13 @@ public class SkillPickup : MonoBehaviour
         }
         else if (GetComponent<SimpleTooltip>() != null)
         {
+            if (RandomOfSameRarity == true)
+            {
+                if (skill.IsAbility)
+                    skill = player.GetSkillManager().GetRandomAbility();
+                else
+                    skill = player.GetSkillManager().GetRandomMods(1, skill.Rarity)[0];
+            }
             GetComponent<SimpleTooltip>().infoLeft = skill.SimpleDescription;
         }
         isMod = skill.IsAbility ? false : true;

@@ -140,7 +140,7 @@ public class OptionsMenu : MonoBehaviour
         //Debug.Log("MusicVolume: " + value);
         if (value > -40f)
         {
-            AudioManager.instance.mixer.SetFloat("musicVolume", value);
+            AudioManager.instance.mixer.SetFloat("musicVolume", value * .7f);
         }
         else
         {

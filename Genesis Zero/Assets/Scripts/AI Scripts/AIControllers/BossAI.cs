@@ -329,7 +329,7 @@ public class BossAI : AIController
 			healthbar.GetComponentInChildren<Slider>().value = GetHealth().GetRatio();
 		}
 
-		if (IsDying())
+		if (died)
 		{
 			DeathChecks();
 		}
@@ -413,7 +413,7 @@ public class BossAI : AIController
 				secondtrigger = true;
 			}
 		}
-		if (HealthLoss >= TotalHealth / 2)
+		if (HealthLoss >= TotalHealth / 2 && GetHealth().GetValue() > 0)
 		{
 			action = 1;
 			SetBossstate(State.Setting, 2.5f);
@@ -789,16 +789,19 @@ public class BossAI : AIController
 
 	public void KillNearbyEnemies()
 	{
-		GameObject[] enemies = GameObject.FindGameObjectsWithTag("Enemy");
-		foreach (GameObject e in enemies)
+		try
 		{
-			if (e.gameObject.activeSelf == true && e != this)
+			GameObject[] enemies = GameObject.FindGameObjectsWithTag("Enemy");
+			foreach (GameObject e in enemies)
 			{
-				e.GetComponentInParent<Pawn>().GetHealth().SetValue(0);
+				if (e.gameObject.activeSelf == true && e != this)
+				{
+					e.GetComponentInParent<Pawn>().GetHealth().SetValue(0);
+				}
 			}
+			Invoke("DestroyPickups", .5f);
 		}
-
-		Invoke("DestroyPickups", .5f);
+		catch { }
 	}
 
 	void DestroyPickups()

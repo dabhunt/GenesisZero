@@ -14,6 +14,7 @@ public class BasicCameraZoom : MonoBehaviour
     private float time;
     private float savedpov;
     private float savedmax;
+	private float updatetime;
     // Use this for initialization
     void Start()
     {
@@ -50,6 +51,15 @@ public class BasicCameraZoom : MonoBehaviour
             }
         }
 
+		if (updatetime > 0)
+		{
+			updatetime -= Time.deltaTime;
+			if (updatetime <= 0)
+			{
+				fovMax = savedmax;
+			}
+		}
+
     }
 
     public void ChangeFieldOfView(float field)
@@ -84,12 +94,12 @@ public class BasicCameraZoom : MonoBehaviour
 
 	public void StopTempFieldOfViewChange()
 	{
-		time = 0;
-		if (time <= 0)
+		if (time > 0 && spanding == false)
 		{
-			fovMax = savedmax;
+			time = 0;
 			target = savedpov;
 			ChangeFieldOfView(savedpov);
+			updatetime = .5f;
 		}
 	}
 
