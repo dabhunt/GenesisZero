@@ -35,7 +35,7 @@ public class PlayerController : MonoBehaviour
     [Header("Physics")]
     public float gravity = 18f;
     private float resetGravity;
-    public float terminalVel = 24f;
+    public float terminalVel = 32f;
 
     public float fallSpeedMult = 1.45f;
     public float airControlMult = 0.5f;
@@ -338,8 +338,8 @@ public class PlayerController : MonoBehaviour
 
         if (vertVel > 0)
         {
-            vertVel -= gravity * Time.fixedDeltaTime;
-            transform.position += Vector3.up * (startVel * Time.fixedDeltaTime + (0.5f * -gravity) * Mathf.Pow(Time.fixedDeltaTime, 2));
+            vertVel -= gravity * (Player.instance.GetWeight().GetValue()/10) *  Time.fixedDeltaTime;
+            transform.position += Vector3.up * (startVel * Time.fixedDeltaTime + (0.5f * -gravity* (Player.instance.GetWeight().GetValue() / 10)) * Mathf.Pow(Time.fixedDeltaTime, 2));
         }
         else
         {
@@ -459,9 +459,9 @@ public class PlayerController : MonoBehaviour
         }
         if (!isJumping)
         {
-            vertVel -= gravity * fallSpeedMult * Time.fixedDeltaTime;
+            vertVel -= gravity* (Player.instance.GetWeight().GetValue() / 10) * fallSpeedMult * Time.fixedDeltaTime;
             vertVel = Mathf.Clamp(vertVel, -terminalVel, 0);
-            transform.position += Vector3.up * (startVel * Time.fixedDeltaTime + (0.5f * fallSpeedMult * -gravity) * Mathf.Pow(Time.fixedDeltaTime, 2));
+            transform.position += Vector3.up * (startVel * Time.fixedDeltaTime + (0.5f * fallSpeedMult * -gravity* (Player.instance.GetWeight().GetValue() / 10)) * Mathf.Pow(Time.fixedDeltaTime, 2));
         }
     }
 

@@ -5,7 +5,6 @@ using UnityEngine;
 public class TileManager : MonoBehaviour
 {
 	//Public Variables (Visible in Inspector)
-	
 	[Header("Tile Spawning")]
 	public static TileManager instance;
 	public int maxBuildingWidth = 5;
@@ -16,7 +15,6 @@ public class TileManager : MonoBehaviour
 	public float levelSpacing = 1000;
 	public float minOffset;
 	public float maxOffset;
-	
 	[Header("Interactable Spawning")]
 	public string teleporterID = "Teleporter_Mock2";
 	public float godHeadSpawnChance = .2f;
@@ -108,7 +106,6 @@ public class TileManager : MonoBehaviour
 		//{
 		//generateBuilding(Random.Range(minBuildingWidth, maxBuildingWidth), Random.Range(minBuildingTileCount, maxBuildingTileCount), level);
 		//}
-
 		//Placemat PCG Pass
 		levelTracking = levelSpacing;
 		//bool AllTeleportersSpawned = false;

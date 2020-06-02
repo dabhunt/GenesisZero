@@ -10,7 +10,7 @@ public class SkillPickup : MonoBehaviour
     private bool added;
     private bool isMod;
     private bool pressed;
-    private float pickupDist = 3f;
+    private float pickupDist = 2.6f;
     private float speedvar = 4f;
     private GameObject target;
     private Player player;

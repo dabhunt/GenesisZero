@@ -46,8 +46,6 @@ public class AbilityCasting : MonoBehaviour
     private float TotalAbilityCasttime1;
     private float TotalAbilityCooldown1;
     private float ActiveTime1;
-
-
     private float AbilityCasttime2;
     private float AbilityCooldown2;
     private float TotalAbilityCasttime2;
@@ -91,9 +89,7 @@ public class AbilityCasting : MonoBehaviour
             CastAbility(skillmanager.GetAbility2().name, 2);
             ui.Cast(1);
         }
-
     }
-
     public void CastUI(int num)
     {
         ui.Cast(num);
@@ -102,22 +98,23 @@ public class AbilityCasting : MonoBehaviour
     private void CastAbility(string name, int num)
     {
         GetComponent<UniqueEffects>().AbilityTrigger();
+        float cdr = 1-Player.instance.GetCDR().GetValue();
         switch (name)
         {
             case "Pulse Burst":
-                InitializeAbility(4, 0, 0, num);
+                InitializeAbility(4 * cdr, 0, 0, num);
                 CastPulseBurst();
                 break;
             case "Burst Charge":
-                InitializeAbility(4, 0, 0, num);
+                InitializeAbility(5 * cdr, 0, 0, num);
                 CastBurstCharge();
                 break;
             case "Overdrive":
-                InitializeAbility(17, 0, 0, num);
+                InitializeAbility(17 * cdr, 0, 0, num);
                 CastOverdrive(num);
                 break;
             case "Time Dilation":
-                InitializeAbility(7, 0, TS_effectDuration-TS_offset, num);
+                InitializeAbility(7 * cdr, 0, TS_effectDuration-TS_offset, num);
                 CastSlowDown();
                 break;
             case "Culling Blast":
@@ -125,31 +122,31 @@ public class AbilityCasting : MonoBehaviour
                 CastSpartanLaser(num);
                 break;
             case "Wound Sealant":
-                InitializeAbility(100, 0, 0, num);
+                InitializeAbility(100 * cdr, 0, 0, num);
                 CastWoundSealant();
                 break;
             case "Atom Splitter":
                 //(Cooldown, Casttime, ActiveTime, Abilitynum)
                 //NOTE: Cooldown does not start going down until the Active wears off
-                InitializeAbility(MS_Cooldown, 0, MS_ActiveTime, num);
+                InitializeAbility(MS_Cooldown * cdr, 0, MS_ActiveTime, num);
                 CastMultiShot();
                 break;
             case "Heat Vent Shield":
                 if (player.GetOverHeat().GetHeat() < 1)
                     return; //prevent player from using shield at 0 heat, since it does nothing
-                InitializeAbility(5, 0, 4, num);
+                InitializeAbility(5 * cdr, 0, 4, num);
                 CastHeatShield(num);
                 break;
             case "Fire Dash":
-                InitializeAbility(5, 0, 0, num);
+                InitializeAbility(5 * cdr, 0, 0, num);
                 CastFireDash();
                 break;
             case "Singularity":
-                InitializeAbility(5, 0, 0, num);
+                InitializeAbility(5 * cdr, 0, 0, num);
                 CastSingularity();
                 break;
             case "Manic Titan":
-                InitializeAbility(MT_Cooldown, 0, MT_ActiveTime, num);
+                InitializeAbility(MT_Cooldown * cdr, 0, MT_ActiveTime, num);
                 CastManicTitan();
                 break;
         }
@@ -165,7 +162,17 @@ public class AbilityCasting : MonoBehaviour
     {
         return (AbilityCasttime2 <= 0 && AbilityCooldown2 <= 0 && skillmanager.GetAbility2() != null);
     }
-
+    //sets the players cool down reduction
+    public void SetCoolDownReduction(float percent)
+    {
+        Player.instance.GetCDR().SetValue(percent);
+    }
+    //adds to the cooldown reduction statistic
+    //ex passing .2 would result in 20% cool down reduction
+    public void AddCoolDownReduction(float percent)
+    {
+        Player.instance.GetCDR().AddValue(percent);
+    }
     private void InitializeAbility(float cooldown, float casttime, float activeTime, int num)
     {
         if (num == 1)
@@ -277,8 +284,6 @@ public class AbilityCasting : MonoBehaviour
         AbilityCooldown1 -= seconds;
         AbilityCooldown2 -= seconds;
     }
-
-
     public void SwapAbilityCooldowns()
     {
         float TCastTime = AbilityCasttime1;
@@ -303,7 +308,7 @@ public class AbilityCasting : MonoBehaviour
     private void CastPulseBurst()
     {
         pc.SetVertVel(0);
-        player.KnockBackForced(-aimDir + Vector2.up, 25);
+        player.KnockBackForced(-aimDir + Vector2.up, 30);
         GameObject hitbox = SpawnGameObject("PulseBurstHitbox", CastAtAngle(pc.CenterPoint(), aimDir, 1), Quaternion.identity);
         hitbox.GetComponent<Hitbox>().InitializeHitbox(GetComponent<Player>().GetAbilityPower().GetValue() / 2, GetComponent<Player>());
         hitbox.GetComponent<Hitbox>().SetStunTime(1.2f);
@@ -321,7 +326,7 @@ public class AbilityCasting : MonoBehaviour
         hitbox.GetComponent<Hitbox>().InitializeHitbox(GetComponent<Player>().GetAbilityPower().GetValue(), GetComponent<Player>());
         hitbox.transform.parent = transform;
         player.SetInvunerable(.6f);
-        player.GetComponent<PlayerController>().Dash(.6f, FD_gravityReplacement);
+        player.GetComponent<PlayerController>().Dash(FD_duration - .1f, FD_gravityReplacement);
         hitbox.GetComponent<Hitbox>().SetLifeTime(.6f);
         EndBonus();
     }
@@ -334,7 +339,7 @@ public class AbilityCasting : MonoBehaviour
         hitbox.GetComponent<Hitbox>().InitializeHitbox(GetComponent<Player>().GetAbilityPower().GetValue() / 2, GetComponent<Player>());
         hitbox.transform.parent = transform;
         player.SetInvunerable(FD_duration);
-        player.GetComponent<PlayerController>().Dash(FD_duration + .1f, FD_gravityReplacement);
+        player.GetComponent<PlayerController>().Dash(FD_duration - .1f, FD_gravityReplacement);
         hitbox.GetComponent<Hitbox>().SetLifeTime(FD_duration);
         EndBonus();
     }

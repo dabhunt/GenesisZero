@@ -5,7 +5,7 @@ using UnityEngine;
 public class Player : Pawn
 {
     SkillManager SkillManager;
-    public Statistic Essence, Keys, AbilityPower;
+    public Statistic Essence, Keys, AbilityPower, CDR;
     private List<Statistic> playerStatistics;
     public float baseAbilityPower = 16;
     public bool IsInteracting = false;
@@ -78,22 +78,28 @@ public class Player : Pawn
     public void InitializePlayerStats()
     {
         playerStatistics = new List<Statistic>();
-        Essence = new Statistic(EssenceHardCap);
-        Essence.SetValue(0);
         playerStatistics.Add(Keys = new Statistic(MaxKeys));
+        playerStatistics.Add(CDR = new Statistic(1));
+        playerStatistics.Add(Essence = new Statistic(EssenceHardCap));
+        playerStatistics.Add(AbilityPower = new Statistic(baseAbilityPower));
+        Essence.SetValue(0);
+        CDR.SetValue(0);
         Keys.SetValue(0);
-        playerStatistics.Add(AbilityPower = new Statistic(16));
         AbilityPower.SetValue(baseAbilityPower);
     }
     public Statistic GetAbilityPower()
     {
         return AbilityPower;
     }
+    public Statistic GetCDR()
+    {
+        return CDR;
+    }
     public float GetAbilityPowerAmount()
     {
         return AbilityPower.GetValue();
     }
-
+    
     public Statistic GetEssence()
     {
         return Essence;

@@ -22,6 +22,7 @@ public class Pawn : MonoBehaviour
     private float stunImmuneAfterStun = 1.5f;
     private Vector3 knockbackvector, lastposition;
     private bool Initialized, ForcedKnockBack, Dying, StunnedLastFrame, HasAnimationEventController;
+    private float dashDecay = .01f;
 
     protected void Start()
     {
@@ -166,9 +167,12 @@ public class Pawn : MonoBehaviour
             {
                 GetStunnedStatus().AddTime(Time.fixedDeltaTime);
             }
-            knockbackforce *= Mathf.Clamp(9.5f / GetWeight().GetValue(), 0, .99f);
-            if (ForcedKnockBack)
+            if (!ForcedKnockBack)
+                knockbackforce *= Mathf.Clamp(9.5f / GetWeight().GetValue(), 0, .99f); //only decrease velocity for non players
+            else
             {
+                knockbackforce *= Mathf.Clamp(1-dashDecay, 0, 1-dashDecay);
+                dashDecay *= 1.2f; //increases by 10% each frame
                 Vector3 translation = knockbackvector.normalized * knockbackforce * Time.fixedDeltaTime;
                 bool colliding = false;
                 if (GetComponentInChildren<CapsuleCollider>() && GetComponent<Hurtbox>())
@@ -199,7 +203,7 @@ public class Pawn : MonoBehaviour
                     transform.position -= translation * 2;
                 }
             }
-            if (knockbackforce < 1)
+            if (knockbackforce < 1 || dashDecay >= 1)
             {
                 ForcedKnockBack = false;
                 knockbackforce = 0;
@@ -363,6 +367,8 @@ public class Pawn : MonoBehaviour
     }
     public void KnockBackForced(Vector3 direction, float force)
     {
+        //Invoke("EndDash", force / 65); //ex: if force is 25, cancels in 1 second
+        dashDecay = .01f;
         KnockBack(direction, force);
     }
 
@@ -426,6 +432,7 @@ public class Pawn : MonoBehaviour
     {
         return lastposition;
     }
+
     // ------------------------- ---------------- ------------------------------//
 
     // ------------------------ General Functions ------------------------------//
