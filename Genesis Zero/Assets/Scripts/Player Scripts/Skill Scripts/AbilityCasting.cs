@@ -310,7 +310,7 @@ public class AbilityCasting : MonoBehaviour
         pc.SetVertVel(0);
         player.KnockBackForced(-aimDir + Vector2.up, 30);
         GameObject hitbox = SpawnGameObject("PulseBurstHitbox", CastAtAngle(pc.CenterPoint(), aimDir, 1), Quaternion.identity);
-        hitbox.GetComponent<Hitbox>().InitializeHitbox(GetComponent<Player>().GetAbilityPower().GetValue() / 2, GetComponent<Player>());
+        hitbox.GetComponent<Hitbox>().InitializeHitbox(GetComponent<Player>().GetAbilityPower().GetValue() / 2, GetComponent<Player>(), false);
         hitbox.GetComponent<Hitbox>().SetStunTime(1.2f);
         player.SetInvunerable(.5f);
         hitbox.GetComponent<Hitbox>().SetLifeTime(.15f);
@@ -323,7 +323,7 @@ public class AbilityCasting : MonoBehaviour
         player.KnockBackForced(aimDir + Vector2.up, 30);
         GameObject hitbox = SpawnGameObject("BurstChargeHitbox", pc.CenterPoint(), Quaternion.identity);
         print("ability power in burst charge:"+ GetComponent<Player>().GetAbilityPower().GetValue());
-        hitbox.GetComponent<Hitbox>().InitializeHitbox(GetComponent<Player>().GetAbilityPower().GetValue(), GetComponent<Player>());
+        hitbox.GetComponent<Hitbox>().InitializeHitbox(GetComponent<Player>().GetAbilityPower().GetValue(), GetComponent<Player>(), false);
         hitbox.transform.parent = transform;
         player.SetInvunerable(.6f);
         player.GetComponent<PlayerController>().Dash(FD_duration - .1f, FD_gravityReplacement);
@@ -336,7 +336,7 @@ public class AbilityCasting : MonoBehaviour
         player.KnockBackForced(aimDir + Vector2.up, 25);
         player.GetComponent<PlayerController>().NewLayerMask(ignoreEnemiesLayerMask, FD_duration);
         GameObject hitbox = SpawnGameObject("FireDashHitbox", CastAtAngle(pc.CenterPoint(), aimDir, .5f), GetComponent<Gun>().firePoint.rotation);
-        hitbox.GetComponent<Hitbox>().InitializeHitbox(GetComponent<Player>().GetAbilityPower().GetValue() / 2, GetComponent<Player>());
+        hitbox.GetComponent<Hitbox>().InitializeHitbox(GetComponent<Player>().GetAbilityPower().GetValue() / 2, GetComponent<Player>(), false);
         hitbox.transform.parent = transform;
         player.SetInvunerable(FD_duration);
         player.GetComponent<PlayerController>().Dash(FD_duration - .1f, FD_gravityReplacement);
@@ -405,7 +405,7 @@ public class AbilityCasting : MonoBehaviour
                 hitbox.transform.localScale = new Vector3(scale, scale, scale);
                 vfx_blast.transform.localScale = new Vector3(scale, scale, scale);
                 float damage = U.SL_CalculateDmg();
-                hitbox.GetComponent<Hitbox>().InitializeHitbox(damage, player);
+                hitbox.GetComponent<Hitbox>().InitializeHitbox(damage, player, false);
                 //manually put spartan laser ability on cooldown since the initial cast can't have a cooldown
                 if (num == 1)
                 {

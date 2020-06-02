@@ -88,7 +88,7 @@ public class PlayerController : MonoBehaviour
     private float currentHitboxHeight;
     private Vector3 currentHitBoxCenter;
     private CapsuleCollider hurtBoxCol;
-
+    private bool isFallingFast = false;
     //Animation/States Variables
     private Animator animator;
     private bool isGrounded;
@@ -307,8 +307,17 @@ public class PlayerController : MonoBehaviour
     }
     public void Down(InputAction.CallbackContext ctx)
     {
-        if (!isGrounded)
-                FallFaster(-45);
+        if (isGrounded)
+            return;
+        FallFaster(-45);
+        isFallingFast = true;
+        Hitbox hit = this.transform.Find("Center").Find("Down").GetComponent<Hitbox>();
+        hit.InitializeHitbox(Player.instance.GetAbilityPower().GetValue(), Player.instance, false);
+        int stacks = Player.instance.GetSkillStack("Anti-Gravity Boots");
+        if (stacks > 0)
+        {
+            hit.Damage = (stacks * Player.instance.GetAbilityPower().GetValue()) + Player.instance.GetAbilityPower().GetValue();
+        }
 
     }
     public void FallFaster(float terminal)
@@ -367,9 +376,14 @@ public class PlayerController : MonoBehaviour
         if (IsBlocked(Vector3.down))
         {
             isGrounded = true;
+            if (isFallingFast)
+            {
+                VFXManager.instance.PlayEffect("VFX_Lightning", this.transform.position);
+                isFallingFast = false;
+                Invoke("DisableDown", .75f);
+            }
             hurtBoxCol.center = currentHitBoxCenter;
             hurtBoxCol.height = currentHitboxHeight;
-            transform.Find("Center").Find("Down").gameObject.SetActive(false);
             if (cols.Length != 0)
             {
                 foreach (var col in cols)
@@ -688,7 +702,10 @@ public class PlayerController : MonoBehaviour
     	if(IsBlocked(Vector3.up)) return true;
     	return false;
     }
-
+    public void DisableDown()
+    {
+        transform.Find("Center").Find("Down").gameObject.SetActive(false);
+    }
     /* This function updates information
      * about the player's state for animations
      */
