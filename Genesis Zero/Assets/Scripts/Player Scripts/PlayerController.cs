@@ -311,6 +311,7 @@ public class PlayerController : MonoBehaviour
             return;
         FallFaster(-45);
         isFallingFast = true;
+        AudioManager.instance.PlaySound("SFX_DownAir", false, .8f);
         Hitbox hit = this.transform.Find("Center").Find("Down").GetComponent<Hitbox>();
         hit.InitializeHitbox(Player.instance.GetAbilityPower().GetValue(), Player.instance, false);
         int stacks = Player.instance.GetSkillStack("Anti-Gravity Boots");
@@ -379,6 +380,8 @@ public class PlayerController : MonoBehaviour
             if (isFallingFast)
             {
                 VFXManager.instance.PlayEffect("VFX_Lightning", this.transform.position);
+                AudioManager.instance.PlaySound("SFX_Downsmash", false, 1);
+                AudioManager.instance.StopSound("SFX_DownAir");
                 isFallingFast = false;
                 Invoke("DisableDown", .75f);
             }
