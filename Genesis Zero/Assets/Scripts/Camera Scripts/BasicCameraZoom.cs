@@ -19,6 +19,8 @@ public class BasicCameraZoom : MonoBehaviour
     {
         myCamera = GetComponent<Camera>();
         target = myCamera.fieldOfView;
+		savedpov = target;
+		savedmax = fovMax;
     }
 
     // Update is called once per frame
@@ -43,6 +45,7 @@ public class BasicCameraZoom : MonoBehaviour
             if (time <= 0)
             {
                 fovMax = savedmax;
+				target = savedpov;
                 ChangeFieldOfView(savedpov);
             }
         }
@@ -57,7 +60,8 @@ public class BasicCameraZoom : MonoBehaviour
             {
                 fovMax = field;
             }
-            StartCoroutine(Spandout(.5f, myCamera.fieldOfView, field, spanding));
+			target = field;
+			StartCoroutine(Spandout(.5f, myCamera.fieldOfView, field, spanding));
         }
     }
 
@@ -69,8 +73,10 @@ public class BasicCameraZoom : MonoBehaviour
             if (field > fovMax)
             {
                 fovMax = field;
+				field = fovMax;
             }
-            this.time = time;
+			target = field;
+			this.time = time;
             savedpov = myCamera.fieldOfView;
             StartCoroutine(Spandout(duration, myCamera.fieldOfView, field, spanding));
         }
@@ -82,6 +88,7 @@ public class BasicCameraZoom : MonoBehaviour
 		if (time <= 0)
 		{
 			fovMax = savedmax;
+			target = savedpov;
 			ChangeFieldOfView(savedpov);
 		}
 	}
