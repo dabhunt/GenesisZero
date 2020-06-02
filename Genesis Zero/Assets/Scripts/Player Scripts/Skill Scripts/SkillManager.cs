@@ -220,9 +220,9 @@ public class SkillManager
         }
 
         SkillObject[] abils = Resources.LoadAll<SkillObject>("Skills/Abilities");
-        for (int i = 0; i < abils.Length; i++)
+        foreach (SkillObject ab in abils)
         {
-            abilities.Add(abils[i]);
+            abilities.Add(ab);
         }
     }
 

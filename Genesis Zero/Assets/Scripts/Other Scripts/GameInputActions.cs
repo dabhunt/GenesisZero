@@ -97,6 +97,14 @@ public class @GameInputActions : IInputActionCollection, IDisposable
                     ""expectedControlType"": ""Button"",
                     ""processors"": """",
                     ""interactions"": ""Press(pressPoint=0.1)""
+                },
+                {
+                    ""name"": ""Down"",
+                    ""type"": ""PassThrough"",
+                    ""id"": ""6c9a6697-8ca6-42ea-8b81-726fc158e221"",
+                    ""expectedControlType"": ""Button"",
+                    ""processors"": """",
+                    ""interactions"": ""Press(pressPoint=0.1)""
                 }
             ],
             ""bindings"": [
@@ -374,6 +382,17 @@ public class @GameInputActions : IInputActionCollection, IDisposable
                     ""action"": ""Ability_2"",
                     ""isComposite"": false,
                     ""isPartOfComposite"": false
+                },
+                {
+                    ""name"": """",
+                    ""id"": ""855c20ea-3add-457b-b22f-c02fec91ae40"",
+                    ""path"": ""<Keyboard>/s"",
+                    ""interactions"": """",
+                    ""processors"": """",
+                    ""groups"": ""Keyboard&Mouse"",
+                    ""action"": ""Down"",
+                    ""isComposite"": false,
+                    ""isPartOfComposite"": false
                 }
             ]
         },
@@ -507,6 +526,7 @@ public class @GameInputActions : IInputActionCollection, IDisposable
         m_PlayerControls_Pause = m_PlayerControls.FindAction("Pause", throwIfNotFound: true);
         m_PlayerControls_Ability_1 = m_PlayerControls.FindAction("Ability_1", throwIfNotFound: true);
         m_PlayerControls_Ability_2 = m_PlayerControls.FindAction("Ability_2", throwIfNotFound: true);
+        m_PlayerControls_Down = m_PlayerControls.FindAction("Down", throwIfNotFound: true);
         // MenuControls
         m_MenuControls = asset.FindActionMap("MenuControls", throwIfNotFound: true);
         m_MenuControls_Select = m_MenuControls.FindAction("Select", throwIfNotFound: true);
@@ -571,6 +591,7 @@ public class @GameInputActions : IInputActionCollection, IDisposable
     private readonly InputAction m_PlayerControls_Pause;
     private readonly InputAction m_PlayerControls_Ability_1;
     private readonly InputAction m_PlayerControls_Ability_2;
+    private readonly InputAction m_PlayerControls_Down;
     public struct PlayerControlsActions
     {
         private @GameInputActions m_Wrapper;
@@ -585,6 +606,7 @@ public class @GameInputActions : IInputActionCollection, IDisposable
         public InputAction @Pause => m_Wrapper.m_PlayerControls_Pause;
         public InputAction @Ability_1 => m_Wrapper.m_PlayerControls_Ability_1;
         public InputAction @Ability_2 => m_Wrapper.m_PlayerControls_Ability_2;
+        public InputAction @Down => m_Wrapper.m_PlayerControls_Down;
         public InputActionMap Get() { return m_Wrapper.m_PlayerControls; }
         public void Enable() { Get().Enable(); }
         public void Disable() { Get().Disable(); }
@@ -624,6 +646,9 @@ public class @GameInputActions : IInputActionCollection, IDisposable
                 @Ability_2.started -= m_Wrapper.m_PlayerControlsActionsCallbackInterface.OnAbility_2;
                 @Ability_2.performed -= m_Wrapper.m_PlayerControlsActionsCallbackInterface.OnAbility_2;
                 @Ability_2.canceled -= m_Wrapper.m_PlayerControlsActionsCallbackInterface.OnAbility_2;
+                @Down.started -= m_Wrapper.m_PlayerControlsActionsCallbackInterface.OnDown;
+                @Down.performed -= m_Wrapper.m_PlayerControlsActionsCallbackInterface.OnDown;
+                @Down.canceled -= m_Wrapper.m_PlayerControlsActionsCallbackInterface.OnDown;
             }
             m_Wrapper.m_PlayerControlsActionsCallbackInterface = instance;
             if (instance != null)
@@ -658,6 +683,9 @@ public class @GameInputActions : IInputActionCollection, IDisposable
                 @Ability_2.started += instance.OnAbility_2;
                 @Ability_2.performed += instance.OnAbility_2;
                 @Ability_2.canceled += instance.OnAbility_2;
+                @Down.started += instance.OnDown;
+                @Down.performed += instance.OnDown;
+                @Down.canceled += instance.OnDown;
             }
         }
     }
@@ -741,6 +769,7 @@ public class @GameInputActions : IInputActionCollection, IDisposable
         void OnPause(InputAction.CallbackContext context);
         void OnAbility_1(InputAction.CallbackContext context);
         void OnAbility_2(InputAction.CallbackContext context);
+        void OnDown(InputAction.CallbackContext context);
     }
     public interface IMenuControlsActions
     {

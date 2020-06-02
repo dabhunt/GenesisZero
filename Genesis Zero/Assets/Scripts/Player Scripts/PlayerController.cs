@@ -305,6 +305,12 @@ public class PlayerController : MonoBehaviour
             }
         }
     }
+    public void Down(InputAction.CallbackContext ctx)
+    {
+        if (!isGrounded)
+                FallFaster(-45);
+
+    }
     public void FallFaster(float terminal)
     {
         if (vertVel > terminal * .35f)
@@ -441,8 +447,6 @@ public class PlayerController : MonoBehaviour
         float startVel = vertVel;
         if (isGrounded)
             return;
-        if (Input.GetKeyDown(KeyCode.S))
-            FallFaster(-45);
         if (isRolling)
         {
             fallSpeedMult = 0;

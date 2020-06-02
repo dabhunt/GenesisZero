@@ -71,7 +71,10 @@ public class GameInputManager : MonoBehaviour
         }
         return false;
     }
-
+    public bool isEnabled()
+    {
+        return inputActions.PlayerControls.enabled;
+    }
     public void DisablePlayerControls()
     {
         inputActions.PlayerControls.Disable();

@@ -155,12 +155,12 @@ public class AbilityCasting : MonoBehaviour
 
     private bool CanCastAbility1()
     {
-        return (AbilityCasttime1 <= 0 && AbilityCooldown1 <= 0 && skillmanager.GetAbility1() != null);
+        return (AbilityCasttime1 <= 0 && AbilityCooldown1 <= 0 && skillmanager.GetAbility1() != null && GameInputManager.instance.isEnabled());
     }
 
     private bool CanCastAbility2()
     {
-        return (AbilityCasttime2 <= 0 && AbilityCooldown2 <= 0 && skillmanager.GetAbility2() != null);
+        return (AbilityCasttime2 <= 0 && AbilityCooldown2 <= 0 && skillmanager.GetAbility2() != null && GameInputManager.instance.isEnabled());
     }
     //sets the players cool down reduction
     public void SetCoolDownReduction(float percent)
@@ -320,7 +320,7 @@ public class AbilityCasting : MonoBehaviour
     private void CastBurstCharge()
     {
         player.GetComponent<PlayerController>().SetVertVel(0);
-        player.KnockBackForced(aimDir + Vector2.up, 25);
+        player.KnockBackForced(aimDir + Vector2.up, 30);
         GameObject hitbox = SpawnGameObject("BurstChargeHitbox", pc.CenterPoint(), Quaternion.identity);
         print("ability power in burst charge:"+ GetComponent<Player>().GetAbilityPower().GetValue());
         hitbox.GetComponent<Hitbox>().InitializeHitbox(GetComponent<Player>().GetAbilityPower().GetValue(), GetComponent<Player>());

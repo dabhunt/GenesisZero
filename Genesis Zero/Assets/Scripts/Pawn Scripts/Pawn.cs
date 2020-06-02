@@ -172,7 +172,7 @@ public class Pawn : MonoBehaviour
             else
             {
                 knockbackforce *= Mathf.Clamp(1-dashDecay, 0, 1-dashDecay);
-                dashDecay *= 1.2f; //increases by 10% each frame
+                dashDecay *= 1.2f; //decay rate increases by 20% each frame
                 Vector3 translation = knockbackvector.normalized * knockbackforce * Time.fixedDeltaTime;
                 bool colliding = false;
                 if (GetComponentInChildren<CapsuleCollider>() && GetComponent<Hurtbox>())
