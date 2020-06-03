@@ -36,7 +36,7 @@ public class PlayerController : MonoBehaviour
     public float gravity = 18f;
     private float resetGravity;
     public float terminalVel = 32f;
-
+    public float slamCoolDown = 2.5f;
     public float fallSpeedMult = 1.45f;
     public float airControlMult = 0.5f;
     public float airSpeedMult = 0.85f;
@@ -310,7 +310,7 @@ public class PlayerController : MonoBehaviour
     {
         if (ctx.performed)
         {
-            if (isGrounded)
+            if (isGrounded )
                 return;
             FallFaster(-45);
             isFallingFast = true;

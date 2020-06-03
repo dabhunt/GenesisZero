@@ -131,7 +131,7 @@ public class BossAI : AIController
 					GameInputManager.instance.EnablePlayerControls();
 					AudioManager.instance.PlaySound("SFX_BossRoar(0)");
 					camera.transform.DOShakePosition(duration: 1.25f, strength: 1, vibrato: 5, randomness: 60, snapping: false, fadeOut: true);
-					Camera.main.GetComponent<BasicCameraZoom>().ChangeFieldOfView(30);
+					Camera.main.GetComponent<BasicCameraZoom>().ChangeFieldOfView(30, 1);
 					GameObject canvas = GameObject.FindGameObjectWithTag("CanvasUI");
 					healthbar = canvas.transform.Find("BossHealthbar").gameObject;
 					healthbar.SetActive(true);

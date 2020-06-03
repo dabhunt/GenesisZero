@@ -66,8 +66,10 @@ public class FillHealthBar : MonoBehaviour
     	// uses the player object to get info about player health
     	// fillvalue represents how filled in the healthbar is, from 0 to 100
         float curValue = player.GetHealth().GetValue();
-        if (!StateManager.instance.InTutorial)
-            GetComponent<SimpleTooltip>().infoLeft = curValue + " / " + player.GetHealth().GetMaxValue()+ " Health";
+        if (!StateManager.instance.InTutorial && GetComponent<SimpleTooltip>())
+        {
+            GetComponent<SimpleTooltip>().infoLeft = curValue + " / " + player.GetHealth().GetMaxValue() + " Health";
+        }
         if (curValue < valueLastFrame && curValue > 0)
         {
             player.GetComponent<Gun>().PlayerHurtTrigger = true;
@@ -101,8 +103,6 @@ public class FillHealthBar : MonoBehaviour
             t = shieldSlider.DOValue(shield, tweenTime);
             shieldImage.DOColor(Color.white, .3f);
         }
-        if (t != null && t.IsComplete())
-            shieldImage.DOColor(fillColor, .3f);
         shieldLastFrame = shield;
     }
     public void HurtTween()

@@ -86,19 +86,19 @@ public class Teleporter : MonoBehaviour
 	{
 		StateManager.instance.InTutorial = false;
 		player.position = new Vector2(destinationX, destinationY);
+		int level = StateManager.instance.GetCurrentPlayerLevel();
 		if (BossRoomOverride == true)
+		{
 			player.position = StateManager.instance.GetBossRoomLocation();
+			player.GetComponent<UniqueEffects>().CombatChangesMusic = false;
+			level = 4;
+		}
 		Player.instance.Heal(50);
 		EnemyManager.ModifyDifficultyMulti(1.3f);
 		Camera.main.GetComponentInParent<CinemachineBrain>().enabled = true;
 		buge.transform.position = player.position;
 		buge.GetComponent<BUGE>().FollowingPlayer(true);
-		int level = StateManager.instance.GetCurrentPlayerLevel();
 		AudioManager.instance.PlaySongsForLevel(level);
-		//Camera.main.transform.position = new Vector2(player.transform.position.x, player.transform.position.y);
-		//Camera.main.GetComponent<CinemachineBrain>().enabled = true;
-		//Camera.main.transform.position = new Vector3(player.position.x, player.position.y, -35.6f);
-		//GameObject.FindWithTag("CamCollider").transform.position = new Vector2(destinationX, GameObject.FindWithTag("CamCollider").transform.position.y);
 		TileManager.instance.playerOnlevel++;
 	}
 	public void SetDestination(Vector2 destination)

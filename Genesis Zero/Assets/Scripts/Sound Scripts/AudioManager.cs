@@ -291,17 +291,6 @@ public class AudioManager : MonoBehaviour
 	}
 	IEnumerator NewSongPairing(string slowsong, string combatsong, float fadeOutDuration)
 	{
-		//if (Primary.volume < .1f) //if channel 1 is not audible, use
-		//{
-		//	PlayFadeInTrack(1, "Music", slowsong, true, 1f);
-		//	PlayTrack(3, "Music", combatsong, true, false, 0, 1);
-		//}
-		//if (Secondary.volume < .1f) //if channel 2 is not audible, use it
-		//{
-		//	PlayFadeInTrack(2, "Music", slowsong, true, 1f);
-		//	PlayTrack(3, "Music", combatsong, true, false, 0, 1);
-		//
-		//(audioSource.time);
 		FadeChannel(1, 0 , fadeOutDuration);
 		FadeChannel(2, 0 , fadeOutDuration);
 		yield return StartCoroutine(WaitForRealSeconds(fadeOutDuration)); //wait until the other songs have faded out
@@ -709,7 +698,6 @@ public class AudioManager : MonoBehaviour
 			//Debug.Log("vol in PlayAttachedSound: " + vol);
 			PlayClipOnObject(temp.clip, obj, delay, vol, pit, loop);
 		}
-
 		Destroy(temp);
 	}
 	//Takes a string name of the type of sound effect to play, and randomly chooses one to play
