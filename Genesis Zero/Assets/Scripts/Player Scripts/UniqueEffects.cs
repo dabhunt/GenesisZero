@@ -127,8 +127,7 @@ public class UniqueEffects : MonoBehaviour
 			hit.Burn = new Vector2(3, HE_TotalBurnDMG / 3);
 			hit.SetStunTime(1f);
 			hitbox.GetComponent<SphereCollider>().radius = 2 * multi;
-			VFXManager.instance.PlayEffect("VFX_HeatExpulsion", hitbox.transform.position);
-			print("2 * multi =" + 2 * multi);
+			VFXManager.instance.PlayEffect("VFX_HeatExpulsion", hitbox.transform.position,0, 2*multi);
 			aManager.PlaySoundOneShot("SFX_ExplosionEnemy");
 			print("Overheat is happening boss");
 			overheat.SetHeat(0);

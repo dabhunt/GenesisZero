@@ -225,7 +225,8 @@ public class Merchant : MonoBehaviour
                 break;
             case 1:
                 //if it is a health or shield charge (type 1)
-                pp.GetShield().AddValue(30f);
+                pp.GetShield().AddMaxValue(30);
+                pp.GetShield().SetValue(30f);
                 break;
             case 4:
                 //increase the maximum amount of essence capsules the player can have by 1

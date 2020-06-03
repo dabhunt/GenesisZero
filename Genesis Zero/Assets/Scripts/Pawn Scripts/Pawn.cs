@@ -74,6 +74,7 @@ public class Pawn : MonoBehaviour
             // Shield Damage
             if (GetShield().GetValue() > 0)
             {
+                print("shield thing is running" + GetShield().GetValue());
                 float diff = GetShield().GetValue() - finaldamage;
                 if (diff > 0)
                 {

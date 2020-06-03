@@ -116,6 +116,7 @@ public class CheatCodes : MonoBehaviour
             p.SetKeys(3);
             p.GetHealth().SetMaxValue(9999);
         }
+        godmode = !godmode;
     }
     public void LowGravity()
     {

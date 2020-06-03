@@ -99,7 +99,7 @@ public class SpawnOnDestroy : MonoBehaviour
             {
                 SkillManager sk = player.GetSkillManager();
                 SkillObject mod = sk.GetRandomModByChance();
-                GameObject modObj = sk.SpawnMod(transform.position, mod.name);
+                GameObject modObj = sk.SpawnMod(transform.position + Vector3.up, mod.name);
             }
        
         }

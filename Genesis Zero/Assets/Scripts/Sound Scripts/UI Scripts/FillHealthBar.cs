@@ -6,7 +6,9 @@ using DG.Tweening;
 public class FillHealthBar : MonoBehaviour
 {
 	public Image fillImage;
+	public Image shieldImage;
 	public Slider slider;
+	public Slider shieldSlider;
     public Color fillColor = new Color(0,1,.9f);
     public Color gainHPColor = new Color(.25f, .75f, .27f);
     public Color lowHPcolor;
@@ -18,6 +20,7 @@ public class FillHealthBar : MonoBehaviour
 
     private Player player;
     private float valueLastFrame = 100;
+    private float shieldLastFrame = 30;
     private float tweenTime = .7f;
     private Color color;
     private GameObject canvas;
@@ -25,10 +28,12 @@ public class FillHealthBar : MonoBehaviour
     private Color zero; //lowHPcolor but with 0 alpha
     private bool delayedStart = true;
     private Camera camRef;
+    private Tween t = null;
     void Start()
     {
         camRef = Camera.main;
         Invoke("DelayedStart", 0);
+        shieldSlider.value = 0;
     }
     public void DelayedStart()
     {
@@ -55,11 +60,14 @@ public class FillHealthBar : MonoBehaviour
     	{
     		fillImage.enabled = true;
     	}
+        if (shieldImage != null)
+            ShieldUpdate();
         slider.maxValue = player.GetHealth().GetMaxValue();
     	// uses the player object to get info about player health
     	// fillvalue represents how filled in the healthbar is, from 0 to 100
         float curValue = player.GetHealth().GetValue();
-        
+        if (!StateManager.instance.InTutorial)
+            GetComponent<SimpleTooltip>().infoLeft = curValue + " / " + player.GetHealth().GetMaxValue()+ " Health";
         if (curValue < valueLastFrame && curValue > 0)
         {
             player.GetComponent<Gun>().PlayerHurtTrigger = true;
@@ -83,6 +91,19 @@ public class FillHealthBar : MonoBehaviour
             Invoke("TweenBackBar", tweenTime);
         }
         valueLastFrame = curValue;
+    }
+    public void ShieldUpdate()
+    {
+        float shield = player.GetShield().GetValue();
+        shieldSlider.maxValue = player.GetShield().GetMaxValue();
+        if (shield < shieldLastFrame || (shieldSlider.value <= 0 && shield > 20))
+        {
+            t = shieldSlider.DOValue(shield, tweenTime);
+            shieldImage.DOColor(Color.white, .3f);
+        }
+        if (t != null && t.IsComplete())
+            shieldImage.DOColor(fillColor, .3f);
+        shieldLastFrame = shield;
     }
     public void HurtTween()
     {
