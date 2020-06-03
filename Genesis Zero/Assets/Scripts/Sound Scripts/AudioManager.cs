@@ -285,7 +285,10 @@ public class AudioManager : MonoBehaviour
 				StartCoroutine(NewSongPairing("Foundry_Slow", "Foundry_Fast", SongPairTransitionTime));
 				break;
 			case 3:
-				StartCoroutine(NewSongPairing("Elevator_Slow", "Boss_Fast", SongPairTransitionTime));
+				StartCoroutine(NewSongPairing("Elevator_Slow", "Elevator_Fast", SongPairTransitionTime));
+				break;
+			case 4:
+				StartCoroutine(NewSongPairing("Boss_Slow", "Boss_Fast", SongPairTransitionTime));
 				break;
 		}
 	}

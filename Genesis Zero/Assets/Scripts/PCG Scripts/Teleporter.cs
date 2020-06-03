@@ -91,7 +91,7 @@ public class Teleporter : MonoBehaviour
 		{
 			player.position = StateManager.instance.GetBossRoomLocation();
 			player.GetComponent<UniqueEffects>().CombatChangesMusic = false;
-			level = 4;
+			level = 3;
 		}
 		Player.instance.Heal(50);
 		EnemyManager.ModifyDifficultyMulti(1.3f);
