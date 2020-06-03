@@ -54,11 +54,11 @@ public class OverHeat : MonoBehaviour
     public void Increment(float amount)
     {
     	heat += amount;
-        heat = Mathf.Clamp(heat, 0, maxHeat);
         if (heat >= maxHeat) 
         {
             GetComponent<UniqueEffects>().OverHeatTrigger();
         }
+        heat = Mathf.Clamp(heat, 0, maxHeat);
     }
     public float CalculateBloom()
     {

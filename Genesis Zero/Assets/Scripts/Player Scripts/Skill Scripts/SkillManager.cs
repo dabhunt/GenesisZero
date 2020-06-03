@@ -692,9 +692,7 @@ public class SkillManager
     public float GetSkillStackAsMultiplier(string skill, float multiPerStack)
     {
         int stacks = GetSkillStack(skill);
-        float multi = 1;
-        if (stacks > 1)
-            multi = 1 + (multiPerStack - 1) * (stacks - 1);
+        float multi = 1 + (multiPerStack - 1) * (stacks - 1);
         return multi;
     }
     public bool GetUpdated()

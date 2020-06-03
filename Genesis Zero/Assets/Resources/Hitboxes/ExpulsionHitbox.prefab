@@ -57,6 +57,7 @@ MeshRenderer:
   m_LightProbeUsage: 1
   m_ReflectionProbeUsage: 1
   m_RayTracingMode: 2
+  m_RayTraceProcedural: 0
   m_RenderingLayerMask: 1
   m_RendererPriority: 0
   m_Materials:
@@ -81,6 +82,7 @@ MeshRenderer:
   m_SortingLayerID: 0
   m_SortingLayer: 0
   m_SortingOrder: 0
+  m_AdditionalVertexStreams: {fileID: 0}
 --- !u!135 &8662332623139089234
 SphereCollider:
   m_ObjectHideFlags: 0
@@ -115,8 +117,10 @@ MonoBehaviour:
   Knockbackforce: 12
   DirectionalKnockback: 0
   StunTime: 0
+  IgnoredDamageReduction: 0
   LifeTime: 99
   Burn: {x: 0, y: 0}
+  Slow: {x: 0, y: 0}
   Collider: {fileID: 8662332623139089234}
   Source: {fileID: 0}
   hitEffectVFX: VFX_BulletSparks

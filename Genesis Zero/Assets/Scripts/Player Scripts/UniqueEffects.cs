@@ -29,7 +29,7 @@ public class UniqueEffects : MonoBehaviour
 	[Header("Heat Expulsion")]
 	public float HE_Damage = 20;
 	public float HE_TotalBurnDMG = 21;
-	public float HE_StackMulti = 1.2f;
+	public float HE_StackMulti = 1.4f;
 	[Header("Chemical Accelerant")]
 	public float CA_MaxAttackSpeedPerStack = .50f;
 	public float CA_MaxCritChancePerStack = .25f;
@@ -114,7 +114,7 @@ public class UniqueEffects : MonoBehaviour
 	public void OverHeatTrigger()
 	{
 		int HE_stacks = player.GetSkillStack("Heat Expulsion");
-		if (HE_stacks > 0 && overheat.GetHeat() >= overheat.GetMaxHeat())
+		if (HE_stacks > 0)
 		{
 			//HE_stack multi is 1.2f, which represents a 20% increase in size for each modifier past 1
 			float multi = player.GetSkillManager().GetSkillStackAsMultiplier("Heat Expulsion", HE_StackMulti);
@@ -123,12 +123,14 @@ public class UniqueEffects : MonoBehaviour
 			//Sets damage to double player's * stack multiplier of 20% per stack, false means it can't crit
 			hitbox.GetComponent<Hitbox>().InitializeHitbox(player.GetDamage().GetValue() * 2f * multi, player, false);
 			hitbox.transform.parent = transform;
-			hit.SetLifeTime(.25f);
+			hit.SetLifeTime(.3f);
 			hit.Burn = new Vector2(3, HE_TotalBurnDMG / 3);
 			hit.SetStunTime(1f);
 			hitbox.GetComponent<SphereCollider>().radius = 2 * multi;
-			VFXManager.instance.PlayEffect("VFX_HeatExpulsion", hitbox.transform.position, 0, 2 * multi);
+			VFXManager.instance.PlayEffect("VFX_HeatExpulsion", hitbox.transform.position);
+			print("2 * multi =" + 2 * multi);
 			aManager.PlaySoundOneShot("SFX_ExplosionEnemy");
+			print("Overheat is happening boss");
 			overheat.SetHeat(0);
 		}
 	}
