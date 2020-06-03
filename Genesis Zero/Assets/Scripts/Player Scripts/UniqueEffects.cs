@@ -7,7 +7,7 @@ public class UniqueEffects : MonoBehaviour
 {
 	//this script contains non bullet related unique effects of modifiers outside the data structure of stats
 	//if this is 2, it checks twice per second
-	public bool PhaseTrigger = false;
+	public bool phaseTrigger = false;
 	public float checksPerSecond = 4f;
 	[Header("Music Cross Fade durations")]
 	public float fadeIn = 3f;
@@ -35,6 +35,9 @@ public class UniqueEffects : MonoBehaviour
 	public float CA_MaxCritChancePerStack = .25f;
 	[Header("Amplified Essence")]
 	public float AE_MaxAPMulti = 3f;
+	[Header("Phase Fuse")]
+	public float PF_CD_Firststack = 2.5f;
+	public float PF_ExtraStacks = 1f;
 	[Header("Superheated Essence")]
 	public float SE_MaxAttackSpeed = 1f;
 	public float SE_MaxExtraBloom = .35f;
@@ -86,7 +89,8 @@ public class UniqueEffects : MonoBehaviour
 		SuperHeatedEssence();
 		ThermiteCore();
 		MusicTimer();
-		if (PhaseTrigger)
+		
+		if (phaseTrigger)
 		{
 			PowerSurge();
 		}
@@ -185,7 +189,7 @@ public class UniqueEffects : MonoBehaviour
 		{
 			incombat = true;
 		}
-		Camera.main.GetComponent<BasicCameraZoom>().ChangeFieldOfViewTemporary(22, 40, .5f);
+		Camera.main.GetComponent<BasicCameraZoom>().ChangeFieldOfViewTemporary(22, 35, .5f);
 		AudioManager.instance.CrossFadeChannels(1, 5.0f, 2, fadeIn);
 		//AudioManager.instance.CrossFadeChannels(2, "Music", "CombatMusic", true, 15);
 	}
@@ -291,6 +295,7 @@ public class UniqueEffects : MonoBehaviour
 			player.GetAbilityPower().AddRepeatingBonus(currentAPbonus, currentAPbonus, 1 / checksPerSecond, "AmplifiedEssence");
 		}
 	}
+	//extra damage based on how much heat
 	private void ChemicalAccelerant()
 	{
 		int stacks = player.GetSkillStack("Chemical Accelerant");
@@ -304,6 +309,17 @@ public class UniqueEffects : MonoBehaviour
 			player.GetAttackSpeed().AddRepeatingBonus(currentAttackSpeed, currentAttackSpeed, 1 / checksPerSecond, "ChemicalAccelerant_AS");
 			player.GetCritChance().AddRepeatingBonus(currentCritChance, currentCritChance, 1 / checksPerSecond, "ChemicalAccelerant_CC");
 		}
+	}
+	public void PhaseTrigger()
+	{
+		phaseTrigger = true;
+		int stacks = player.GetSkillStack("Phase Fuse");
+		if (stacks > 0)
+		{
+			float reduction = ((stacks - 1) * PF_ExtraStacks) + PF_CD_Firststack;
+			player.GetComponent<AbilityCasting>().ReduceSlotCooldown(reduction, 1);
+		}
+		//more mods
 	}
 	private void PowerSurge()
 	{
@@ -320,7 +336,7 @@ public class UniqueEffects : MonoBehaviour
 	}
 	public void ResetPhaseTrigger()
 	{
-		PhaseTrigger = false;
+		phaseTrigger = false;
 		PreBonusAP = 0;
 	}
 	//Bullets deal bonus damage, based on how much heat you have, up to a cap of 35% more damage

@@ -85,10 +85,10 @@ public class Teleporter : MonoBehaviour
 	private void Teleport()
 	{
 		StateManager.instance.InTutorial = false;
+		player.position = new Vector2(destinationX, destinationY);
 		if (BossRoomOverride == true)
 			player.position = StateManager.instance.GetBossRoomLocation();
 		Player.instance.Heal(50);
-		player.position = new Vector2(destinationX, destinationY);
 		EnemyManager.ModifyDifficultyMulti(1.3f);
 		Camera.main.GetComponentInParent<CinemachineBrain>().enabled = true;
 		buge.transform.position = player.position;

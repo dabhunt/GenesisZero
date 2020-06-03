@@ -284,6 +284,13 @@ public class AbilityCasting : MonoBehaviour
         AbilityCooldown1 -= seconds;
         AbilityCooldown2 -= seconds;
     }
+    public void ReduceSlotCooldown(float seconds, int slot)
+    {
+        if (slot == 1)
+            AbilityCooldown1 -= seconds;
+        else
+            AbilityCooldown2 -= seconds;
+    }
     public void SwapAbilityCooldowns()
     {
         float TCastTime = AbilityCasttime1;
@@ -310,7 +317,7 @@ public class AbilityCasting : MonoBehaviour
         pc.SetVertVel(0);
         player.KnockBackForced(-aimDir + Vector2.up, 30);
         GameObject hitbox = SpawnGameObject("PulseBurstHitbox", CastAtAngle(pc.CenterPoint(), aimDir, 1), Quaternion.identity);
-        hitbox.GetComponent<Hitbox>().InitializeHitbox(GetComponent<Player>().GetAbilityPower().GetValue() / 2, GetComponent<Player>(), false);
+        hitbox.GetComponent<Hitbox>().InitializeHitbox(GetComponent<Player>().GetAbilityPower().GetValue(), GetComponent<Player>(), false);
         hitbox.GetComponent<Hitbox>().SetStunTime(1.2f);
         player.SetInvunerable(.5f);
         hitbox.GetComponent<Hitbox>().SetLifeTime(.15f);
@@ -322,7 +329,8 @@ public class AbilityCasting : MonoBehaviour
         player.GetComponent<PlayerController>().SetVertVel(0);
         player.KnockBackForced(aimDir + Vector2.up, 30);
         GameObject hitbox = SpawnGameObject("BurstChargeHitbox", pc.CenterPoint(), Quaternion.identity);
-        print("ability power in burst charge:"+ GetComponent<Player>().GetAbilityPower().GetValue());
+        hitbox.transform.LookAt(WorldXhair);
+        //print("ability power in burst charge:"+ GetComponent<Player>().GetAbilityPower().GetValue());
         hitbox.GetComponent<Hitbox>().InitializeHitbox(GetComponent<Player>().GetAbilityPower().GetValue(), GetComponent<Player>(), false);
         hitbox.transform.parent = transform;
         player.SetInvunerable(.6f);

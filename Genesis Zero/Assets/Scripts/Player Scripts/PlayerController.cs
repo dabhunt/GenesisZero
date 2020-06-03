@@ -98,6 +98,7 @@ public class PlayerController : MonoBehaviour
     private bool isDashing;
     private bool isFacingRight = true;
     private bool isAimingRight;
+    private GameObject downSmash;
 
     //sound variables
     private bool walkSoundPlaying = false;
@@ -307,26 +308,31 @@ public class PlayerController : MonoBehaviour
     }
     public void Down(InputAction.CallbackContext ctx)
     {
-        if (isGrounded)
-            return;
-        FallFaster(-45);
-        isFallingFast = true;
-        AudioManager.instance.PlaySound("SFX_DownAir", false, .8f);
-        Hitbox hit = this.transform.Find("Center").Find("Down").GetComponent<Hitbox>();
-        hit.InitializeHitbox(Player.instance.GetAbilityPower().GetValue(), Player.instance, false);
-        int stacks = Player.instance.GetSkillStack("Anti-Gravity Boots");
-        if (stacks > 0)
+        if (ctx.performed)
         {
-            hit.Damage = (stacks * Player.instance.GetAbilityPower().GetValue()) + Player.instance.GetAbilityPower().GetValue();
+            if (isGrounded)
+                return;
+            FallFaster(-45);
+            isFallingFast = true;
+            AudioManager.instance.PlaySound("SFX_DownAir", false, .8f);
+            downSmash = Instantiate(Resources.Load<GameObject>("Hitboxes/DownSmashHitbox"), CenterPoint(), Quaternion.identity);
+            downSmash.transform.SetParent(this.transform.Find("Center"));
+            Hitbox hit = downSmash.GetComponent<Hitbox>();
+            hit.InitializeHitbox(Player.instance.GetAbilityPower().GetValue(), Player.instance, false);
+            int stacks = Player.instance.GetSkillStack("Anti-Gravity Boots");
+            if (stacks > 0)
+            {
+                hit.Damage = (stacks * Player.instance.GetAbilityPower().GetValue()) + Player.instance.GetAbilityPower().GetValue();
+            }
         }
-
     }
     public void FallFaster(float terminal)
     {
         if (vertVel > terminal * .35f)
             vertVel = terminal * .35f;
         terminalVel = terminal * -1;
-        transform.Find("Center").Find("Down").gameObject.SetActive(true);
+        //transform.Find("Center").Fin.gameObject.SetActive(true);
+        //vfx_downsmash = VFXManager.instance.PlayEffectOnObject("VFX_Down", this.transform.Find("Center").gameObject, new Vector3(0, 0, 0));
     }
     /* This function is used to update the jump cycle and its behavior
      */
@@ -380,10 +386,10 @@ public class PlayerController : MonoBehaviour
             if (isFallingFast)
             {
                 VFXManager.instance.PlayEffect("VFX_Lightning", this.transform.position);
-                AudioManager.instance.PlaySound("SFX_Downsmash", false, 1);
+                AudioManager.instance.PlayRandomSFXType("SFX_Downsmash");
                 AudioManager.instance.StopSound("SFX_DownAir");
                 isFallingFast = false;
-                Invoke("DisableDown", .75f);
+                downSmash.AddComponent<DestroyAfterXTime>().time = .4f;
             }
             hurtBoxCol.center = currentHitBoxCenter;
             hurtBoxCol.height = currentHitboxHeight;
@@ -502,7 +508,7 @@ public class PlayerController : MonoBehaviour
                 //animator.SetTrigger("startRoll");
                 //StartCoroutine(ResetTrigger("startRoll", triggerResetTime));
                 gun.PhaseTrigger = true;
-                GetComponent<UniqueEffects>().PhaseTrigger = true;
+                GetComponent<UniqueEffects>().PhaseTrigger();
                 sound.Roll();
                 //VFXManager.instance.PlayEffect("VFX_PlayerDashStart", transform.position);
 
@@ -704,10 +710,6 @@ public class PlayerController : MonoBehaviour
     	if(IsBlocked(Vector3.right)) return true;
     	if(IsBlocked(Vector3.up)) return true;
     	return false;
-    }
-    public void DisableDown()
-    {
-        transform.Find("Center").Find("Down").gameObject.SetActive(false);
     }
     /* This function updates information
      * about the player's state for animations

@@ -3997,7 +3997,7 @@ ParticleSystem:
     lifetime:
       serializedVersion: 2
       minMaxState: 0
-      scalar: 0.4
+      scalar: 0.3
       minScalar: 1
       maxCurve:
         serializedVersion: 2
@@ -4880,8 +4880,6 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 7888669560160962224}
-  - component: {fileID: 7888669559358303155}
-  - component: {fileID: 7888669559358303154}
   m_Layer: 8
   m_Name: VFX_Down
   m_TagString: Untagged
@@ -4906,48 +4904,6 @@ Transform:
   m_Father: {fileID: 0}
   m_RootOrder: 0
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!135 &7888669559358303155
-SphereCollider:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 7888669560160962231}
-  m_Material: {fileID: 0}
-  m_IsTrigger: 1
-  m_Enabled: 1
-  serializedVersion: 2
-  m_Radius: 1
-  m_Center: {x: 0, y: -1.44, z: 0.12}
---- !u!114 &7888669559358303154
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 7888669560160962231}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 1e7773cfab260d141aad2bd82731dee2, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  Damage: 10
-  Critical: 0
-  HurtsAllies: 0
-  HurtsEnemies: 1
-  Intangible: 1
-  MaxHits: 9999
-  Knockbackforce: 7
-  DirectionalKnockback: 1
-  StunTime: 0.4
-  IgnoredDamageReduction: 0
-  LifeTime: 99
-  Burn: {x: 0, y: 0}
-  Slow: {x: 0, y: 0}
-  Collider: {fileID: 7888669559358303155}
-  Source: {fileID: 0}
-  hitEffectVFX: VFX_SpartanSparks
-  VFX_ScaleReduction: 0.5
 --- !u!1 &7888669561122521471
 GameObject:
   m_ObjectHideFlags: 0
@@ -9891,7 +9847,7 @@ TrailRenderer:
   m_SortingLayerID: 0
   m_SortingLayer: 0
   m_SortingOrder: 0
-  m_Time: 1.3
+  m_Time: 0.5
   m_Parameters:
     serializedVersion: 3
     widthMultiplier: 2

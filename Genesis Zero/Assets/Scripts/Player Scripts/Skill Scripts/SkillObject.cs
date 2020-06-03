@@ -35,4 +35,5 @@ public class SkillObject : ScriptableObject
     public float shield;
     public float weight;
     public float abilitypower;
+    public float cooldownreduction; //ex .1 = 10%
 }
