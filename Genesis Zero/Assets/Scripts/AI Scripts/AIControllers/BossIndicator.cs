@@ -1,7 +1,7 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
-
+using DG.Tweening;
 [ExecuteInEditMode]
 public class BossIndicator : MonoBehaviour
 {
@@ -73,8 +73,7 @@ public class BossIndicator : MonoBehaviour
     {
         origin = pos;
         size = image.sprite.rect.size;
-        scalex = targetsize.x / size.x;
-        scaley = targetsize.y / size.y;
+        image.transform.DOScaleY(scaley, .45f);
         image.transform.localScale = new Vector2(scalex * image.sprite.pixelsPerUnit, scaley * image.sprite.pixelsPerUnit);
         image.transform.localEulerAngles = new Vector3(0, 0, angle);
 
