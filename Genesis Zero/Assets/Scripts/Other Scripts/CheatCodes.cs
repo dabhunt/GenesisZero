@@ -53,11 +53,7 @@ public class CheatCodes : MonoBehaviour
     }
     public void BossRoom()
     {
-        pObj.transform.position = StateManager.instance.GetBossRoomLocation();
-        //temporary code
-        GameObject.FindWithTag("BUG-E").GetComponent<BUGE>().FollowingPlayer(true);
-        //temporary code ^
-        GameObject.FindWithTag("BUG-E").transform.position = pObj.transform.position;
+        StateManager.instance.Teleport(Vector2.zero, true);
     }
     public void SpawnMod()
     {

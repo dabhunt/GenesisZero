@@ -26,7 +26,7 @@ public class PlayerController : MonoBehaviour
     public Color phaseColor = Color.black;
     public float rollDuration = 3f;
     public float rollSpeedMult = 1.5f;
-    public float rollCooldownDuration = 3.0f;
+    public float rollCooldownDuration = 2.0f;
     public float jumpBufferTime = 0.2f;
     public LayerMask immoveables; //LayerMask for bound checks
     public LayerMask rollingLayerMask; //layermask used while rolling
@@ -36,7 +36,7 @@ public class PlayerController : MonoBehaviour
     public float gravity = 18f;
     private float resetGravity;
     public float terminalVel = 32f;
-    public float slamCoolDown = 2.5f;
+    public float slamCoolDownDuration = 2f;
     public float fallSpeedMult = 1.45f;
     public float airControlMult = 0.5f;
     public float airSpeedMult = 0.85f;
@@ -81,6 +81,7 @@ public class PlayerController : MonoBehaviour
     private float jumpPressedTime;
     private float timeRolled = 0;
     private float rollCooldown = 0;
+    private float slamCooldown = 0;
     private float lastPressed = 0;
     private float dJumpDelay = 0.15f;
     private int rollDirection;
@@ -128,12 +129,10 @@ public class PlayerController : MonoBehaviour
         currentHitboxHeight = hurtBoxCol.height;
         currentHitBoxCenter = hurtBoxCol.center;
     }
-
     private void Update()
     {
         AnimStateUpdate();
     }
-
     private void FixedUpdate()
     {
         CheckGround();
@@ -318,6 +317,7 @@ public class PlayerController : MonoBehaviour
             downSmash = Instantiate(Resources.Load<GameObject>("Hitboxes/DownSmashHitbox"), CenterPoint(), Quaternion.identity);
             downSmash.transform.SetParent(this.transform.Find("Center"));
             Hitbox hit = downSmash.GetComponent<Hitbox>();
+            rollCooldown = rollCooldownDuration;
             hit.InitializeHitbox(Player.instance.GetAbilityPower().GetValue(), Player.instance, false);
             int stacks = Player.instance.GetSkillStack("Anti-Gravity Boots");
             if (stacks > 0)
@@ -384,13 +384,7 @@ public class PlayerController : MonoBehaviour
         {
             isGrounded = true;
             if (isFallingFast)
-            {
-                VFXManager.instance.PlayEffect("VFX_Lightning", this.transform.position);
-                AudioManager.instance.PlayRandomSFXType("SFX_Downsmash");
-                AudioManager.instance.StopSound("SFX_DownAir");
-                isFallingFast = false;
-                downSmash.AddComponent<DestroyAfterXTime>().time = .4f;
-            }
+                EndSlam();
             hurtBoxCol.center = currentHitBoxCenter;
             hurtBoxCol.height = currentHitboxHeight;
             if (cols.Length != 0)
@@ -505,13 +499,11 @@ public class PlayerController : MonoBehaviour
             if (!inputActions.PlayerControls.enabled) return;
             if (!isRolling && rollCooldown == 0)
             {
-                //animator.SetTrigger("startRoll");
-                //StartCoroutine(ResetTrigger("startRoll", triggerResetTime));
+                EndSlam();
                 gun.PhaseTrigger = true;
                 GetComponent<UniqueEffects>().PhaseTrigger();
                 sound.Roll();
                 //VFXManager.instance.PlayEffect("VFX_PlayerDashStart", transform.position);
-
                 GameObject dashstart = VFXManager.instance.PlayEffectOnObject("VFX_PlayerDashStart", this.gameObject, new Vector2(0,1));
                 if (IsFacingRight() == false)
                     dashstart.transform.Rotate(new Vector3(0, 180, 0));
@@ -557,6 +549,16 @@ public class PlayerController : MonoBehaviour
         gameObject.GetComponentInChildren<SkinnedMeshRenderer>().enabled = true;
         StartCoroutine(ResetCooldown(rollCooldownDuration));
     }
+    private void EndSlam()
+    {
+        VFXManager.instance.PlayEffect("VFX_Lightning", this.transform.position);
+        AudioManager.instance.PlayRandomSFXType("SFX_Downsmash");
+        AudioManager.instance.StopSound("SFX_DownAir");
+        isFallingFast = false;
+        downSmash.AddComponent<DestroyAfterXTime>().time = .4f;
+        StartCoroutine(ResetSlamCool(slamCoolDownDuration));
+    }
+    
     /* This function keeps track of rolling state
      * and make player exit rolling state if necessary
      */
@@ -782,6 +784,11 @@ public class PlayerController : MonoBehaviour
     {
         yield return new WaitForSeconds(time);
         rollCooldown = 0;
+    }
+    private IEnumerator ResetSlamCool(float time)
+    {
+        yield return new WaitForSeconds(time);
+        slamCooldown = 0;
     }
     public Vector2 CenterPoint()
     {

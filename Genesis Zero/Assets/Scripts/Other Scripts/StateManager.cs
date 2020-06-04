@@ -4,6 +4,7 @@ using UnityEngine;
 using UnityEngine.SceneManagement;
 using UnityEngine.UI;
 using DG.Tweening;
+using Cinemachine;
 using UnityEngine.Rendering.PostProcessing;
 
 public class StateManager : MonoBehaviour
@@ -102,7 +103,6 @@ public class StateManager : MonoBehaviour
     {
         ChangeTimeScale(1, 0);
     }
-
     //This pauses game
     public void PauseGame()
     {
@@ -122,7 +122,6 @@ public class StateManager : MonoBehaviour
         else
             UnpauseGame();
     }
-
     //This unpauses game
     public void UnpauseGame()
     {
@@ -211,6 +210,25 @@ public class StateManager : MonoBehaviour
         int level = Mathf.FloorToInt(Player.instance.transform.position.x / TileManager.instance.levelSpacing);
         Mathf.Clamp(level, 0, 3);
         return level;
+    }
+    public void Teleport(Vector2 destination, bool bossRoomOverride)
+    {
+        StateManager.instance.InTutorial = false;
+        Player.instance.transform.position = new Vector2(destination.x, destination.y);
+        int level = StateManager.instance.GetCurrentPlayerLevel();
+        if (bossRoomOverride == true)
+        {
+            Player.instance.transform.position = GetBossRoomLocation();
+            player.GetComponent<UniqueEffects>().CombatChangesMusic = false;
+            level = 3;
+        }
+        Player.instance.Heal(50);
+        EnemyManager.ModifyDifficultyMulti(1.3f);
+        Camera.main.GetComponentInParent<CinemachineBrain>().enabled = true;
+        BUGE.instance.transform.position = player.transform.position;
+        BUGE.instance.FollowingPlayer(true);
+        AudioManager.instance.PlaySongsForLevel(level);
+        TileManager.instance.playerOnlevel++;
     }
     public void RecursiveLayerChange(Transform t, string layerName)
     {

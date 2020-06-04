@@ -84,22 +84,7 @@ public class Teleporter : MonoBehaviour
 	}
 	private void Teleport()
 	{
-		StateManager.instance.InTutorial = false;
-		player.position = new Vector2(destinationX, destinationY);
-		int level = StateManager.instance.GetCurrentPlayerLevel();
-		if (BossRoomOverride == true)
-		{
-			player.position = StateManager.instance.GetBossRoomLocation();
-			player.GetComponent<UniqueEffects>().CombatChangesMusic = false;
-			level = 4;
-		}
-		Player.instance.Heal(50);
-		EnemyManager.ModifyDifficultyMulti(1.3f);
-		Camera.main.GetComponentInParent<CinemachineBrain>().enabled = true;
-		buge.transform.position = player.position;
-		buge.GetComponent<BUGE>().FollowingPlayer(true);
-		AudioManager.instance.PlaySongsForLevel(level);
-		TileManager.instance.playerOnlevel++;
+		StateManager.instance.Teleport(new Vector2(destinationX, destinationY), BossRoomOverride);
 	}
 	public void SetDestination(Vector2 destination)
 	{
@@ -107,7 +92,6 @@ public class Teleporter : MonoBehaviour
 		destinationY = destination.y;
 		destinationZ = 0;
 	}
-
 	public float GetAnimationStateTime(){
 		return Mathf.Repeat(ani.GetCurrentAnimatorStateInfo(0).normalizedTime, 1f)+.1f;
 	}
