@@ -277,6 +277,7 @@ public class TileManager : MonoBehaviour
 			}
 			//Spawn tile and move spawnVector
 			newTile.transform.position = spawnVector;
+			
 			spawnVector.x += tileLength;
 			
 			//Spawn Enemy
