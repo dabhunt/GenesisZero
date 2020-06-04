@@ -18,6 +18,7 @@ public class ChangeZoomOnTriggerEnter : MonoBehaviour
 		if (other.GetComponentInParent<Player>() == true && triggered == false)
 		{
 			Camera.main.GetComponent<BasicCameraZoom>().ChangeFieldOfView(TargetFOV, 1);
+			AudioManager.instance.CrossFadeChannels(1,1.5f,2,1.5f);
 			triggered = true;
 		}
 	}
