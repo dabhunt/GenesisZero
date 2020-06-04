@@ -213,8 +213,11 @@ public class StateManager : MonoBehaviour
     }
     public void Teleport(Vector2 destination, bool bossRoomOverride)
     {
+        GameObject fakeTele = TileManager.instance.interactablePrefabs[4]; //spawn a fake teleporter where ever the teleporter takes you
+        fakeTele.transform.position = destination;
+        Destroy(fakeTele.GetComponent<Teleporter>());
         StateManager.instance.InTutorial = false;
-        Player.instance.transform.position = new Vector2(destination.x, destination.y);
+        Player.instance.transform.position = new Vector3(destination.x, destination.y, 0);
         int level = StateManager.instance.GetCurrentPlayerLevel();
         if (bossRoomOverride == true)
         {
@@ -223,7 +226,7 @@ public class StateManager : MonoBehaviour
             level = 3;
         }
         Player.instance.Heal(50);
-        EnemyManager.ModifyDifficultyMulti(1.3f);
+        EnemyManager.ModifyDifficultyMulti(1.4f);
         Camera.main.GetComponentInParent<CinemachineBrain>().enabled = true;
         BUGE.instance.transform.position = player.transform.position;
         BUGE.instance.FollowingPlayer(true);

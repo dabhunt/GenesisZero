@@ -384,7 +384,7 @@ public class PlayerController : MonoBehaviour
         {
             isGrounded = true;
             if (isFallingFast)
-                EndSlam();
+                EndSlam(false);
             hurtBoxCol.center = currentHitBoxCenter;
             hurtBoxCol.height = currentHitboxHeight;
             if (cols.Length != 0)
@@ -499,7 +499,7 @@ public class PlayerController : MonoBehaviour
             if (!inputActions.PlayerControls.enabled) return;
             if (!isRolling && rollCooldown == 0)
             {
-                EndSlam();
+                EndSlam(true);
                 gun.PhaseTrigger = true;
                 GetComponent<UniqueEffects>().PhaseTrigger();
                 sound.Roll();
@@ -549,14 +549,22 @@ public class PlayerController : MonoBehaviour
         gameObject.GetComponentInChildren<SkinnedMeshRenderer>().enabled = true;
         StartCoroutine(ResetCooldown(rollCooldownDuration));
     }
-    private void EndSlam()
+    private void EndSlam(bool cancelled)
     {
-        VFXManager.instance.PlayEffect("VFX_Lightning", this.transform.position);
-        AudioManager.instance.PlayRandomSFXType("SFX_Downsmash");
         AudioManager.instance.StopSound("SFX_DownAir");
         isFallingFast = false;
         downSmash.AddComponent<DestroyAfterXTime>().time = .4f;
         StartCoroutine(ResetSlamCool(slamCoolDownDuration));
+        if (cancelled)
+        {
+            terminalVel = 0;
+        }
+        else
+        {
+            VFXManager.instance.PlayEffect("VFX_Lightning", this.transform.position);
+            AudioManager.instance.PlayRandomSFXType("SFX_Downsmash");
+        }
+
     }
     
     /* This function keeps track of rolling state
