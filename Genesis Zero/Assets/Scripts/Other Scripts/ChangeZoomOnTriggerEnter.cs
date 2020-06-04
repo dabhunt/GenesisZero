@@ -10,15 +10,14 @@ public class ChangeZoomOnTriggerEnter : MonoBehaviour
 	private bool triggered;
 	private void Start()
 	{
-		player = Player.instance.gameObject;
+		player = GameObject.FindGameObjectWithTag("Player");
 	}
 
 	private void OnTriggerEnter(Collider other)
 	{
 		if (other.GetComponentInParent<Player>() == true && triggered == false)
 		{
-			Camera.main.GetComponent<BasicCameraZoom>().ChangeFieldOfView(TargetFOV, 1);
-			AudioManager.instance.CrossFadeChannels(1,1.5f,2,1.5f);
+			Camera.main.GetComponent<BasicCameraZoom>().ChangeFieldOfView(TargetFOV);
 			triggered = true;
 		}
 	}

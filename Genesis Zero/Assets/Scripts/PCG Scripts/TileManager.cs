@@ -171,8 +171,8 @@ public class TileManager : MonoBehaviour
 					//if less than this number of cubbies have been checked, force the teleporter to have it's position updated regardless of rng.
 					//this prevents the teleporter from ever spawning in the first building.
 					if (iter < dontSpawnUntilAfter || Random.value <= teleSpawnChance)
-					{
-						newestTele.transform.position = new Vector3(mat.transform.position.x, mat.transform.position.y, 0);
+					{ 
+						newestTele.transform.position = mat.transform.position;
 					}
 					LastMatLevel = curMatLevel;
 				}

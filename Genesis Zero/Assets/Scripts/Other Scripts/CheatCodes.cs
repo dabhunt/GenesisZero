@@ -53,9 +53,11 @@ public class CheatCodes : MonoBehaviour
     }
     public void BossRoom()
     {
-        GameObject tele = GameObject.FindGameObjectWithTag("Teleporter");
-        tele.GetComponent<Teleporter>().BossRoomOverride = true;
-        tele.GetComponent<Teleporter>().TeleportWithAnim();
+        pObj.transform.position = StateManager.instance.GetBossRoomLocation();
+        //temporary code
+        GameObject.FindWithTag("BUG-E").GetComponent<BUGE>().FollowingPlayer(true);
+        //temporary code ^
+        GameObject.FindWithTag("BUG-E").transform.position = pObj.transform.position;
     }
     public void SpawnMod()
     {

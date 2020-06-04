@@ -61,7 +61,7 @@ public class UniqueEffects : MonoBehaviour
 	private float currentAttackSpeed = 0;
 	private float currentCritChance = 0;
 	private AudioManager aManager;
-	public bool CombatChangesMusic = true;
+
 	private Player player;
 	private OverHeat overheat;
 	private bool incombat = false;
@@ -100,6 +100,7 @@ public class UniqueEffects : MonoBehaviour
 	private void Update()
 	{
 		StackDecayTimer();
+
 	}
 	private void MusicTimer()
 	{
@@ -170,8 +171,7 @@ public class UniqueEffects : MonoBehaviour
 	public void DamageGivenTrigger()
 	{
 		MusicDecay = durationUntilDecay;
-		if (CombatChangesMusic)
-			EnterCombatMusic();
+		EnterCombatMusic();
 	}
 	public bool IsInCombat()
 	{
@@ -179,11 +179,17 @@ public class UniqueEffects : MonoBehaviour
 	}
 	private void ExitCombat()
 	{
-		incombat = false;
+		if (incombat == true)
+		{
+			incombat = false;
+		}
 	}
 	public void EnterCombatMusic()
 	{
-		incombat = true;
+		if (incombat == false)
+		{
+			incombat = true;
+		}
 		Camera.main.GetComponent<BasicCameraZoom>().ChangeFieldOfViewTemporary(22, 35, .5f);
 		AudioManager.instance.CrossFadeChannels(1, 5.0f, 2, fadeIn);
 		//AudioManager.instance.CrossFadeChannels(2, "Music", "CombatMusic", true, 15);
@@ -194,7 +200,7 @@ public class UniqueEffects : MonoBehaviour
 		{	
 			incombat = false;
 		}
-		//Camera.main.GetComponent<BasicCameraZoom>().StopTempFieldOfViewChange();
+		Camera.main.GetComponent<BasicCameraZoom>().StopTempFieldOfViewChange();
 		AudioManager.instance.CrossFadeChannels(2, 5.0f, 1, fadeOut);
 	}
 	void StackDecayTimer()

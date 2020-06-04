@@ -121,8 +121,8 @@ public class Merchant : MonoBehaviour
             SkillObject mod = skillManager.GetSkillFromString(name);
             rarity = " ( " + skillManager.GetRarityString(mod) + " )";
             color = skillManager.GetColor(mod);
-            cost = "x" + (mod.Rarity).ToString();
-            canistersNeeded = mod.Rarity;
+            cost = "x" + (1 + mod.Rarity).ToString();
+            canistersNeeded = 1 + mod.Rarity;
             icon = mod.Icon;
             desc = mod.Description;
         }
