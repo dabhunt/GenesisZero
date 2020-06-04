@@ -115,6 +115,7 @@ public class BossAI : AIController
 			{
 				DialogueManager.instance.TriggerDialogue("PreBoss4", false);
 				AudioManager.instance.PlaySound("SFX_BossRoar(1)");
+				AudioManager.instance.PlaySongsForLevel(4);
 				introdialogue = true;
 			}
 
@@ -131,7 +132,7 @@ public class BossAI : AIController
 					GameInputManager.instance.EnablePlayerControls();
 					AudioManager.instance.PlaySound("SFX_BossRoar(0)");
 					camera.transform.DOShakePosition(duration: 1.25f, strength: 1, vibrato: 5, randomness: 60, snapping: false, fadeOut: true);
-					Camera.main.GetComponent<BasicCameraZoom>().ChangeFieldOfView(30);
+					Camera.main.GetComponent<BasicCameraZoom>().ChangeFieldOfView(30, 1);
 					GameObject canvas = GameObject.FindGameObjectWithTag("CanvasUI");
 					healthbar = canvas.transform.Find("BossHealthbar").gameObject;
 					healthbar.SetActive(true);
@@ -426,6 +427,7 @@ public class BossAI : AIController
 			Camera.main.GetComponent<BasicCameraZoom>().ChangeFieldOfViewTemporary(45, 1.1f, .25f);
 			AudioManager.instance.PlaySound("SFX_BossRoar(0)"); // Play sound Effect
 			GetComponent<BossEvents>().DestroyGameObjectsOnWild(); //Destroy top platforms
+			AudioManager.instance.CrossFadeChannels(1, 1.5f, 2, 1.5f);
 			if (WildVFX)
 			{
 				Invoke("WildVFXSpawn", .5f);

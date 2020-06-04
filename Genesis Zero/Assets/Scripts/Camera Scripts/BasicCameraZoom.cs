@@ -1,6 +1,7 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using DG.Tweening;
 
 public class BasicCameraZoom : MonoBehaviour
 {
@@ -10,20 +11,13 @@ public class BasicCameraZoom : MonoBehaviour
     private Camera myCamera;
     private float target;
     private bool spanding;
-    private bool reset;
     private float time;
-    private float savedpov;
-    private float savedmax;
-	private float updatetime;
     // Use this for initialization
     void Start()
     {
         myCamera = GetComponent<Camera>();
         target = myCamera.fieldOfView;
-		savedpov = target;
-		savedmax = fovMax;
     }
-
     // Update is called once per frame
     void Update()
     {
@@ -39,83 +33,78 @@ public class BasicCameraZoom : MonoBehaviour
             target = Mathf.Clamp(target, fovMin, fovMax);
             myCamera.fieldOfView = target;
         }
-
-        if (time > 0)
-        {
-            time -= Time.deltaTime;
-            if (time <= 0)
-            {
-                fovMax = savedmax;
-				target = savedpov;
-                ChangeFieldOfView(savedpov);
-            }
-        }
-
-		if (updatetime > 0)
-		{
-			updatetime -= Time.deltaTime;
-			if (updatetime <= 0)
-			{
-				fovMax = savedmax;
-			}
-		}
-
     }
 
-    public void ChangeFieldOfView(float field)
+    public void ChangeFieldOfView(float field, float tweenTime)
     {
         if (spanding == false)
         {
-            if (field > fovMax)
-            {
-                fovMax = field;
-            }
-			target = field;
-			StartCoroutine(Spandout(.5f, myCamera.fieldOfView, field, spanding));
+            myCamera.DOFieldOfView(field, tweenTime);
         }
     }
-
-    public void ChangeFieldOfViewTemporary(float field, float time, float duration)
+    public void ChangeFieldOfViewTemporary(float field, float duration, float tweenTime)
     {
-        if (spanding == false)
+        if (spanding == false) //only change FOV if not already doing it
         {
-            savedmax = fovMax;
-            if (field > fovMax)
-            {
-                fovMax = field;
-				field = fovMax;
-            }
-			target = field;
-			this.time = time;
-            savedpov = myCamera.fieldOfView;
-            StartCoroutine(Spandout(duration, myCamera.fieldOfView, field, spanding));
+            float savedpov = myCamera.fieldOfView;
+            myCamera.DOFieldOfView(field, tweenTime);
+            StartCoroutine(Reset(duration, savedpov));
+            spanding = true;
         }
     }
-
-	public void StopTempFieldOfViewChange()
-	{
-		if (time > 0 && spanding == false)
-		{
-			time = 0;
-			target = savedpov;
-			ChangeFieldOfView(savedpov);
-			updatetime = .5f;
-		}
-	}
-
-    IEnumerator Spandout(float time, float start, float target, bool spanding)
+    IEnumerator Reset(float waitTime, float FOV)
     {
-        spanding = true;
-        for (float f = 0; f <= time; f += Time.fixedDeltaTime)
+        yield return new WaitForSeconds(waitTime);
+        while (Player.instance.GetComponent<UniqueEffects>().IsInCombat() == true) //continue checking while in combat
         {
-            if (spanding == true && reset == true)
-            {
-                reset = false;
-                break;
-            }
-            myCamera.fieldOfView = Mathf.Clamp(start + ((target - start) * f / time), fovMin, fovMax);
-            yield return new WaitForSeconds(Time.fixedDeltaTime);
+            yield return new WaitForSeconds(.5f); //wait .5 seconds then check again to see if player is still in combat
         }
+        myCamera.DOFieldOfView(FOV, 1.2f); //tween back to original FOV
         spanding = false;
     }
 }
+/*public void ChangeFieldOfViewTemporary(float field, float time, float duration)
+{
+    if (spanding == false)
+    {
+        savedmax = fovMax;
+        if (field > fovMax)
+        {
+            fovMax = field;
+            field = fovMax;
+        }
+        target = field;
+        this.time = time;
+        savedpov = myCamera.fieldOfView;
+        StartCoroutine(Spandout(duration, myCamera.fieldOfView, field, spanding));
+    }
+}
+
+public void StopTempFieldOfViewChange()
+{
+    if (time > 0 && spanding == false)
+    {
+        time = 0;
+        target = savedpov;
+        ChangeFieldOfView(savedpov);
+        updatetime = .5f;
+    }
+}
+
+IEnumerator Spandout(float time, float start, float target, bool spanding)
+{
+    spanding = true;
+    for (float f = 0; f <= time; f += Time.fixedDeltaTime)
+    {
+        if (spanding == true && reset == true)
+        {
+            reset = false;
+            break;
+        }
+        myCamera.fieldOfView = Mathf.Clamp(start + ((target - start) * f / time), fovMin, fovMax);
+        yield return new WaitForSeconds(Time.fixedDeltaTime);
+    }
+    spanding = false;
+}
+}
+*/
