@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
+using UnityEngine.VFX;
 using DG.Tweening;
 
 /**
@@ -10,6 +11,8 @@ using DG.Tweening;
  */
 public class BossAI : AIController
 {
+	public VisualEffect flamethrower;
+
 	public enum State { Headbutt, Firebreath, Pulse, Wild, MovingAway, MovingCloser, Centering, Cooling, Repositioning, Setting, PerformingAttack, Stunned }
 	protected State bossstate = State.MovingAway; // Current behavior state
 	private bool secondphase;
@@ -91,6 +94,8 @@ public class BossAI : AIController
 		back = Vector3.back; foward = Vector3.forward; up = Vector3.up; down = Vector3.down;
 		camera = Camera.main.gameObject;
 		LastZDepth = transform.position.z;
+
+		flamethrower.Stop();
 	}
 
 	new protected void Update()
@@ -172,10 +177,12 @@ public class BossAI : AIController
 				animationswitch = true;
 			}
 			boxanimating = true;
+			flamethrower.Play();
 		}
 		else if (IsDying() == false)
 		{
 			boxanimating = false;
+			flamethrower.Stop();
 		}
 
 		if (boxanimating == false)
