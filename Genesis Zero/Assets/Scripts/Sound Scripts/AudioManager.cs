@@ -287,9 +287,6 @@ public class AudioManager : MonoBehaviour
 			case 3:
 				StartCoroutine(NewSongPairing("Elevator_Slow", "Elevator_Fast", SongPairTransitionTime));
 				break;
-			case 4:
-				StartCoroutine(NewSongPairing("Boss_Slow", "Boss_Fast", SongPairTransitionTime));
-				break;
 		}
 	}
 	IEnumerator NewSongPairing(string slowsong, string combatsong, float fadeOutDuration)
@@ -404,7 +401,7 @@ public class AudioManager : MonoBehaviour
 	//--------------------------------------------------
 	// Crossfading channels
 	//--------------------------------------------------
-
+	//
 	public void CrossFadeChannels(int outAudio, float outTime, int inAudio, float inTime)
 	{
 		if (ChannelVolume(outAudio) != 0 && !isFading)

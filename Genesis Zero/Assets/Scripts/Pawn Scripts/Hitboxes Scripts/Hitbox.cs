@@ -68,8 +68,8 @@ public class Hitbox : MonoBehaviour
     {
         if (StateManager.instance.GameOver == true)
             return;
-        player = Player.instance.gameObject;
-
+        if (Player.instance != null)
+            player = Player.instance.gameObject;
         //colliders.Clear();
         state = State.Active;
         if (GetComponent<Collider>() == null)
