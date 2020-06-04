@@ -36,7 +36,7 @@ public class PlayerController : MonoBehaviour
     public float gravity = 18f;
     private float resetGravity;
     public float terminalVel = 32f;
-    public float slamCoolDownDuration = 1.6f;
+    public float slamCoolDownDuration = 1.5f;
     public float fallSpeedMult = 1.45f;
     public float airControlMult = 0.5f;
     public float airSpeedMult = 0.85f;

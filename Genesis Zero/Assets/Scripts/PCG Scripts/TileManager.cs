@@ -223,8 +223,8 @@ public class TileManager : MonoBehaviour
 		{
 			//Create new tile and set parent to TileManager
 			GameObject newTile;
-			//newTile = Instantiate(tilePrefabs[Random.Range(0, tilePrefabs.Length)]) as GameObject;
-			newTile = Instantiate(tilePrefabs[0]) as GameObject;
+			newTile = Instantiate(tilePrefabs[Random.Range(0, tilePrefabs.Length)]) as GameObject;
+			//newTile = Instantiate(tilePrefabs[0]) as GameObject;
 			if (newTile.GetComponent<MeshRenderer>() == null)
 			{
 				MeshCombiner combiner = newTile.AddComponent<MeshCombiner>();
