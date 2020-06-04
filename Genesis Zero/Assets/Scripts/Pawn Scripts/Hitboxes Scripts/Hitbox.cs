@@ -230,7 +230,11 @@ public class Hitbox : MonoBehaviour
                     if (killDelegate != null) killDelegate();
 
                 GameObject emit = VFXManager.instance.PlayEffect("DamageNumber", new Vector3(transform.position.x - 1, transform.position.y + 1, transform.position.z - 4f));
-                emit.GetComponent<DamageNumber>().SetNumber(damagetaken, Critical);
+				if (Vector3.Distance(emit.transform.position, p.transform.position) >= 3)
+				{
+					emit.transform.position = p.transform.position + new Vector3(0,3,0);
+				}
+				emit.GetComponent<DamageNumber>().SetNumber(damagetaken, Critical);
                 if (Critical)
                 {
                     emit.GetComponent<DamageNumber>().SetColor(new Color(1, 1, 0));
@@ -248,6 +252,13 @@ public class Hitbox : MonoBehaviour
                 {
                     emit.GetComponent<DamageNumber>().SetColor(new Color(.25f, .25f, .25f));
                 }
+
+				bool invis = ((damagetaken == 0 && p.GetComponent<PlayerController>() && p.GetComponent<PlayerController>().IsRolling()) || p.IsDying());
+				if (invis)
+				{
+					emit.GetComponent<DamageNumber>().SetColor(new Color(0, 0, 0, 0));
+				}
+
                 if (hitEffectVFX != "")
                 {
                     GameObject vfx = VFXManager.instance.PlayEffect(hitEffectVFX, new Vector3(transform.position.x, transform.position.y, transform.position.z), 0f, Mathf.Clamp(damagetaken / VFX_ScaleReduction, .2f, 3.5f));
