@@ -429,6 +429,7 @@ public class BossAI : AIController
 			FlameGround.SetActive(true);        //Set the flame ground to true/active
 			animator.SetBool("Wild", true);
 			flamethrower.Play();
+			Invoke("StopFlamethrower", 2.43f);
 			//at some point we need flamethrower.Stop();
 			camera.transform.DOShakePosition(duration: 2.4f, strength: 1, vibrato: 5, randomness: 60, snapping: false, fadeOut: true);
 			Camera.main.GetComponent<BasicCameraZoom>().ChangeFieldOfViewTemporary(45, 1.1f, .25f);
@@ -971,6 +972,12 @@ public class BossAI : AIController
 	void BurnGround()
 	{
 		FlameGround.SetActive(true);
+	}
+
+	void StopFlamethrower()
+	{
+		flamethrower.Stop();
+		Destroy(flamethrower.gameObject, 4f);
 	}
 
 	void WildVFXSpawn()
