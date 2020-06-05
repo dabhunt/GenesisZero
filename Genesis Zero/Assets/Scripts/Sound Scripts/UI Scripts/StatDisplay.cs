@@ -63,14 +63,14 @@ public class StatDisplay : MonoBehaviour
             AD.SetText("B.D.: " + (int)_bd);
             AP.SetText("A.P.: " + (int)_ap);
             AS.SetText("A.S.: " + (Mathf.Round(_as * 100)) / 100.0);
-            CC.SetText("Crit: " + _cc + "%");
+            CC.SetText("Crit: " + (Mathf.Round(_cc * 100)) / 100.0 + "%");
         }
         else
         {
             AD.SetText("Bullet Damage: " + (int)_bd);
             AP.SetText("Ability Power: " + (int)_ap);
             AS.SetText("Attack Speed: " + (Mathf.Round(_as * 100)) / 100.0);
-            CC.SetText("Crit Chance: " + _cc + "%");
+            CC.SetText("Crit Chance: " + (Mathf.Round(_cc * 100)) / 100.0+"%");
         }
     }
 
