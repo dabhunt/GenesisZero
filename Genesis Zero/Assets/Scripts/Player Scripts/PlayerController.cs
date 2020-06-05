@@ -564,8 +564,7 @@ public class PlayerController : MonoBehaviour
         else
         {
             VFXManager.instance.PlayEffect("VFX_Lightning", this.transform.position);
-            if (!AudioManager.instance.IsPlaying("SFX_Downsmash")) //if it's not already playing
-                AudioManager.instance.PlayRandomSFXType("SFX_Downsmash");
+            AudioManager.instance.PlayRandomSFXType("SFX_Downsmash");
         }
 
     }
