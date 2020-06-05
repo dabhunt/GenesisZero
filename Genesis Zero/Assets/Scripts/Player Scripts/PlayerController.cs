@@ -526,6 +526,10 @@ public class PlayerController : MonoBehaviour
                 GetComponent<Player>().SetInvunerable(rollDuration+.1f);
                 NewLayerMask(rollingLayerMask, rollDuration);
                 timeRolled = 0;
+                if (rollDirection > 0)
+                    dashstart.transform.Rotate(new Vector3(0, 0, 0));
+                else
+                    dashstart.transform.Rotate(new Vector3(0, 0, 0));
                 //lastRollingPosition = transform.position;
                 //Rotate the character depending on roll direction
                 if (rollDirection < 0 && isFacingRight)
@@ -539,7 +543,7 @@ public class PlayerController : MonoBehaviour
                     transform.rotation = Quaternion.Euler(0, 90, 0);
                     isFacingRight = true;
                 }
-                dashstart.transform.Rotate(new Vector3(0, 0, 0));
+
                 if (isFallingFast)
                     EndSlam(true);
             }
