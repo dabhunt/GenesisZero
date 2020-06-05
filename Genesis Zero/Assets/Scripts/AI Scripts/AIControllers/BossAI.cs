@@ -121,6 +121,7 @@ public class BossAI : AIController
 				DialogueManager.instance.TriggerDialogue("PreBoss4", false);
 				AudioManager.instance.PlaySound("SFX_BossRoar(1)");
 				AudioManager.instance.PlaySongsForLevel(4);
+				Camera.main.GetComponent<BasicCameraZoom>().inboss = true;
 				introdialogue = true;
 			}
 
