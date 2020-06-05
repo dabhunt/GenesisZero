@@ -360,7 +360,8 @@ public class PlayerController : MonoBehaviour
 
         if (vertVel > 0)
         {
-            vertVel -= gravity * (Player.instance.GetWeight().GetValue()/10) *  Time.fixedDeltaTime;
+            float weight = Mathf.Clamp(Player.instance.GetWeight().GetValue(), 5, 15); //weight should never be less than 5
+            vertVel -= gravity * (weight / 10) *  Time.fixedDeltaTime;
             transform.position += Vector3.up * (startVel * Time.fixedDeltaTime + (0.5f * -gravity* (Player.instance.GetWeight().GetValue() / 10)) * Mathf.Pow(Time.fixedDeltaTime, 2));
         }
         else
