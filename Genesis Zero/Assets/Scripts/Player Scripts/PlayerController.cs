@@ -505,8 +505,6 @@ public class PlayerController : MonoBehaviour
                 sound.Roll();
                 //VFXManager.instance.PlayEffect("VFX_PlayerDashStart", transform.position);
                 GameObject dashstart = VFXManager.instance.PlayEffectOnObject("VFX_PlayerDashStart", this.gameObject, new Vector2(0,1));
-                if (IsFacingRight() == false)
-                    dashstart.transform.Rotate(new Vector3(0, -90, 0));
                 gameObject.GetComponentInChildren<SkinnedMeshRenderer>().enabled = false; //TEMPORARY CHANGE THIS
                 GameObject dash = VFXManager.instance.PlayEffectForDuration("VFX_PlayerDashEffect", transform.position, rollDuration);
                 dash.transform.SetParent(transform);
@@ -520,6 +518,9 @@ public class PlayerController : MonoBehaviour
                     rollDirection = movementInput.x > 0 ? 1 : -1;
                 else
                     rollDirection =  isAimingRight ? 1 : -1;
+                //print("rolldirection" + rollDirection);
+                if (rollDirection == -1)
+                    dashstart.transform.Rotate(new Vector3(0, -90, 0));
                 isRolling = true;
                 GetComponent<Player>().SetInvunerable(rollDuration+.1f);
                 NewLayerMask(rollingLayerMask, rollDuration);
