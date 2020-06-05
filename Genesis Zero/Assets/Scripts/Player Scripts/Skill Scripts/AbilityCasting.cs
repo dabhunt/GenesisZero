@@ -281,13 +281,22 @@ public class AbilityCasting : MonoBehaviour
 
     public void ReduceCooldowns(float seconds)
     {
-        AbilityCooldown1 -= seconds;
-        AbilityCooldown2 -= seconds;
+        if (!IsAbilitySlotActive(1))
+            AbilityCooldown1 -= seconds;
+        if (!IsAbilitySlotActive(2))
+            AbilityCooldown2 -= seconds;
     }
     public void ReduceSlotCooldown(float seconds, int slot)
     {
+        if (IsAbilitySlotActive(slot))
+            return;
         if (slot == 1)
+        {
+
             AbilityCooldown1 -= seconds;
+
+        }
+
         else
             AbilityCooldown2 -= seconds;
     }

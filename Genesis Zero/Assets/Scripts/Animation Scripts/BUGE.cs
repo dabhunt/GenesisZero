@@ -285,7 +285,8 @@ public class BUGE : MonoBehaviour
             }
         }
         else {
-            alertObj.SetActive(false);
+            if (alertObj != null)
+                alertObj.SetActive(false);
         }
     }
     public void AddOptionalDialoguePrompt(string name)

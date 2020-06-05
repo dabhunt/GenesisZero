@@ -112,6 +112,7 @@ public class BossAI : AIController
 			GameInputManager.instance.DisablePlayerControls();
 			GameObject.FindGameObjectWithTag("Player").GetComponent<PlayerController>().movementInput = Vector2.zero;
 			initiated = true;
+			Player.instance.GetComponent<UniqueEffects>().CombatChangesMusic = false;
 		}
 		if (initiated)
 		{
@@ -513,7 +514,7 @@ public class BossAI : AIController
 				SetRepeatingAttacks(2);
 				SetBossstate(State.Headbutt, actiontime);
 				Vector3 target = PredictPath(1.25f);
-				SpawnIndicator(transform.position, new Vector2(16, 6), target - transform.position, new Color(1, 0, 0, .1f), Vector2.zero, false, true, chargeuptime);
+				SpawnIndicator(transform.position, new Vector2(20, 6), target - transform.position, new Color(1, 0, 0, .1f), Vector2.zero, false, true, chargeuptime);
 				LookAtVectorTemp(target + ((target - transform.position).normalized * 20), actiontime);
 				//StartCoroutine(MoveTo(transform.position + ((target - transform.position).normalized * 16), .25f, chargeuptime));
 				headbuttangle = ((target - transform.position).normalized * 16);
@@ -539,7 +540,7 @@ public class BossAI : AIController
 				animator.SetTrigger("Pulsing");
 				actiontime = RepeatingAttack > 0 ? SetAttackTime(1.4f, 1.2f) : SetAttackTime(1.4f, 1.2f);
 				SetBossstate(State.Pulse, actiontime);
-				SpawnIndicator(transform.position, new Vector2(18, 18), lookDir, new Color(1, 0, 0, .1f), Vector2.zero, true, false, chargeuptime);
+				SpawnIndicator(transform.position, new Vector2(20, 20), lookDir, new Color(1, 0, 0, .1f), Vector2.zero, true, false, chargeuptime);
 				Invoke("Pulse", chargeuptime);
 				LookAtVectorTemp(ForwardLookObject.transform.position, actiontime);
 				AudioManager.instance.PlaySound("SFX_ChargePulse");
