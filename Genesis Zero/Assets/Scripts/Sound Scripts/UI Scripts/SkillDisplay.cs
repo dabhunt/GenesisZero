@@ -24,6 +24,7 @@ public class SkillDisplay : MonoBehaviour
     public bool ModsInMiddle = true;
     private Canvas canvasRef;
 
+	private bool inboss;
     public int skillnumber;
     // Start is called before the first frame update
     void Start()
@@ -57,6 +58,12 @@ public class SkillDisplay : MonoBehaviour
         }
     }
 
+	public void HideMods()
+	{
+		inboss = true;
+		UpdateDisplay();
+	}
+
     /**
      * Updates the display of the skills.
      */
@@ -76,7 +83,7 @@ public class SkillDisplay : MonoBehaviour
             int col = modnum % MaxColumns;
             int row = modnum / MaxColumns;
 
-            if (skills[i].IsAbility == false)
+            if (skills[i].IsAbility == false && inboss == false)
             {
                 float scaleFactor = canvasRef.scaleFactor;
                 if (ModsInMiddle)
