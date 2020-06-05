@@ -182,7 +182,6 @@ public class BossAI : AIController
 		else if (IsDying() == false)
 		{
 			boxanimating = false;
-			flamethrower.Stop();
 		}
 
 		if (boxanimating == false)
