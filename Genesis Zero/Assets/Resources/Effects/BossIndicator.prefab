@@ -9,8 +9,8 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 589314748826124410}
+  - component: {fileID: 1876374564091985622}
   - component: {fileID: 4431718181552350088}
-  - component: {fileID: 7051766676748687690}
   m_Layer: 0
   m_Name: BossIndicator
   m_TagString: Untagged
@@ -26,33 +26,13 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 2725547454958836629}
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 1.5, y: 0, z: 0}
+  m_LocalPosition: {x: 0.5, y: 0, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 0}
   m_Children: []
   m_Father: {fileID: 0}
   m_RootOrder: 0
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!114 &4431718181552350088
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 2725547454958836629}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: d024cdafaa095b249b5d5ca19a617f45, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  Square: {fileID: 21300000, guid: 440905fd6ddb57f48b1c042bfec397d6, type: 3}
-  Circle: {fileID: 21300000, guid: ef168a8cff5394947b501f642d774618, type: 3}
-  targetsize: {x: 1, y: 1}
-  angle: 0
-  offset: {x: 0, y: 0}
-  Centered: 0
-  color: {r: 1, g: 0, b: 0, a: 1}
-  HideFirstFrame: 0
---- !u!212 &7051766676748687690
+--- !u!212 &1876374564091985622
 SpriteRenderer:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -93,7 +73,7 @@ SpriteRenderer:
   m_SortingLayer: 0
   m_SortingOrder: 0
   m_Sprite: {fileID: 21300000, guid: 440905fd6ddb57f48b1c042bfec397d6, type: 3}
-  m_Color: {r: 1, g: 0, b: 0, a: 1}
+  m_Color: {r: 1, g: 1, b: 1, a: 0}
   m_FlipX: 0
   m_FlipY: 0
   m_DrawMode: 0
@@ -101,5 +81,25 @@ SpriteRenderer:
   m_AdaptiveModeThreshold: 0.5
   m_SpriteTileMode: 0
   m_WasSpriteAssigned: 1
-  m_MaskInteraction: 0
+  m_MaskInteraction: 1
   m_SpriteSortPoint: 0
+--- !u!114 &4431718181552350088
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2725547454958836629}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: d024cdafaa095b249b5d5ca19a617f45, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  Square: {fileID: 21300000, guid: 440905fd6ddb57f48b1c042bfec397d6, type: 3}
+  Circle: {fileID: 21300000, guid: ef168a8cff5394947b501f642d774618, type: 3}
+  targetsize: {x: 1, y: 1}
+  angle: 0
+  offset: {x: 0, y: 0}
+  Centered: 0
+  color: {r: 1, g: 1, b: 1, a: 0}
+  HideFirstFrame: 0

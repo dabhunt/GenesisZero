@@ -121,6 +121,7 @@ public class BossAI : AIController
 				DialogueManager.instance.TriggerDialogue("PreBoss4", false);
 				AudioManager.instance.PlaySound("SFX_BossRoar(1)");
 				AudioManager.instance.PlaySongsForLevel(4);
+				Camera.main.GetComponent<BasicCameraZoom>().inboss = true;
 				introdialogue = true;
 			}
 
@@ -177,10 +178,12 @@ public class BossAI : AIController
 				animationswitch = true;
 			}
 			boxanimating = true;
+			flamethrower.Play();
 		}
 		else if (IsDying() == false)
 		{
 			boxanimating = false;
+			flamethrower.Stop();
 		}
 
 		if (boxanimating == false)
@@ -428,14 +431,15 @@ public class BossAI : AIController
 			Invoke("BurnGround", 1f);
 			FlameGround.SetActive(true);        //Set the flame ground to true/active
 			animator.SetBool("Wild", true);
-			flamethrower.Play();
-			Invoke("StopFlamethrower", 2.43f);
-			//at some point we need flamethrower.Stop();
 			camera.transform.DOShakePosition(duration: 2.4f, strength: 1, vibrato: 5, randomness: 60, snapping: false, fadeOut: true);
 			Camera.main.GetComponent<BasicCameraZoom>().ChangeFieldOfViewTemporary(45, 1.1f, .25f);
 			AudioManager.instance.PlaySound("SFX_BossRoar(0)"); // Play sound Effect
 			GetComponent<BossEvents>().DestroyGameObjectsOnWild(); //Destroy top platforms
 			AudioManager.instance.CrossFadeChannels(1, 1.5f, 2, 1.5f);
+			if (WildVFX)
+			{
+				Invoke("WildVFXSpawn", .5f);
+			}
 			boxanimating = true;
 			Wild = true;
 		}
@@ -972,12 +976,6 @@ public class BossAI : AIController
 	void BurnGround()
 	{
 		FlameGround.SetActive(true);
-	}
-
-	void StopFlamethrower()
-	{
-		flamethrower.Stop();
-		Destroy(flamethrower.gameObject, 4f);
 	}
 
 	void WildVFXSpawn()
