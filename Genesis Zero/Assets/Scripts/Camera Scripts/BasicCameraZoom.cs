@@ -10,7 +10,7 @@ public class BasicCameraZoom : MonoBehaviour
     public float fovMax;
     private Camera myCamera;
     private float target;
-    private bool spanding;
+    private bool spanding = false;
     private float time;
 
 	[HideInInspector]
@@ -62,11 +62,13 @@ public class BasicCameraZoom : MonoBehaviour
     IEnumerator Reset(float waitTime, float FOV)
     {
         yield return new WaitForSeconds(waitTime);
+
         while (Player.instance.GetComponent<UniqueEffects>().IsInCombat() == true) //continue checking while in combat
         {
             yield return new WaitForSeconds(.5f); //wait .5 seconds then check again to see if player is still in combat
         }
-		if (inboss)
+        print("is in combat no longer true");
+        if (!inboss) //
 		{
 			myCamera.DOFieldOfView(FOV, 1.2f); //tween back to original FOV
 		}

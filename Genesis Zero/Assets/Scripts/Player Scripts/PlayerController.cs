@@ -514,6 +514,7 @@ public class PlayerController : MonoBehaviour
                     VFXManager.instance.ChangeColor(dash, phaseColor);
                 }
                 //Select roll direction based on crosshair position and input
+                rollCooldown = rollCooldownDuration;
                 if (movementInput.x != 0)
                     rollDirection = movementInput.x > 0 ? 1 : -1;
                 else

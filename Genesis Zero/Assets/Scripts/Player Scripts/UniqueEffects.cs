@@ -170,8 +170,9 @@ public class UniqueEffects : MonoBehaviour
 	public void DamageGivenTrigger()
 	{
 		MusicDecay = durationUntilDecay;
-		if (CombatChangesMusic)
-			EnterCombatMusic();
+		print("damage given");
+		if (CombatChangesMusic && incombat == false)
+			EnterCombatMusic(); //if not in combat and combat should change music
 	}
 	public bool IsInCombat()
 	{
@@ -184,16 +185,13 @@ public class UniqueEffects : MonoBehaviour
 	public void EnterCombatMusic()
 	{
 		incombat = true;
-		Camera.main.GetComponent<BasicCameraZoom>().ChangeFieldOfViewTemporary(22, 35, .5f);
+		Camera.main.GetComponent<BasicCameraZoom>().ChangeFieldOfViewTemporary(20, 9, .5f);
 		AudioManager.instance.CrossFadeChannels(1, 5.0f, 2, fadeIn);
 		//AudioManager.instance.CrossFadeChannels(2, "Music", "CombatMusic", true, 15);
 	}
 	public void ExitCombatMusic()
 	{
-		if (incombat == true)
-		{	
-			incombat = false;
-		}
+		incombat = false;
 		//Camera.main.GetComponent<BasicCameraZoom>().StopTempFieldOfViewChange();
 		if (CombatChangesMusic)
 		{
