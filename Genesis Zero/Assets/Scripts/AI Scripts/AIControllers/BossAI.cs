@@ -178,7 +178,6 @@ public class BossAI : AIController
 				animationswitch = true;
 			}
 			boxanimating = true;
-			flamethrower.Play();
 		}
 		else if (IsDying() == false)
 		{
@@ -430,6 +429,8 @@ public class BossAI : AIController
 			animator.SetTrigger("WildTrigger"); //Set wild trigger
 			Invoke("BurnGround", 1f);
 			FlameGround.SetActive(true);        //Set the flame ground to true/active
+			flamethrower.Play();
+			Invoke("StopFlamethrower", 2.4f);
 			animator.SetBool("Wild", true);
 			camera.transform.DOShakePosition(duration: 2.4f, strength: 1, vibrato: 5, randomness: 60, snapping: false, fadeOut: true);
 			Camera.main.GetComponent<BasicCameraZoom>().ChangeFieldOfViewTemporary(45, 1.1f, .25f);
@@ -438,7 +439,7 @@ public class BossAI : AIController
 			AudioManager.instance.CrossFadeChannels(1, 1.5f, 2, 1.5f);
 			if (WildVFX)
 			{
-				Invoke("WildVFXSpawn", .5f);
+				//Invoke("WildVFXSpawn", .5f);
 			}
 			boxanimating = true;
 			Wild = true;
@@ -982,6 +983,12 @@ public class BossAI : AIController
 	{
 		GameObject emit = Instantiate(WildVFX, HeadModel.transform.position, Quaternion.identity);
 		//emit.transform.parent = HeadModel.transform;
+	}
+
+	void StopFlamethrower()
+	{
+		flamethrower.Stop();
+		//Destroy(flamethrower.gameObject, 4f);
 	}
 
 
