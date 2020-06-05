@@ -30,7 +30,8 @@ public class PlayerSounds : MonoBehaviour
 	}
 	public void Land()
 	{
-		aManager.PlayRandomSFXType("Jump", null, .3f);
+		if (GameInputManager.instance.isEnabled())
+			aManager.PlayRandomSFXType("Jump", null, .3f);
 	}
 	public void Walk()
 	{
