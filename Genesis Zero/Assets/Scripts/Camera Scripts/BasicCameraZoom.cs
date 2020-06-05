@@ -54,7 +54,8 @@ public class BasicCameraZoom : MonoBehaviour
         if (spanding == false) //only change FOV if not already doing it
         {
             float savedpov = myCamera.fieldOfView;
-            myCamera.DOFieldOfView(field, tweenTime);
+            Tween t = myCamera.DOFieldOfView(field, tweenTime);
+            t.SetUpdate(UpdateType.Fixed);
             StartCoroutine(Reset(duration, savedpov));
             spanding = true;
         }
@@ -67,10 +68,10 @@ public class BasicCameraZoom : MonoBehaviour
         {
             yield return new WaitForSeconds(.5f); //wait .5 seconds then check again to see if player is still in combat
         }
-        print("is in combat no longer true");
-        if (!inboss) //
+        if (!inboss)
 		{
-			myCamera.DOFieldOfView(FOV, 1.2f); //tween back to original FOV
+            Tween t = myCamera.DOFieldOfView(FOV, 1.2f); //tween back to original FOV
+            t.SetUpdate(UpdateType.Fixed);
 		}
 		spanding = false;
     }
