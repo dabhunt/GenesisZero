@@ -362,7 +362,7 @@ public class PlayerController : MonoBehaviour
         {
             float weight = Mathf.Clamp(Player.instance.GetWeight().GetValue(), 5, 15); //weight should never be less than 5
             vertVel -= gravity * (weight / 10) *  Time.fixedDeltaTime;
-            transform.position += Vector3.up * (startVel * Time.fixedDeltaTime + (0.5f * -gravity* (Player.instance.GetWeight().GetValue() / 10)) * Mathf.Pow(Time.fixedDeltaTime, 2));
+            transform.position += Vector3.up * (startVel * Time.fixedDeltaTime + (0.5f * -gravity* (weight / 10)) * Mathf.Pow(Time.fixedDeltaTime, 2));
         }
         else
         {
@@ -482,9 +482,10 @@ public class PlayerController : MonoBehaviour
         }
         if (!isJumping)
         {
-            vertVel -= gravity* (Player.instance.GetWeight().GetValue() / 10) * fallSpeedMult * Time.fixedDeltaTime;
+            float weight = Mathf.Clamp(Player.instance.GetWeight().GetValue(), 5, 15); //weight should never be less than 5
+            vertVel -= gravity* (weight / 10) * fallSpeedMult * Time.fixedDeltaTime;
             vertVel = Mathf.Clamp(vertVel, -terminalVel, 0);
-            transform.position += Vector3.up * (startVel * Time.fixedDeltaTime + (0.5f * fallSpeedMult * -gravity* (Player.instance.GetWeight().GetValue() / 10)) * Mathf.Pow(Time.fixedDeltaTime, 2));
+            transform.position += Vector3.up * (startVel * Time.fixedDeltaTime + (0.5f * fallSpeedMult * -gravity* weight) * Mathf.Pow(Time.fixedDeltaTime, 2));
         }
     }
 

@@ -57,7 +57,6 @@ public class SkillPickup : MonoBehaviour
         //if the player has no more room for new modifiers, tell them
         if (!skill.IsAbility)
         {
-
             if (player.GetSkillManager().GetUniqueModAmount() >= player.GetSkillManager().GetModSlotLimit())
             {
                 //if the player is at the modlimit, and the player doesn't have one of that type it cannot be picked up
