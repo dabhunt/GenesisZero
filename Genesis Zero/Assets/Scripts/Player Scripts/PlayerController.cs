@@ -519,8 +519,6 @@ public class PlayerController : MonoBehaviour
                 else
                     rollDirection =  isAimingRight ? 1 : -1;
                 //print("rolldirection" + rollDirection);
-                if (rollDirection == -1)
-                    dashstart.transform.Rotate(new Vector3(0, -90, 0));
                 isRolling = true;
                 GetComponent<Player>().SetInvunerable(rollDuration+.1f);
                 NewLayerMask(rollingLayerMask, rollDuration);
@@ -538,6 +536,7 @@ public class PlayerController : MonoBehaviour
                     transform.rotation = Quaternion.Euler(0, 90, 0);
                     isFacingRight = true;
                 }
+                dashstart.transform.Rotate(new Vector3(0, 0, 0));
                 if (isFallingFast)
                     EndSlam(true);
             }
