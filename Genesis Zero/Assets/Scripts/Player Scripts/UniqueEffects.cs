@@ -195,7 +195,10 @@ public class UniqueEffects : MonoBehaviour
 			incombat = false;
 		}
 		//Camera.main.GetComponent<BasicCameraZoom>().StopTempFieldOfViewChange();
-		AudioManager.instance.CrossFadeChannels(2, 5.0f, 1, fadeOut);
+		if (CombatChangesMusic)
+		{
+			AudioManager.instance.CrossFadeChannels(2, 5.0f, 1, fadeOut);
+		}
 	}
 	void StackDecayTimer()
 	{
