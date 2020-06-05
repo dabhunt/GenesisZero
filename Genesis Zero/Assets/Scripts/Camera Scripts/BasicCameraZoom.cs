@@ -27,6 +27,7 @@ public class BasicCameraZoom : MonoBehaviour
     {
         if (GameInputManager.instance.isEnabled())
         {
+			/**
             if (Input.GetAxis("Mouse ScrollWheel") < 0 && time <= 0)
             {
                 target += zoomSpeed;
@@ -39,6 +40,7 @@ public class BasicCameraZoom : MonoBehaviour
                 target = Mathf.Clamp(target, fovMin, fovMax);
                 myCamera.fieldOfView = target;
             }
+			*/
         }
     }
 
