@@ -135,6 +135,7 @@ public class BossAI : AIController
 
 				if (TimeBeforeFight <= 0)
 				{
+					GameObject.FindGameObjectWithTag("CanvasUI").transform.Find("Modifier BG").GetComponent<SkillDisplay>().HideMods();
 					GameInputManager.instance.EnablePlayerControls();
 					AudioManager.instance.PlaySound("SFX_BossRoar(0)");
 					camera.transform.DOShakePosition(duration: 1.25f, strength: 1, vibrato: 5, randomness: 60, snapping: false, fadeOut: true);
