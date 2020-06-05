@@ -21,17 +21,20 @@ public class BasicCameraZoom : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-        if (Input.GetAxis("Mouse ScrollWheel") < 0 && time <= 0)
+        if (GameInputManager.instance.isEnabled())
         {
-            target += zoomSpeed;
-            target = Mathf.Clamp(target, fovMin, fovMax);
-            myCamera.fieldOfView = target;
-        }
-        if (Input.GetAxis("Mouse ScrollWheel") > 0 && time <= 0)
-        {
-            target -= zoomSpeed;
-            target = Mathf.Clamp(target, fovMin, fovMax);
-            myCamera.fieldOfView = target;
+            if (Input.GetAxis("Mouse ScrollWheel") < 0 && time <= 0)
+            {
+                target += zoomSpeed;
+                target = Mathf.Clamp(target, fovMin, fovMax);
+                myCamera.fieldOfView = target;
+            }
+            if (Input.GetAxis("Mouse ScrollWheel") > 0 && time <= 0)
+            {
+                target -= zoomSpeed;
+                target = Mathf.Clamp(target, fovMin, fovMax);
+                myCamera.fieldOfView = target;
+            }
         }
     }
 
