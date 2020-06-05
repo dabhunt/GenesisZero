@@ -12,10 +12,6 @@ public class BasicCameraZoom : MonoBehaviour
     private float target;
     private bool spanding;
     private float time;
-
-	[HideInInspector]
-	public bool inboss;
-
     // Use this for initialization
     void Start()
     {
@@ -66,11 +62,8 @@ public class BasicCameraZoom : MonoBehaviour
         {
             yield return new WaitForSeconds(.5f); //wait .5 seconds then check again to see if player is still in combat
         }
-		if (inboss)
-		{
-			myCamera.DOFieldOfView(FOV, 1.2f); //tween back to original FOV
-		}
-		spanding = false;
+        myCamera.DOFieldOfView(FOV, 1.2f); //tween back to original FOV
+        spanding = false;
     }
 }
 /*public void ChangeFieldOfViewTemporary(float field, float time, float duration)
