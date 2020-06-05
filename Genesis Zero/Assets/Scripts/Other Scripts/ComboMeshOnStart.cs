@@ -12,7 +12,7 @@ public class ComboMeshOnStart : MonoBehaviour
         {
             MeshCombiner combiner = gameObject.AddComponent<MeshCombiner>();
             combiner.CreateMultiMaterialMesh = MultiMaterial;
-            combiner.DestroyCombinedChildren = true;
+            combiner.DeactivateCombinedChildrenMeshRenderers = true;
             combiner.CombineMeshes(true);
             gameObject.GetComponent<MeshRenderer>().receiveShadows = false;
         }
