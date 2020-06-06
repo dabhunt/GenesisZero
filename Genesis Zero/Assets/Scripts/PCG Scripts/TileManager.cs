@@ -31,6 +31,7 @@ public class TileManager : MonoBehaviour
 	private GameObject[] tilePrefabs;
 	public GameObject[] industrialTilePrefabs;
 	public GameObject[] cityTilePrefabs;
+	public GameObject[] rooftopPrefabs;
 	public GameObject[] enemyPrefabs;
 	public GameObject[] interactablePrefabs;
 	public GameObject levelEndCityBuilding;
@@ -217,6 +218,9 @@ public class TileManager : MonoBehaviour
 		int floorWidth = width; //Total width of current floor in tiles (x axis)
 		int shift = width; // Equals 0 when floor is complete
 		int height = 1; //Current building height (# of floors)
+		List<GameObject> roofList = new List<GameObject>();
+		List<Vector3> vectorList = new List<Vector3>();
+		
 		//Create Building
 		spawnVector.z += 2; //Initialize spawnVector Z position
 		while (end > 0)
@@ -276,6 +280,24 @@ public class TileManager : MonoBehaviour
 				spawnVector.z += 2;
 				height++;
 			}
+			
+			if (tilePrefabs == cityTilePrefabs)
+			{
+				//Instantiate & Spawn Rooftop
+				GameObject newRooftop = Instantiate(rooftopPrefabs[Random.Range(0, rooftopPrefabs.Length)]) as GameObject;
+				newRooftop.transform.SetParent(transform);
+				spawnVector.z += 5.2f;
+				newRooftop.transform.position = spawnVector;
+				Vector3 newVector = newRooftop.transform.position;
+				spawnVector.z -= 5.2f;
+			
+				// Lists of rooftop objects and building spawn vectors
+				//(Used for rooftop cleanup later)
+			
+				roofList.Add(newRooftop);
+				vectorList.Add(newVector);
+			}
+			
 			//Spawn tile and move spawnVector
 			newTile.transform.position = spawnVector;
 			
@@ -303,6 +325,27 @@ public class TileManager : MonoBehaviour
 			//Iterate counting variables
 			shift--;
 			end--;
+		}
+		
+		//Remove extra rooftops
+		if (tilePrefabs == cityTilePrefabs)
+		{
+			for (int i = 0; i < vectorList.Count; ++i)
+			{
+				GameObject roofObject = roofList[i];
+				Vector3 roofVector = roofObject.transform.position;
+			
+				int j = i + 1;
+				while (j < vectorList.Count)
+				{
+					if (Vector3.Distance(roofVector, vectorList[j]) < 7.0)
+					{
+						Destroy(roofObject);
+						j = vectorList.Count;
+					}
+					++j;
+				}
+			}
 		}
 		
 		//Shift currentPos for next building
