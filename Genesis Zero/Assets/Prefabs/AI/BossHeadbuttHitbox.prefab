@@ -47,7 +47,7 @@ SphereCollider:
   m_IsTrigger: 1
   m_Enabled: 1
   serializedVersion: 2
-  m_Radius: 3
+  m_Radius: 2
   m_Center: {x: 0, y: 0, z: 0}
 --- !u!114 &5278818344263968163
 MonoBehaviour:
@@ -70,8 +70,10 @@ MonoBehaviour:
   Knockbackforce: 10
   DirectionalKnockback: 1
   StunTime: 0
+  IgnoredDamageReduction: 0
   LifeTime: 99
   Burn: {x: 0, y: 0}
+  Slow: {x: 0, y: 0}
   Collider: {fileID: 7528679365860970713}
   Source: {fileID: 0}
   hitEffectVFX: VFX_BulletSparks
@@ -115,6 +117,7 @@ MeshRenderer:
   m_LightProbeUsage: 1
   m_ReflectionProbeUsage: 1
   m_RayTracingMode: 2
+  m_RayTraceProcedural: 0
   m_RenderingLayerMask: 1
   m_RendererPriority: 0
   m_Materials:
@@ -139,6 +142,7 @@ MeshRenderer:
   m_SortingLayerID: 0
   m_SortingLayer: 0
   m_SortingOrder: 0
+  m_AdditionalVertexStreams: {fileID: 0}
 --- !u!1 &7102405536984258577
 GameObject:
   m_ObjectHideFlags: 0
@@ -194,6 +198,7 @@ MeshRenderer:
   m_LightProbeUsage: 1
   m_ReflectionProbeUsage: 1
   m_RayTracingMode: 2
+  m_RayTraceProcedural: 0
   m_RenderingLayerMask: 1
   m_RendererPriority: 0
   m_Materials:
@@ -218,3 +223,4 @@ MeshRenderer:
   m_SortingLayerID: 0
   m_SortingLayer: 0
   m_SortingOrder: 0
+  m_AdditionalVertexStreams: {fileID: 0}
