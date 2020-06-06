@@ -43,11 +43,14 @@ public class InteractInterface : MonoBehaviour
     }
     public GameObject ClosestObjToPlayer(GameObject[] objects)
     {
-        print("closest Object array length: "+objects.Length);
+        if (objects.Length < 1)
+        {
+            return null;
+        }
+
         GameObject closest = objects[0];
         if (closest == null)
         {
-            Debug.LogError("closest is returning NULL bro");
             return null;
         }
         float shortest = Vector2.Distance(Player.instance.CenterPoint(), objects[0].transform.position);
@@ -67,14 +70,12 @@ public class InteractInterface : MonoBehaviour
         }
         if (shortest >= minProximity)
             return null;
-        print("shortest >= min prox");
         return closest;
     }
     void Update()
     {
         if (Input.GetKeyDown(KeyCode.F))
         {
-            print("isInteracting = " + player.GetComponent<Player>().IsInteracting);
             if (player.GetComponent<Player>().IsInteracting == true)
                 return;
             //determine which interactable / pickup is closest, and perform interact
@@ -110,20 +111,22 @@ public class InteractInterface : MonoBehaviour
         GameObject closestPickup = null;
         for (int i = 0; i < tags.Length; i++)
         {
-            closestObjectList.Add(ClosestTaggedObj(tags[i])); //add to the list of 
-            if (tags[i] == "Pickups")
+            if (ClosestTaggedObj(tags[i]) != null) //if the returned value is not null, add it to the list
             {
-                closestPickup = closestObjectList[i];
+                closestObjectList.Add(ClosestTaggedObj(tags[i]));
+                if (tags[i] == "Pickups")
+                {
+                    closestPickup = closestObjectList[i];
+                }
             }
         }
         if (closestObjectList.Count < 1)
             return null;
         GameObject closestPriorityObj = ClosestObjToPlayer(closestObjectList.ToArray());
-        print("closest priority obj: " + closestPriorityObj);
         if (closestPickup != null)
         {
-            float pickupDist = Mathf.Abs( closestPickup.transform.position.x - Player.instance.transform.position.x); //set distance from player
-            float otherObjDist = Mathf.Abs( closestPriorityObj.transform.position.x - Player.instance.transform.position.x); //set distan
+            float pickupDist = Mathf.Abs(closestPickup.transform.position.x - Player.instance.transform.position.x); //set distance from player
+            float otherObjDist = Mathf.Abs(closestPriorityObj.transform.position.x - Player.instance.transform.position.x); //set distan
             if ((pickupDist - 3 < otherObjDist))//
                 closestPriorityObj = closestPickup;
         }

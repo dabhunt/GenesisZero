@@ -16,9 +16,8 @@ public class ModConverter : MonoBehaviour
     private void Start()
     {
         modList = new List<SkillObject>();
-        player = GameObject.FindGameObjectWithTag("Player");
-        Player playerScript = player.GetComponent<Player>();
-        sk = playerScript.GetSkillManager();
+        player = Player.instance.gameObject;
+        sk = Player.instance.GetSkillManager();
         gameObject.AddComponent<InactiveFlag>();
     }
     //When you press the Interact button, the Merchant/Machine determines what random Mod to give you
@@ -26,7 +25,7 @@ public class ModConverter : MonoBehaviour
     {
         if (!isActive || player == null)
             return;
-        if (Vector3.Distance(player.transform.position, gameObject.transform.position) <= 5)
+        if (Vector2.Distance(Player.instance.CenterPoint(), gameObject.transform.position) <= 5)
         {
             if (modList.Count >= 1)
             {

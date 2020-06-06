@@ -16,7 +16,7 @@ public class SkillPickup : MonoBehaviour
     private Player player;
     private bool dropped = false;
     public float YOffset = .7f;
-    private float modConverterDist = .3f;
+    private float modConverterDist = .45f;
     // Start is called before the first frame update
     void Start()
     {
