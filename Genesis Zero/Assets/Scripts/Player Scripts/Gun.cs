@@ -87,7 +87,8 @@ public class Gun : MonoBehaviour
         vfx_MuzzleFlash = VFXManager.instance.PlayEffectReturn("VFX_MuzzleFlash", spawnpoint, 0, "");
         vfx_MuzzleFlash.transform.SetParent(firePoint);
         vfx_MuzzleFlash.transform.localPosition = Vector3.zero;
-        GameObject instance = (GameObject) Instantiate(GetProjectile(crit), spawnpoint, Quaternion.identity);
+		vfx_MuzzleFlash.transform.rotation = firePoint.transform.rotation;
+		GameObject instance = (GameObject) Instantiate(GetProjectile(crit), spawnpoint, Quaternion.identity);
         //sets the object to look towards where it should be firing
         instance.transform.LookAt(controller.worldXhair.transform);
         //means that instantiate hitbox will not calculate crit on it's own

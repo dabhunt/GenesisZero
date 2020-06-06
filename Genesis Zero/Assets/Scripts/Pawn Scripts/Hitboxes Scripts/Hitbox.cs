@@ -366,7 +366,6 @@ public class Hitbox : MonoBehaviour
 			GameObject emit = Instantiate(Resources.Load<GameObject>("Hitboxes/PyroExplosion"), p.transform.position + new Vector3(0,1,0), Quaternion.identity);
 			AudioManager.instance.PlaySound("SFX_FireExplosion");
 			emit.GetComponent<Hitbox>().InitializeHitbox(finaldamage, p, false);
-			Debug.Log("Explode");
 		}
 	}
 
