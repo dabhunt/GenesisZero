@@ -217,10 +217,14 @@ public class Hitbox : MonoBehaviour
                     p.GetStunnedStatus().AddTime(StunTime);
                 }
 
-                if (Burn.x > 0 && Burn.y > 0)
-                {
-                    p.Burn(Burn.x, Burn.y);
-                }
+				if(Source != p)
+				{
+					if (Burn.x > 0 && Burn.y > 0)
+					{
+						BurnCheck(p);
+						p.Burn(Burn.x, Burn.y);
+					}
+				}
 
                 float phealth = p.GetHealth().GetValue();
                 float damagetaken = p.TakeDamage(finaldamage, Source);
@@ -344,6 +348,25 @@ public class Hitbox : MonoBehaviour
 	public void SetLifeTime(float time)
 	{
 		LifeTime = time;
+	}
+
+	public void BurnCheck(Pawn p)
+	{
+		if (Player.instance.GetSkillStack("Pyromaniac") >= 1 && p.GetBurnImmunity() <= 0 && p.IsBurning())
+		{
+			float finaldamage = 0;
+			if (Burn.x >= p.GetBurnStats().x && Burn.y >= p.GetBurnStats().y)
+			{
+				finaldamage = p.GetBurnStats().x * p.GetBurnStats().y * Player.instance.GetAbilityPowerAmount() / 16 * Player.instance.GetSkillStack("Pyromaniac");
+			}
+			else
+			{
+				finaldamage = Burn.x * Burn.y * Player.instance.GetAbilityPowerAmount() / 16 * Player.instance.GetSkillStack("Pyromaniac");
+			}
+			GameObject emit = Instantiate(Resources.Load<GameObject>("Hitboxes/PyroExplosion"), p.transform.position + new Vector3(0,1,0), Quaternion.identity);
+			AudioManager.instance.PlaySound("SFX_FireExplosion");
+			emit.GetComponent<Hitbox>().InitializeHitbox(finaldamage, p, false);
+		}
 	}
 
 	private void OnDrawGizmos()

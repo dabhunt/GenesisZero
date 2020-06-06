@@ -17,7 +17,7 @@ public class Pawn : MonoBehaviour
     private Status invunerable, stunned, burning, slowed, stunimmune;
     private List<Status> statuses;
 
-    private float burntime, burndamage, burntick; //burndamage is damage per second
+    private float burntime, burndamage, burntick, burnimmunity; //burndamage is damage per second
     private float slowtime, knockbackforce;
     private float stunImmuneAfterStun = 1.5f;
     private Vector3 knockbackvector, lastposition;
@@ -138,6 +138,7 @@ public class Pawn : MonoBehaviour
             }
             burntime -= Time.deltaTime;
             burntick += Time.deltaTime;
+			burnimmunity -= Time.deltaTime;
         }
         if (IsSlowed())
         {
@@ -331,19 +332,35 @@ public class Pawn : MonoBehaviour
 
     public void Burn(float time, float damage)
     {
-        if (IsInvunerable()) //Does not inflict burn if the pawn is invunerable
-        {
-            return;
-        }
-        burntime = time;
+		if (IsInvunerable()) //Does not inflict burn if the pawn is invunerable
+		{
+			return;
+		}
+		bool replace = damage >= burndamage && time >= burntime;
+
+		if (replace)
+		{
+			burntime = time;		
+			burndamage = damage;
+		}
         burntick = Time.deltaTime;
-        burndamage = damage;
         burning.SetTime(time);
         GameObject burnemit = VFXManager.instance.PlayEffectForDuration("VFX_BurnEffect", transform.position, burntime);
         burnemit.transform.parent = transform;
         burnemit.transform.localScale = new Vector3(1, 1, 1);
+		burnimmunity = Time.deltaTime;
 
     }
+
+	public Vector2 GetBurnStats()
+	{
+		return new Vector2(burndamage, burntime);
+	}
+
+	public float GetBurnImmunity()
+	{
+		return burnimmunity;
+	}
 
     public void KnockBack(Vector3 direction, float force)
     {
