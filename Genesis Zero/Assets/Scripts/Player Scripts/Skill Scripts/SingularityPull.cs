@@ -10,6 +10,7 @@ public class SingularityPull : MonoBehaviour
     {
         PulledTargets = new List<GameObject>();
         Collider[] collisions = null;
+        AudioManager.instance.PlayRandomSFXType("blackholeExplode");
         if (GetComponent<SphereCollider>())
         {
             collisions = Physics.OverlapSphere(transform.position, GetComponent<SphereCollider>().radius);

@@ -486,6 +486,7 @@ public class AbilityCasting : MonoBehaviour
     }
     private void CastSingularity()
     {
+        AudioManager.instance.PlayRandomSFXType("blackholeInitial");
         GameObject hitbox = SpawnGameObject("Sing_Projectile", GetComponent<Gun>().firePoint.position, GetComponent<Gun>().firePoint.rotation);
         hitbox.GetComponent<Hitbox>().InitializeHitbox(1, player);
         hitbox.GetComponent<Projectile>().lifeTime = ((WorldXhair - (Vector2)GetComponent<Gun>().firePoint.position).magnitude / hitbox.GetComponent<Projectile>().speed);
