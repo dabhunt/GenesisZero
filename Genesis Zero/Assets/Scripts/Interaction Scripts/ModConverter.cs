@@ -32,6 +32,7 @@ public class ModConverter : MonoBehaviour
                 sk.SpawnMod(player.transform.position, GetNewMod().name);
                 //marks this object as no longer able to be interacted with
                 gameObject.AddComponent<InactiveFlag>();
+                this.transform.Find("TopSection").GetComponent<TweenTo>().Move();
             }
         }
     }
