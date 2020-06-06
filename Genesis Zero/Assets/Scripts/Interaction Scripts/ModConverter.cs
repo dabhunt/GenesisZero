@@ -34,7 +34,6 @@ public class ModConverter : MonoBehaviour
                 //marks this object as no longer able to be interacted with
                 gameObject.AddComponent<InactiveFlag>();
             }
-                
         }
     }
     //returns a new mod based on what mod's are being held in the list
@@ -62,7 +61,6 @@ public class ModConverter : MonoBehaviour
                 newMod = oldMod;
         }
         //randomly rolls a mod by chance, giving the player the chance to potentially receive a better mod
-        
         if (value >= 3 && mod[0].Rarity > newMod.Rarity)
             newMod = mod[0]; //if the mod is better replace it, otherwise it stays the same
         modList.Clear();

@@ -274,9 +274,7 @@ public class UniqueEffects : MonoBehaviour
 		{
 			float ratio = player.GetEssenceAmount() / player.GetMaxEssenceAmount();
 			float cur_ADbonus = (player.GetDamage().GetBaseValue() * 2f) * stacks * ratio;
-			float cur_DmgReductionDebuff = (-1f) * stacks * ratio;
 			player.GetDamage().AddRepeatingBonus(cur_ADbonus, cur_ADbonus, 1 / checksPerSecond, "UnstableEssence_DMG");
-			player.GetDamageReduction().AddRepeatingBonus(cur_DmgReductionDebuff, 0, 1 / checksPerSecond, "UnstableEssence_Debuff");
 		}
 	}
 	//Player abilities deal bonus damage proportionate to how much essence they have, up to a cap of their base AP damage
@@ -301,7 +299,6 @@ public class UniqueEffects : MonoBehaviour
 			//Sets the players bonus attack speed equal to the max value proportionate to how much heat you have, up to the max of 100 heat
 			currentAttackSpeed = CA_MaxAttackSpeedPerStack * stacks * (heat / 100);
 			currentCritChance = CA_MaxCritChancePerStack * stacks * (heat / 100);
-			//gives the player an attackspeed boost that lasts until this function is called again (every .25 seconds)
 			player.GetAttackSpeed().AddRepeatingBonus(currentAttackSpeed, currentAttackSpeed, 1 / checksPerSecond, "ChemicalAccelerant_AS");
 			player.GetCritChance().AddRepeatingBonus(currentCritChance, currentCritChance, 1 / checksPerSecond, "ChemicalAccelerant_CC");
 		}
@@ -315,7 +312,6 @@ public class UniqueEffects : MonoBehaviour
 			float reduction = ((stacks - 1) * PF_ExtraStacks) + PF_CD_Firststack;
 			player.GetComponent<AbilityCasting>().ReduceSlotCooldown(reduction, 1);
 		}
-		//more mods
 	}
 	private void PowerSurge()
 	{

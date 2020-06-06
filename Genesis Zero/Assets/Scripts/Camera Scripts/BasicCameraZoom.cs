@@ -12,10 +12,8 @@ public class BasicCameraZoom : MonoBehaviour
     private float target;
     private bool spanding = false;
     private float time;
-
 	[HideInInspector]
 	public bool inboss;
-
     // Use this for initialization
     void Start()
     {
@@ -25,23 +23,18 @@ public class BasicCameraZoom : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-        if (GameInputManager.instance.isEnabled())
+        if (GameInputManager.instance.isEnabled() && myCamera.GetComponent<BasicCameraZoom>().spanding)
         {
             if (Input.GetAxis("Mouse ScrollWheel") < 0 && time <= 0)
             {
-                target += zoomSpeed;
-                target = Mathf.Clamp(target, fovMin, fovMax);
-                myCamera.fieldOfView = target;
+                myCamera.DOFieldOfView(myCamera.fieldOfView+3, .5f);
             }
             if (Input.GetAxis("Mouse ScrollWheel") > 0 && time <= 0)
             {
-                target -= zoomSpeed;
-                target = Mathf.Clamp(target, fovMin, fovMax);
-                myCamera.fieldOfView = target;
+                myCamera.DOFieldOfView(myCamera.fieldOfView+3, .5f);
             }
         }
     }
-
     public void ChangeFieldOfView(float field, float tweenTime)
     {
         if (spanding == false)

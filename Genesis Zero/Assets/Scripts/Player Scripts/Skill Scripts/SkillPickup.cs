@@ -16,11 +16,11 @@ public class SkillPickup : MonoBehaviour
     private Player player;
     private bool dropped = false;
     public float YOffset = .7f;
-    private float modConverterDist = 10f;
+    private float modConverterDist = .3f;
     // Start is called before the first frame update
     void Start()
     {
-        target = Player.instance.gameObject;
+        //target = Player.instance.gameObject;
         player = Player.instance;
         if (skill == null)
         {
@@ -39,7 +39,6 @@ public class SkillPickup : MonoBehaviour
             GetComponent<SimpleTooltip>().infoLeft = skill.SimpleDescription;
         }
         isMod = skill.IsAbility ? false : true;
-
         if (skill != null)
         {
             if (skill.IsAbility)
@@ -87,9 +86,9 @@ public class SkillPickup : MonoBehaviour
             bool targetIsPlayer = true;
             if (target.GetComponent<Player>() == null)
                 targetIsPlayer = false;
-            if (dropped)
+            print("target:" + target);
+;            if (dropped)
             {
-                target = InteractInterface.instance.ClosestInteractable();
                 //if target is null, or target is the player
                 if (target == null || target.GetComponent<ModConverter>() == null)
                 {
@@ -104,7 +103,7 @@ public class SkillPickup : MonoBehaviour
                     added = true;
                 }
             }
-            else if ((targetIsPlayer && pressed) || (!targetIsPlayer && target.GetComponent<ModConverter>().isActive))
+            if ((targetIsPlayer && pressed) || (!targetIsPlayer && target.GetComponent<ModConverter>().isActive))
             {  // Force pull for pickup
                 if (GetComponentInChildren<Floating>() != null)
                     Destroy(GetComponentInChildren<Floating>());
@@ -123,6 +122,7 @@ public class SkillPickup : MonoBehaviour
     {
         if (added)
             return;
+        //if (dropped && other.GetComponent<ModConverter>() != null && other.GetComponent<ModConverter>().isActive) // if there is an active modconverter within the radius
         if (pressed)
         {
             if (other.GetComponentInParent<Player>())
@@ -132,7 +132,6 @@ public class SkillPickup : MonoBehaviour
                 {
                     p = other.GetComponentInParent<Player>();
                 }
-
                 if (skill != null && added == false)
                 {
                     // There are more than two abilities and a new ability is here
@@ -157,12 +156,15 @@ public class SkillPickup : MonoBehaviour
     }
     public void Interact()
     {
-        if (dropped == true)
-            return;
         if (Vector2.Distance(player.transform.position, transform.position) <= pickupDist)
         {
             pressed = true;
+            target = Player.instance.gameObject;
         }
+    }
+    public void SetTarget(GameObject obj)
+    {
+        target = obj;
     }
     public void SetDropped(bool boo)
     {

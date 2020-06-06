@@ -4,7 +4,6 @@ using UnityEngine;
 using UnityEngine.InputSystem;
 using UnityEngine.UI;
 using UnityEngine.Events;
-
 public class InteractInterface : MonoBehaviour
 {
     public static InteractInterface instance;
@@ -33,9 +32,43 @@ public class InteractInterface : MonoBehaviour
     }
     public GameObject ClosestTaggedObj(string tag)
     {
-        //convert single string into array
-        string[] strArray = {tag};
-        return ClosestTaggedObj(strArray);
+        if (!canInteract)
+            return null;
+        List<GameObject> objects = new List<GameObject>();
+        objects.AddRange(GameObject.FindGameObjectsWithTag(tag));
+        if (objects.Count < 1)
+            return null;
+        //evaluates the distance between the player and each object of this tag
+        return ClosestObjToPlayer(objects.ToArray());
+    }
+    public GameObject ClosestObjToPlayer(GameObject[] objects)
+    {
+        print("closest Object array length: "+objects.Length);
+        GameObject closest = objects[0];
+        if (closest == null)
+        {
+            Debug.LogError("closest is returning NULL bro");
+            return null;
+        }
+        float shortest = Vector2.Distance(Player.instance.CenterPoint(), objects[0].transform.position);
+        for (int i = 0; i < objects.Length; i++)
+        {
+            float dist = Vector2.Distance(Player.instance.CenterPoint(), objects[i].transform.position);
+            if (dist < shortest)
+            {
+                //if the Inactiveflag component is on the script, it ignores it
+                //this solves the problem that there are many components with different active states being checked here
+                if (objects[i].GetComponent<InactiveFlag>() == null)
+                {
+                    shortest = dist;
+                    closest = objects[i];
+                }
+            }
+        }
+        if (shortest >= minProximity)
+            return null;
+        print("shortest >= min prox");
+        return closest;
     }
     void Update()
     {
@@ -45,10 +78,9 @@ public class InteractInterface : MonoBehaviour
             if (player.GetComponent<Player>().IsInteracting == true)
                 return;
             //determine which interactable / pickup is closest, and perform interact
-            string[] strArray = { "Interactable", "Pickups" };
+            string[] strArray = { "Pickups" , "Interactable", };
             GameObject obj = ClosestTaggedObj(strArray);
             //if the closestObject is too far away, it returns null
-            print("it's skipping the bool check I.I");
             if (obj == null)
             {
                 AudioManager.instance.PlaySound("SFX_Nope");
@@ -73,34 +105,29 @@ public class InteractInterface : MonoBehaviour
     {
         if (!canInteract)
             return null;
-        List<GameObject> objects = new List<GameObject>();
-        //add all gameObjects that contain the tags specified in the passed in array into a big list
-        for (int i = 0; i < tags.Length;i++)
+        //ClosestWithTag[] closestWithTag = new ClosestWithTag[tags.Length];
+        List<GameObject> closestObjectList = new List<GameObject>();
+        GameObject closestPickup = null;
+        for (int i = 0; i < tags.Length; i++)
         {
-            objects.AddRange(GameObject.FindGameObjectsWithTag(tags[i]));
-        }
-        if (objects.Count < 1)
-            return null;
-        //evaluates the distance between the player and each object of this tag
-        GameObject closest = objects[0];
-        float shortest = Vector2.Distance(Player.instance.CenterPoint(), objects[0].transform.position);
-        for (int i = 0; i < objects.Count; i++)
-        {
-            float dist = Vector2.Distance(Player.instance.CenterPoint(), objects[i].transform.position);
-            if (dist < shortest)
+            closestObjectList.Add(ClosestTaggedObj(tags[i])); //add to the list of 
+            if (tags[i] == "Pickups")
             {
-                //if the Inactiveflag component is on the script, it ignores it
-                //this solves the problem that there are many components with different active states being checked here
-                if (objects[i].GetComponent<InactiveFlag>() == null)
-                {
-                    shortest = dist;
-                    closest = objects[i];
-                }
+                closestPickup = closestObjectList[i];
             }
         }
-        if (shortest >= minProximity)
+        if (closestObjectList.Count < 1)
             return null;
-        return closest;
+        GameObject closestPriorityObj = ClosestObjToPlayer(closestObjectList.ToArray());
+        print("closest priority obj: " + closestPriorityObj);
+        if (closestPickup != null)
+        {
+            float pickupDist = Mathf.Abs( closestPickup.transform.position.x - Player.instance.transform.position.x); //set distance from player
+            float otherObjDist = Mathf.Abs( closestPriorityObj.transform.position.x - Player.instance.transform.position.x); //set distan
+            if ((pickupDist - 3 < otherObjDist))//
+                closestPriorityObj = closestPickup;
+        }
+        return closestPriorityObj;
     }
     // button sends the int value of the selected UI obj as a string, this gets sent to godhead script as updateselect + the mod slot
     // this is used for sacrifice interface and merchant interface
@@ -143,6 +170,4 @@ public class InteractInterface : MonoBehaviour
         GameObject closest = ClosestInteractable();
         closest.GetComponent<Merchant>().CloseUI();
     }
-
-
 }
