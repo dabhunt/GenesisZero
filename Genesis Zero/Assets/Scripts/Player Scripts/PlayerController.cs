@@ -24,10 +24,12 @@ public class PlayerController : MonoBehaviour
     public float jumpingHitboxHeight = 1f;
     [Header("Phase Dash")]
     public Color phaseColor = Color.black;
+    public bool overrideColor = false;
     public float rollDuration = 3f;
     public float rollSpeedMult = 1.5f;
     public float rollCooldownDuration = 1.5f;
     public float jumpBufferTime = 0.2f;
+    public float rollRotation = 180;
     public LayerMask immoveables; //LayerMask for bound checks
     public LayerMask rollingLayerMask; //layermask used while rolling
     public bool debug;
@@ -100,7 +102,7 @@ public class PlayerController : MonoBehaviour
     private bool isFacingRight = true;
     private bool isAimingRight;
     private GameObject downSmash;
-
+    private GameObject followLight;
     //sound variables
     private bool walkSoundPlaying = false;
     private PlayerSounds sound;
@@ -128,6 +130,7 @@ public class PlayerController : MonoBehaviour
         hurtBoxCol = gameObject.GetComponent<Hurtbox>().colliders[0].GetComponent<CapsuleCollider>();
         currentHitboxHeight = hurtBoxCol.height;
         currentHitBoxCenter = hurtBoxCol.center;
+        followLight = GameObject.FindGameObjectWithTag("FollowLight");
     }
     private void Update()
     {
@@ -488,7 +491,6 @@ public class PlayerController : MonoBehaviour
             transform.position += Vector3.up * (startVel * Time.fixedDeltaTime + (0.5f * fallSpeedMult * -gravity* weight) * Mathf.Pow(Time.fixedDeltaTime, 2));
         }
     }
-
     /* This function is invoked when player press
      * roll button for dodgerolling.
      * It will put the player into rolling state
@@ -506,11 +508,11 @@ public class PlayerController : MonoBehaviour
                 GetComponent<UniqueEffects>().PhaseTrigger();
                 sound.Roll();
                 //VFXManager.instance.PlayEffect("VFX_PlayerDashStart", transform.position);
-                GameObject dashstart = VFXManager.instance.PlayEffectOnObject("VFX_PlayerDashStart", this.gameObject, new Vector2(0,1));
+                GameObject dashstart = VFXManager.instance.PlayEffectOnObject("VFX_PlayerDashStart", followLight, new Vector2(0,0));
                 gameObject.GetComponentInChildren<SkinnedMeshRenderer>().enabled = false; //TEMPORARY CHANGE THIS
                 GameObject dash = VFXManager.instance.PlayEffectForDuration("VFX_PlayerDashEffect", transform.position, rollDuration);
                 dash.transform.SetParent(transform);
-                if (phaseColor != Color.black)
+                if (overrideColor == true)
                 {
                     VFXManager.instance.ChangeColor(dashstart, phaseColor);
                     VFXManager.instance.ChangeColor(dash, phaseColor);
@@ -526,10 +528,6 @@ public class PlayerController : MonoBehaviour
                 GetComponent<Player>().SetInvunerable(rollDuration+.1f);
                 NewLayerMask(rollingLayerMask, rollDuration);
                 timeRolled = 0;
-                if (rollDirection > 0)
-                    dashstart.transform.Rotate(new Vector3(0, 0, 0));
-                else
-                    dashstart.transform.Rotate(new Vector3(0, 0, 0));
                 //lastRollingPosition = transform.position;
                 //Rotate the character depending on roll direction
                 if (rollDirection < 0 && isFacingRight)
@@ -561,16 +559,23 @@ public class PlayerController : MonoBehaviour
     {
         AudioManager.instance.StopSound("SFX_DownAir");
         isFallingFast = false;
-        if (downSmash != null)
-            downSmash.AddComponent<DestroyAfterXTime>().time = .4f;
+
         Invoke("ResetSlamCool", slamCoolDownDuration);
         if (cancelled)
         {
             vertVel = 0;
+
+            if (downSmash != null)
+            {
+                Destroy(downSmash);
+            }
+
         }
         else
         {
-            VFXManager.instance.PlayEffect("VFX_Lightning", this.transform.position);
+            if (downSmash != null)
+                downSmash.AddComponent<DestroyAfterXTime>().time = .4f;
+            VFXManager.instance.PlayEffect("VFX_DownSlam", this.transform.position);
             AudioManager.instance.PlayRandomSFXType("SFX_Downsmash");
         }
 

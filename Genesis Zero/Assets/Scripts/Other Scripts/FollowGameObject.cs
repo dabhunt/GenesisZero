@@ -4,6 +4,7 @@ using UnityEngine;
 
 public class FollowGameObject : MonoBehaviour
 {
+	
 	public GameObject FollowObject;
 	public Vector3 Offset;
 	public float LerpStrength = 1;
