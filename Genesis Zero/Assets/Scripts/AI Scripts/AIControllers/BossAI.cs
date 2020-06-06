@@ -139,6 +139,7 @@ public class BossAI : AIController
 					GameObject.FindGameObjectWithTag("CanvasUI").transform.Find("Modifier BG").GetComponent<SkillDisplay>().HideMods();
 					GameInputManager.instance.EnablePlayerControls();
 					AudioManager.instance.PlaySound("SFX_BossRoar(0)");
+					StartCoroutine(FlickerLights(.1f, .2f, 1f, false));//min delay, max delay, total duration to flickerlights, endDark bool
 					camera.transform.DOShakePosition(duration: 1.25f, strength: 1, vibrato: 5, randomness: 60, snapping: false, fadeOut: true);
 					Camera.main.GetComponent<BasicCameraZoom>().ChangeFieldOfView(30, 1);
 					GameObject canvas = GameObject.FindGameObjectWithTag("CanvasUI");
@@ -323,6 +324,7 @@ public class BossAI : AIController
 				DisableUIExceptDialogue();
 				SetBossstate(State.Setting, 20f);
 				animator.SetTrigger("Dead");
+				StartCoroutine(FlickerLights(.1f, .5f, 2f, false));
 				Camera.main.GetComponent<BasicCameraZoom>().ChangeFieldOfViewTemporary(45, 1, .25f);
 				KillNearbyEnemies();
 				died = true;
@@ -432,9 +434,10 @@ public class BossAI : AIController
 			FlameGround.SetActive(true);        //Set the flame ground to true/active
 			flamethrower.Play();
 			Invoke("StopFlamethrower", 2.4f);
+			StartCoroutine(FlickerLights(.1f, .55f, 7f, true));//min delay, max delay, total duration to flickerlights
 			animator.SetBool("Wild", true);
 			camera.transform.DOShakePosition(duration: 2.4f, strength: 1, vibrato: 5, randomness: 60, snapping: false, fadeOut: true);
-			Camera.main.GetComponent<BasicCameraZoom>().ChangeFieldOfViewTemporary(45, 1.1f, .25f);
+			camera.GetComponent<BasicCameraZoom>().ChangeFieldOfViewTemporary(45, 1.1f, .25f);
 			AudioManager.instance.PlaySound("SFX_BossRoar(0)"); // Play sound Effect
 			GetComponent<BossEvents>().DestroyGameObjectsOnWild(); //Destroy top platforms
 			AudioManager.instance.CrossFadeChannels(1, 1.5f, 2, 1.5f);
@@ -1028,7 +1031,35 @@ public class BossAI : AIController
 
 		}
 	}
-
+	//Flicker the lights for totalDuration amount of time. minDelay is minimum amount of time between flickers, and max is Maxamount
+	//it randomizes inbetween the two values
+	public IEnumerator FlickerLights(float minDelay , float maxDelay,  float totalDuration, bool endDark)
+	{
+		float start = Time.realtimeSinceStartup;
+		SetPostProcessing(true);
+		while (Time.realtimeSinceStartup < start + totalDuration)
+		{
+			yield return new WaitForSeconds(Random.Range(minDelay, maxDelay)); //wait random amount of time between ranges
+			TogglePostProcessing();
+		}
+		SetPostProcessing(endDark);
+	}
+	//swap the active states of postprocessing for boss room
+	public void TogglePostProcessing()
+	{
+		GameObject regularPP = camera.transform.parent.Find("Post Processing").gameObject;
+		GameObject darkPP = camera.transform.parent.Find("DarkestPP").gameObject;
+		if (Random.value > .75f)
+			darkPP = camera.transform.parent.Find("BossRoomPostProcessing").gameObject;
+		regularPP.SetActive(!regularPP.activeSelf); //swap the states
+		darkPP.SetActive(!regularPP.activeSelf);
+	}
+	public void SetPostProcessing(bool dark)
+	{
+		camera.transform.parent.Find("Post Processing").gameObject.SetActive(!dark);
+		camera.transform.parent.Find("BossRoomPostProcessing").gameObject.SetActive(dark);
+		//camera.transform.parent.Find("DarkestPP").gameObject.SetActive(dark);
+	}
 	private Vector2 CastAtAngle(Vector2 position, Vector2 direction, float distance)
 	{
 		Vector2 result = position + direction.normalized * distance;

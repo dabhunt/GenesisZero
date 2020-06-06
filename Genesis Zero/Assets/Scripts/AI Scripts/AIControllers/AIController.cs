@@ -367,7 +367,7 @@ public class AIController : Pawn
     {
         if (Target != null)
         {
-            return Vector3.Distance(trueOrigin, Target.position);
+            return Vector2.Distance(trueOrigin, Player.instance.CenterPoint());
         }
         return 0.0f;
     }
