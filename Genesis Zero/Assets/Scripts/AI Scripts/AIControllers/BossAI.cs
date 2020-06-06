@@ -1057,7 +1057,7 @@ public class BossAI : AIController
 	public void SetPostProcessing(bool dark)
 	{
 		camera.transform.parent.Find("Post Processing").gameObject.SetActive(!dark);
-		camera.transform.parent.Find("BossRoomPostProcessing").gameObject.SetActive(dark);
+		camera.transform.parent.Find("DarkestPP").gameObject.SetActive(dark);
 		//camera.transform.parent.Find("DarkestPP").gameObject.SetActive(dark);
 	}
 	private Vector2 CastAtAngle(Vector2 position, Vector2 direction, float distance)
