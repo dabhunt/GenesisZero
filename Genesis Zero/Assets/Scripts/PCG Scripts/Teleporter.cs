@@ -82,6 +82,8 @@ public class Teleporter : MonoBehaviour
 	}
 	private void Teleport()
 	{
+		if (MayhemTimer.instance != null)
+			MayhemTimer.instance.LevelCleared();
 		StateManager.instance.Teleport(new Vector2(destinationX, destinationY), BossRoomOverride);
 	}
 	public void SetDestination(Vector2 destination)

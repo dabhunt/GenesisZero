@@ -427,15 +427,15 @@ public class AbilityCasting : MonoBehaviour
                 if (num == 1)
                 {
                     ActiveTime1 = 0;
-                    AbilityCooldown1 = SL_Cooldown;
-                    TotalAbilityCooldown1 = SL_Cooldown;
+                    AbilityCooldown1 = SL_Cooldown * Player.instance.GetCDR().GetValue();
+                    TotalAbilityCooldown1 = SL_Cooldown * Player.instance.GetCDR().GetValue();
                     ui.Cast(0);
                 }
                 else
                 {
                     ActiveTime2 = 0;
-                    AbilityCooldown2 = SL_Cooldown;
-                    TotalAbilityCooldown2 = SL_Cooldown;
+                    AbilityCooldown2 = SL_Cooldown * Player.instance.GetCDR().GetValue();
+                    TotalAbilityCooldown2 = SL_Cooldown * Player.instance.GetCDR().GetValue();
                     ui.Cast(1);
                 }
                 EndBonus();
