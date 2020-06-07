@@ -435,7 +435,7 @@ public class BossAI : AIController
 			FlameGround.SetActive(true);        //Set the flame ground to true/active
 			flamethrower.Play();
 			Invoke("StopFlamethrower", 2.4f);
-			EmergencyLights(2.4f);
+			EmergencyLights(.4f);
 			animator.SetBool("Wild", true);
 			camera.transform.DOShakePosition(duration: 2.4f, strength: 1, vibrato: 5, randomness: 60, snapping: false, fadeOut: true);
 			camera.GetComponent<BasicCameraZoom>().ChangeFieldOfViewTemporary(45, 1.1f, .25f);

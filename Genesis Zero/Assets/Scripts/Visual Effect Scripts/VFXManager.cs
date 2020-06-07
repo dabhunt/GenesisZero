@@ -33,6 +33,8 @@ public class VFXManager : MonoBehaviour
     }
     public void RecursiveChildScale(Transform t, float scaleMultiplier)
     {
+        if (scaleMultiplier == 0)
+            return;
         foreach (Transform child in t)
         {
             child.localScale = new Vector3(child.localScale.x * scaleMultiplier, child.localScale.y * scaleMultiplier, child.localScale.z * scaleMultiplier);

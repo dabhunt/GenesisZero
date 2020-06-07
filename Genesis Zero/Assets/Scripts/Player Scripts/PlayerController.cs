@@ -559,12 +559,10 @@ public class PlayerController : MonoBehaviour
     {
         AudioManager.instance.StopSound("SFX_DownAir");
         isFallingFast = false;
-
         Invoke("ResetSlamCool", slamCoolDownDuration);
         if (cancelled)
         {
             vertVel = 0;
-
             if (downSmash != null)
             {
                 Destroy(downSmash);
@@ -576,6 +574,7 @@ public class PlayerController : MonoBehaviour
             if (downSmash != null)
                 downSmash.AddComponent<DestroyAfterXTime>().time = .4f;
             VFXManager.instance.PlayEffect("VFX_DownSlam", this.transform.position);
+            AudioManager.instance.StopSound("SFX_Downsmash");
             AudioManager.instance.PlayRandomSFXType("SFX_Downsmash");
         }
 
