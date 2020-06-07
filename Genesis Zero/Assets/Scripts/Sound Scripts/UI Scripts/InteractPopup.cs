@@ -33,12 +33,7 @@ public class InteractPopup : MonoBehaviour
         camRef = Camera.main;
         InvokeRepeating("DistanceCheck", 0, checksPerSecond);
         //if there is a skillpickup attached to this, set the title to the name and rarity color
-        if (GetComponent<SkillPickup>() != null)
-        {
-            SkillObject skill = GetComponent<SkillPickup>().skill;
-            titleColor = player.GetSkillManager().GetColor(skill);
-            TitleText = skill.name;
-        }
+        InitializeValues();
     }
     private void DistanceCheck()
     {
@@ -60,8 +55,18 @@ public class InteractPopup : MonoBehaviour
         }
 
     }
+    private void InitializeValues()
+    {
+        if (GetComponent<SkillPickup>() != null)
+        {
+            SkillObject skill = GetComponent<SkillPickup>().skill;
+            titleColor = player.GetSkillManager().GetColor(skill);
+            TitleText = skill.name;
+        }
+    }
     private void InitializeUI()
     {
+        InitializeValues();
         Vector2 screenPos = CalcScreenPos();
         popup = (GameObject)GameObject.Instantiate(Resources.Load("UI/InteractPopup"), screenPos, Quaternion.identity);
         SetScreenPos(screenPos);

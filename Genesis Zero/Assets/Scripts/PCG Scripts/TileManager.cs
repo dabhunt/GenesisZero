@@ -118,7 +118,6 @@ public class TileManager : MonoBehaviour
 		int iter = 0;
 		foreach (GameObject mat in GameObject.FindGameObjectsWithTag("Placemat"))
 		{
-			
 			curMatLevel = Mathf.FloorToInt(mat.transform.position.x / levelSpacing); //convert X position to what level we are on
 			//print("mat.transform: " + mat.transform.position.x + " = curmatlevel: " + curMatLevel);
 			if (mat.transform.position.x > levelSpacing)
@@ -154,7 +153,7 @@ public class TileManager : MonoBehaviour
 				}
 				else if (mat.name == "TeleportMat")
 				{
-					//print("curmatlevel: " + curMatLevel);
+					print("curmatlevel: " + curMatLevel);
 					if (curMatLevel > LastMatLevel)//guarantees the creation of a teleporter on each level
 					{
 						if (curMatLevel > 1)
@@ -178,6 +177,23 @@ public class TileManager : MonoBehaviour
 					LastMatLevel = curMatLevel;
 				}
 				iter++; //keep track of how many cubbies are checked
+			}
+
+		}
+		//the final level of PCG needs this for the guidance arrows
+		foreach (GameObject tele in GameObject.FindGameObjectsWithTag("Teleporter"))
+		{
+			if (tele.name.Contains("to Boss"))
+			{
+				int z = 0;
+				print("level 2 tele found");
+				foreach (GameObject arrow in guideArrows[1])
+				{
+					print("Arrow " + z); 
+					if (arrow != null)
+						arrow.transform.LookAt(newestTele.transform); //make all arrows point at the tele for the level just finished
+					z++;
+				}
 			}
 		}
     }
