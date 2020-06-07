@@ -11,6 +11,7 @@ public class BasicCameraZoom : MonoBehaviour
     private Camera myCamera;
     private float target;
     private bool spanding = false;
+    private float savedFOV;
     private float time;
 	[HideInInspector]
 	public bool inboss;
@@ -19,11 +20,12 @@ public class BasicCameraZoom : MonoBehaviour
     {
         myCamera = GetComponent<Camera>();
         target = myCamera.fieldOfView;
+        savedFOV = myCamera.fieldOfView;
     }
     // Update is called once per frame
     void Update()
     {
-        if (GameInputManager.instance.isEnabled() && myCamera.GetComponent<BasicCameraZoom>().spanding)
+        if (GameInputManager.instance.isEnabled() && !spanding)
         {
             if (Input.GetAxis("Mouse ScrollWheel") < 0 && time <= 0)
             {
@@ -35,82 +37,51 @@ public class BasicCameraZoom : MonoBehaviour
             }
         }
     }
-    public void ChangeFieldOfView(float field, float tweenTime)
+    public void ChangeFieldOfView(float newFOV, float tweenTime)
     {
         if (spanding == false)
         {
-            myCamera.DOFieldOfView(field, tweenTime);
+            savedFOV = myCamera.fieldOfView; //save current FOV
+            myCamera.DOFieldOfView(newFOV, tweenTime);
+            StartCoroutine(Reset(false, tweenTime));
         }
     }
     public void ChangeFieldOfViewTemporary(float field, float duration, float tweenTime)
     {
         if (spanding == false) //only change FOV if not already doing it
         {
-            float savedpov = myCamera.fieldOfView;
+            savedFOV = myCamera.fieldOfView;
             Tween t = myCamera.DOFieldOfView(field, tweenTime);
             t.SetUpdate(UpdateType.Fixed);
-            StartCoroutine(Reset(duration, savedpov));
+            StartCoroutine(Reset(true,duration));
             spanding = true;
         }
     }
-    IEnumerator Reset(float waitTime, float FOV)
+    //resets the spanding value and FOV if it was a temporary change
+    // pass in whether or not this reset is for a temp FOV change, or permanent one, and how long to wait before doing the rest
+    IEnumerator Reset(bool temp, float waitTime)
     {
         yield return new WaitForSeconds(waitTime);
-
+        spanding = false;
+        if (!temp)
+            yield return 0;
         while (Player.instance.GetComponent<UniqueEffects>().IsInCombat() == true) //continue checking while in combat
         {
             yield return new WaitForSeconds(.5f); //wait .5 seconds then check again to see if player is still in combat
         }
         if (!inboss)
 		{
-            Tween t = myCamera.DOFieldOfView(FOV, 1.2f); //tween back to original FOV
+            Tween t = myCamera.DOFieldOfView(savedFOV, 1.2f); //tween back to original FOV
             t.SetUpdate(UpdateType.Fixed);
 		}
 		spanding = false;
     }
-}
-/*public void ChangeFieldOfViewTemporary(float field, float time, float duration)
-{
-    if (spanding == false)
+    public void ZoomOnCombat(bool flag)
     {
-        savedmax = fovMax;
-        if (field > fovMax)
+        inboss = flag;
+        if (!flag)
         {
-            fovMax = field;
-            field = fovMax;
+            StopAllCoroutines();
         }
-        target = field;
-        this.time = time;
-        savedpov = myCamera.fieldOfView;
-        StartCoroutine(Spandout(duration, myCamera.fieldOfView, field, spanding));
     }
 }
-
-public void StopTempFieldOfViewChange()
-{
-    if (time > 0 && spanding == false)
-    {
-        time = 0;
-        target = savedpov;
-        ChangeFieldOfView(savedpov);
-        updatetime = .5f;
-    }
-}
-
-IEnumerator Spandout(float time, float start, float target, bool spanding)
-{
-    spanding = true;
-    for (float f = 0; f <= time; f += Time.fixedDeltaTime)
-    {
-        if (spanding == true && reset == true)
-        {
-            reset = false;
-            break;
-        }
-        myCamera.fieldOfView = Mathf.Clamp(start + ((target - start) * f / time), fovMin, fovMax);
-        yield return new WaitForSeconds(Time.fixedDeltaTime);
-    }
-    spanding = false;
-}
-}
-*/

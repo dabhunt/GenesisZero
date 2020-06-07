@@ -110,9 +110,10 @@ public class BossAI : AIController
 		if (GetDistanceToTarget() < TriggerRadius && initiated == false)
 		{
 			GameInputManager.instance.DisablePlayerControls();
-			GameObject.FindGameObjectWithTag("Player").GetComponent<PlayerController>().movementInput = Vector2.zero;
-			initiated = true;
+			Player.instance.GetComponent<PlayerController>().movementInput = Vector2.zero;
+			Camera.main.GetComponent<BasicCameraZoom>().ZoomOnCombat(false);
 			Player.instance.GetComponent<UniqueEffects>().CombatChangesMusic = false;
+			initiated = true;
 		}
 		if (initiated)
 		{
@@ -141,7 +142,7 @@ public class BossAI : AIController
 					AudioManager.instance.PlaySound("SFX_BossRoar(0)");
 					StartCoroutine(FlickerLights(1, 3, 1f, false));//min delay, max delay, total duration to flickerlights, endDark bool
 					camera.transform.DOShakePosition(duration: 1.25f, strength: 1, vibrato: 5, randomness: 60, snapping: false, fadeOut: true);
-					Camera.main.GetComponent<BasicCameraZoom>().ChangeFieldOfView(30, 1);
+					Camera.main.GetComponent<BasicCameraZoom>().ChangeFieldOfView(30, 1.2f);
 					GameObject canvas = GameObject.FindGameObjectWithTag("CanvasUI");
 					healthbar = canvas.transform.Find("BossHealthbar").gameObject;
 					healthbar.SetActive(true);
@@ -434,7 +435,7 @@ public class BossAI : AIController
 			FlameGround.SetActive(true);        //Set the flame ground to true/active
 			flamethrower.Play();
 			Invoke("StopFlamethrower", 2.4f);
-			EmergencyLights(1.5f);
+			EmergencyLights(2.4f);
 			animator.SetBool("Wild", true);
 			camera.transform.DOShakePosition(duration: 2.4f, strength: 1, vibrato: 5, randomness: 60, snapping: false, fadeOut: true);
 			camera.GetComponent<BasicCameraZoom>().ChangeFieldOfViewTemporary(45, 1.1f, .25f);
