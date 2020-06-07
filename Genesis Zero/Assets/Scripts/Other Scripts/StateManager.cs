@@ -233,6 +233,8 @@ public class StateManager : MonoBehaviour
         Camera.main.GetComponentInParent<CinemachineBrain>().enabled = true;
         BUGE.instance.transform.position = player.transform.position;
         BUGE.instance.FollowingPlayer(true);
+        BUGE.instance.GetComponent<InteractPopup>().SetText("Right Click to Interact");
+        BUGE.instance.GetComponent<InteractPopup>().DestroyPopUp();
         AudioManager.instance.PlaySongsForLevel(level);
         TileManager.instance.playerOnlevel++;
     }

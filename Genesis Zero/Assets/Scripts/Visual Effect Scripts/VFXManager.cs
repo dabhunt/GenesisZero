@@ -33,7 +33,7 @@ public class VFXManager : MonoBehaviour
     }
     public void RecursiveChildScale(Transform t, float scaleMultiplier)
     {
-        if (scaleMultiplier == 0)
+        if (scaleMultiplier <= 0)
             return;
         foreach (Transform child in t)
         {
@@ -151,7 +151,8 @@ public class VFXManager : MonoBehaviour
     {
         GameObject effect = Instantiate(Resources.Load<GameObject>("Effects/" + name), position, Quaternion.identity);
         Transform tEffect = effect.transform;
-        RecursiveChildScale(tEffect, scaleMultiplier);
+        if (scaleMultiplier != 1 && scaleMultiplier != 0)
+            RecursiveChildScale(tEffect, scaleMultiplier);
         VFXScript vfx = effect.GetComponent<VFXScript>();
         if (vfx != null && delay > 0)
         {
