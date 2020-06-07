@@ -139,7 +139,7 @@ public class BossAI : AIController
 					GameObject.FindGameObjectWithTag("CanvasUI").transform.Find("Modifier BG").GetComponent<SkillDisplay>().HideMods();
 					GameInputManager.instance.EnablePlayerControls();
 					AudioManager.instance.PlaySound("SFX_BossRoar(0)");
-					StartCoroutine(FlickerLights(.1f, .2f, 1f, false));//min delay, max delay, total duration to flickerlights, endDark bool
+					StartCoroutine(FlickerLights(1, 3, 1f, false));//min delay, max delay, total duration to flickerlights, endDark bool
 					camera.transform.DOShakePosition(duration: 1.25f, strength: 1, vibrato: 5, randomness: 60, snapping: false, fadeOut: true);
 					Camera.main.GetComponent<BasicCameraZoom>().ChangeFieldOfView(30, 1);
 					GameObject canvas = GameObject.FindGameObjectWithTag("CanvasUI");
@@ -324,7 +324,7 @@ public class BossAI : AIController
 				DisableUIExceptDialogue();
 				SetBossstate(State.Setting, 20f);
 				animator.SetTrigger("Dead");
-				StartCoroutine(FlickerLights(.1f, .5f, 2f, false));
+				StartCoroutine(FlickerLights(1, 3, 2f, false));
 				Camera.main.GetComponent<BasicCameraZoom>().ChangeFieldOfViewTemporary(45, 1, .25f);
 				KillNearbyEnemies();
 				died = true;
@@ -434,7 +434,7 @@ public class BossAI : AIController
 			FlameGround.SetActive(true);        //Set the flame ground to true/active
 			flamethrower.Play();
 			Invoke("StopFlamethrower", 2.4f);
-			StartCoroutine(FlickerLights(.1f, .55f, 7f, true));//min delay, max delay, total duration to flickerlights
+			EmergencyLights(1.5f);
 			animator.SetBool("Wild", true);
 			camera.transform.DOShakePosition(duration: 2.4f, strength: 1, vibrato: 5, randomness: 60, snapping: false, fadeOut: true);
 			camera.GetComponent<BasicCameraZoom>().ChangeFieldOfViewTemporary(45, 1.1f, .25f);
@@ -1033,16 +1033,45 @@ public class BossAI : AIController
 	}
 	//Flicker the lights for totalDuration amount of time. minDelay is minimum amount of time between flickers, and max is Maxamount
 	//it randomizes inbetween the two values
-	public IEnumerator FlickerLights(float minDelay , float maxDelay,  float totalDuration, bool endDark)
+	//public IEnumerator FlickerLights(float minDelay, float maxDelay, float totalDuration, bool endDark)
+	//{
+	//	float start = Time.realtimeSinceStartup;
+	//	SetPostProcessing(true);
+	//	while (Time.realtimeSinceStartup < start + totalDuration)
+	//	{
+	//		yield return new WaitForSeconds(Random.Range(minDelay, maxDelay)); //wait random amount of time between ranges
+	//		TogglePostProcessing();
+	//	}
+	//	SetPostProcessing(endDark);
+	//}
+	public IEnumerator FlickerLights(float minSpeed, float maxSpeed, float totalDuration, bool endDark)
 	{
 		float start = Time.realtimeSinceStartup;
-		SetPostProcessing(true);
+		GameObject pp = camera.transform.parent.Find("BossRoomPostProcessing").gameObject;
+		pp.SetActive(true);
+		Animation lightsOff = pp.GetComponent<Animation>();
+		lightsOff["PostProcessGetDark"].speed = Random.Range(minSpeed, maxSpeed);
+		lightsOff["PostProcessGetDark"].wrapMode = WrapMode.PingPong;
+		lightsOff.Play("PostProcessGetDark");
 		while (Time.realtimeSinceStartup < start + totalDuration)
 		{
-			yield return new WaitForSeconds(Random.Range(minDelay, maxDelay)); //wait random amount of time between ranges
-			TogglePostProcessing();
+			yield return new WaitForSeconds(Random.Range(.1f, .3f)); //wait random amount of time between ranges
+			lightsOff["PostProcessGetDark"].speed = Random.Range(minSpeed, maxSpeed);
+			//TogglePostProcessing();
 		}
-		SetPostProcessing(endDark);
+		lightsOff["PostProcessGetDark"].wrapMode = WrapMode.Once;
+		lightsOff["PostProcessGetBrighter"].wrapMode = WrapMode.Once;
+		lightsOff.Play("PostProcessGetBrighter");
+		//SetPostProcessing(endDark);
+	}
+	public void EmergencyLights(float loopSpeed)
+	{
+		GameObject pp = camera.transform.parent.Find("BossRoomPostProcessing").gameObject;
+		pp.SetActive(true);
+		Animation lightsOff = pp.GetComponent<Animation>();
+		lightsOff["PostProcessGetDark"].wrapMode = WrapMode.PingPong;
+		lightsOff["PostProcessGetDark"].speed = loopSpeed;
+		lightsOff.Play("PostProcessGetDark");
 	}
 	//swap the active states of postprocessing for boss room
 	public void TogglePostProcessing()
