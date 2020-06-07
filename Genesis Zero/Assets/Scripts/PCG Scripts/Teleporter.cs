@@ -26,7 +26,6 @@ public class Teleporter : MonoBehaviour
 		ani = GetComponent<Animator>();
 		canvas = GameObject.FindGameObjectWithTag("CanvasUI");
 		InvokeRepeating("portalAnimation", 1f, .3f);
-		AudioManager.instance.PlayAttachedSound("SFX_TeleporterAmbient", this.gameObject, .5f, 1, true, 0);
 	}
 	private void OnTriggerEnter(Collider other)
 	{
@@ -50,7 +49,6 @@ public class Teleporter : MonoBehaviour
 	}
 	public void TeleportWithAnim()
 	{
-		AudioManager.instance.PlaySound("SFX_Teleport", 1, 1);
 		canvas.transform.Find("BlackOverlay").GetComponent<SpriteFade>().color = Color.white;
 		canvas.transform.Find("BlackOverlay").GetComponent<SpriteFade>().FadeIn(toWhite);
 		Camera cam = Camera.main;
@@ -100,6 +98,7 @@ public class Teleporter : MonoBehaviour
     {
 			if(distanceFromPortal()<portalactivedistance){
 				ani.SetBool("Open",true);
+				AudioManager.instance.PlayAttachedSound("SFX_TeleporterAmbient", this.gameObject, .5f, 1, true, 0);
 				ani.SetBool("Close",false);
 			}
 			if(distanceFromPortal()>portalactivedistance){

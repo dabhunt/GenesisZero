@@ -6,9 +6,9 @@ using DG.Tweening;
 public class BasicCameraZoom : MonoBehaviour
 {
     public float zoomSpeed;
-    public float fovMin;
+    public float fovMin = 6;
     public float fovMax = 20;
-    public float scrollZoom = 2; //amount of fov per scroll
+    public float scrollZoom = 3; //amount of fov per scroll
     private Camera myCamera;
     private float target;
     private bool spanding = false;

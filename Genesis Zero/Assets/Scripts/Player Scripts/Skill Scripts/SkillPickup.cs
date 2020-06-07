@@ -16,6 +16,7 @@ public class SkillPickup : MonoBehaviour
     private Player player;
     private bool dropped = false;
     public float YOffset = .7f;
+    public static float ConverterOffset = 2f;
     private float modConverterDist = .45f;
     // Start is called before the first frame update
     void Start()
@@ -46,7 +47,6 @@ public class SkillPickup : MonoBehaviour
             else
                 VFXManager.instance.ChangeColor(this.gameObject, player.GetSkillManager().GetColor(skill));
         }
-
     }
     private void Update()
     {
@@ -86,8 +86,7 @@ public class SkillPickup : MonoBehaviour
             bool targetIsPlayer = true;
             if (target.GetComponent<Player>() == null)
                 targetIsPlayer = false;
-            print("target:" + target);
-;            if (dropped)
+;           if (dropped)
             {
                 //if target is null, or target is the player
                 if (target == null || target.GetComponent<ModConverter>() == null)
@@ -96,7 +95,7 @@ public class SkillPickup : MonoBehaviour
                     return;
                 }
                 //this section of code deals with what the mod should do once it reaches a ScrapConverter
-                float dist = Vector2.Distance(target.transform.position, transform.position);
+                float dist = Vector2.Distance(new Vector2(target.transform.position.x, target.transform.position.y+ConverterOffset), transform.position);
                 if (dist < modConverterDist)
                 {
                     target.GetComponent<ModConverter>().AddMod(skill);
@@ -108,7 +107,11 @@ public class SkillPickup : MonoBehaviour
                 if (GetComponentInChildren<Floating>() != null)
                     Destroy(GetComponentInChildren<Floating>());
                 speedvar *= 1.09f;
-                Vector3 tVec = new Vector3(target.transform.position.x, target.transform.position.y +YOffset, 0);
+                Vector3 tVec;
+                if (targetIsPlayer)
+                    tVec = new Vector3(target.transform.position.x, target.transform.position.y +YOffset, 0);
+                else
+                    tVec = new Vector3(target.transform.position.x, target.transform.position.y + ConverterOffset, 0);
                 transform.LookAt(tVec);
                 this.transform.position = Vector3.MoveTowards(this.transform.position, tVec, speedvar * Time.deltaTime);
             }

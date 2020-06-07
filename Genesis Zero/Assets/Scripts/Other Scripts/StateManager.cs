@@ -80,6 +80,8 @@ public class StateManager : MonoBehaviour
                 }
             }
         }
+        if (Input.GetKeyDown(KeyCode.Backspace))
+            restart.RestartScene();
         if (isPaused == true || Cursorvisible)
             Cursor.visible = true;
         else
@@ -213,6 +215,7 @@ public class StateManager : MonoBehaviour
     }
     public void Teleport(Vector2 destination, bool bossRoomOverride)
     {
+        AudioManager.instance.PlaySound("SFX_Teleport");
         GameObject fakeTele = Instantiate(TileManager.instance.interactablePrefabs[4]) as GameObject;//spawn a fake teleporter where ever the teleporter takes you
         fakeTele.transform.position = destination;
         Destroy(fakeTele.GetComponent<Teleporter>());
