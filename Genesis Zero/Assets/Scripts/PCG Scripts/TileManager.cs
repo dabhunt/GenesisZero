@@ -47,7 +47,7 @@ public class TileManager : MonoBehaviour
 	private float tileLength = 22.0f;
 	private float tileHeight = 6.5f;
 	private int seedValue;
-	private float levelTracking;
+	private float levelTracking, enemyspawnchanceincease;
 	private List<GameObject> endBuildings;
 	private List<GameObject> teleporterInstances;
 	List<List<GameObject>> guideArrows = new List<List<GameObject>>();
@@ -320,7 +320,7 @@ public class TileManager : MonoBehaviour
 			spawnVector.x += tileLength;
 			
 			//Spawn Enemy
-			if (Random.value <= SpawnChance)
+			if (Random.value <= (SpawnChance + enemyspawnchanceincease))
 			{
 				int i = Random.Range((int)MinMaxEnemies.x, (int)MinMaxEnemies.y+levelNumber-1);
 				spawnVector.y += 3;
@@ -336,6 +336,11 @@ public class TileManager : MonoBehaviour
 				spawnVector.y -= 3;
 				spawnVector.x += 11;
 				spawnVector.z += 2;
+				enemyspawnchanceincease = 0;
+			}
+			else
+			{
+				enemyspawnchanceincease += .05f;
 			}
 			
 			//Iterate counting variables
