@@ -153,7 +153,7 @@ public class TileManager : MonoBehaviour
 				}
 				else if (mat.name == "TeleportMat")
 				{
-					print("curmatlevel: " + curMatLevel);
+					//print("curmatlevel: " + curMatLevel);
 					if (curMatLevel > LastMatLevel)//guarantees the creation of a teleporter on each level
 					{
 						if (curMatLevel > 1)

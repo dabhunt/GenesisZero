@@ -24,18 +24,22 @@ public class MayhemTimer : MonoBehaviour
         {
             Destroy(gameObject);
         }
-        if (ActiveOnStart)
-            Active = true;
-        else
-        {
-            Active = false;
-            this.gameObject.SetActive(false);//turn it off if active on start is false
-        }
     }
     void Start()
     {
         curTimeLeft = resetTime;
         levelsClearedText.text = "Levels Cleared: " + levelsCleared.ToString();
+        if (ActiveOnStart)
+            Active = true;
+        else
+        {
+            Invoke("DelayedStart", 1.5f);
+        }
+    }
+    void DelayedStart()
+    {
+        Active = false;
+        this.gameObject.SetActive(false);//turn it off if active on start is false
     }
     void Update()
     {
