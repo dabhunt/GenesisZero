@@ -229,7 +229,7 @@ public class StateManager : MonoBehaviour
             level = 3;
         }
         Player.instance.Heal(50);
-        EnemyManager.ModifyDifficultyMulti(1.7f);
+        EnemyManager.ModifyDifficultyMulti(2f);
         Camera.main.GetComponentInParent<CinemachineBrain>().enabled = true;
         BUGE.instance.transform.position = player.transform.position;
         BUGE.instance.FollowingPlayer(true);
