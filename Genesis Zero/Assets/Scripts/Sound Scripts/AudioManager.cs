@@ -48,7 +48,7 @@ public class AudioManager : MonoBehaviour
 
 		// Hardcoded default values
 		setVolumeMaster = AudioListener.volume;
-		setVolumeMusic = .3f;
+		setVolumeMusic = .07f;
 		setVolumeSound = 1f;
 		globalMute = false;
 		soundUpdate = true;
@@ -62,7 +62,7 @@ public class AudioManager : MonoBehaviour
 			SFXNames.Add(temp[i].name);
 		}
 		//PlayFadeInTrack(1, "Music", "AmbientMusic", true, 5f);
-		SetVolumeMusic(.3f);
+		SetVolumeMusic(.07f);
 		PlayFadeInTrack(1, "Music", "Scrapyard_Slow", true, 7f);
 		PlayTrack(2, "Music", "Scrapyard_Fast", true, true, 0, 1);
 	}
