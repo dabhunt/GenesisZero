@@ -324,7 +324,7 @@ public class AbilityCasting : MonoBehaviour
     private void CastPulseBurst()
     {
         pc.SetVertVel(0);
-        player.KnockBackForced(-aimDir + Vector2.up, 30);
+        player.KnockBackForced(-aimDir, 30);
         GameObject hitbox = SpawnGameObject("PulseBurstHitbox", CastAtAngle(pc.CenterPoint(), aimDir, 1), Quaternion.identity);
         hitbox.GetComponent<Hitbox>().InitializeHitbox(GetComponent<Player>().GetAbilityPower().GetValue(), GetComponent<Player>(), false);
         hitbox.GetComponent<Hitbox>().SetStunTime(1.2f);
@@ -336,7 +336,7 @@ public class AbilityCasting : MonoBehaviour
     private void CastBurstCharge()
     {
         player.GetComponent<PlayerController>().SetVertVel(0);
-        player.KnockBackForced(aimDir + Vector2.up, 30);
+        player.KnockBackForced(aimDir, 30);
         GameObject hitbox = SpawnGameObject("BurstChargeHitbox", pc.CenterPoint(), Quaternion.identity);
         hitbox.transform.LookAt(WorldXhair);
         //print("ability power in burst charge:"+ GetComponent<Player>().GetAbilityPower().GetValue());
