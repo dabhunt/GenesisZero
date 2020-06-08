@@ -6,7 +6,7 @@ public class SkillPickup : MonoBehaviour
 {
     [Header("Mod or Ability")]
     public SkillObject skill;
-    public bool RandomOfSameRarity = true;
+    public bool RandomOfSameRarity = false;
     private bool added;
     private bool isMod;
     private bool pressed;

@@ -283,7 +283,7 @@ ParticleSystem:
       serializedVersion: 2
       minMaxState: 0
       minColor: {r: 1, g: 1, b: 1, a: 1}
-      maxColor: {r: 1, g: 1, b: 1, a: 1}
+      maxColor: {r: 0.4628357, g: 0.35294116, b: 1, a: 1}
       maxGradient:
         serializedVersion: 2
         key0: {r: 1, g: 1, b: 1, a: 1}
@@ -345,7 +345,7 @@ ParticleSystem:
     startSize:
       serializedVersion: 2
       minMaxState: 3
-      scalar: 0.15
+      scalar: 0.3
       minScalar: 0.1
       maxCurve:
         serializedVersion: 2
@@ -741,7 +741,7 @@ ParticleSystem:
     m_SpriteRenderer: {fileID: 0}
     m_UseMeshMaterialIndex: 0
     m_UseMeshColors: 1
-    alignToDirection: 0
+    alignToDirection: 1
     m_Texture: {fileID: 0}
     m_TextureClipChannel: 3
     m_TextureClipThreshold: 0
@@ -982,7 +982,7 @@ ParticleSystem:
       countCurve:
         serializedVersion: 2
         minMaxState: 0
-        scalar: 20
+        scalar: 40
         minScalar: 0
         maxCurve:
           serializedVersion: 2
@@ -1032,7 +1032,7 @@ ParticleSystem:
           m_PreInfinity: 2
           m_PostInfinity: 2
           m_RotationOrder: 4
-      cycleCount: 5
+      cycleCount: 3
       repeatInterval: 0.05
       probability: 1
   SizeModule:
@@ -1369,7 +1369,7 @@ ParticleSystem:
       maxGradient:
         serializedVersion: 2
         key0: {r: 1, g: 1, b: 1, a: 0}
-        key1: {r: 1, g: 1, b: 1, a: 1}
+        key1: {r: 0.764151, g: 0.764151, b: 0.764151, a: 1}
         key2: {r: 0, g: 0, b: 0, a: 1}
         key3: {r: 0, g: 0, b: 0, a: 0}
         key4: {r: 0, g: 0, b: 0, a: 0}
@@ -1377,8 +1377,8 @@ ParticleSystem:
         key6: {r: 0, g: 0, b: 0, a: 0}
         key7: {r: 0, g: 0, b: 0, a: 0}
         ctime0: 0
-        ctime1: 65535
-        ctime2: 0
+        ctime1: 45489
+        ctime2: 65535
         ctime3: 0
         ctime4: 0
         ctime5: 0
@@ -1386,14 +1386,14 @@ ParticleSystem:
         ctime7: 0
         atime0: 0
         atime1: 6168
-        atime2: 39572
-        atime3: 45923
+        atime2: 52235
+        atime3: 64764
         atime4: 49204
         atime5: 0
         atime6: 0
         atime7: 0
         m_Mode: 0
-        m_NumColorKeys: 2
+        m_NumColorKeys: 3
         m_NumAlphaKeys: 4
       minGradient:
         serializedVersion: 2
@@ -1428,7 +1428,7 @@ ParticleSystem:
     serializedVersion: 2
     enabled: 0
     mode: 0
-    timeMode: 0
+    timeMode: 1
     fps: 30
     frameOverTime:
       serializedVersion: 2
@@ -1486,7 +1486,7 @@ ParticleSystem:
     startFrame:
       serializedVersion: 2
       minMaxState: 0
-      scalar: 0
+      scalar: 0.25
       minScalar: 0
       maxCurve:
         serializedVersion: 2
@@ -1536,14 +1536,14 @@ ParticleSystem:
         m_PreInfinity: 2
         m_PostInfinity: 2
         m_RotationOrder: 4
-    speedRange: {x: 0, y: 1}
-    tilesX: 1
-    tilesY: 1
-    animationType: 0
+    speedRange: {x: 0, y: 0}
+    tilesX: 4
+    tilesY: 4
+    animationType: 1
     rowIndex: 0
     cycles: 1
     uvChannelMask: -1
-    rowMode: 1
+    rowMode: 0
     sprites:
     - sprite: {fileID: 0}
     flipU: 0
@@ -2747,7 +2747,7 @@ ParticleSystem:
     strength:
       serializedVersion: 2
       minMaxState: 0
-      scalar: 0.5
+      scalar: 0.3
       minScalar: 1
       maxCurve:
         serializedVersion: 2
@@ -3998,7 +3998,7 @@ ParticleSystem:
         m_RotationOrder: 4
     maxLights: 20
   TrailModule:
-    enabled: 0
+    enabled: 1
     mode: 0
     ratio: 1
     lifetime:
@@ -4055,13 +4055,13 @@ ParticleSystem:
         m_PostInfinity: 2
         m_RotationOrder: 4
     minVertexDistance: 0.2
-    textureMode: 0
+    textureMode: 1
     ribbonCount: 1
     shadowBias: 0.5
     worldSpace: 0
     dieWithParticles: 1
     sizeAffectsWidth: 1
-    sizeAffectsLifetime: 0
+    sizeAffectsLifetime: 1
     inheritParticleColor: 1
     generateLightingData: 0
     splitSubEmitterRibbons: 0
@@ -4132,7 +4132,7 @@ ParticleSystem:
     widthOverTrail:
       serializedVersion: 2
       minMaxState: 0
-      scalar: 1
+      scalar: 0.8
       minScalar: 1
       maxCurve:
         serializedVersion: 2
@@ -4831,7 +4831,8 @@ ParticleSystemRenderer:
   m_RenderingLayerMask: 4294967295
   m_RendererPriority: 0
   m_Materials:
-  - {fileID: 2100000, guid: 4a160ef4f071b11499d42da0037ca087, type: 2}
+  - {fileID: 2100000, guid: 30d158b5c8342d2498681373d83e7b4f, type: 2}
+  - {fileID: 2100000, guid: 30d158b5c8342d2498681373d83e7b4f, type: 2}
   m_StaticBatchInfo:
     firstSubMesh: 0
     subMeshCount: 0
@@ -4865,7 +4866,7 @@ ParticleSystemRenderer:
   m_RenderAlignment: 0
   m_Pivot: {x: 0, y: 0, z: 0}
   m_Flip: {x: 0, y: 0, z: 0}
-  m_UseCustomVertexStreams: 1
+  m_UseCustomVertexStreams: 0
   m_EnableGPUInstancing: 0
   m_ApplyActiveColorSpace: 0
   m_AllowRoll: 1
@@ -5080,6 +5081,11 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 599979758952144302, guid: 5d924d6c14f261b41a7f95bdd45a42cb,
         type: 3}
+      propertyPath: m_PropertySheet.m_Gradient.m_Array.Array.size
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 599979758952144302, guid: 5d924d6c14f261b41a7f95bdd45a42cb,
+        type: 3}
       propertyPath: m_PropertySheet.m_Float.m_Array.Array.data[3].m_Value
       value: 0.7
       objectReference: {fileID: 0}
@@ -5096,12 +5102,12 @@ PrefabInstance:
     - target: {fileID: 599979758952144302, guid: 5d924d6c14f261b41a7f95bdd45a42cb,
         type: 3}
       propertyPath: m_PropertySheet.m_Vector4f.m_Array.Array.data[0].m_Value.x
-      value: 3.6314206
+      value: 0.19554394
       objectReference: {fileID: 0}
     - target: {fileID: 599979758952144302, guid: 5d924d6c14f261b41a7f95bdd45a42cb,
         type: 3}
       propertyPath: m_PropertySheet.m_Vector4f.m_Array.Array.data[0].m_Value.z
-      value: 25.688938
+      value: 2.6082375
       objectReference: {fileID: 0}
     - target: {fileID: 599979758952144302, guid: 5d924d6c14f261b41a7f95bdd45a42cb,
         type: 3}
@@ -5116,7 +5122,102 @@ PrefabInstance:
     - target: {fileID: 599979758952144302, guid: 5d924d6c14f261b41a7f95bdd45a42cb,
         type: 3}
       propertyPath: m_PropertySheet.m_Vector4f.m_Array.Array.data[0].m_Overridden
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 599979758952144302, guid: 5d924d6c14f261b41a7f95bdd45a42cb,
+        type: 3}
+      propertyPath: m_PropertySheet.m_Vector4f.m_Array.Array.data[0].m_Value.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 599979758952144302, guid: 5d924d6c14f261b41a7f95bdd45a42cb,
+        type: 3}
+      propertyPath: m_PropertySheet.m_Gradient.m_Array.Array.data[0].m_Value.key0.r
+      value: 0.6714287
+      objectReference: {fileID: 0}
+    - target: {fileID: 599979758952144302, guid: 5d924d6c14f261b41a7f95bdd45a42cb,
+        type: 3}
+      propertyPath: m_PropertySheet.m_Gradient.m_Array.Array.data[0].m_Value.key0.b
       value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 599979758952144302, guid: 5d924d6c14f261b41a7f95bdd45a42cb,
+        type: 3}
+      propertyPath: m_PropertySheet.m_Gradient.m_Array.Array.data[0].m_Value.key0.a
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 599979758952144302, guid: 5d924d6c14f261b41a7f95bdd45a42cb,
+        type: 3}
+      propertyPath: m_PropertySheet.m_Gradient.m_Array.Array.data[0].m_Value.key1.a
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 599979758952144302, guid: 5d924d6c14f261b41a7f95bdd45a42cb,
+        type: 3}
+      propertyPath: m_PropertySheet.m_Gradient.m_Array.Array.data[0].m_Value.key2.a
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 599979758952144302, guid: 5d924d6c14f261b41a7f95bdd45a42cb,
+        type: 3}
+      propertyPath: m_PropertySheet.m_Gradient.m_Array.Array.data[0].m_Value.key3.a
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 599979758952144302, guid: 5d924d6c14f261b41a7f95bdd45a42cb,
+        type: 3}
+      propertyPath: m_PropertySheet.m_Gradient.m_Array.Array.data[0].m_Value.ctime1
+      value: 49344
+      objectReference: {fileID: 0}
+    - target: {fileID: 599979758952144302, guid: 5d924d6c14f261b41a7f95bdd45a42cb,
+        type: 3}
+      propertyPath: m_PropertySheet.m_Gradient.m_Array.Array.data[0].m_Value.atime1
+      value: 6554
+      objectReference: {fileID: 0}
+    - target: {fileID: 599979758952144302, guid: 5d924d6c14f261b41a7f95bdd45a42cb,
+        type: 3}
+      propertyPath: m_PropertySheet.m_Gradient.m_Array.Array.data[0].m_Value.atime2
+      value: 52428
+      objectReference: {fileID: 0}
+    - target: {fileID: 599979758952144302, guid: 5d924d6c14f261b41a7f95bdd45a42cb,
+        type: 3}
+      propertyPath: m_PropertySheet.m_Gradient.m_Array.Array.data[0].m_Value.atime3
+      value: 65535
+      objectReference: {fileID: 0}
+    - target: {fileID: 599979758952144302, guid: 5d924d6c14f261b41a7f95bdd45a42cb,
+        type: 3}
+      propertyPath: m_PropertySheet.m_Gradient.m_Array.Array.data[0].m_Value.m_NumColorKeys
+      value: 3
+      objectReference: {fileID: 0}
+    - target: {fileID: 599979758952144302, guid: 5d924d6c14f261b41a7f95bdd45a42cb,
+        type: 3}
+      propertyPath: m_PropertySheet.m_Gradient.m_Array.Array.data[0].m_Value.m_NumAlphaKeys
+      value: 4
+      objectReference: {fileID: 0}
+    - target: {fileID: 599979758952144302, guid: 5d924d6c14f261b41a7f95bdd45a42cb,
+        type: 3}
+      propertyPath: m_PropertySheet.m_Gradient.m_Array.Array.data[0].m_Name
+      value: Main Gradient
+      objectReference: {fileID: 0}
+    - target: {fileID: 599979758952144302, guid: 5d924d6c14f261b41a7f95bdd45a42cb,
+        type: 3}
+      propertyPath: m_PropertySheet.m_Gradient.m_Array.Array.data[0].m_Overridden
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 599979758952144302, guid: 5d924d6c14f261b41a7f95bdd45a42cb,
+        type: 3}
+      propertyPath: m_PropertySheet.m_Gradient.m_Array.Array.data[0].m_Value.key1.r
+      value: 0.84525055
+      objectReference: {fileID: 0}
+    - target: {fileID: 599979758952144302, guid: 5d924d6c14f261b41a7f95bdd45a42cb,
+        type: 3}
+      propertyPath: m_PropertySheet.m_Gradient.m_Array.Array.data[0].m_Value.key1.b
+      value: 5.9851193
+      objectReference: {fileID: 0}
+    - target: {fileID: 599979758952144302, guid: 5d924d6c14f261b41a7f95bdd45a42cb,
+        type: 3}
+      propertyPath: m_PropertySheet.m_Gradient.m_Array.Array.data[0].m_Value.ctime2
+      value: 65535
+      objectReference: {fileID: 0}
+    - target: {fileID: 599979758952144302, guid: 5d924d6c14f261b41a7f95bdd45a42cb,
+        type: 3}
+      propertyPath: m_PropertySheet.m_Gradient.m_Array.Array.data[0].m_Value.key1.g
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 599979758952144303, guid: 5d924d6c14f261b41a7f95bdd45a42cb,
         type: 3}

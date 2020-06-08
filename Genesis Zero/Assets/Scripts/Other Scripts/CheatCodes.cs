@@ -78,14 +78,14 @@ public class CheatCodes : MonoBehaviour
         SkillManager skillManager = p.GetSkillManager();
         skillManager.clearSkills();
         p.GetSkillManager().AddSkill(p.GetSkillManager().GetRandomAbility());
-        SkillObject secondAbility = skillManager.GetRandomAbility();
+        //SkillObject secondAbility = skillManager.GetRandomAbility();
         //give the p a second ability, that isn't the same as the first
         while (skillManager.GetAbilityAmount() < 2)
         {
             p.GetSkillManager().AddSkill(p.GetSkillManager().GetRandomAbility());
         }
         int i = 0;
-        while (p.GetSkillManager().GetAmount() < 19 || i > 250)
+        while (p.GetSkillManager().GetAmount() < 19 || i > 300)
         {
             if (i == 0)
             { //guarantee you get 2 legendary's
