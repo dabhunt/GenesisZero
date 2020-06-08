@@ -424,18 +424,19 @@ public class AbilityCasting : MonoBehaviour
                 float damage = U.SL_CalculateDmg();
                 hitbox.GetComponent<Hitbox>().InitializeHitbox(damage, player, false);
                 //manually put spartan laser ability on cooldown since the initial cast can't have a cooldown
+                float cdr = 1 - Player.instance.GetCDR().GetValue();
                 if (num == 1)
                 {
                     ActiveTime1 = 0;
-                    AbilityCooldown1 = SL_Cooldown * Player.instance.GetCDR().GetValue();
-                    TotalAbilityCooldown1 = SL_Cooldown * Player.instance.GetCDR().GetValue();
+                    AbilityCooldown1 = SL_Cooldown * cdr;
+                    TotalAbilityCooldown1 = SL_Cooldown * cdr;
                     ui.Cast(0);
                 }
                 else
                 {
                     ActiveTime2 = 0;
-                    AbilityCooldown2 = SL_Cooldown * Player.instance.GetCDR().GetValue();
-                    TotalAbilityCooldown2 = SL_Cooldown * Player.instance.GetCDR().GetValue();
+                    AbilityCooldown2 = SL_Cooldown *cdr;
+                    TotalAbilityCooldown2 = SL_Cooldown * cdr;
                     ui.Cast(1);
                 }
                 EndBonus();
