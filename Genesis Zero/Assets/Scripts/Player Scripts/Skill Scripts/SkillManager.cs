@@ -30,7 +30,7 @@ public class SkillManager
     private List<SkillObject> bluemods; // List of bluemods in the game
     private List<SkillObject> goldmods;  // List of goldmods in the game
     private List<SkillObject> startermods; // List of startermods in the game
-    private List<SkillObject> abilities;
+    private List<SkillObject> abilities;	// List of all abilities
 
     // Lower the number, lower the chance. Determined by this order (0 - 100)
     private int goldchance = 10; 
@@ -508,7 +508,8 @@ public class SkillManager
         SkillObject so = (SkillObject)Resources.Load("Skills/Abilities/" + name);
         GameObject emit = (GameObject)GameObject.Instantiate(Resources.Load("Pickups/AbilityPickup"), position, Quaternion.identity);
         emit.GetComponent<SkillPickup>().skill = so;
-        emit.GetComponent<SimpleTooltip>().infoLeft = so.name + "\n";
+		emit.GetComponent<SkillPickup>().RandomOfSameRarity = false;
+		emit.GetComponent<SimpleTooltip>().infoLeft = so.name + "\n";
         emit.GetComponent<SimpleTooltip>().infoLeft += so.Description;
         return emit;
     }
