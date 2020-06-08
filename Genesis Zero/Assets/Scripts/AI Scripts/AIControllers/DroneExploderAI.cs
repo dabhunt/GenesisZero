@@ -133,7 +133,7 @@ public class DroneExploderAI : AIController
             spawnedExplosion.GetComponent<ProjectileTest>().DestroyEvent.AddListener(DestroySelf);
             if (AudioManager.instance != null)
             {
-                AudioManager.instance.PlayRandomSFXType("EnemyHit");
+                //AudioManager.instance.PlayRandomSFXType("EnemyHit");
                 AudioManager.instance.PlayRandomSFXType("ExplosionEnemy", this.gameObject, .9f, 1.2f, 1f);
             }
             // Vector3 spawnPoint = new Vector3(transform.position.x, transform.position.y,0);

@@ -253,7 +253,7 @@ public class Hitbox : MonoBehaviour
                 else if (special && bp.damagemultipler > 1)
                 {
                     VFXManager.instance.PlayEffect("VFX_WeakPoint", this.transform.position);
-                    if (AudioManager.instance != null)
+                    if (AudioManager.instance != null && !AudioManager.instance.IsPlaying("EnemyHit"))
                         AudioManager.instance.PlayRandomSFXType("EnemyHit", this.gameObject, .4f);
                     if (player != null)
                         player.GetComponent<Player>().GetComponent<UniqueEffects>().WeakPointHit();
