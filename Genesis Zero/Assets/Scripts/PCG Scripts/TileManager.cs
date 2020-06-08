@@ -39,6 +39,7 @@ public class TileManager : MonoBehaviour
 	
 	[Header("Enemy Spawning")]
 	public Vector2 MinMaxEnemies = new Vector2(1, 2);
+	public Vector2 MinMaxClusterDistance = new Vector2(4, 7); //min guarantees enemy clusters can't be closer than this, Max guarantees they can't be further than this
 	[Range(0, 1)]
 	public float SpawnChance = .1f;
 	public int playerOnlevel = 0;
@@ -234,10 +235,12 @@ public class TileManager : MonoBehaviour
 		int floorWidth = width; //Total width of current floor in tiles (x axis)
 		int shift = width; // Equals 0 when floor is complete
 		int height = 1; //Current building height (# of floors)
+		int tilesSinceLastCluster = 0;
 		List<GameObject> roofList = new List<GameObject>();
 		List<Vector3> vectorList = new List<Vector3>();
 		
 		//Create Building
+
 		spawnVector.z += 2; //Initialize spawnVector Z position
 		while (end > 0)
 		{
@@ -261,10 +264,10 @@ public class TileManager : MonoBehaviour
 			{
 				//Randomly Select Case (0-4)
 				int tileRand;
-				float offset = Random.Range(minOffset,maxOffset);
+				float offset = Random.Range(minOffset, maxOffset);
 				if (floorWidth > 3) tileRand = Random.Range(0, 4);
 				else tileRand = 0;
-				
+
 				if (tileRand == 0) shift = floorWidth; // Case 0
 				else if (tileRand == 1) //Case 1
 				{
@@ -277,7 +280,7 @@ public class TileManager : MonoBehaviour
 					//floorWidth -= 2;
 					//shift = floorWidth;
 					//currentPosClone += Random.Range(0.0f, 44.0f)
-					
+
 					//Replacement Behavior
 					floorWidth -= 1;
 					shift = floorWidth;
@@ -288,15 +291,15 @@ public class TileManager : MonoBehaviour
 					shift = floorWidth;
 					currentPosClone += tileLength;
 				}
-				
+
 				//Set spawnVector for next floor
-				spawnVector = new Vector3(1,0,0) * currentPosClone;
+				spawnVector = new Vector3(1, 0, 0) * currentPosClone;
 				spawnVector.x += offset;
 				spawnVector.y += tileHeight * height;
 				spawnVector.z += 2;
 				height++;
 			}
-			
+
 			if (tilePrefabs == cityTilePrefabs)
 			{
 				//Instantiate & Spawn Rooftop
@@ -306,43 +309,43 @@ public class TileManager : MonoBehaviour
 				newRooftop.transform.position = spawnVector;
 				Vector3 newVector = newRooftop.transform.position;
 				spawnVector.z -= 5.2f;
-			
 				// Lists of rooftop objects and building spawn vectors
 				//(Used for rooftop cleanup later)
-			
 				roofList.Add(newRooftop);
 				vectorList.Add(newVector);
 			}
-			
 			//Spawn tile and move spawnVector
 			newTile.transform.position = spawnVector;
-			
+
 			spawnVector.x += tileLength;
-			
+			bool clusterSpawned = false;
 			//Spawn Enemy
-			if (Random.value <= (SpawnChance + enemyspawnchanceincease))
-			{
-				int i = Random.Range((int)MinMaxEnemies.x, (int)MinMaxEnemies.y+levelNumber-1);
-				spawnVector.y += 3;
-				spawnVector.x -= 11;
-				spawnVector.z -= 2;
-				while (i > 0)
+			if (tilesSinceLastCluster > MinMaxClusterDistance.x && tilesSinceLastCluster < MinMaxClusterDistance.y) //if it's within our constraints, use randomness
+			{ 
+				if (Random.value <= (SpawnChance + enemyspawnchanceincease))
 				{
-					GameObject newEnemy = Instantiate(enemyPrefabs[Random.Range(0, enemyPrefabs.Length)]) as GameObject;
-					newEnemy.transform.position = spawnVector;
-					--i;
+					int amount = Random.Range((int)MinMaxEnemies.x, (int)MinMaxEnemies.y + levelNumber - 1);
+					spawnVector = SpawnEnemy(amount, spawnVector);
+					tilesSinceLastCluster = 0;
+					clusterSpawned = true;
 				}
-				
-				spawnVector.y -= 3;
-				spawnVector.x += 11;
-				spawnVector.z += 2;
-				enemyspawnchanceincease = 0;
+			} 
+			else if (tilesSinceLastCluster >= MinMaxClusterDistance.y)
+			{
+				int amount = Random.Range((int)MinMaxEnemies.x, (int)MinMaxEnemies.y + levelNumber - 1);
+				spawnVector = SpawnEnemy(amount, spawnVector);
+				clusterSpawned = true;
 			}
-			else
+			if (clusterSpawned) //if an enemy cluster spawned in this tile
+			{
+				enemyspawnchanceincease = 0;
+				tilesSinceLastCluster = 0;
+			}
+			else // if an enemy cluster did not spawn in this tile
 			{
 				enemyspawnchanceincease += .05f;
+				tilesSinceLastCluster++;
 			}
-			
 			//Iterate counting variables
 			shift--;
 			end--;
@@ -372,5 +375,23 @@ public class TileManager : MonoBehaviour
 		//Shift currentPos for next building
 		currentPos += tileLength * width;
 		currentPos += Random.Range(8.0f, 15.0f);
+	}
+	public Vector3 SpawnEnemy(int amount , Vector3 spawnVector)
+	{
+		spawnVector.y += 3;
+		spawnVector.x -= 11;
+		spawnVector.z -= 2;
+
+		while (amount > 0)
+		{
+			GameObject newEnemy = Instantiate(enemyPrefabs[Random.Range(0, enemyPrefabs.Length)]) as GameObject;
+			newEnemy.transform.position = spawnVector;
+
+			--amount;
+		}
+		spawnVector.y -= 3;
+		spawnVector.x += 11;
+		spawnVector.z += 2;
+		return spawnVector;
 	}
 }
