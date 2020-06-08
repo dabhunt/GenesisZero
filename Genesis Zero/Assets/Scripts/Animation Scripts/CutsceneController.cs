@@ -4,11 +4,13 @@ using UnityEngine;
 using UnityEngine.Playables;
 using DG.Tweening;
 using UnityEngine.SceneManagement;
-
+using Cinemachine;
+using RootMotion.FinalIK;
 public class CutsceneController : MonoBehaviour
 {
     // Start is called before the first frame update
-    public PlayableDirector intro;
+    private Animation cutscene;
+    public string IntroName = "IntroCutscene";
     private GameObject Primarycanvas;
     private GameObject CutsceneCanvas;
     private Camera cam;
@@ -18,6 +20,7 @@ public class CutsceneController : MonoBehaviour
         UpdateCanvases();
         cam = Camera.main;
         InspectorFov = cam.fieldOfView;
+        cutscene = transform.Find("MainCamera").gameObject.GetComponent<Animation>();
     }
     private void Update()
     {
@@ -28,13 +31,15 @@ public class CutsceneController : MonoBehaviour
     {
         cam.fieldOfView = 20;
         Cutscene();
-        intro.Play();
+        cutscene.Play(IntroName);
         GameObject.FindGameObjectWithTag("GameManagers").transform.Find("TileManager").GetComponent<DeactivateDistant>().SetDist(100);
-        Invoke("Reset", (float)intro.duration);
+        Invoke("Reset", (float)cutscene[IntroName].length); //reset the normal camera after it finishes
     }
     public void Cutscene()
     {
         UpdateCanvases();
+        Player.instance.GetComponent<AimIK>().enabled = false;
+        GetComponent<CinemachineBrain>().enabled = true;
         GameInputManager.instance.DisablePlayerControls();
         StateManager.instance.Cursorvisible = true;
         CutsceneCanvas.SetActive(true);
@@ -43,7 +48,9 @@ public class CutsceneController : MonoBehaviour
     }
     public void Skip()
     {
-        intro.time = intro.duration;
+        //cutscene.fin
+        cutscene[IntroName].enabled = false;
+        cutscene.Play("EndIntro");
         Reset();
     }
     public void UpdateCanvases()
@@ -55,6 +62,7 @@ public class CutsceneController : MonoBehaviour
     }
     public void Reset()
     {
+        Player.instance.GetComponent<AimIK>().enabled = true;
         UpdateCanvases();
         StateManager.instance.Cursorvisible = false;
         if(SceneManager.GetActiveScene().name != "BossTest")
@@ -63,6 +71,7 @@ public class CutsceneController : MonoBehaviour
 		}
         GameInputManager.instance.EnablePlayerControls();
         GameObject.FindGameObjectWithTag("GameManagers").transform.Find("TileManager").GetComponent<DeactivateDistant>().ResetDist();
+        GetComponent<CinemachineBrain>().enabled = true;
         Primarycanvas.SetActive(true);
         CutsceneCanvas.SetActive(false);
         Invoke("AfterDelay", 1.6f);

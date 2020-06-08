@@ -81,6 +81,10 @@ public class BasicCameraZoom : MonoBehaviour
 		}
 		spanding = false;
     }
+    public void EndCinematic()
+    {
+
+    }
     public void ZoomOnCombat(bool flag)
     {
         inboss = flag;
