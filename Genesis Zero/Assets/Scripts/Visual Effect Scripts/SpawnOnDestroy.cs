@@ -9,6 +9,7 @@ public class SpawnOnDestroy : MonoBehaviour
     public string vfxName;
     public float vfxScaleMultiplier;
     public string sound;
+    public float volume = 1;
     public bool quitting;
     private Restart restartScript;
     //.3f is 30% drop chance
@@ -20,12 +21,11 @@ public class SpawnOnDestroy : MonoBehaviour
     public GameObject EssencePrefab;
 
 
-
     private SkillObject ModDrop;
     private Player player;
     private bool canDrop = true;
     private AudioManager aManager;
-
+    private bool beingDestroyed = false;
 
 
     //bool applicationIsQuitting;
@@ -57,6 +57,7 @@ public class SpawnOnDestroy : MonoBehaviour
     }
     private void OnDestroy()
     {
+        beingDestroyed = true;
         //if a scene is being loaded or the player quits/dies
         if (player == null || SceneManager.sceneCount > 1 || restartScript == null || restartScript.ExitingScene() || quitting)
         {
@@ -70,7 +71,7 @@ public class SpawnOnDestroy : MonoBehaviour
             if (aManager != null)
             {
                 //plays sound at this location
-                aManager.PlayRandomSFXType(sound, this.gameObject, .2f);
+                aManager.PlayRandomSFXType(sound, this.gameObject, .8f, 1.2f , volume);
             }
         }
         //if vfx string is not empty
@@ -121,7 +122,7 @@ public class SpawnOnDestroy : MonoBehaviour
         Destroy(this.GetComponent<SpawnOnDestroy>());
         Destroy(gameObject);
     }
-
+    public bool isBeingDestroyed(){ return beingDestroyed; }
     public void isQuitting()
     {
         quitting = true;

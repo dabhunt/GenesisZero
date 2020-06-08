@@ -25,7 +25,7 @@ public class ModConverter : MonoBehaviour
     {
         if (!isActive || player == null)
             return;
-        if (Vector2.Distance(Player.instance.CenterPoint(), gameObject.transform.position) <= 5)
+        if (GetComponent<InteractPopup>().visible == true)
         {
             if (modList.Count >= 1)
             {
@@ -90,7 +90,7 @@ public class ModConverter : MonoBehaviour
         switch (modList[i].Rarity)
         {
             case 2: //2 is rare
-                value = 2;
+                value = 3;
                 break;
             case 3: //3 is legendary
                 value = 8;

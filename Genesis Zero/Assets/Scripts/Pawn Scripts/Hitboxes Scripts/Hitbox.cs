@@ -221,7 +221,7 @@ public class Hitbox : MonoBehaviour
 				{
 					if (Burn.x > 0 && Burn.y > 0)
 					{
-						BurnCheck(p);
+						BurnCheck(p, other);
 						p.Burn(Burn.x, Burn.y);
 					}
 				}
@@ -233,10 +233,10 @@ public class Hitbox : MonoBehaviour
                 if (damagetaken >= phealth)
                     if (killDelegate != null) killDelegate();
 
-                GameObject emit = VFXManager.instance.PlayEffect("DamageNumber", new Vector3(transform.position.x - 1, transform.position.y + 1, transform.position.z - 4f));
+                GameObject emit = VFXManager.instance.PlayEffect("DamageNumber", new Vector3(transform.position.x - 2f, transform.position.y + 1, transform.position.z - 4f));
 				if (Vector3.Distance(emit.transform.position, p.transform.position) >= 3)
 				{
-					emit.transform.position = p.transform.position + new Vector3(0,3,0);
+					emit.transform.position = p.transform.position + new Vector3(0,1.5f,0);
 				}
 				emit.GetComponent<DamageNumber>().SetNumber(damagetaken, Critical);
                 if (Critical)
@@ -350,7 +350,7 @@ public class Hitbox : MonoBehaviour
 		LifeTime = time;
 	}
 
-	public void BurnCheck(Pawn p)
+	public void BurnCheck(Pawn p, Collider other)
 	{
 		if (Player.instance.GetSkillStack("Pyromaniac") >= 1 && p.GetBurnImmunity() <= 0 && p.IsBurning())
 		{
@@ -363,7 +363,7 @@ public class Hitbox : MonoBehaviour
 			{
 				finaldamage = Burn.x * Burn.y * Player.instance.GetAbilityPowerAmount() / 16 * Player.instance.GetSkillStack("Pyromaniac");
 			}
-			GameObject emit = Instantiate(Resources.Load<GameObject>("Hitboxes/PyroExplosion"), p.transform.position + new Vector3(0,1,0), Quaternion.identity);
+			GameObject emit = Instantiate(Resources.Load<GameObject>("Hitboxes/PyroExplosion"), other.transform.position + new Vector3(0,1,0), Quaternion.identity);
 			AudioManager.instance.PlaySound("SFX_FireExplosion");
 			emit.GetComponent<Hitbox>().InitializeHitbox(finaldamage, p, false);
 		}

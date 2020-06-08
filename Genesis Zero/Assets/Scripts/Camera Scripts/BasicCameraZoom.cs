@@ -6,8 +6,9 @@ using DG.Tweening;
 public class BasicCameraZoom : MonoBehaviour
 {
     public float zoomSpeed;
-    public float fovMin;
-    public float fovMax;
+    public float fovMin = 6;
+    public float fovMax = 20;
+    public float scrollZoom = 3; //amount of fov per scroll
     private Camera myCamera;
     private float target;
     private bool spanding = false;
@@ -27,13 +28,15 @@ public class BasicCameraZoom : MonoBehaviour
     {
         if (GameInputManager.instance.isEnabled() && !spanding)
         {
-            if (Input.GetAxis("Mouse ScrollWheel") < 0 && time <= 0)
+            if (Input.GetAxis("Mouse ScrollWheel") < 0)
             {
-                myCamera.DOFieldOfView(myCamera.fieldOfView+3, .5f);
+                if (myCamera.fieldOfView+scrollZoom < fovMax)
+                    myCamera.DOFieldOfView(myCamera.fieldOfView+scrollZoom, .5f);
             }
-            if (Input.GetAxis("Mouse ScrollWheel") > 0 && time <= 0)
+            if (Input.GetAxis("Mouse ScrollWheel") > 0)
             {
-                myCamera.DOFieldOfView(myCamera.fieldOfView+3, .5f);
+                if (myCamera.fieldOfView - scrollZoom > fovMin)
+                    myCamera.DOFieldOfView(myCamera.fieldOfView-scrollZoom, .5f);
             }
         }
     }
@@ -51,9 +54,11 @@ public class BasicCameraZoom : MonoBehaviour
         if (spanding == false) //only change FOV if not already doing it
         {
             savedFOV = myCamera.fieldOfView;
+            fovMax = field;
             Tween t = myCamera.DOFieldOfView(field, tweenTime);
             t.SetUpdate(UpdateType.Fixed);
             StartCoroutine(Reset(true,duration));
+
             spanding = true;
         }
     }

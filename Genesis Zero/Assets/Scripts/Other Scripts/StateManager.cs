@@ -80,6 +80,8 @@ public class StateManager : MonoBehaviour
                 }
             }
         }
+        if (Input.GetKeyDown(KeyCode.Backspace))
+            restart.RestartScene();
         if (isPaused == true || Cursorvisible)
             Cursor.visible = true;
         else
@@ -213,7 +215,8 @@ public class StateManager : MonoBehaviour
     }
     public void Teleport(Vector2 destination, bool bossRoomOverride)
     {
-        GameObject fakeTele = TileManager.instance.interactablePrefabs[4]; //spawn a fake teleporter where ever the teleporter takes you
+        AudioManager.instance.PlaySound("SFX_Teleport");
+        GameObject fakeTele = Instantiate(TileManager.instance.interactablePrefabs[4]) as GameObject;//spawn a fake teleporter where ever the teleporter takes you
         fakeTele.transform.position = destination;
         Destroy(fakeTele.GetComponent<Teleporter>());
         StateManager.instance.InTutorial = false;
@@ -226,10 +229,12 @@ public class StateManager : MonoBehaviour
             level = 3;
         }
         Player.instance.Heal(50);
-        EnemyManager.ModifyDifficultyMulti(1.4f);
+        EnemyManager.ModifyDifficultyMulti(2f);
         Camera.main.GetComponentInParent<CinemachineBrain>().enabled = true;
         BUGE.instance.transform.position = player.transform.position;
         BUGE.instance.FollowingPlayer(true);
+        BUGE.instance.GetComponent<InteractPopup>().SetText("Right Click to Interact");
+        BUGE.instance.GetComponent<InteractPopup>().DestroyPopUp();
         AudioManager.instance.PlaySongsForLevel(level);
         TileManager.instance.playerOnlevel++;
     }

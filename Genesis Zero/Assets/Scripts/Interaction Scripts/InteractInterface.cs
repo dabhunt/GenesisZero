@@ -82,7 +82,8 @@ public class InteractInterface : MonoBehaviour
             string[] strArray = { "Pickups" , "Interactable", };
             GameObject obj = ClosestTaggedObj(strArray);
             //if the closestObject is too far away, it returns null
-            if (obj == null)
+            print("closest Obj is... " + obj);
+;           if (obj == null)
             {
                 AudioManager.instance.PlaySound("SFX_Nope");
                 return;
@@ -95,7 +96,7 @@ public class InteractInterface : MonoBehaviour
             if (obj.GetComponent<GodHead>() != null)
                 { obj.GetComponent<GodHead>().Interact(); return; }
             if (obj.GetComponent<ModConverter>() != null)
-                { obj.GetComponent<ModConverter>().Interact(); return; }
+                {obj.GetComponent<ModConverter>().Interact(); return; }
             if (obj.GetComponent<SafeBox>() != null)
                 { obj.GetComponent<SafeBox>().Interact(); return; }
             if (obj.GetComponent<BUGE>() != null)

@@ -722,12 +722,15 @@ public class AudioManager : MonoBehaviour
 		//Debug.Log("vol at start of PlayAttachedSound: " + vol);
 		float pitchRange = pitchMax - pitchMin;
 		//default volume values if audio is played on an object in world space
-		float Volume = 4;
+		float Volume = 1;
 		if (obj == null || obj == playerObj)
 		{ // playerObj is used if no object is passed in
 			obj = getPlayerObj();
 			Volume = 1; //sounds played right next to the audio listener should not exceed 1
 		}
+		//if the object is being destroyed
+
+
 		if (vol > 0)
 			Volume = vol;
 		bool found = false;
@@ -751,7 +754,10 @@ public class AudioManager : MonoBehaviour
 				pitch = pitchMin + (Random.value * pitchRange);
 			//PlaySound(type[rng], Volume, pitch);
 			//Debug.Log("vol end of PlayRandomSFXtype: " + Volume);
-			PlayAttachedSound(type[rng], obj, Volume, pitch, false, 0);
+			if (obj.GetComponent<SpawnOnDestroy>() != null && obj.GetComponent<SpawnOnDestroy>().isBeingDestroyed())
+				PlaySound(type[rng], vol, pitch, loop: false, obj.transform.position);
+			else
+				PlayAttachedSound(type[rng], obj, Volume, pitch, false, 0);
 		}
 		else
 		{

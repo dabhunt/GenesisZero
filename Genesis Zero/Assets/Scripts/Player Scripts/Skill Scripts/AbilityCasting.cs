@@ -324,7 +324,7 @@ public class AbilityCasting : MonoBehaviour
     private void CastPulseBurst()
     {
         pc.SetVertVel(0);
-        player.KnockBackForced(-aimDir + Vector2.up, 30);
+        player.KnockBackForced(-aimDir, 30);
         GameObject hitbox = SpawnGameObject("PulseBurstHitbox", CastAtAngle(pc.CenterPoint(), aimDir, 1), Quaternion.identity);
         hitbox.GetComponent<Hitbox>().InitializeHitbox(GetComponent<Player>().GetAbilityPower().GetValue(), GetComponent<Player>(), false);
         hitbox.GetComponent<Hitbox>().SetStunTime(1.2f);
@@ -336,7 +336,7 @@ public class AbilityCasting : MonoBehaviour
     private void CastBurstCharge()
     {
         player.GetComponent<PlayerController>().SetVertVel(0);
-        player.KnockBackForced(aimDir + Vector2.up, 30);
+        player.KnockBackForced(aimDir, 30);
         GameObject hitbox = SpawnGameObject("BurstChargeHitbox", pc.CenterPoint(), Quaternion.identity);
         hitbox.transform.LookAt(WorldXhair);
         //print("ability power in burst charge:"+ GetComponent<Player>().GetAbilityPower().GetValue());
@@ -427,15 +427,15 @@ public class AbilityCasting : MonoBehaviour
                 if (num == 1)
                 {
                     ActiveTime1 = 0;
-                    AbilityCooldown1 = SL_Cooldown;
-                    TotalAbilityCooldown1 = SL_Cooldown;
+                    AbilityCooldown1 = SL_Cooldown * Player.instance.GetCDR().GetValue();
+                    TotalAbilityCooldown1 = SL_Cooldown * Player.instance.GetCDR().GetValue();
                     ui.Cast(0);
                 }
                 else
                 {
                     ActiveTime2 = 0;
-                    AbilityCooldown2 = SL_Cooldown;
-                    TotalAbilityCooldown2 = SL_Cooldown;
+                    AbilityCooldown2 = SL_Cooldown * Player.instance.GetCDR().GetValue();
+                    TotalAbilityCooldown2 = SL_Cooldown * Player.instance.GetCDR().GetValue();
                     ui.Cast(1);
                 }
                 EndBonus();

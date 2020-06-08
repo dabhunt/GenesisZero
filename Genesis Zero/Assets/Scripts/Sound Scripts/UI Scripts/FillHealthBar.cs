@@ -46,25 +46,25 @@ public class FillHealthBar : MonoBehaviour
         player = temp.GetComponent<Player>();
         fade = canvas.transform.Find("VignetteOverlay").gameObject.GetComponent<SpriteFade>();
     }
-    void Update()
+    public void UpdateHealthBar()
     {
         if (delayedStart)
             return;
         if (player == null)
             return;
-    	if (slider.value <= slider.minValue)
-    	{
-    		fillImage.enabled = false;
-    	}
-    	if (slider.value > slider.minValue && fillImage.enabled)
-    	{
-    		fillImage.enabled = true;
-    	}
+        if (slider.value <= slider.minValue)
+        {
+            fillImage.enabled = false;
+        }
+        if (slider.value > slider.minValue && fillImage.enabled)
+        {
+            fillImage.enabled = true;
+        }
         if (shieldImage != null)
             ShieldUpdate();
         slider.maxValue = player.GetHealth().GetMaxValue();
-    	// uses the player object to get info about player health
-    	// fillvalue represents how filled in the healthbar is, from 0 to 100
+        // uses the player object to get info about player health
+        // fillvalue represents how filled in the healthbar is, from 0 to 100
         float curValue = player.GetHealth().GetValue();
         if (!StateManager.instance.InTutorial && GetComponent<SimpleTooltip>())
         {
@@ -78,14 +78,14 @@ public class FillHealthBar : MonoBehaviour
             float pain = (valueLastFrame - curValue) / 15;
             if (pain > .5f)
             {
-                camRef.transform.DOShakePosition(duration:duration, strength:strength, vibrato: vibration,randomness:randomness,snapping:false, fadeOut:true);
+                camRef.transform.DOShakePosition(duration: duration, strength: strength, vibrato: vibration, randomness: randomness, snapping: false, fadeOut: true);
             }
             pain = Mathf.Clamp(pain, 0, 1);
             fade.HurtTween(pain);
             HurtTween();
             Invoke("TweenBackBar", tweenTime);
         }
-        if (curValue > valueLastFrame) 
+        if (curValue > valueLastFrame)
         {
             fillImage.color = Color.white;
             DOTween.To(() => slider.value, x => slider.value = x, curValue, tweenTime);
@@ -93,6 +93,10 @@ public class FillHealthBar : MonoBehaviour
             Invoke("TweenBackBar", tweenTime);
         }
         valueLastFrame = curValue;
+    }
+    void Update()
+    {
+        UpdateHealthBar();
     }
     public void ShieldUpdate()
     {
