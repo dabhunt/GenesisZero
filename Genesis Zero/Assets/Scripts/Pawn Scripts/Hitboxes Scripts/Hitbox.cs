@@ -215,6 +215,8 @@ public class Hitbox : MonoBehaviour
                 if (StunTime > 0 && p.IsStunImmune() == false)
                 {
                     p.GetStunnedStatus().AddTime(StunTime);
+                    print("stun sound");
+                    AudioManager.instance.PlayRandomSFXType("Stunned", this.gameObject, .4f);
                 }
 
 				if(Source != p)
@@ -229,7 +231,11 @@ public class Hitbox : MonoBehaviour
                 float phealth = p.GetHealth().GetValue();
                 float damagetaken = p.TakeDamage(finaldamage, Source);
                 if (player != null)
+                {
+                    AudioManager.instance.PlayRandomSFXType("EnemyHit", this.gameObject, .8f, 1.2f, .9f);
                     player.GetComponent<Player>().GetComponent<UniqueEffects>().DamageGivenTrigger();
+                }
+
                 if (damagetaken >= phealth)
                     if (killDelegate != null) killDelegate();
 
@@ -248,7 +254,7 @@ public class Hitbox : MonoBehaviour
                 {
                     VFXManager.instance.PlayEffect("VFX_WeakPoint", this.transform.position);
                     if (AudioManager.instance != null)
-                        AudioManager.instance.PlayRandomSFXType("EnemyHit", this.gameObject, .2f);
+                        AudioManager.instance.PlayRandomSFXType("EnemyHit", this.gameObject, .4f);
                     if (player != null)
                         player.GetComponent<Player>().GetComponent<UniqueEffects>().WeakPointHit();
                     emit.GetComponent<DamageNumber>().SetColor(Color.red);

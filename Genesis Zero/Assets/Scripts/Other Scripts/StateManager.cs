@@ -242,7 +242,7 @@ public class StateManager : MonoBehaviour
     {
         foreach (Transform child in t)
         {
-            this.gameObject.layer = LayerMask.NameToLayer("Dead");
+            this.gameObject.layer = LayerMask.NameToLayer(layerName);
             if (child.childCount > 0)
             {
                 RecursiveLayerChange(child, layerName);
