@@ -49,7 +49,6 @@ public class Player : Pawn
     }
     public void SetInteracting(bool foo)
     {
-        print("Somebody touching my spaghetti");
         isInteracting = foo;
     }
     new void FixedUpdate()

@@ -78,6 +78,7 @@ public class GameInputManager : MonoBehaviour
     public void DisablePlayerControls()
     {
         inputActions.PlayerControls.Disable();
+        Player.instance.GetComponent<PlayerController>().movementInput = Vector2.zero;
     }
 
     public void EnablePlayerControls()
