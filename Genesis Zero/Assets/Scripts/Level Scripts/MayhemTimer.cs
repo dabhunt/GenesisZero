@@ -58,6 +58,10 @@ public class MayhemTimer : MonoBehaviour
         levelsCleared++;
         levelsClearedText.text = "Levels Cleared: "+ levelsCleared.ToString();
     }
+    public void IncrementClearedLevels()
+    {
+        levelsCleared++;
+    }
     public void BumpDifficulty()
     {
         EnemyManager.ModifyDifficultyMulti(1.2f);

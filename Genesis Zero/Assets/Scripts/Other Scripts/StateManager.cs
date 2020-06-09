@@ -228,6 +228,10 @@ public class StateManager : MonoBehaviour
             player.GetComponent<UniqueEffects>().CombatChangesMusic = false;
             level = 3;
         }
+        if (TileManager.instance.MayhemMode)
+        {
+            MayhemTimer.instance.IncrementClearedLevels();
+        }
         Player.instance.Heal(50);
         EnemyManager.ModifyDifficultyMulti(2f);
         Camera.main.GetComponentInParent<CinemachineBrain>().enabled = true;

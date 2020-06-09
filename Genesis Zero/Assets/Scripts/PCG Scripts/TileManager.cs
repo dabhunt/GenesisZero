@@ -96,6 +96,7 @@ public class TileManager : MonoBehaviour
 		if (!MayhemMode)
 		{
 			//Level 1
+			
 			int level = 1;
 			currentPos = levelSpacing * level + 22;
 			for (int i = 0; i < numberOfBuildings; ++i)
@@ -120,7 +121,9 @@ public class TileManager : MonoBehaviour
 		}
 		else
 		{
-			//Mayhem Mode		
+			//Mayhem Mode	
+			betweenAreas = Resources.LoadAll<GameObject>("InbetweenAreas");
+			StateManager.instance.Teleport( new Vector2(levelSpacing + 5,40) , false);
 			int level = 1;
 			currentPos = levelSpacing * level + 22;
 			for (int i = 0; i < numberOfBuildings; ++i)
@@ -422,6 +425,7 @@ public class TileManager : MonoBehaviour
 		float sOffset = (spacing  * randMulti);
 		int rng = Random.Range(0, betweenAreas.Length - 1);
 		GameObject areaObj = Instantiate(betweenAreas[rng]) as GameObject;
+		areaObj.transform.SetParent(LevelParent.transform);
 		InbetweenArea area = areaObj.GetComponent<InbetweenArea>();
 		areaObj.transform.position = new Vector3(oldBuildingX - sOffset , Random.Range(0, area.offset.y), Random.Range(10, area.offset.z)); // randomize location somewhat
 		foreach (GameObject bill in area.billboards)
@@ -469,8 +473,23 @@ public class TileManager : MonoBehaviour
 				generateBuilding(Random.Range(minBuildingWidth, maxBuildingWidth), Random.Range(minBuildingTileCount, maxBuildingTileCount), level);
 			}
 			Vector3 spawnVector = new Vector3(1, 0, 0) * currentPos + new Vector3(0, -2, 0); //spawnVector for tiles
-			//GameObject endBuilding = (GameObject)GameObject.Instantiate(levelEndCityBuilding, spawnVector, Quaternion.Euler(0, 141.6f, 0));
-			
+																							 //GameObject endBuilding = (GameObject)GameObject.Instantiate(levelEndCityBuilding, spawnVector, Quaternion.Euler(0, 141.6f, 0));
+																							 //the final level of PCG needs this for the guidance arrows
+			foreach (GameObject tele in GameObject.FindGameObjectsWithTag("Teleporter"))
+			{
+				if (tele.name.Contains("mayhem"))
+				{
+					int z = 0;
+					//print("level 2 tele found");
+					foreach (GameObject arrow in guideArrows[0])
+					{
+						//print("Arrow " + z); 
+						if (arrow != null)
+							arrow.transform.LookAt(teleporterInstances[teleporterInstances.Count-1].transform); //make all arrows point at the tele for the level just finished
+						z++;
+					}
+				}
+			}
 			GetComponent<DeactivateDistant>().SetFirstCheck(true);
 		}
 	}

@@ -10,7 +10,7 @@ public class EnemyManager : MonoBehaviour
 {
     public static List<AIController> AllEnemies = new List<AIController>();
     public static float Difficulty = .75f;
-    public static float MaxDifficulty = 4.0f;
+    public static float MaxDifficulty = 100.0f;
     public static float NormalizedDifficulty { get { return Difficulty / Mathf.Max(0.01f, MaxDifficulty); } } // Range form 0 to 1 indicating current difficulty factor
 
     public static EnemyManager instance = null; // Singleton instance.
@@ -27,7 +27,6 @@ public class EnemyManager : MonoBehaviour
             Destroy(gameObject);
         }
     }
-
     private void Start()
     {
         AllEnemies.Clear();
@@ -39,6 +38,11 @@ public class EnemyManager : MonoBehaviour
     {
         float newDificulty = Difficulty * multiplier;
         Difficulty = Mathf.Clamp(newDificulty, 1f, MaxDifficulty);
+        foreach (AIController enemy in AllEnemies)
+        {
+            float oldHP = enemy.GetHealth().GetValue();
+            enemy.SetMaxHealth(oldHP * multiplier);
+        }
     }
 }
 
