@@ -14,9 +14,6 @@ public class CutsceneController : MonoBehaviour
     public string bugeIntro = "MeetingBuge";
 
     public Vector3 playerCutscenePos;
-    public Vector3 bugePos;
-    public Vector3 bugeRotation;
-    public Transform buge = BUGE.instance.transform;
     private Vector3 playerPreCutscene;
     private GameObject Primarycanvas;
     private GameObject CutsceneCanvas;
@@ -34,11 +31,6 @@ public class CutsceneController : MonoBehaviour
     {
         if (Input.GetKeyDown(KeyCode.Escape) && CutsceneCanvas.activeSelf)
             Skip();
-        if (inCutscene)
-        {
-            BUGE.instance.transform.position = bugePos;
-            BUGE.instance.transform.rotation = Quaternion.Euler(bugeRotation);
-        }
     }
     public void IntroCutscene()
     {
