@@ -34,6 +34,7 @@ public class Hitbox : MonoBehaviour
     public float IgnoredDamageReduction = 0;
     [HideInInspector]
     public float LifeTime = 99;
+    public string SFXOnStart = "";
     public delegate void OnKill();
     public OnKill killDelegate;
 
@@ -50,6 +51,7 @@ public class Hitbox : MonoBehaviour
     private List<GameObject> hittargets = new List<GameObject>();
     private Vector3 lastposition;
     private Vector3 spawnposition;
+   
     private GameObject player;
     private void Awake()
     {
@@ -78,6 +80,10 @@ public class Hitbox : MonoBehaviour
             {
                 Collider = GetComponent<Collider>();
             }
+        }
+        if (SFXOnStart != "")
+        {
+            AudioManager.instance.PlayRandomSFXType(SFXOnStart, this.gameObject, .4f);
         }
         //AddCollliders(transform, colliders);
         lastposition = GetComponent<Collider>().transform.position;

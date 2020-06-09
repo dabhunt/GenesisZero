@@ -35,7 +35,7 @@ public class PlatformShooterAI : AIController
     private bool edgeInFront = true;
     private bool edgeBehind = true;
     public LayerMask groundCheckMask;
-
+    public bool chargeSoundPlaying;
     [Header("Attack")]
     public ParticleSystem chargeParticles;
     public ParticleSystem attackParticles;
@@ -153,21 +153,19 @@ public class PlatformShooterAI : AIController
         transform.rotation = Quaternion.LookRotation(lookDir, Vector3.up);
 
         // Particles to show charge and attack states (for testing)
-        if (chargeParticles != null)
+        if (state == AIState.Charge)
         {
-            if (state == AIState.Charge)
+            if (!chargeSoundPlaying)
             {
-                if (!chargeParticles.isPlaying)
-                {
-                    chargeParticles.Play();
-                }
-            }
-            else if (chargeParticles.isPlaying)
-            {
-                chargeParticles.Stop();
+                AudioManager.instance.PlayRandomSFXType("ChargeLaser", this.gameObject, .33f);
+                chargeSoundPlaying = true;
             }
         }
-
+        else if (chargeSoundPlaying)
+        {
+            AudioManager.instance.StopSound("ChargeLaser");
+            chargeSoundPlaying = false;
+        }
         if (attackParticles != null)
         {
             if (state == AIState.Attack)
