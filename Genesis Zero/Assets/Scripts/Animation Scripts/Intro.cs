@@ -88,12 +88,12 @@ public class Intro : MonoBehaviour
         cardQueue.Clear();
         gameObject.SetActive(false);
         gameObject.transform.parent.Find("BlackOverlay").GetComponent<SpriteFade>().FadeOut(4f);
-        if (Camera.main.GetComponentInParent<CutsceneController>())
+        if (Camera.main.GetComponent<CutsceneController>())
         {
             if (SaveLoadManager.instance.newGame == true)
-                Camera.main.GetComponentInParent<CutsceneController>().IntroCutscene();
+                Camera.main.GetComponent<CutsceneController>().IntroCutscene();
             else
-                Camera.main.GetComponentInParent<CutsceneController>().Reset();
+                Camera.main.GetComponent<CutsceneController>().Reset();
         }
 
     }

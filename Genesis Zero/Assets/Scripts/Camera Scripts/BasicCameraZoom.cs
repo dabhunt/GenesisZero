@@ -20,6 +20,7 @@ public class BasicCameraZoom : MonoBehaviour
     void Start()
     {
         myCamera = GetComponent<Camera>();
+        myCamera.fieldOfView = fovMax;
         target = myCamera.fieldOfView;
         savedFOV = myCamera.fieldOfView;
     }

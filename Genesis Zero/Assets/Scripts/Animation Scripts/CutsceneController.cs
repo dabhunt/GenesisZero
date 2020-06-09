@@ -11,35 +11,57 @@ public class CutsceneController : MonoBehaviour
     // Start is called before the first frame update
     private Animation cutscene;
     public string IntroName = "IntroCutscene";
+    public string bugeIntro = "MeetingBuge";
+
+    public Vector3 playerCutscenePos;
+    public Vector3 bugePos;
+    public Vector3 bugeRotation;
+    public Transform buge = BUGE.instance.transform;
+    private Vector3 playerPreCutscene;
     private GameObject Primarycanvas;
     private GameObject CutsceneCanvas;
     private Camera cam;
     private float InspectorFov;
+    private bool inCutscene;
     private void Start()
     {
         UpdateCanvases();
         cam = Camera.main;
         InspectorFov = cam.fieldOfView;
-        cutscene = transform.Find("MainCamera").gameObject.GetComponent<Animation>();
+        cutscene = GetComponent<Animation>();
     }
     private void Update()
     {
         if (Input.GetKeyDown(KeyCode.Escape) && CutsceneCanvas.activeSelf)
             Skip();
+        if (inCutscene)
+        {
+            BUGE.instance.transform.position = bugePos;
+            BUGE.instance.transform.rotation = Quaternion.Euler(bugeRotation);
+        }
     }
     public void IntroCutscene()
     {
+        playerPreCutscene = Player.instance.transform.position; 
         cam.fieldOfView = 20;
         Cutscene();
         cutscene.Play(IntroName);
-        GameObject.FindGameObjectWithTag("GameManagers").transform.Find("TileManager").GetComponent<DeactivateDistant>().SetDist(100);
+        TileManager.instance.GetComponent<DeactivateDistant>().SetDist(100);
         Invoke("Reset", (float)cutscene[IntroName].length); //reset the normal camera after it finishes
+    }
+    public void BugeCutscene()
+    {
+        Cutscene();
+        cutscene.Play(IntroName);
+        CutsceneCanvas.SetActive(false);
+        Invoke("Reset", (float)cutscene[bugeIntro].length); //reset the normal camera after it finishes
     }
     public void Cutscene()
     {
         UpdateCanvases();
+        inCutscene = true;
         Player.instance.GetComponent<AimIK>().enabled = false;
-        GetComponent<CinemachineBrain>().enabled = true;
+        GetComponentInParent<CinemachineBrain>().enabled = true;
         GameInputManager.instance.DisablePlayerControls();
         StateManager.instance.Cursorvisible = true;
         CutsceneCanvas.SetActive(true);
@@ -62,6 +84,8 @@ public class CutsceneController : MonoBehaviour
     }
     public void Reset()
     {
+        inCutscene = false;
+        Player.instance.transform.position = playerPreCutscene;
         Player.instance.GetComponent<AimIK>().enabled = true;
         UpdateCanvases();
         StateManager.instance.Cursorvisible = false;
@@ -70,8 +94,8 @@ public class CutsceneController : MonoBehaviour
 			DOTween.To(() => cam.fieldOfView, x => cam.fieldOfView = x, 15, 3);
 		}
         GameInputManager.instance.EnablePlayerControls();
-        GameObject.FindGameObjectWithTag("GameManagers").transform.Find("TileManager").GetComponent<DeactivateDistant>().ResetDist();
-        GetComponent<CinemachineBrain>().enabled = true;
+        TileManager.instance.GetComponent<DeactivateDistant>().ResetDist();
+        GetComponentInParent<CinemachineBrain>().enabled = true;
         Primarycanvas.SetActive(true);
         CutsceneCanvas.SetActive(false);
         Invoke("AfterDelay", 1.6f);
