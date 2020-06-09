@@ -324,6 +324,7 @@ public class BossAI : AIController
 			{
 				DisableUIExceptDialogue();
 				SetBossstate(State.Setting, 20f);
+				animator.gameObject.GetComponent<SnakeBossBase>().KillIK();
 				animator.SetTrigger("Dead");
 				StartCoroutine(FlickerLights(1, 3, 2f, false));
 				Camera.main.GetComponent<BasicCameraZoom>().ChangeFieldOfViewTemporary(45, 1, .25f);

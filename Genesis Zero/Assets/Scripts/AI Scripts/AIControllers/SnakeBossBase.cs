@@ -61,4 +61,13 @@ public class SnakeBossBase : MonoBehaviour
         }
 		Recalculate();
 	}
+
+	public void KillIK()
+	{
+		FastIKFabric[] iks = gameObject.GetComponentsInChildren<FastIKFabric>();
+		foreach (FastIKFabric ik in iks)
+		{
+			Destroy(ik);
+		}
+	}
 }
