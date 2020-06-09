@@ -51,6 +51,8 @@ public class TileManager : MonoBehaviour
 	private float levelTracking, enemyspawnchanceincease;
 	private List<GameObject> endBuildings;
 	private List<GameObject> teleporterInstances;
+	private GameObject[] betweenAreas;
+	private Sprite[] ads;
 	List<List<GameObject>> guideArrows = new List<List<GameObject>>();
 	private void Awake()
 	{
@@ -64,6 +66,9 @@ public class TileManager : MonoBehaviour
 	}
 	private void Start()
     {
+		betweenAreas = Resources.LoadAll<GameObject>("InbetweenAreas");
+		ads = Resources.LoadAll<Sprite>("Billboards");
+		SkillObject[] sskills = Resources.LoadAll<SkillObject>("Skills/Starter Mods");
 		guideArrows.Add(new List<GameObject>());//level 1 arrows
 		guideArrows.Add(new List<GameObject>());//level 2
 		interactableSpawnChances = new[]{ godHeadSpawnChance, chestSpawnChance, merchantSpawnChance, scrapConverterSpawnChance, teleSpawnChance, guideArrowSpawnChance};
@@ -371,10 +376,25 @@ public class TileManager : MonoBehaviour
 				}
 			}
 		}
-		
 		//Shift currentPos for next building
 		currentPos += tileLength * width;
-		currentPos += Random.Range(8.0f, 15.0f);
+		float oldBuildingX = currentPos;
+		float spacing = Random.Range(8.0f, 15.0f);//where to start the next building
+		float nextBuildingStart = currentPos + spacing;
+		float randMulti = Random.Range(.45f, .55f);
+		float sOffset = (spacing  * randMulti);
+		print("spawnpoint offset: " + sOffset);
+		int rng = Random.Range(0, betweenAreas.Length - 1);
+		GameObject areaObj = Instantiate(betweenAreas[rng]) as GameObject;
+		InbetweenArea area = areaObj.GetComponent<InbetweenArea>();
+		areaObj.transform.position = new Vector3(oldBuildingX - sOffset , Random.Range(0, area.offset.y), Random.Range(10, area.offset.z)); // randomize location somewhat
+		foreach (GameObject bill in area.billboards)
+		{
+			bill.GetComponent<SpriteRenderer>().color = area.AcceptableColors[Random.Range(0, area.AcceptableColors.Length - 1)]; //get random color from acceptable color list of colors
+			bill.GetComponent<SpriteRenderer>().sprite = ads[Random.Range(0, ads.Length - 1)]; //set sprite to a random image in the billboards folder
+		}
+		//areaObj = VFXManager.instance.ChangeColor(areaObj, area.AcceptableColors[Random.Range(0, area.AcceptableColors.Length - 1)]);
+		currentPos += spacing;
 	}
 	public Vector3 SpawnEnemy(int amount , Vector3 spawnVector)
 	{

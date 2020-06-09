@@ -976,7 +976,7 @@ public class BossAI : AIController
 		hitbox.transform.parent = transform;
 		hitbox.GetComponent<Hitbox>().LifeTime = .1f;
 		camera.transform.DOShakePosition(duration: .75f, strength: 1, vibrato: 5, randomness: 60, snapping: false, fadeOut: true);
-		AudioManager.instance.PlaySound("SFX_FireExplosion", false, 0);
+		AudioManager.instance.PlayRandomSFXType("SFX_FireExplosion");
 	}
 
 	void BurnGround()

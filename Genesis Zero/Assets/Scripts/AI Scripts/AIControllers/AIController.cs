@@ -604,10 +604,6 @@ public class AIController : Pawn
                 alertTracking = true;
                 //AudioManager.instance.PlayRandomSFXType("Enemy", this.gameObject);
                 //print("enemy SFX");
-                if (AudioManager.instance != null)
-                {
-                    AudioManager.instance.PlayRandomSFXType("EnemyNearby", this.gameObject, .2f);
-                }
                 if (alertOthers)
                 {
                     AlertNearbyEnemies(target);

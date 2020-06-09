@@ -16,7 +16,7 @@ public class Teleporter : MonoBehaviour
 	private Transform player;
 	private GameObject buge;
 	public float portalactivedistance = 9.5f;
-	public GameObject canvas;
+	private GameObject canvas;
 	Animator ani;
 
 	private void Start()
