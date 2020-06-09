@@ -79,6 +79,7 @@ public class GameInputManager : MonoBehaviour
     {
         inputActions.PlayerControls.Disable();
         Player.instance.GetComponent<PlayerController>().movementInput = Vector2.zero;
+        Player.instance.GetComponent<PlayerController>().fireInput = 0;
     }
 
     public void EnablePlayerControls()

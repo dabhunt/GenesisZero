@@ -90,6 +90,7 @@ public class CutsceneController : MonoBehaviour
     public void Reset()
     {
         inCutscene = false;
+        CancelInvoke("Reset");
         Player.instance.transform.position = playerPreCutscene;
         Player.instance.GetComponent<AimIK>().enabled = true;
         UpdateCanvases();

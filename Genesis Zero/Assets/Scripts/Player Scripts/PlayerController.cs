@@ -68,7 +68,7 @@ public class PlayerController : MonoBehaviour
     public Vector2 movementInput;
     private Vector2 aimInputMouse;
     private Vector2 aimInputController;
-    private float fireInput;
+    public float fireInput;
     private float interactInput;
     public float rotationspeed;
 
