@@ -192,10 +192,10 @@ public class TileManager : MonoBehaviour
 			if (tele.name.Contains("to Boss"))
 			{
 				int z = 0;
-				print("level 2 tele found");
+				//print("level 2 tele found");
 				foreach (GameObject arrow in guideArrows[1])
 				{
-					print("Arrow " + z); 
+					//print("Arrow " + z); 
 					if (arrow != null)
 						arrow.transform.LookAt(newestTele.transform); //make all arrows point at the tele for the level just finished
 					z++;
@@ -383,7 +383,6 @@ public class TileManager : MonoBehaviour
 		float nextBuildingStart = currentPos + spacing;
 		float randMulti = Random.Range(.45f, .55f);
 		float sOffset = (spacing  * randMulti);
-		print("spawnpoint offset: " + sOffset);
 		int rng = Random.Range(0, betweenAreas.Length - 1);
 		GameObject areaObj = Instantiate(betweenAreas[rng]) as GameObject;
 		InbetweenArea area = areaObj.GetComponent<InbetweenArea>();
