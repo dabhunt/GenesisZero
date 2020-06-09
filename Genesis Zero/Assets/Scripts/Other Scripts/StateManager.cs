@@ -129,7 +129,7 @@ public class StateManager : MonoBehaviour
     {
         if (Player.instance != null) //if there is a player
         { 
-            if (Player.instance.IsInteracting == true)
+            if (Player.instance.IsInteracting() == true)
                 return; //don't unpause if the player is interacting
         }
         //UnPauses Game

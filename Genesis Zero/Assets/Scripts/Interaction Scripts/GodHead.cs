@@ -175,7 +175,7 @@ public class GodHead : MonoBehaviour
     }
     private void InitializeUI()
     {
-        player.GetComponent<Player>().IsInteracting = true;
+        player.GetComponent<Player>().SetInteracting(true);
         //destroy all popups when entering the interface
         if (GetComponent<InteractPopup>() !=null)
             GetComponent<InteractPopup>().DestroyPopUp();
@@ -216,7 +216,7 @@ public class GodHead : MonoBehaviour
     }
     public void CloseUI()
     {
-        player.GetComponent<Player>().IsInteracting = false;
+        player.GetComponent<Player>().SetInteracting(false);
         isActive = false;
         //marks this object as no longer able to be interacted with
         gameObject.AddComponent<InactiveFlag>();

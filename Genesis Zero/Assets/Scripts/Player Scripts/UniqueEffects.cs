@@ -24,8 +24,8 @@ public class UniqueEffects : MonoBehaviour
 	[Header("Better Coolant")]
 	public float coolRatePerStack = 1.1f;
 	[Header("Boiling Point")]
-	public float BP_MaxExtraHeat = .35f;
-	public float BP_MaxExtraDMG = .35f;
+	public float BP_MaxExtraHeat = 3.5f;
+	public float BP_MaxExtraDMG = 3.5f;
 	[Header("Heat Expulsion")]
 	public float HE_Damage = 20;
 	public float HE_TotalBurnDMG = 21;

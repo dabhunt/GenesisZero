@@ -113,8 +113,9 @@ public class DialogueManager : MonoBehaviour
             dialoguePlayed[name] = dialoguePlayed[name] + 1;
         else
             dialoguePlayed.Add(name, 1);
+        dialoguePlaying = true;
         if (GetPlayer() != null)
-            player.IsInteracting = true;
+            player.SetInteracting(true);
         StartDialogue(dialogue);
         StateManager.instance.Pause(pauseGame);
     }
@@ -219,7 +220,7 @@ public class DialogueManager : MonoBehaviour
         if (currentType == -1)
         {
             if (GetPlayer() != null)
-                player.IsInteracting = false;
+                player.SetInteracting(false);
             StateManager.instance.UnpauseGame();
         }
         Cursor.visible = false;
@@ -255,7 +256,7 @@ public class DialogueManager : MonoBehaviour
     {
         if (Input.GetKeyDown(KeyCode.F))
         {
-            if (canSkip)
+            if (canSkip && dialoguePlaying)
                 DisplayNextSentence();
         }
     }

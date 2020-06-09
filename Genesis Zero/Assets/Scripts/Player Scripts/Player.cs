@@ -8,7 +8,7 @@ public class Player : Pawn
     public Statistic Essence, Keys, AbilityPower, CDR;
     private List<Statistic> playerStatistics;
     public float baseAbilityPower = 16;
-    public bool IsInteracting = false;
+    private bool isInteracting = false;
     private float EssenceHardCap = 60f;
     private float MaxEssence = 50f;
     private float MaxKeys = 3f;
@@ -43,7 +43,15 @@ public class Player : Pawn
         }
         base.Update();
     }
-
+    public bool IsInteracting()
+    {
+        return isInteracting;
+    }
+    public void SetInteracting(bool foo)
+    {
+        print("Somebody touching my spaghetti");
+        isInteracting = foo;
+    }
     new void FixedUpdate()
     {
         base.FixedUpdate();
@@ -134,6 +142,7 @@ public class Player : Pawn
     {
         return MaxKeys;
     }
+    //actually always the amount of canisters you can have but a float for statistic backend reasons
     public float GetMaxCapsuleAmount()
     {
         return MaxCapsules;

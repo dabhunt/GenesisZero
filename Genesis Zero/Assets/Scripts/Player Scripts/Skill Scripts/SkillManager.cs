@@ -21,7 +21,7 @@ public class SkillManager
     private string ability1 = "";
     private string ability2 = "";
     private int uniqueModLimit = 8;
-    private int ClampModLimit = 11;
+    private int ClampModLimit = 10;
 
     private bool updated;
 
@@ -687,6 +687,10 @@ public class SkillManager
     {
         newLimit = Mathf.Clamp(newLimit, 7, ClampModLimit);
         uniqueModLimit = (int)newLimit;
+    }
+    public int GetModHardCap()
+    {
+        return ClampModLimit;
     }
     //This function returns a multiplier value, based on how many of that skill the player has
     // pass in the name of modifier, and how much additional stacks past 1 should be multiplied by, (mainly used for explosion radius increases right now)

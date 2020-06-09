@@ -143,13 +143,10 @@ public class Merchant : MonoBehaviour
             purchaseButton.GetComponentInChildren<Text>().text = "Not Enough Essence";
         }
         //if the player has selected a mod they don't already have, and don't have room for it
-        else if (selectedShopItem.Type == 0 && (skillManager.GetUniqueModAmount() >= skillManager.GetModSlotLimit()))
+        else if (selectedShopItem.Type == 0 && (skillManager.GetUniqueModAmount() >= skillManager.GetModSlotLimit() && !skillManager.HasSkill(name)))
         {
-            if (skillManager.HasSkill(name) == false)
-            {
                 purchaseButton.interactable = false;
                 purchaseButton.GetComponentInChildren<Text>().text = "Mod Limit Reached";
-            }
         }
         else
         {//if none of the above are true, the player is allowed to purchase the item
@@ -159,7 +156,7 @@ public class Merchant : MonoBehaviour
     }
     public void InitializeUI()
     {
-        player.GetComponent<Player>().IsInteracting = true;
+        player.GetComponent<Player>().SetInteracting(true);
         firstInteraction = false;
         //Destroy the "Press F to interact popup"
         merchantUI = (RectTransform) canvasRef.transform.Find("MerchantUI");
@@ -205,6 +202,15 @@ public class Merchant : MonoBehaviour
             } 
             gameObjList.Add(child.gameObject);
             num++;
+        }
+        SkillManager sk = Player.instance.GetSkillManager();
+        if (sk.GetModSlotLimit() >= sk.GetModHardCap())
+        {
+            disableShopItem(5, "Out of stock");
+        }
+        if (Player.instance.GetMaxCapsuleAmount() >= 6)
+        {
+            disableShopItem(4, "Out of stock");
         }
         merchantUI.gameObject.SetActive(true);
         //load all shop items from resources, put them in the array as gameobjects
@@ -253,21 +259,27 @@ public class Merchant : MonoBehaviour
         int essenceCost = player.GetComponent<Player>().GetEssencePerCapsule() * canistersNeeded * -1;
         player.GetComponent<Player>().AddEssence(essenceCost);
         //set the purchased overlay to active so player is not able to select Item
-        gameObjList[itemSelectNum].transform.Find("PurchasedOverlay").gameObject.SetActive(true);
-        Button purchaseButton = merchantUI.transform.Find("Purchase").gameObject.GetComponent<Button>();
-        purchaseButton.interactable = false;
-        purchaseButton.GetComponentInChildren<Text>().text = "None Left";
-        gameObjList[itemSelectNum].GetComponent<Button>().interactable = false;
+        disableShopItem(itemSelectNum, "Purchased");
         //update UI, since game is paused must be manually done
         canvasRef.transform.Find("EssencePanel").gameObject.GetComponent<EssenceFill>().CalculateEssenceUI();
     }
     public void CloseUI()
     {
-        player.GetComponent<Player>().IsInteracting = false;
+        player.GetComponent<Player>().SetInteracting(false);
         merchantUI.gameObject.SetActive(false);
         StateManager.instance.UnpauseGame();
         itemSelectNum = -1;
         GameInputManager.instance.SwitchControlMap("PlayerControls");
+    }
+    public void disableShopItem(int num, string text)
+    {
+        text = text.ToUpper();
+        GameObject purchasedOverlay = gameObjList[num].transform.Find("PurchasedOverlay").gameObject;
+        purchasedOverlay.SetActive(true);
+        Button purchaseButton = merchantUI.transform.Find("Purchase").gameObject.GetComponent<Button>();
+        purchaseButton.interactable = false;
+        purchasedOverlay.GetComponentInChildren<Text>().text = text;
+        gameObjList[num].GetComponent<Button>().interactable = false;
     }
     public bool GetWindowOpen()
     {
