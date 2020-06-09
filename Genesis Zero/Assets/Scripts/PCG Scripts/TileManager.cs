@@ -7,7 +7,7 @@ public class TileManager : MonoBehaviour
 	//Public Variables (Visible in Inspector)
 	[Header("Tile Spawning")]
 	public static TileManager instance;
-	public bool MayhemMode;
+	public bool MayhemMode = false;
 	public int maxBuildingWidth = 5;
 	public int minBuildingWidth = 2;
 	public int maxBuildingTileCount = 24;
