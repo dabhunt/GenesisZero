@@ -11,10 +11,11 @@ public class FindingBuge : MonoBehaviour
 	{
 		if (PlayDialogueOnStart)
 		{
+			CutsceneController.instance.Reset();
 			BUGE.instance.FollowingPlayer(true);
 			//play starting dialogue and pause the game with true param
 			DialogueManager.instance.TriggerDialogue("StartDialogue", true, false);
-			Destroy(gameObject.GetComponent<FindingBuge>());
+			//Destroy(gameObject.GetComponent<FindingBuge>());
 		}
 	}
 	private void OnTriggerEnter(Collider other)
