@@ -13,7 +13,7 @@ public class MayhemTimer : MonoBehaviour
     public bool ActiveOnStart = false;
     public float decreasePercent = .9f;//how much time between difficulty bumps decreases each difficulty bump
     private string Strformat = "0.#";
-    private float levelsCleared = 0;
+    private int levelsCleared = 0;
     private void Awake()
     {
         if (instance == null)
@@ -58,6 +58,8 @@ public class MayhemTimer : MonoBehaviour
         levelsCleared++;
         levelsClearedText.text = "Levels Cleared: "+ levelsCleared.ToString();
     }
+    public int GetLevelsCleared() 
+    { return levelsCleared; }
     public void IncrementClearedLevels()
     {
         levelsCleared++;

@@ -122,17 +122,7 @@ public class TileManager : MonoBehaviour
 		{
 			//Mayhem Mode	
 			//StateManager.instance.Teleport( new Vector2(levelSpacing + 5,40) , false, true);
-			SwapTileSet();
-			int level = 1;
-			currentPos = levelSpacing * level + 22;
-			for (int i = 0; i < numberOfBuildings; ++i)
-			{
-				generateBuilding(Random.Range(minBuildingWidth, maxBuildingWidth), Random.Range(minBuildingTileCount, maxBuildingTileCount), level);
-			}
-			Vector3 spawnVector = new Vector3(1, 0, 0) * currentPos + new Vector3(0, -2, 0); //spawnVector for tiles
-			GameObject endBuilding = (GameObject)GameObject.Instantiate(levelEndCityBuilding, spawnVector, Quaternion.Euler(0, 141.6f, 0));
-			
-			//mayhemLevelUp();
+			mayhemLevelUp();
 		}
 
 		//Placemat PCG Pass
@@ -368,24 +358,25 @@ public class TileManager : MonoBehaviour
 			spawnVector.x += tileLength;
 			bool clusterSpawned = false;
 			//Spawn Enemy
+			int amount = 0;
 			if (tilesSinceLastCluster > MinMaxClusterDistance.x && tilesSinceLastCluster < MinMaxClusterDistance.y) //if it's within our constraints, use randomness
 			{ 
 				if (Random.value <= (SpawnChance + enemyspawnchanceincease))
 				{
-					int amount = Random.Range((int)MinMaxEnemies.x, (int)MinMaxEnemies.y + levelNumber - 1);
-					spawnVector = SpawnEnemy(amount, spawnVector);
-					tilesSinceLastCluster = 0;
 					clusterSpawned = true;
 				}
 			} 
 			else if (tilesSinceLastCluster >= MinMaxClusterDistance.y)
 			{
-				int amount = Random.Range((int)MinMaxEnemies.x, (int)MinMaxEnemies.y + levelNumber - 1);
-				spawnVector = SpawnEnemy(amount, spawnVector);
 				clusterSpawned = true;
 			}
 			if (clusterSpawned) //if an enemy cluster spawned in this tile
 			{
+				if (MayhemMode)
+					amount = Random.Range((int)MinMaxEnemies.x, (int)MinMaxEnemies.y + MayhemTimer.instance.GetLevelsCleared() - 1);
+				else
+					amount = Random.Range((int)MinMaxEnemies.x, (int)MinMaxEnemies.y + levelNumber - 1);
+				spawnVector = SpawnEnemy(amount, spawnVector);
 				enemyspawnchanceincease = 0;
 				tilesSinceLastCluster = 0;
 			}
