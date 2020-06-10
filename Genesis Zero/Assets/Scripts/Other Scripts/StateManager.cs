@@ -220,8 +220,17 @@ public class StateManager : MonoBehaviour
         {
             GameObject newTele = Instantiate(TileManager.instance.interactablePrefabs[4]) as GameObject;//spawn a teporter where ever the teleporter takes you
             newTele.transform.position = destination + new Vector2(-4, 4);
-            newTele.GetComponent<Teleporter>().SetDestination(player.transform.position + new Vector3(4,0,0));
+            newTele.GetComponent<Teleporter>().SetDestination(player.transform.position + new Vector3(4, 0, 0));
             newTele.GetComponent<Teleporter>().hasPair = true;
+            if (TileManager.instance.MayhemMode) //if it doesn't have pair, and you are in mayhem mode
+            {
+                MayhemTimer.instance.IncrementClearedLevels();
+                EnemyManager.instance.ModifyDifficultyMulti(.4f); //mayhem mode increase
+            }
+            else //if it doesnt have pair and you are in normal mode
+            {
+                EnemyManager.instance.ModifyDifficultyMulti(.4f); //regular mode
+            }
         }
         //Destroy(fakeTele.GetComponent<Teleporter>());
         StateManager.instance.InTutorial = false;
@@ -232,15 +241,6 @@ public class StateManager : MonoBehaviour
             Player.instance.transform.position = GetBossRoomLocation();
             player.GetComponent<UniqueEffects>().CombatChangesMusic = false;
             level = 3;
-        }
-        if (TileManager.instance.MayhemMode)
-        {
-            MayhemTimer.instance.IncrementClearedLevels();
-            EnemyManager.instance.ModifyDifficultyMulti(.4f); //mayhem mode increase
-        }
-        else 
-        {
-            EnemyManager.instance.ModifyDifficultyMulti(.4f); //regular mode
         }
         Player.instance.Heal(50);
         Camera.main.GetComponentInParent<CinemachineBrain>().enabled = true;

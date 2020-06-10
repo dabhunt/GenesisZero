@@ -63,6 +63,7 @@ public class MayhemTimer : MonoBehaviour
         {
             display = levelsCleared.ToString() + " Levels Cleared ";
         }
+        levelsClearedText.text = display;
         TileManager.instance.tempTextDisplay.ShowText(display , 1, .75f);
     }
     public int GetLevelsCleared() 
@@ -73,7 +74,7 @@ public class MayhemTimer : MonoBehaviour
     }
     public void BumpDifficulty()
     {
-        EnemyManager.instance.ModifyDifficultyMulti(1);
+        EnemyManager.instance.ModifyDifficultyMulti(.65f);
         TileManager.instance.tempTextDisplay.ShowText("Difficulty Increased!", 1 , .75f);
         curTimeLeft = resetTime * decreasePercent;
         curTimeLeft = Mathf.Clamp(curTimeLeft, 30, 60);

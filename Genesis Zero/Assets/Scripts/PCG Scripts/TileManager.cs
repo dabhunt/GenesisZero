@@ -94,7 +94,7 @@ public class TileManager : MonoBehaviour
 		if (!MayhemMode)
 		{
 			//Level 1
-			
+			PlaceInteractables();
 			int level = 1;
 			currentPos = levelSpacing * level + 22;
 			for (int i = 0; i < numberOfBuildings; ++i)
@@ -103,7 +103,6 @@ public class TileManager : MonoBehaviour
 			}
 			Vector3 spawnVector = new Vector3(1, 0, 0) * currentPos + new Vector3(0, -2, 0); //spawnVector for tiles
 			GameObject endBuilding = (GameObject)GameObject.Instantiate(levelEndCityBuilding, spawnVector, Quaternion.Euler(0, 141.6f, 0));
-			
 
 			tilePrefabs = cityTilePrefabs;
 			
@@ -127,7 +126,7 @@ public class TileManager : MonoBehaviour
 		}
 
 		//Placemat PCG Pass
-		PlaceInteractables();
+
     }
 	private void DelayedStart()
 	{
@@ -234,13 +233,13 @@ public class TileManager : MonoBehaviour
 		if(!MayhemMode)
 		{
 			GameObject newTele = Instantiate(interactablePrefabs[4]) as GameObject;
+			newTele.transform.SetParent(LevelParent.transform);
 			teleporterInstances.Add(newTele);
-			
 			if (teleporterInstances.Count < 2)
 			{
 				newTele.name = "Teleporter in Level " + (teleporterInstances.Count);
 				levelTracking += levelSpacing;
-				newTele.GetComponent<Teleporter>().SetDestination(new Vector2(levelTracking + 5, 40));
+				newTele.GetComponent<Teleporter>().SetDestination(new Vector2(levelTracking + 5, 4));
 				teleporterInstances[teleporterInstances.Count - 1].transform.position = mat.transform.position;
 			}
 			else
@@ -254,13 +253,16 @@ public class TileManager : MonoBehaviour
 		}
 		else
 		{
+			print("teleporter instances: " + teleporterInstances);
 			if (teleporterInstances.Count < 1)
 			{
 				GameObject newTele = Instantiate(interactablePrefabs[4]) as GameObject;
+				newTele.transform.SetParent(LevelParent.transform);
+				teleporterInstances.Add(newTele);
 				newTele.name = "Mayhem Teleporter";
 				teleporterInstances.Add(newTele);
 			}
-			teleporterInstances[teleporterInstances.Count - 1].GetComponent<Teleporter>().SetDestination(new Vector2(levelSpacing + 5, 40));
+			teleporterInstances[teleporterInstances.Count - 1].GetComponent<Teleporter>().SetDestination(new Vector2(levelSpacing + 5, 5));
 			teleporterInstances[teleporterInstances.Count - 1].transform.position = mat.transform.position;
 			print("levelspacing:" + levelSpacing);
 			return teleporterInstances[teleporterInstances.Count - 1];
@@ -484,7 +486,9 @@ public class TileManager : MonoBehaviour
 				generateBuilding(Random.Range(minBuildingWidth, maxBuildingWidth), Random.Range(minBuildingTileCount, maxBuildingTileCount), level);
 			} //the final level of PCG needs this for the guidance arrows
 			Vector3 spawnVector = new Vector3(1, 0, 0) * currentPos + new Vector3(0, -2, 0); //spawnVector for tiles																		 //GameObject endBuilding = (GameObject)GameObject.Instantiate(levelEndCityBuilding, spawnVector, Quaternion.Euler(0, 141.6f, 0));
-			PlaceInteractables();																				
+			PlaceInteractables();
+			GameObject endBuilding = (GameObject)GameObject.Instantiate(levelEndCityBuilding, spawnVector, Quaternion.Euler(0, 141.6f, 0));
+			endBuilding.transform.SetParent(LevelParent.transform);
 			foreach (GameObject tele in GameObject.FindGameObjectsWithTag("Teleporter"))
 			{
 				if (tele.name.Contains("Mayhem"))
