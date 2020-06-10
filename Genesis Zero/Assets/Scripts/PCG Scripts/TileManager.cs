@@ -84,7 +84,6 @@ public class TileManager : MonoBehaviour
 		
 		if (SaveLoadManager.instance.newGame == true)
 		{
-
 			seedValue = Random.Range(0, 999999);
 			Random.InitState(seedValue);
 		}
@@ -122,8 +121,8 @@ public class TileManager : MonoBehaviour
 		else
 		{
 			//Mayhem Mode	
-			betweenAreas = Resources.LoadAll<GameObject>("InbetweenAreas");
-			StateManager.instance.Teleport( new Vector2(levelSpacing + 5,40) , false);
+			//StateManager.instance.Teleport( new Vector2(levelSpacing + 5,40) , false, true);
+			SwapTileSet();
 			int level = 1;
 			currentPos = levelSpacing * level + 22;
 			for (int i = 0; i < numberOfBuildings; ++i)
@@ -135,12 +134,20 @@ public class TileManager : MonoBehaviour
 			
 			//mayhemLevelUp();
 		}
-		
+
 		//Placemat PCG Pass
+		PlaceInteractables();
+    }
+	public int GetSeed()
+	{
+		return seedValue;
+	}
+	public void PlaceInteractables()
+	{
 		levelTracking = levelSpacing;
 		//bool AllTeleportersSpawned = false;
 		teleporterInstances = new List<GameObject>();
-		int curMatLevel = 0; 
+		int curMatLevel = 0;
 
 		int LastMatLevel = 0;
 		GameObject newestTele = null;
@@ -148,7 +155,7 @@ public class TileManager : MonoBehaviour
 		foreach (GameObject mat in GameObject.FindGameObjectsWithTag("Placemat"))
 		{
 			curMatLevel = Mathf.FloorToInt(mat.transform.position.x / levelSpacing); //convert X position to what level we are on
-			//print("mat.transform: " + mat.transform.position.x + " = curmatlevel: " + curMatLevel);
+																					 //print("mat.transform: " + mat.transform.position.x + " = curmatlevel: " + curMatLevel);
 			if (mat.transform.position.x > levelSpacing)
 			{
 				if (mat.name == "GodHeadMat" && Random.value <= godHeadSpawnChance) //Case 1: God Heads
@@ -176,7 +183,7 @@ public class TileManager : MonoBehaviour
 							newInteractable = Instantiate(interactablePrefabs[rng]) as GameObject;
 							newInteractable.transform.position = mat.transform.position;
 						}
-						
+
 						newInteractable.transform.SetParent(mat.transform.parent);
 					}
 				}
@@ -224,10 +231,6 @@ public class TileManager : MonoBehaviour
 				}
 			}
 		}
-    }
-	public int GetSeed()
-	{
-		return seedValue;
 	}
 	private GameObject NewTeleporter(GameObject mat)
 	{
@@ -262,7 +265,7 @@ public class TileManager : MonoBehaviour
 			}
 			teleporterInstances[teleporterInstances.Count - 1].GetComponent<Teleporter>().SetDestination(new Vector2(levelSpacing + 5, 40));
 			teleporterInstances[teleporterInstances.Count - 1].transform.position = mat.transform.position;
-			
+			print("levelspacing:" + levelSpacing);
 			return teleporterInstances[teleporterInstances.Count - 1];
 		}
 	}
@@ -301,9 +304,9 @@ public class TileManager : MonoBehaviour
 				combiner.DeactivateCombinedChildren = true;
 				combiner.CombineMeshes(false);
 				newTile.GetComponent<MeshRenderer>().receiveShadows = false;
-				newTile.transform.SetParent(LevelParent.transform);
 				newTile.transform.localRotation = Quaternion.Euler(0, 180, 0);
 			}
+			newTile.transform.SetParent(LevelParent.transform);
 			//Transform Position & Update
 			if (shift <= 0)
 			{
@@ -455,7 +458,15 @@ public class TileManager : MonoBehaviour
 		spawnVector.z += 2;
 		return spawnVector;
 	}
-	
+	public void SwapTileSet()
+	{
+		if (tilePrefabs == cityTilePrefabs)
+			tilePrefabs = industrialTilePrefabs;
+		else
+		{
+			tilePrefabs = cityTilePrefabs; //randomly choose the tileset
+		}
+	}
 	public void mayhemLevelUp()
 	{
 		if (MayhemMode)
@@ -464,7 +475,7 @@ public class TileManager : MonoBehaviour
 			Destroy(LevelParent);
 			LevelParent = new GameObject("LevelParentInstance");
 			LevelParent.transform.SetParent(transform);
-			
+			SwapTileSet(); //alternate tiles
 			//Construct New Level
 			int level = 1;
 			currentPos = levelSpacing * level + 22;
@@ -474,10 +485,10 @@ public class TileManager : MonoBehaviour
 			}
 			Vector3 spawnVector = new Vector3(1, 0, 0) * currentPos + new Vector3(0, -2, 0); //spawnVector for tiles
 																							 //GameObject endBuilding = (GameObject)GameObject.Instantiate(levelEndCityBuilding, spawnVector, Quaternion.Euler(0, 141.6f, 0));
-																							 //the final level of PCG needs this for the guidance arrows
+			PlaceInteractables();																				 //the final level of PCG needs this for the guidance arrows
 			foreach (GameObject tele in GameObject.FindGameObjectsWithTag("Teleporter"))
 			{
-				if (tele.name.Contains("mayhem"))
+				if (tele.name.Contains("Mayhem"))
 				{
 					int z = 0;
 					//print("level 2 tele found");
