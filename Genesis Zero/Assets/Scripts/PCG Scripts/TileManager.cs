@@ -131,7 +131,7 @@ public class TileManager : MonoBehaviour
 	private void DelayedStart()
 	{
 		//StateManager.instance.Teleport( new Vector2(levelSpacing + 5,40) , false, true);
-		GameObject.FindGameObjectWithTag("Teleporter").GetComponent<Teleporter>().SkipTutorial();
+		StateManager.instance.SkipTutorial();
 		tempTextDisplay. ShowText("Clear as many levels as possible without dying", 5, .75f);
 	}
 	public int GetSeed()
@@ -233,7 +233,6 @@ public class TileManager : MonoBehaviour
 		if(!MayhemMode)
 		{
 			GameObject newTele = Instantiate(interactablePrefabs[4]) as GameObject;
-			newTele.transform.SetParent(LevelParent.transform);
 			teleporterInstances.Add(newTele);
 			if (teleporterInstances.Count < 2)
 			{
@@ -248,7 +247,7 @@ public class TileManager : MonoBehaviour
 				teleporterInstances[teleporterInstances.Count - 1].transform.position = mat.transform.position;
 				newTele.GetComponent<Teleporter>().BossRoomOverride = true; //makes this TP go to boss room instead
 			}
-			
+			newTele.transform.SetParent(LevelParent.transform);
 			return newTele;
 		}
 		else
@@ -257,14 +256,14 @@ public class TileManager : MonoBehaviour
 			if (teleporterInstances.Count < 1)
 			{
 				GameObject newTele = Instantiate(interactablePrefabs[4]) as GameObject;
-				newTele.transform.SetParent(LevelParent.transform);
 				teleporterInstances.Add(newTele);
 				newTele.name = "Mayhem Teleporter";
+				//newTele.transform.SetParent(LevelParent.transform);
 				teleporterInstances.Add(newTele);
 			}
 			teleporterInstances[teleporterInstances.Count - 1].GetComponent<Teleporter>().SetDestination(new Vector2(levelSpacing + 5, 5));
 			teleporterInstances[teleporterInstances.Count - 1].transform.position = mat.transform.position;
-			print("levelspacing:" + levelSpacing);
+			teleporterInstances[teleporterInstances.Count - 1].transform.SetParent(LevelParent.transform);
 			return teleporterInstances[teleporterInstances.Count - 1];
 		}
 	}

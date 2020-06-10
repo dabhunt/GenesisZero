@@ -25,6 +25,9 @@ public class StateManager : MonoBehaviour
     public bool GameOver = false;
     public bool InTutorial = true;
     private float tweenduration = 0;
+    private  float toWhite = .6f;
+    private float stayWhite = 1.2f;
+    private float fadeWhite = 1.2f;
     private void Awake()
     {
         if (instance == null)
@@ -212,8 +215,18 @@ public class StateManager : MonoBehaviour
         Mathf.Clamp(level, 0, 3);
         return level;
     }
-    public void Teleport(Vector2 destination, bool bossRoomOverride, bool hasPair)
+    public void Teleport(Vector2 destination, bool bossRoomOverride, bool hasPair , string name)
     {
+        canvas.transform.Find("BlackOverlay").GetComponent<Animation>().Play();
+        if (MayhemTimer.instance != null && TileManager.instance.MayhemMode)
+            MayhemTimer.instance.LevelCleared();
+        Camera cam = Camera.main;
+        cam.GetComponentInParent<CinemachineBrain>().enabled = false;
+        cam.transform.position = new Vector3(player.transform.position.x, cam.transform.position.y, cam.transform.position.z);
+        //GameObject.FindGameObjectWithTag("CMcam").GetComponent<CinemachineVirtualCamera>().enabled = false;
+        TileManager.instance.GetComponent<TileManager>().mayhemLevelUp();
+        if (name.Contains("Skip"))
+            SkipTutorial();
         AudioManager.instance.PlaySound("SFX_Teleport");
         if (!hasPair) //if the teleporter doesn't already have a pair
         {
@@ -221,15 +234,15 @@ public class StateManager : MonoBehaviour
             newTele.transform.position = destination + new Vector2(-4, 4);
             newTele.GetComponent<Teleporter>().SetDestination(player.transform.position + new Vector3(4, 0, 0));
             newTele.GetComponent<Teleporter>().hasPair = true;
-            if (TileManager.instance.MayhemMode) //if it doesn't have pair, and you are in mayhem mode
-            {
-                MayhemTimer.instance.IncrementClearedLevels();
-                EnemyManager.instance.ModifyDifficultyMulti(.4f); //mayhem mode increase
-            }
-            else //if it doesnt have pair and you are in normal mode
-            {
-                EnemyManager.instance.ModifyDifficultyMulti(.4f); //regular mode
-            }
+        }
+        if (TileManager.instance.MayhemMode) //if it doesn't have pair, and you are in mayhem mode
+        {
+            MayhemTimer.instance.IncrementClearedLevels();
+            EnemyManager.instance.ModifyDifficultyMulti(.4f); //mayhem mode increase
+        }
+        else //if it doesnt have pair and you are in normal mode
+        {
+            EnemyManager.instance.ModifyDifficultyMulti(.4f); //regular mode
         }
         //Destroy(fakeTele.GetComponent<Teleporter>());
         StateManager.instance.InTutorial = false;
@@ -249,6 +262,19 @@ public class StateManager : MonoBehaviour
         BUGE.instance.GetComponent<InteractPopup>().DestroyPopUp();
         AudioManager.instance.PlaySongsForLevel(level);
         TileManager.instance.playerOnlevel++;
+    }
+    public void SkipTutorial()
+    {
+        SkillManager sk = Player.instance.GetSkillManager();
+        sk.AddSkill(sk.GetRandomAbility());
+        while (sk.GetRandomGoldsFromPlayer(1).Count < 1 && sk.GetPlayerMods().Count < 5) // if the player has a legendary OR 4 mods, stop rolling
+            sk.AddSkill(sk.GetRandomModsByChance(1)[0]);
+        DialogueManager.instance.TriggerDialogue("BUG-E_SkipTut");
+        Destroy(gameObject.GetComponent<FindingBuge>());
+        BUGE buge = BUGE.instance;
+        buge.GetComponent<InteractPopup>().SetInteractable(false);
+        buge.GetComponent<InteractPopup>().DestroyPopUp();
+        buge.GetComponent<InteractPopup>().SetText("Right Click to Interact");
     }
     public void RecursiveLayerChange(Transform t, string layerName)
     {

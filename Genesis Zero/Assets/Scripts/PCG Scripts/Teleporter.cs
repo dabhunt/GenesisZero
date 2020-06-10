@@ -10,9 +10,7 @@ public class Teleporter : MonoBehaviour
 	public float destinationZ = 0;
 	public bool BossRoomOverride = false;
 	//Variables for animator
-	public float toWhite = .5f;
-	public float stayWhite = .6f;
-	public float fadeWhite = 1f;
+
 	private Transform player;
 	private GameObject buge;
 	public float portalactivedistance = 9.5f;
@@ -32,61 +30,13 @@ public class Teleporter : MonoBehaviour
 	{
 		if (other.GetComponentInParent<Player>())
 		{
-			//thePlayer.transform.position = destination.position;
-
-			//thePlayer.transform.position = new Vector3(-120, 16, 0);
-			//	if(GetAnimationStateTime()>=1){
-			//d();
-
-			//ani.Play("TeleportAnimation");
 			TeleportWithAnim();
 		}
 	}
-
-
-	private void Update()
-	{
-		//portalAnimation();
-	}
 	public void TeleportWithAnim()
 	{
-		canvas.transform.Find("BlackOverlay").GetComponent<SpriteFade>().color = Color.white;
-		canvas.transform.Find("BlackOverlay").GetComponent<SpriteFade>().FadeIn(toWhite);
-		Camera cam = Camera.main;
-		cam.GetComponentInParent<CinemachineBrain>().enabled = false;
-		cam.transform.position = new Vector3(player.transform.position.x, cam.transform.position.y, cam.transform.position.z);
-		//GameObject.FindGameObjectWithTag("CMcam").GetComponent<CinemachineVirtualCamera>().enabled = false;
-		Invoke("CallTeleportFromAnimation", toWhite);
-		TileManager.instance.GetComponent<TileManager>().mayhemLevelUp();
-	}
-	public void SkipTutorial()
-	{
-		SkillManager sk = Player.instance.GetSkillManager();
-		sk.AddSkill(sk.GetRandomAbility());
-		while (sk.GetRandomGoldsFromPlayer(1).Count < 1 && sk.GetPlayerMods().Count < 5) // if the player has a legendary OR 4 mods, stop rolling
-			sk.AddSkill(sk.GetRandomModsByChance(1)[0]);
-		DialogueManager.instance.TriggerDialogue("BUG-E_SkipTut");
-		Destroy(gameObject.GetComponent<FindingBuge>());
-		buge.GetComponent<InteractPopup>().SetInteractable(false);
-		buge.GetComponent<InteractPopup>().DestroyPopUp();
-		buge.GetComponent<InteractPopup>().SetText("Right Click to Interact");
-	}
-	private void CallTeleportFromAnimation()
-	{
-		Invoke("AfterTele",stayWhite);
-		Teleport();
-		if (this.name.Contains("Skip"))
-			SkipTutorial();
-	}
-	public void AfterTele()
-	{
-		canvas.transform.Find("BlackOverlay").GetComponent<SpriteFade>().FadeOut(fadeWhite);
-	}
-	private void Teleport()
-	{
-		if (TileManager.instance.MayhemMode)
-			MayhemTimer.instance.LevelCleared();
-		StateManager.instance.Teleport(new Vector2(destinationX, destinationY), BossRoomOverride, hasPair);
+		print("teleport being called");
+		StateManager.instance.Teleport(new Vector2(destinationX, destinationY), BossRoomOverride, hasPair, this.name);
 		hasPair = true;
 	}
 	public void SetDestination(Vector2 destination)
@@ -103,7 +53,8 @@ public class Teleporter : MonoBehaviour
     {
 			if(distanceFromPortal()<portalactivedistance){
 				ani.SetBool("Open",true);
-				AudioManager.instance.PlayAttachedSound("SFX_TeleporterAmbient", this.gameObject, .5f, 1, true, 0);
+				if (!AudioManager.instance.IsPlaying("TeleporterAmbient"))
+					AudioManager.instance.PlayAttachedSound("SFX_TeleporterAmbient", this.gameObject, .5f, 1, true, 0);
 				ani.SetBool("Close",false);
 			}
 			if(distanceFromPortal()>portalactivedistance){
