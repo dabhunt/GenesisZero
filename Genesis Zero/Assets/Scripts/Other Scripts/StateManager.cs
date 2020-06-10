@@ -45,7 +45,6 @@ public class StateManager : MonoBehaviour
             //MapData mData = SaveLoadManager.instance.LoadMapData();
             SaveLoadManager.instance.ApplyPlayerData(pData, temp);
         }
-
         temp = StateManager.instance.gameObject;
         restart = temp.GetComponent<Restart>();
         canvas = GameObject.FindWithTag("CanvasUI");

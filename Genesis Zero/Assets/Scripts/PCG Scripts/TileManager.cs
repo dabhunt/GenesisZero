@@ -94,7 +94,6 @@ public class TileManager : MonoBehaviour
 		if (!MayhemMode)
 		{
 			//Level 1
-			PlaceInteractables();
 			int level = 1;
 			currentPos = levelSpacing * level + 22;
 			for (int i = 0; i < numberOfBuildings; ++i)
@@ -115,6 +114,7 @@ public class TileManager : MonoBehaviour
 			}
 			spawnVector = new Vector3(1, 0, 0) * currentPos + new Vector3(0, -2, 0); //spawnVector for tiles
 			GameObject endBuilding2 = (GameObject)GameObject.Instantiate(levelEndCityBuilding, spawnVector, Quaternion.Euler(0, 141.6f, 0));
+			PlaceInteractables();
 		}
 		else
 		{
@@ -144,7 +144,7 @@ public class TileManager : MonoBehaviour
 		//bool AllTeleportersSpawned = false;
 		teleporterInstances = new List<GameObject>();
 		int curMatLevel = 0;
-
+		print("placing Interactables");
 		int LastMatLevel = 0;
 		GameObject newestTele = null;
 		int iter = 0;

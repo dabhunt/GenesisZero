@@ -30,61 +30,63 @@ public class EnemyOverlayShader : MonoBehaviour
     {
         if (GetComponentInParent<Pawn>() == null)
             return;
-        bool isStunned = GetComponentInParent<Pawn>().IsStunned();
-        float ratio = GetComponentInParent<Pawn>().GetHealth().GetValue() / GetComponentInParent<Pawn>().GetHealth().GetMaxValue();
-        hpcurValue = GetComponentInParent<Pawn>().GetHealth().GetValue();
-
-        if (isStunned == true)
+        if (GetComponentInParent<Pawn>())
         {
-            gameObject.GetComponent<Renderer>().material.SetFloat("_StunOnOff", 1);
-        }
-        else
-        {
-            gameObject.GetComponent<Renderer>().material.SetFloat("_StunOnOff", 0);
-        }
-
-        if (hpcurValue < hpvalueLastFrame && hpcurValue > 0)
-        {
-            onOffVal = -12;
-            hpVal = .15f;
-            Invoke("TweenBack", tweenDuration);
-        }
-        if (ratio < lowHealthCutoff && lowHPFlag == false)
-        {
-            lowHPFlag = true;
-            GameObject sparks = VFXManager.instance.PlayEffectReturn("VFX_LoopingSparks", transform.position, 0, "");
-            sparks.transform.SetParent(this.transform);
-            //gameObject.GetComponent<Renderer>().material.SetFloat("_OnOff", -12f);
-            //gameObject.GetComponent<Renderer>().material.SetFloat("_LowHP", .15f);
-        }
-        gameObject.GetComponent<Renderer>().material.SetFloat("_OnOff", onOffVal);
-        gameObject.GetComponent<Renderer>().material.SetFloat("_LowHP", hpVal);
-        hpvalueLastFrame = GetComponentInParent<Pawn>().GetHealth().GetValue();
-        if (ratio <= 0)
-        {
-            if (!DeathSFXPlayed)
+            bool isStunned = GetComponentInParent<Pawn>().IsStunned();
+            float ratio = GetComponentInParent<Pawn>().GetHealth().GetValue() / GetComponentInParent<Pawn>().GetHealth().GetMaxValue();
+            hpcurValue = GetComponentInParent<Pawn>().GetHealth().GetValue();
+            if (isStunned == true)
             {
-                if (AudioManager.instance != null)
-                {
-                    AudioManager.instance.PlayRandomSFXType("EnemyDeath", this.gameObject, .9f, 1.2f, 7f);
-                }
-                DeathSFXPlayed = true;
-            }
-            if (!dissolveComplete)
-            {
-                //float deathDuration = GetComponentInParent<Pawn>().Stats.deathDuration;
-                gameObject.GetComponent<Renderer>().material.SetFloat("_DissolveEffect", 1);
-                Invoke("FinishDissolve", delayBeforeDissolving);
+                gameObject.GetComponent<Renderer>().material.SetFloat("_StunOnOff", 1);
             }
             else
             {
-                float effectVal = 1;
-                CurrentTimeEffect = Mathf.Clamp(CurrentTimeEffect + (1 * Time.deltaTime / GetComponentInParent<Pawn>().Stats.deathDuration), 0, 1);
-                gameObject.GetComponent<Renderer>().material.SetFloat("_TimeEffect", CurrentTimeEffect);
-                gameObject.GetComponent<Renderer>().material.SetFloat("_DissolveEffect", effectVal);
+                gameObject.GetComponent<Renderer>().material.SetFloat("_StunOnOff", 0);
             }
+            if (hpcurValue < hpvalueLastFrame && hpcurValue > 0)
+            {
+                onOffVal = -12;
+                hpVal = .15f;
+                Invoke("TweenBack", tweenDuration);
+            }
+            if (ratio < lowHealthCutoff && lowHPFlag == false)
+            {
+                lowHPFlag = true;
+                GameObject sparks = VFXManager.instance.PlayEffectReturn("VFX_LoopingSparks", transform.position, 0, "");
+                sparks.transform.SetParent(this.transform);
+                //gameObject.GetComponent<Renderer>().material.SetFloat("_OnOff", -12f);
+                //gameObject.GetComponent<Renderer>().material.SetFloat("_LowHP", .15f);
+            }
+            gameObject.GetComponent<Renderer>().material.SetFloat("_OnOff", onOffVal);
+            gameObject.GetComponent<Renderer>().material.SetFloat("_LowHP", hpVal);
+            hpvalueLastFrame = GetComponentInParent<Pawn>().GetHealth().GetValue();
+            if (ratio <= 0)
+            {
+                if (!DeathSFXPlayed)
+                {
+                    if (AudioManager.instance != null)
+                    {
+                        AudioManager.instance.PlayRandomSFXType("EnemyDeath", this.gameObject, .9f, 1.2f, 7f);
+                    }
+                    DeathSFXPlayed = true;
+                }
+                if (!dissolveComplete)
+                {
+                    //float deathDuration = GetComponentInParent<Pawn>().Stats.deathDuration;
+                    gameObject.GetComponent<Renderer>().material.SetFloat("_DissolveEffect", 1);
+                    Invoke("FinishDissolve", delayBeforeDissolving);
+                }
+                else
+                {
+                    float effectVal = 1;
+                    CurrentTimeEffect = Mathf.Clamp(CurrentTimeEffect + (1 * Time.deltaTime / GetComponentInParent<Pawn>().Stats.deathDuration), 0, 1);
+                    gameObject.GetComponent<Renderer>().material.SetFloat("_TimeEffect", CurrentTimeEffect);
+                    gameObject.GetComponent<Renderer>().material.SetFloat("_DissolveEffect", effectVal);
+                }
 
+            }
         }
+        
 
     }
     public void TweenBack()

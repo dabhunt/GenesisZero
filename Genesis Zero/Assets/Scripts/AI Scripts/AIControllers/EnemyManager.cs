@@ -56,6 +56,10 @@ public class EnemyManager : MonoBehaviour
         }
         print("new difficulty: " + Difficulty);
     }
+    public void ResetDifficulty(float newdif)
+    {
+        Difficulty = newdif;
+    }
 }
 
 // Class for properties that are multiplied by certain amounts based on the difficulty

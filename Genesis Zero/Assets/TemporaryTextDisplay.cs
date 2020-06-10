@@ -25,7 +25,8 @@ public class TemporaryTextDisplay : MonoBehaviour
     void Start()
     {
         txt = GetComponent<TextMeshProUGUI>();
-        txt.alpha = 0;
+        txt.DOFade(0, 0.1f);
+        txt.enabled = false;
     }
     public void ShowText(string text, float duration, float tweentime)
     {
