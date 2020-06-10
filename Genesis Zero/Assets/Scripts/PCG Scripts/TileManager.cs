@@ -44,7 +44,7 @@ public class TileManager : MonoBehaviour
 	[Range(0, 1)]
 	public float SpawnChance = .1f;
 	public int playerOnlevel = 0;
-	
+	public TemporaryTextDisplay tempTextDisplay;
 	//Private Variables
 	private float currentPos = 22.0f;
 	private float tileLength = 22.0f;
@@ -57,7 +57,6 @@ public class TileManager : MonoBehaviour
 	private Sprite[] ads;
 	private GameObject LevelParent;
 	List<List<GameObject>> guideArrows = new List<List<GameObject>>();
-	
 	private void Awake()
 	{
 		if (instance == null)
@@ -131,8 +130,9 @@ public class TileManager : MonoBehaviour
     }
 	private void DelayedStart()
 	{
-		StateManager.instance.Teleport( new Vector2(levelSpacing + 5,40) , false, true);
-		TemporaryTextDisplay.instance.ShowText("Clear as many levels as possible", 5, .75f);
+		//StateManager.instance.Teleport( new Vector2(levelSpacing + 5,40) , false, true);
+		GameObject.FindGameObjectWithTag("Teleporter").GetComponent<Teleporter>().SkipTutorial();
+		tempTextDisplay. ShowText("Clear as many levels as possible without dying", 5, .75f);
 	}
 	public int GetSeed()
 	{
@@ -469,8 +469,8 @@ public class TileManager : MonoBehaviour
 		if (MayhemMode)
 		{
 			//Clear Previous Level
-
 			AudioManager.instance.PlaySongsForLevel(Random.Range(0, 4));
+			EnemyManager.instance.DestroyAll();
 			Destroy(LevelParent);
 			LevelParent = new GameObject("LevelParentInstance");
 			LevelParent.transform.SetParent(transform);

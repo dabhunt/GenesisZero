@@ -31,6 +31,14 @@ public class EnemyManager : MonoBehaviour
     {
         AllEnemies.Clear();
     }
+    public void DestroyAll()
+    {
+        foreach (AIController enemy in AllEnemies)
+        {
+            enemy.GetComponent<SpawnOnDestroy>().quitting = true;
+            Destroy(enemy.gameObject);
+        }
+    }
     // Increase enemy difficulty, based on the current difficulty multiplied by the number passed in.
     // Ex: 1.3 passed in makes enemies 30% more difficult
     public void ModifyDifficultyMulti(float multiplier)
@@ -40,7 +48,6 @@ public class EnemyManager : MonoBehaviour
         int i = 0;
         foreach (AIController enemy in AllEnemies)
         {
-
             float oldHP = enemy.GetHealth().GetValue();
             enemy.SetMaxHealth(oldHP * 1.2f);//health can scale exponentially
             if (i == 0)

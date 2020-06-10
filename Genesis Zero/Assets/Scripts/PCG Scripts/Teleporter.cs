@@ -60,7 +60,7 @@ public class Teleporter : MonoBehaviour
 		
 		TileManager.instance.GetComponent<TileManager>().mayhemLevelUp();
 	}
-	private void SkipTutorial()
+	public void SkipTutorial()
 	{
 		SkillManager sk = Player.instance.GetSkillManager();
 		sk.AddSkill(sk.GetRandomAbility());

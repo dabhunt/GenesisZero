@@ -9,8 +9,8 @@ public class TemporaryTextDisplay : MonoBehaviour
     //float defaultDuration = 4f;
     //float defaultTweenTime = .75f;
     TextMeshProUGUI txt;
-    public static TemporaryTextDisplay instance;
     private float tween;
+    public static TemporaryTextDisplay instance = null;
     private void Awake()
     {
         if (instance == null)
