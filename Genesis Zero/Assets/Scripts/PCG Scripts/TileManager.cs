@@ -123,6 +123,7 @@ public class TileManager : MonoBehaviour
 
 			Invoke("DelayedStart", .5f);
 			mayhemLevelUp();
+			mayhemLevelUp();
 		}
 
 		//Placemat PCG Pass
@@ -481,10 +482,9 @@ public class TileManager : MonoBehaviour
 			for (int i = 0; i < numberOfBuildings; ++i)
 			{
 				generateBuilding(Random.Range(minBuildingWidth, maxBuildingWidth), Random.Range(minBuildingTileCount, maxBuildingTileCount), level);
-			}
-			Vector3 spawnVector = new Vector3(1, 0, 0) * currentPos + new Vector3(0, -2, 0); //spawnVector for tiles
-																							 //GameObject endBuilding = (GameObject)GameObject.Instantiate(levelEndCityBuilding, spawnVector, Quaternion.Euler(0, 141.6f, 0));
-			PlaceInteractables();																				 //the final level of PCG needs this for the guidance arrows
+			} //the final level of PCG needs this for the guidance arrows
+			Vector3 spawnVector = new Vector3(1, 0, 0) * currentPos + new Vector3(0, -2, 0); //spawnVector for tiles																		 //GameObject endBuilding = (GameObject)GameObject.Instantiate(levelEndCityBuilding, spawnVector, Quaternion.Euler(0, 141.6f, 0));
+			PlaceInteractables();																				
 			foreach (GameObject tele in GameObject.FindGameObjectsWithTag("Teleporter"))
 			{
 				if (tele.name.Contains("Mayhem"))

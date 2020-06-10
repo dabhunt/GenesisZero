@@ -29,6 +29,7 @@ public class TemporaryTextDisplay : MonoBehaviour
     }
     public void ShowText(string text, float duration, float tweentime)
     {
+        txt.enabled = true;
         txt.text = text;
         tween = tweentime;
         txt.DOFade(1, tweentime);
@@ -37,5 +38,11 @@ public class TemporaryTextDisplay : MonoBehaviour
     public void FadeText()
     {
         txt.DOFade(0, tween);
+        Invoke("Disable", tween);
     }
+    public void Disable()
+    {
+        txt.enabled = false;
+    }
+
 }

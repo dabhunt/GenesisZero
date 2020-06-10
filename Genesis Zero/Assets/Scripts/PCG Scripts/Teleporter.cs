@@ -57,7 +57,6 @@ public class Teleporter : MonoBehaviour
 		cam.transform.position = new Vector3(player.transform.position.x, cam.transform.position.y, cam.transform.position.z);
 		//GameObject.FindGameObjectWithTag("CMcam").GetComponent<CinemachineVirtualCamera>().enabled = false;
 		Invoke("CallTeleportFromAnimation", toWhite);
-		
 		TileManager.instance.GetComponent<TileManager>().mayhemLevelUp();
 	}
 	public void SkipTutorial()
