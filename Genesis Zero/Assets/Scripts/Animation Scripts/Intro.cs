@@ -23,9 +23,8 @@ public class Intro : MonoBehaviour
     private void Start()
     {
         cardQueue = new Queue<IntroCard>();
-        if (SaveLoadManager.instance.newGame == true)
+        if (TileManager.instance.MayhemMode == false && SaveLoadManager.instance.newGame == true)
         {
-
             IntroCard[] objs = Resources.LoadAll<IntroCard>("IntroCards");
             for (int i = 0; i < objs.Length; i++)
             {
@@ -36,7 +35,7 @@ public class Intro : MonoBehaviour
             NextCard();
             GameInputManager.instance.DisablePlayerControls();
         }
-        else { EndIntro();}
+        else { EndIntro(); }
     }
     public void NextCard()
     {
@@ -90,7 +89,7 @@ public class Intro : MonoBehaviour
         gameObject.transform.parent.Find("BlackOverlay").GetComponent<SpriteFade>().FadeOut(4f);
         if (CutsceneController.instance)
         {
-            if (SaveLoadManager.instance.newGame == true)
+            if (TileManager.instance.MayhemMode == false && SaveLoadManager.instance.newGame == true)
                 CutsceneController.instance.IntroCutscene();
             else
                 CutsceneController.instance.Reset();

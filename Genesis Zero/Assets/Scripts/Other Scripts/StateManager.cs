@@ -233,8 +233,16 @@ public class StateManager : MonoBehaviour
             player.GetComponent<UniqueEffects>().CombatChangesMusic = false;
             level = 3;
         }
+        if (TileManager.instance.MayhemMode)
+        {
+            MayhemTimer.instance.IncrementClearedLevels();
+            EnemyManager.ModifyDifficultyMulti(1); //mayhem mode increase
+        }
+        else 
+        {
+            EnemyManager.ModifyDifficultyMulti(2f); //regular mode
+        }
         Player.instance.Heal(50);
-        EnemyManager.ModifyDifficultyMulti(2f);
         Camera.main.GetComponentInParent<CinemachineBrain>().enabled = true;
         BUGE.instance.transform.position = player.transform.position;
         BUGE.instance.FollowingPlayer(true);

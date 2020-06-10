@@ -62,6 +62,14 @@ public class StartMenu : MonoBehaviour
         mainMenuScreen.SetActive(false);
         optionsScreen.SetActive(true);
     }
+    public void MayhemButton()
+    {
+        mainMenuScreen.SetActive(false);
+        loadingScreen.SetActive(true);
+        SaveLoadManager.instance.DeleteSaveFiles();
+        sceneName = "MayhemMode";
+        LoadScene(true);
+    }
     //Onclick event for Quit Button
     public void QuitButton()
     {

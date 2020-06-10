@@ -98,6 +98,10 @@ public class DeactivateDistant : MonoBehaviour
     {
         deactivateDist = num;
     }
+	public void SetFirstCheck (bool b)
+	{
+		firstCheck = b;
+	}
     //public void SetTagDistance( float newdist)
     //{
 

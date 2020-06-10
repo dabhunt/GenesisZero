@@ -651,6 +651,10 @@ public class AIController : Pawn
         }
         return Vector3.right;
     }
+    public virtual void SetMaxHealth(float newmax)
+    {
+        GetHealth().SetMaxValue(newmax);
+    }
 
     /**
      * Returns the launching point for projectiles

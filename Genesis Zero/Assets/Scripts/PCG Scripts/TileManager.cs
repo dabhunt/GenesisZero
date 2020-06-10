@@ -7,6 +7,7 @@ public class TileManager : MonoBehaviour
 	//Public Variables (Visible in Inspector)
 	[Header("Tile Spawning")]
 	public static TileManager instance;
+	public bool MayhemMode = false;
 	public int maxBuildingWidth = 5;
 	public int minBuildingWidth = 2;
 	public int maxBuildingTileCount = 24;
@@ -43,6 +44,7 @@ public class TileManager : MonoBehaviour
 	[Range(0, 1)]
 	public float SpawnChance = .1f;
 	public int playerOnlevel = 0;
+	
 	//Private Variables
 	private float currentPos = 22.0f;
 	private float tileLength = 22.0f;
@@ -53,7 +55,9 @@ public class TileManager : MonoBehaviour
 	private List<GameObject> teleporterInstances;
 	private GameObject[] betweenAreas;
 	private Sprite[] ads;
+	private GameObject LevelParent;
 	List<List<GameObject>> guideArrows = new List<List<GameObject>>();
+	
 	private void Awake()
 	{
 		if (instance == null)
@@ -73,8 +77,11 @@ public class TileManager : MonoBehaviour
 		guideArrows.Add(new List<GameObject>());//level 2
 		interactableSpawnChances = new[]{ godHeadSpawnChance, chestSpawnChance, merchantSpawnChance, scrapConverterSpawnChance, teleSpawnChance, guideArrowSpawnChance};
 		endBuildings = new List<GameObject>();
+		LevelParent = new GameObject("LevelParentInstance");
+		LevelParent.transform.SetParent(transform);
+		
 		tilePrefabs = industrialTilePrefabs;
-		//tilePrefabs = cityTilePrefabs;
+		
 		if (SaveLoadManager.instance.newGame == true)
 		{
 
@@ -85,34 +92,50 @@ public class TileManager : MonoBehaviour
 		{
 			seedValue = SaveLoadManager.instance.LoadMapData().seed;
 		}
-		//Level 1
-		int level = 1;
-		currentPos = levelSpacing * level + 22;
-		for (int i = 0; i < numberOfBuildings; ++i)
-		{
-			generateBuilding(Random.Range(minBuildingWidth, maxBuildingWidth), Random.Range(minBuildingTileCount, maxBuildingTileCount), level);
-		}
-		Vector3 spawnVector = new Vector3(1, 0, 0) * currentPos + new Vector3(0, -2, 0); //spawnVector for tiles
-		GameObject endBuilding = (GameObject)GameObject.Instantiate(levelEndCityBuilding, spawnVector, Quaternion.Euler(0, 141.6f, 0));
 		
-		//tilePrefabs = industrialTilePrefabs;
-		tilePrefabs = cityTilePrefabs;
-		//Level 2
-		++level;
-		currentPos = levelSpacing*level + 22;
-		for (int i = 0; i < numberOfBuildings; ++i)
+		if (!MayhemMode)
 		{
-			generateBuilding(Random.Range(minBuildingWidth, maxBuildingWidth), Random.Range(minBuildingTileCount, maxBuildingTileCount), level);
+			//Level 1
+			
+			int level = 1;
+			currentPos = levelSpacing * level + 22;
+			for (int i = 0; i < numberOfBuildings; ++i)
+			{
+				generateBuilding(Random.Range(minBuildingWidth, maxBuildingWidth), Random.Range(minBuildingTileCount, maxBuildingTileCount), level);
+			}
+			Vector3 spawnVector = new Vector3(1, 0, 0) * currentPos + new Vector3(0, -2, 0); //spawnVector for tiles
+			GameObject endBuilding = (GameObject)GameObject.Instantiate(levelEndCityBuilding, spawnVector, Quaternion.Euler(0, 141.6f, 0));
+			
+
+			tilePrefabs = cityTilePrefabs;
+			
+			//Level 2
+			++level;
+			currentPos = levelSpacing*level + 22;
+			for (int i = 0; i < numberOfBuildings; ++i)
+			{
+				generateBuilding(Random.Range(minBuildingWidth, maxBuildingWidth), Random.Range(minBuildingTileCount, maxBuildingTileCount), level);
+			}
+			spawnVector = new Vector3(1, 0, 0) * currentPos + new Vector3(0, -2, 0); //spawnVector for tiles
+			GameObject endBuilding2 = (GameObject)GameObject.Instantiate(levelEndCityBuilding, spawnVector, Quaternion.Euler(0, 141.6f, 0));
 		}
-		spawnVector = new Vector3(1, 0, 0) * currentPos + new Vector3(0, -2, 0); //spawnVector for tiles
-		GameObject endBuilding2 = (GameObject)GameObject.Instantiate(levelEndCityBuilding, spawnVector, Quaternion.Euler(0, 141.6f, 0));
-		//Level 3
-		//++level;
-		//currentPos = levelSpacing*level + 22;
-		//for (int i = 0; i < numberOfBuildings; ++i)
-		//{
-		//generateBuilding(Random.Range(minBuildingWidth, maxBuildingWidth), Random.Range(minBuildingTileCount, maxBuildingTileCount), level);
-		//}
+		else
+		{
+			//Mayhem Mode	
+			betweenAreas = Resources.LoadAll<GameObject>("InbetweenAreas");
+			StateManager.instance.Teleport( new Vector2(levelSpacing + 5,40) , false);
+			int level = 1;
+			currentPos = levelSpacing * level + 22;
+			for (int i = 0; i < numberOfBuildings; ++i)
+			{
+				generateBuilding(Random.Range(minBuildingWidth, maxBuildingWidth), Random.Range(minBuildingTileCount, maxBuildingTileCount), level);
+			}
+			Vector3 spawnVector = new Vector3(1, 0, 0) * currentPos + new Vector3(0, -2, 0); //spawnVector for tiles
+			GameObject endBuilding = (GameObject)GameObject.Instantiate(levelEndCityBuilding, spawnVector, Quaternion.Euler(0, 141.6f, 0));
+			
+			//mayhemLevelUp();
+		}
+		
 		//Placemat PCG Pass
 		levelTracking = levelSpacing;
 		//bool AllTeleportersSpawned = false;
@@ -184,7 +207,6 @@ public class TileManager : MonoBehaviour
 				}
 				iter++; //keep track of how many cubbies are checked
 			}
-
 		}
 		//the final level of PCG needs this for the guidance arrows
 		foreach (GameObject tele in GameObject.FindGameObjectsWithTag("Teleporter"))
@@ -209,22 +231,40 @@ public class TileManager : MonoBehaviour
 	}
 	private GameObject NewTeleporter(GameObject mat)
 	{
-		GameObject newTele = Instantiate(interactablePrefabs[4]) as GameObject;
-		teleporterInstances.Add(newTele);
-		if (teleporterInstances.Count < 2)
+		if(!MayhemMode)
 		{
-			newTele.name = "Teleporter in Level " + (teleporterInstances.Count);
-			levelTracking += levelSpacing;
-			newTele.GetComponent<Teleporter>().SetDestination(new Vector2(levelTracking + 5, 40));
-			teleporterInstances[teleporterInstances.Count - 1].transform.position = mat.transform.position;
+			GameObject newTele = Instantiate(interactablePrefabs[4]) as GameObject;
+			teleporterInstances.Add(newTele);
+			
+			if (teleporterInstances.Count < 2)
+			{
+				newTele.name = "Teleporter in Level " + (teleporterInstances.Count);
+				levelTracking += levelSpacing;
+				newTele.GetComponent<Teleporter>().SetDestination(new Vector2(levelTracking + 5, 40));
+				teleporterInstances[teleporterInstances.Count - 1].transform.position = mat.transform.position;
+			}
+			else
+			{
+				newTele.name = "Teleporter to Boss Room";
+				teleporterInstances[teleporterInstances.Count - 1].transform.position = mat.transform.position;
+				newTele.GetComponent<Teleporter>().BossRoomOverride = true; //makes this TP go to boss room instead
+			}
+			
+			return newTele;
 		}
 		else
 		{
-			newTele.name = "Teleporter to Boss Room";
+			if (teleporterInstances.Count < 1)
+			{
+				GameObject newTele = Instantiate(interactablePrefabs[4]) as GameObject;
+				newTele.name = "Mayhem Teleporter";
+				teleporterInstances.Add(newTele);
+			}
+			teleporterInstances[teleporterInstances.Count - 1].GetComponent<Teleporter>().SetDestination(new Vector2(levelSpacing + 5, 40));
 			teleporterInstances[teleporterInstances.Count - 1].transform.position = mat.transform.position;
-			newTele.GetComponent<Teleporter>().BossRoomOverride = true; //makes this TP go to boss room instead
+			
+			return teleporterInstances[teleporterInstances.Count - 1];
 		}
-		return newTele;
 	}
 	public void SetSeed(int num)
 	{
@@ -261,7 +301,7 @@ public class TileManager : MonoBehaviour
 				combiner.DeactivateCombinedChildren = true;
 				combiner.CombineMeshes(false);
 				newTile.GetComponent<MeshRenderer>().receiveShadows = false;
-				newTile.transform.SetParent(transform);
+				newTile.transform.SetParent(LevelParent.transform);
 				newTile.transform.localRotation = Quaternion.Euler(0, 180, 0);
 			}
 			//Transform Position & Update
@@ -309,7 +349,7 @@ public class TileManager : MonoBehaviour
 			{
 				//Instantiate & Spawn Rooftop
 				GameObject newRooftop = Instantiate(rooftopPrefabs[Random.Range(0, rooftopPrefabs.Length)]) as GameObject;
-				newRooftop.transform.SetParent(transform);
+				newRooftop.transform.SetParent(LevelParent.transform);
 				spawnVector.z += 5.2f;
 				newRooftop.transform.position = spawnVector;
 				Vector3 newVector = newRooftop.transform.position;
@@ -385,6 +425,7 @@ public class TileManager : MonoBehaviour
 		float sOffset = (spacing  * randMulti);
 		int rng = Random.Range(0, betweenAreas.Length - 1);
 		GameObject areaObj = Instantiate(betweenAreas[rng]) as GameObject;
+		areaObj.transform.SetParent(LevelParent.transform);
 		InbetweenArea area = areaObj.GetComponent<InbetweenArea>();
 		areaObj.transform.position = new Vector3(oldBuildingX - sOffset , Random.Range(0, area.offset.y), Random.Range(10, area.offset.z)); // randomize location somewhat
 		foreach (GameObject bill in area.billboards)
@@ -405,6 +446,7 @@ public class TileManager : MonoBehaviour
 		{
 			GameObject newEnemy = Instantiate(enemyPrefabs[Random.Range(0, enemyPrefabs.Length)]) as GameObject;
 			newEnemy.transform.position = spawnVector;
+			newEnemy.transform.SetParent(LevelParent.transform);
 
 			--amount;
 		}
@@ -412,5 +454,43 @@ public class TileManager : MonoBehaviour
 		spawnVector.x += 11;
 		spawnVector.z += 2;
 		return spawnVector;
+	}
+	
+	public void mayhemLevelUp()
+	{
+		if (MayhemMode)
+		{
+			//Clear Previous Level
+			Destroy(LevelParent);
+			LevelParent = new GameObject("LevelParentInstance");
+			LevelParent.transform.SetParent(transform);
+			
+			//Construct New Level
+			int level = 1;
+			currentPos = levelSpacing * level + 22;
+			for (int i = 0; i < numberOfBuildings; ++i)
+			{
+				generateBuilding(Random.Range(minBuildingWidth, maxBuildingWidth), Random.Range(minBuildingTileCount, maxBuildingTileCount), level);
+			}
+			Vector3 spawnVector = new Vector3(1, 0, 0) * currentPos + new Vector3(0, -2, 0); //spawnVector for tiles
+																							 //GameObject endBuilding = (GameObject)GameObject.Instantiate(levelEndCityBuilding, spawnVector, Quaternion.Euler(0, 141.6f, 0));
+																							 //the final level of PCG needs this for the guidance arrows
+			foreach (GameObject tele in GameObject.FindGameObjectsWithTag("Teleporter"))
+			{
+				if (tele.name.Contains("mayhem"))
+				{
+					int z = 0;
+					//print("level 2 tele found");
+					foreach (GameObject arrow in guideArrows[0])
+					{
+						//print("Arrow " + z); 
+						if (arrow != null)
+							arrow.transform.LookAt(teleporterInstances[teleporterInstances.Count-1].transform); //make all arrows point at the tele for the level just finished
+						z++;
+					}
+				}
+			}
+			GetComponent<DeactivateDistant>().SetFirstCheck(true);
+		}
 	}
 }
