@@ -30,7 +30,8 @@ public class StartMenu : MonoBehaviour
         GameObject conbttn = menuButtons.transform.Find("Continue").gameObject;
         if (SaveLoadManager.instance.SaveExists())
         {
-            conbttn.SetActive(true);
+            // conbttn.SetActive(true);
+            conbttn.SetActive(false);
         }
         else
         {

@@ -40,13 +40,14 @@ public class StateManager : MonoBehaviour
     }
     private void Start()
     {
-        GameObject temp = Player.instance.gameObject;
+        GameObject temp = GameObject.FindGameObjectWithTag("Player");
         player = Player.instance;
         if (!SaveLoadManager.instance.newGame)
         {
             PlayerData pData = SaveLoadManager.instance.LoadPlayerData();
             //MapData mData = SaveLoadManager.instance.LoadMapData();
-            SaveLoadManager.instance.ApplyPlayerData(pData, temp);
+            print("loading player data");
+            SaveLoadManager.instance.ApplyPlayerData(pData);
         }
         temp = StateManager.instance.gameObject;
         restart = temp.GetComponent<Restart>();

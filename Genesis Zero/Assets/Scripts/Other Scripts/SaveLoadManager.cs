@@ -147,9 +147,9 @@ public class SaveLoadManager : MonoBehaviour
 
     /* Applying saved player data to current game session.
      */
-    public void ApplyPlayerData(PlayerData data, GameObject playerObj)
+    public void ApplyPlayerData(PlayerData data)
     {
-        Player player = playerObj.GetComponent<Player>();
+        Player player = Player.instance;
         SkillManager sM = player.GetSkillManager();
         player.GetHealth().SetValue(data.health);
         player.GetDamage().SetValue(data.damage);
@@ -171,7 +171,8 @@ public class SaveLoadManager : MonoBehaviour
             sM.AddSkill(sObject);
             sM.SetCountByName(data.skillList[i], data.skillStacks[i]);
         }
-        playerObj.transform.position = new Vector3(data.playerPosition[0], data.playerPosition[1], data.playerPosition[2]);
+        //print("x value" + data.playerPosition[0]);
+        Player.instance.gameObject.transform.position = new Vector3(data.playerPosition[0], data.playerPosition[1], data.playerPosition[2]);
     }
 
     /* Grabs map data from current session for saving.
