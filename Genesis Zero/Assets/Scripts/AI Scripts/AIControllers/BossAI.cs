@@ -14,7 +14,7 @@ public class BossAI : AIController
 	public VisualEffect flamethrower;
 
 	public enum State { Headbutt, Firebreath, Pulse, Wild, MovingAway, MovingCloser, Centering, Cooling, Repositioning, Setting, PerformingAttack, Stunned }
-	protected State bossstate = State.MovingAway; // Current behavior state
+	protected State bossstate = State.MovingCloser; // Current behavior state
 	private bool secondphase;
 	[HideInInspector]
 	public bool animating, boxanimating;
@@ -72,8 +72,11 @@ public class BossAI : AIController
 
 	private GameObject camera;
 	private Color color;
-
+	public bool falling = false;
 	private Vector3 back, foward, up, down;
+	private GameObject darkestPost;
+	private GameObject bossPost;
+	private bool posthasPlayed;
 	protected override void Awake()
 	{
 		zdepth = transform.position.z;
@@ -94,7 +97,9 @@ public class BossAI : AIController
 		back = Vector3.back; foward = Vector3.forward; up = Vector3.up; down = Vector3.down;
 		camera = Camera.main.gameObject;
 		LastZDepth = transform.position.z;
-
+		darkestPost = camera.transform.parent.Find("DarkestPP").gameObject;
+		darkestPost.SetActive(false);
+		bossPost = camera.transform.parent.Find("BossRoomPostProcessing").gameObject;
 		flamethrower.Stop();
 	}
 
@@ -114,6 +119,7 @@ public class BossAI : AIController
 			Camera.main.GetComponent<BasicCameraZoom>().ZoomOnCombat(false);
 			Player.instance.GetComponent<UniqueEffects>().CombatChangesMusic = false;
 			initiated = true;
+			falling = true;
 		}
 		if (initiated)
 		{
@@ -142,7 +148,7 @@ public class BossAI : AIController
 					AudioManager.instance.PlaySound("SFX_BossRoar(0)");
 					StartCoroutine(FlickerLights(1, 3, 1f, false));//min delay, max delay, total duration to flickerlights, endDark bool
 					camera.transform.DOShakePosition(duration: 1.25f, strength: 1, vibrato: 5, randomness: 60, snapping: false, fadeOut: true);
-					Camera.main.GetComponent<BasicCameraZoom>().ChangeFieldOfView(30, 1.2f);
+					camera.GetComponent<BasicCameraZoom>().ChangeFieldOfView(30, 1.2f);
 					GameObject canvas = GameObject.FindGameObjectWithTag("CanvasUI");
 					healthbar = canvas.transform.Find("BossHealthbar").gameObject;
 					healthbar.SetActive(true);
@@ -1046,14 +1052,17 @@ public class BossAI : AIController
 	//	}
 	//	SetPostProcessing(endDark);
 	//}
-	public IEnumerator FlickerLights(float minSpeed, float maxSpeed, float totalDuration, bool endDark)
+	public IEnumerator FlickerLights(float minSpeed, float maxSpeed, float totalDuration, bool loopAfter )
 	{
+		//camera.transform.Find("StunEffect").gameObject.SetActive(true);
 		float start = Time.realtimeSinceStartup;
 		GameObject pp = camera.transform.parent.Find("BossRoomPostProcessing").gameObject;
+		darkestPost.SetActive(false);
 		pp.SetActive(true);
 		Animation lightsOff = pp.GetComponent<Animation>();
 		lightsOff["PostProcessGetDark"].speed = Random.Range(minSpeed, maxSpeed);
 		lightsOff["PostProcessGetDark"].wrapMode = WrapMode.PingPong;
+		lightsOff.Play("PostProcessGetBrighter");
 		lightsOff.Play("PostProcessGetDark");
 		while (Time.realtimeSinceStartup < start + totalDuration)
 		{
@@ -1061,8 +1070,11 @@ public class BossAI : AIController
 			lightsOff["PostProcessGetDark"].speed = Random.Range(minSpeed, maxSpeed);
 			//TogglePostProcessing();
 		}
+		//camera.transform.Find("StunEffect").gameObject.SetActive(false);
 		lightsOff["PostProcessGetDark"].wrapMode = WrapMode.Once;
 		lightsOff["PostProcessGetBrighter"].wrapMode = WrapMode.Once;
+		darkestPost.SetActive(true);
+		darkestPost.GetComponent<Animation>().Play("darkestFadeOut");
 		lightsOff.Play("PostProcessGetBrighter");
 		//SetPostProcessing(endDark);
 	}
@@ -1074,6 +1086,7 @@ public class BossAI : AIController
 		lightsOff["PostProcessGetDark"].wrapMode = WrapMode.PingPong;
 		lightsOff["PostProcessGetDark"].speed = loopSpeed;
 		lightsOff.Play("PostProcessGetDark");
+		GetComponent<BossLighting>().AnimateAll(true, 1);
 	}
 	//swap the active states of postprocessing for boss room
 	public void TogglePostProcessing()

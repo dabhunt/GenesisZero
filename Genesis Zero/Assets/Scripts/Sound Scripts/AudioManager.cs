@@ -786,7 +786,7 @@ public class AudioManager : MonoBehaviour
 			{
 				found = true;
 				soundPlayerChilds[i].GetComponent<AudioSource>().Stop();
-				Destroy(soundPlayerChilds[i]);
+				//Destroy(soundPlayerChilds[i]);
 			}
 		}
 		if (found == false)

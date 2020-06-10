@@ -15,7 +15,7 @@ public class DestroyOnPlayerEnter : MonoBehaviour
 	public float delay;
 
 	private bool triggered;
-
+	public bool getDarkAfterTrigger = false;
 	public float lingertime; // Pulls player towards the center x -axis for the linger time.
 	private bool destroyed;
 
@@ -51,6 +51,15 @@ public class DestroyOnPlayerEnter : MonoBehaviour
 		if (Objects.Count > 0 && other.GetComponentInParent<Player>() && triggered == false)
 		{
 			triggered = true;
+			if (getDarkAfterTrigger)
+			{
+				GameObject cam = Camera.main.transform.parent.gameObject;
+				GameObject darkestPost = cam.transform.Find("DarkestPP").gameObject;
+				darkestPost.SetActive(true);
+				darkestPost.GetComponent<Animation>()["darkestFadeIn"].speed = .5f;
+				darkestPost.GetComponent<Animation>().Play("darkestFadeIn");
+				print("darkness fades in");
+			}
 		}
 	}
 

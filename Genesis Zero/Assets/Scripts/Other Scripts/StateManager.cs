@@ -213,12 +213,17 @@ public class StateManager : MonoBehaviour
         Mathf.Clamp(level, 0, 3);
         return level;
     }
-    public void Teleport(Vector2 destination, bool bossRoomOverride)
+    public void Teleport(Vector2 destination, bool bossRoomOverride, bool hasPair)
     {
         AudioManager.instance.PlaySound("SFX_Teleport");
-        GameObject fakeTele = Instantiate(TileManager.instance.interactablePrefabs[4]) as GameObject;//spawn a fake teleporter where ever the teleporter takes you
-        fakeTele.transform.position = destination;
-        Destroy(fakeTele.GetComponent<Teleporter>());
+        if (!hasPair) //if the teleporter doesn't already have a pair
+        {
+            GameObject newTele = Instantiate(TileManager.instance.interactablePrefabs[4]) as GameObject;//spawn a teporter where ever the teleporter takes you
+            newTele.transform.position = destination + new Vector2(-4, 4);
+            newTele.GetComponent<Teleporter>().SetDestination(player.transform.position + new Vector3(4,0,0));
+            newTele.GetComponent<Teleporter>().hasPair = true;
+        }
+        //Destroy(fakeTele.GetComponent<Teleporter>());
         StateManager.instance.InTutorial = false;
         Player.instance.transform.position = new Vector3(destination.x, destination.y, 0);
         int level = StateManager.instance.GetCurrentPlayerLevel();
