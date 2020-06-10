@@ -64,8 +64,9 @@ public class MayhemTimer : MonoBehaviour
     }
     public void BumpDifficulty()
     {
-        EnemyManager.ModifyDifficultyMulti(1.2f);
+        EnemyManager.ModifyDifficultyMulti(1);
         curTimeLeft = resetTime * decreasePercent;
+        curTimeLeft = Mathf.Clamp(curTimeLeft, 30, 60);
         countdownText.text = curTimeLeft.ToString(Strformat);
     }
 }

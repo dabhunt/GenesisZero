@@ -231,7 +231,7 @@ public class StateManager : MonoBehaviour
         if (TileManager.instance.MayhemMode)
         {
             MayhemTimer.instance.IncrementClearedLevels();
-            EnemyManager.ModifyDifficultyMulti(1.2f); //mayhem mode increase
+            EnemyManager.ModifyDifficultyMulti(1); //mayhem mode increase
         }
         else 
         {

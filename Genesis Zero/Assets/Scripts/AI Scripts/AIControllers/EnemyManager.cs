@@ -35,13 +35,19 @@ public class EnemyManager : MonoBehaviour
     // Ex: 1.3 passed in makes enemies 30% more difficult
     public static void ModifyDifficultyMulti(float multiplier)
     {
-        float newDificulty = Difficulty * multiplier;
+        float newDificulty = Difficulty + multiplier; //no longer multiplier because that doesn't scale well for most attributes
         Difficulty = Mathf.Clamp(newDificulty, 1f, MaxDifficulty);
+        int i = 0;
         foreach (AIController enemy in AllEnemies)
         {
+
             float oldHP = enemy.GetHealth().GetValue();
-            enemy.SetMaxHealth(oldHP * multiplier);
+            enemy.SetMaxHealth(oldHP * 1.2f);//health can scale exponentially
+            if (i == 0)
+                print("health of enemy is " + enemy.GetHealth().GetValue());
+            i++;
         }
+        print("new difficulty: " + Difficulty);
     }
 }
 
