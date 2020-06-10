@@ -17,6 +17,7 @@ public class Teleporter : MonoBehaviour
 	private GameObject buge;
 	public float portalactivedistance = 9.5f;
 	private GameObject canvas;
+	public bool hasPair = false;
 	Animator ani;
 
 	private void Start()
@@ -86,7 +87,8 @@ public class Teleporter : MonoBehaviour
 	{
 		if (MayhemTimer.instance != null)
 			MayhemTimer.instance.LevelCleared();
-		StateManager.instance.Teleport(new Vector2(destinationX, destinationY), BossRoomOverride);
+		StateManager.instance.Teleport(new Vector2(destinationX, destinationY), BossRoomOverride, hasPair);
+		hasPair = true;
 	}
 	public void SetDestination(Vector2 destination)
 	{

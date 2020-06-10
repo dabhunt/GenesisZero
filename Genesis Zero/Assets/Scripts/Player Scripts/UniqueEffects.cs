@@ -185,7 +185,7 @@ public class UniqueEffects : MonoBehaviour
 	public void EnterCombatMusic()
 	{
 		incombat = true;
-		Camera.main.GetComponent<BasicCameraZoom>().ChangeFieldOfViewTemporary(20, 9, .5f);
+		//Camera.main.GetComponent<BasicCameraZoom>().ChangeFieldOfViewTemporary(20, 9, .5f);
 		print("entercombatmusic called");
 		AudioManager.instance.CrossFadeChannels(1, 5.0f, 2, fadeIn);
 		//AudioManager.instance.CrossFadeChannels(2, "Music", "CombatMusic", true, 15);
