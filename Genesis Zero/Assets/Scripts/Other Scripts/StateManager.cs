@@ -236,11 +236,11 @@ public class StateManager : MonoBehaviour
         if (TileManager.instance.MayhemMode)
         {
             MayhemTimer.instance.IncrementClearedLevels();
-            EnemyManager.ModifyDifficultyMulti(.4f); //mayhem mode increase
+            EnemyManager.instance.ModifyDifficultyMulti(.4f); //mayhem mode increase
         }
         else 
         {
-            EnemyManager.ModifyDifficultyMulti(.4f); //regular mode
+            EnemyManager.instance.ModifyDifficultyMulti(.4f); //regular mode
         }
         Player.instance.Heal(50);
         Camera.main.GetComponentInParent<CinemachineBrain>().enabled = true;

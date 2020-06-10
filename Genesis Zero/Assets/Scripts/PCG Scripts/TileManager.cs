@@ -121,6 +121,7 @@ public class TileManager : MonoBehaviour
 		else
 		{
 			//Mayhem Mode	
+
 			Invoke("DelayedStart", .5f);
 			mayhemLevelUp();
 		}
@@ -131,6 +132,7 @@ public class TileManager : MonoBehaviour
 	private void DelayedStart()
 	{
 		StateManager.instance.Teleport( new Vector2(levelSpacing + 5,40) , false, true);
+		TemporaryTextDisplay.instance.ShowText("Clear as many levels as possible", 5, .75f);
 	}
 	public int GetSeed()
 	{
@@ -467,6 +469,8 @@ public class TileManager : MonoBehaviour
 		if (MayhemMode)
 		{
 			//Clear Previous Level
+
+			AudioManager.instance.PlaySongsForLevel(Random.Range(0, 4));
 			Destroy(LevelParent);
 			LevelParent = new GameObject("LevelParentInstance");
 			LevelParent.transform.SetParent(transform);

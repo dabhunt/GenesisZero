@@ -33,7 +33,7 @@ public class MayhemTimer : MonoBehaviour
             Active = true;
         else
         {
-            Invoke("DelayedStart", 1.5f);
+            Invoke("DelayedStart", 1f);
         }
     }
     void DelayedStart()
@@ -55,8 +55,16 @@ public class MayhemTimer : MonoBehaviour
     }
     public void LevelCleared()
     {
+
         levelsCleared++;
-        levelsClearedText.text = "Levels Cleared: "+ levelsCleared.ToString();
+        string display;
+        if (levelsCleared == 1)
+            display = "1 Level Cleared";
+        else 
+        {
+            display = levelsCleared.ToString() + " Levels Cleared ";
+        }
+        TemporaryTextDisplay.instance.ShowText(display , 1, .75f);
     }
     public int GetLevelsCleared() 
     { return levelsCleared; }
@@ -66,7 +74,7 @@ public class MayhemTimer : MonoBehaviour
     }
     public void BumpDifficulty()
     {
-        EnemyManager.ModifyDifficultyMulti(1);
+        EnemyManager.instance.ModifyDifficultyMulti(1);
         TemporaryTextDisplay.instance.ShowText("Difficulty Increased!", 1 , .75f);
         curTimeLeft = resetTime * decreasePercent;
         curTimeLeft = Mathf.Clamp(curTimeLeft, 30, 60);
