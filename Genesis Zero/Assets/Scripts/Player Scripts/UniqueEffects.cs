@@ -38,6 +38,9 @@ public class UniqueEffects : MonoBehaviour
 	[Header("Phase Fuse")]
 	public float PF_CD_Firststack = 2.5f;
 	public float PF_ExtraStacks = 1f;
+	[Header("Time Hack")]
+	public float TH_Firststack = .75f;
+	public float TH_ExtraStacks = .4f;
 	[Header("Superheated Essence")]
 	public float SE_MaxAttackSpeed = 1f;
 	public float SE_MaxExtraBloom = .35f;
@@ -308,10 +311,16 @@ public class UniqueEffects : MonoBehaviour
 	{
 		phaseTrigger = true;
 		int stacks = player.GetSkillStack("Phase Fuse");
+		int TH_stacks = player.GetSkillStack("Time Hack");
 		if (stacks > 0)
 		{
 			float reduction = ((stacks - 1) * PF_ExtraStacks) + PF_CD_Firststack;
 			player.GetComponent<AbilityCasting>().ReduceSlotCooldown(reduction, 1);
+		}
+		if (TH_stacks > 0)
+		{
+			float duration = ((TH_stacks - 1) * TH_ExtraStacks) + TH_Firststack;
+			StateManager.instance.ChangeTimeScale(.4f,duration);
 		}
 	}
 	private void PowerSurge()

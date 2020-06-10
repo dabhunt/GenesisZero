@@ -158,7 +158,7 @@ public class StateManager : MonoBehaviour
     {
         TimeScale = timescale;
         Timer = time;
-        if (!isPaused)
+        if (!isPaused && timescale > .9f) //only set timescale if you're not already slowed
         {
             Time.timeScale = timescale;
             Time.fixedDeltaTime = 0.02f * TimeScale;
