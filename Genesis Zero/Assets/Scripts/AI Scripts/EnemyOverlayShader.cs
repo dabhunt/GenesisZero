@@ -30,7 +30,7 @@ public class EnemyOverlayShader : MonoBehaviour
     {
         if (GetComponentInParent<Pawn>() == null)
             return;
-        if (GetComponentInParent<Pawn>())
+        if (GetComponentInParent<Pawn>() != null)
         {
             bool isStunned = GetComponentInParent<Pawn>().IsStunned();
             float ratio = GetComponentInParent<Pawn>().GetHealth().GetValue() / GetComponentInParent<Pawn>().GetHealth().GetMaxValue();

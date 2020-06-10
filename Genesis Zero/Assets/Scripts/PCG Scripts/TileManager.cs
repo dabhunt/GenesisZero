@@ -121,7 +121,7 @@ public class TileManager : MonoBehaviour
 			//Mayhem Mode	
 
 			Invoke("DelayedStart", .5f);
-			mayhemLevelUp();
+			//mayhemLevelUp();
 			mayhemLevelUp();
 		}
 
