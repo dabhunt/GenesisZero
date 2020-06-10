@@ -121,13 +121,17 @@ public class TileManager : MonoBehaviour
 		else
 		{
 			//Mayhem Mode	
-			//StateManager.instance.Teleport( new Vector2(levelSpacing + 5,40) , false, true);
+			Invoke("DelayedStart", .5f);
 			mayhemLevelUp();
 		}
 
 		//Placemat PCG Pass
 		PlaceInteractables();
     }
+	private void DelayedStart()
+	{
+		StateManager.instance.Teleport( new Vector2(levelSpacing + 5,40) , false, true);
+	}
 	public int GetSeed()
 	{
 		return seedValue;

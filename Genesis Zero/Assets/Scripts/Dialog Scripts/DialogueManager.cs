@@ -239,10 +239,12 @@ public class DialogueManager : MonoBehaviour
         switch (type) 
         {
             case 0: //Merchant interaction trigger
-                InteractInterface.instance.ClosestInteractable().GetComponent<Merchant>().AfterDialogue();
+                if (InteractInterface.instance.ClosestInteractable().GetComponent<Merchant>() != null)
+                    InteractInterface.instance.ClosestInteractable().GetComponent<Merchant>().AfterDialogue();
                 break;
             case 1: //GodHead interaction trigger
-                InteractInterface.instance.ClosestInteractable().GetComponent<GodHead>().AfterDialogue();
+                if (InteractInterface.instance.ClosestInteractable().GetComponent<GodHead>() != null)
+                    InteractInterface.instance.ClosestInteractable().GetComponent<GodHead>().AfterDialogue();
                 break;
             case 2: //Snakeboss interaction trigger
                 break;

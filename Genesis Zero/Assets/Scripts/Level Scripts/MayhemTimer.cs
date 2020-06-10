@@ -67,6 +67,7 @@ public class MayhemTimer : MonoBehaviour
     public void BumpDifficulty()
     {
         EnemyManager.ModifyDifficultyMulti(1);
+        TemporaryTextDisplay.instance.ShowText("Difficulty Increased!", 1 , .75f);
         curTimeLeft = resetTime * decreasePercent;
         curTimeLeft = Mathf.Clamp(curTimeLeft, 30, 60);
         countdownText.text = curTimeLeft.ToString(Strformat);
