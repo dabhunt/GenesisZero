@@ -59,8 +59,8 @@ public class InteractInterface : MonoBehaviour
 
         for (int i = 0; i < objects.Length; i++)
         {
-            float dist = Vector2.Distance(Player.instance.CenterPoint(), objects[i].transform.position);
-            if (dist < shortest)
+            float curdist = Vector2.Distance(Player.instance.CenterPoint(), objects[i].transform.position);
+            if (curdist < shortest)
             {
                 //if the Inactiveflag component is on the script, it ignores it
                 //this solves the problem that there are many components with different active states being checked here
@@ -68,7 +68,6 @@ public class InteractInterface : MonoBehaviour
                 {
                     secondshortest = shortest;
                     secondclosest = closest;
-                    dist = closest;
                     shortest = Vector2.Distance(Player.instance.CenterPoint(), objects[0].transform.position);
                     closest = objects[i];
                 }

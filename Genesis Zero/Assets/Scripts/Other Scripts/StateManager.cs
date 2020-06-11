@@ -267,6 +267,7 @@ public class StateManager : MonoBehaviour
         else //if it doesnt have pair and you are in normal mode
         {
             EnemyManager.instance.AddDifficulty(.4f); //regular mode
+            //EnemyManager.instance.ModifyDifficultyMulti(.4f); //mayhem mode increase
         }
         //Destroy(fakeTele.GetComponent<Teleporter>());
         StateManager.instance.InTutorial = false;
