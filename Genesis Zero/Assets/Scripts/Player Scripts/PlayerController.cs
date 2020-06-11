@@ -380,10 +380,22 @@ public class PlayerController : MonoBehaviour
     private void CheckGround()
     {
         Collider[] cols;
-        Vector3 point0 = transform.position + Vector3.up * 0.5f * characterHeight;
+        Vector3 point0 = transform.position + Vector3.up * characterHeight;
         Vector3 point1 = transform.position;
         //cols = Physics.OverlapSphere(origin, 0.075f, immoveables, QueryTriggerInteraction.UseGlobal);
         cols = Physics.OverlapCapsule(point0, point1, 0.05f, immoveables, QueryTriggerInteraction.UseGlobal);
+        if (cols.Length != 0)
+        {
+            foreach (var col in cols)
+            {
+                //If there's at least one non-trigger collider under -> grounded
+                if (!col.isTrigger)
+                {
+                    transform.position = Vector3.Lerp(transform.position, transform.position + Vector3.up * 0.1f, 25);
+                    break;
+                }
+            }
+        }
         if (IsBlocked(Vector3.down))
         {
             isGrounded = true;
@@ -391,18 +403,6 @@ public class PlayerController : MonoBehaviour
                 EndSlam(false);
             hurtBoxCol.center = currentHitBoxCenter;
             hurtBoxCol.height = currentHitboxHeight;
-            if (cols.Length != 0)
-            {
-                foreach (var col in cols)
-                {
-                    //If there's at least one non-trigger collider under -> grounded
-                    if (!col.isTrigger)
-                    {
-                        transform.position = Vector3.Lerp(transform.position, transform.position + Vector3.up * 0.1f, 25 * Time.fixedDeltaTime);
-                        break;
-                    }
-                }
-            }
             //Resets jump counts, play landing sound
             terminalVel = resetTerminalVel;
             if (vertVel < 0)
@@ -567,7 +567,6 @@ public class PlayerController : MonoBehaviour
             {
                 Destroy(downSmash);
             }
-
         }
         else
         {
@@ -577,7 +576,6 @@ public class PlayerController : MonoBehaviour
             AudioManager.instance.StopSound("SFX_Downsmash");
             AudioManager.instance.PlayRandomSFXType("SFX_Downsmash");
         }
-
     }
     
     /* This function keeps track of rolling state
@@ -708,7 +706,8 @@ public class PlayerController : MonoBehaviour
         {
             Debug.LogError("Invalid Vector used in IsBlocked");
         }
-
+        
+        //if (isGrounded) return true;
         if (array.Length == 0)
         {
             isBlock = false;
