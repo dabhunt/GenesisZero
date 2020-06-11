@@ -15,8 +15,6 @@ public class EnemyManager : MonoBehaviour
     public static float NormalizedDifficulty { get { return Difficulty / Mathf.Max(0.01f, MaxDifficulty); } } // Range form 0 to 1 indicating current difficulty factor
 
     public static EnemyManager instance = null; // Singleton instance.
-
-    // Initialize the singleton instance.
     private void Awake()
     {
         if (instance == null)
@@ -73,8 +71,6 @@ public class EnemyManager : MonoBehaviour
                 print("health of enemy is " + enemy.GetHealth().GetValue());
             i++;
         }
-        print("new difficulty: " + Difficulty);
-        print("Health Multiplier is: " + HealthMultiplier);
     }
     public void ResetDifficulty(float newdif)
     {
