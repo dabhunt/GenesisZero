@@ -40,13 +40,15 @@ public class SaveLoadManager : MonoBehaviour
             Destroy(gameObject);
             return;
         }
+        pPath = Application.persistentDataPath + "/" + pFileName + ".dat";
+        mPath = Application.persistentDataPath + "/" + mFileName + ".dat";
+        ePath = Application.persistentDataPath + "/" + eFilename + ".dat";
+        sPath = Application.persistentDataPath + "/" + sFileName + ".dat";
     }
 
     private void Start()
     {
-        pPath = Application.persistentDataPath + "/" + pFileName + ".dat";
-        mPath = Application.persistentDataPath + "/" + mFileName + ".dat";
-        ePath = Application.persistentDataPath + "/" + eFilename + ".dat";
+
         if(SaveExists() && !CorrectVersion())
             DeleteSaveFiles();
     }
@@ -64,13 +66,15 @@ public class SaveLoadManager : MonoBehaviour
             PlayerData playerData = GetPlayerData(player);
             FileStream pFile = File.Create(pPath);
             FileStream mFile = File.Create(mPath);
-            FileStream eFile = File.Create(ePath);
             MapData mapData = GetMapData();
             if (endless)
             {
+                FileStream eFile = File.Create(ePath);
                 EndlessData endlessData = GetEndlessData();
+                foreach (var d in endlessData.data)
+                    Debug.Log(d);
                 bf.Serialize(eFile, endlessData);
-                mFile.Close();
+                eFile.Close();
             }
             //Serialize and write to the file
             bf.Serialize(pFile, playerData);
@@ -205,13 +209,10 @@ public class SaveLoadManager : MonoBehaviour
         }
         //print("x value" + data.playerPosition[0]);
         Player.instance.gameObject.transform.position = new Vector3(data.playerPosition[0], data.playerPosition[1], data.playerPosition[2]);
-
-        if (endless) MayhemTimer.instance.ApplyData();
         //Debug.Log("Player Data, Applied");
         //GameObject.FindGameObjectWithTag("CMcam").SetActive(true);
         //Debug.Log("Cam SetActive!");
     }
-
     /* Grabs map data from current session for saving.
      */
     private MapData GetMapData()
@@ -227,7 +228,6 @@ public class SaveLoadManager : MonoBehaviour
     {
         EndlessData eData = new EndlessData();
         eData.data = MayhemTimer.instance.GetData();
-
         return eData;
     }
     /* Returns a SaveData object with the most updated
@@ -399,6 +399,6 @@ public class EndlessData
 
     public EndlessData()
     {
-        data = new float[3];
+        data = new float[4];
     }
 }

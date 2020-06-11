@@ -248,7 +248,7 @@ public class StateManager : MonoBehaviour
         cam.GetComponentInParent<CinemachineBrain>().enabled = false;
         cam.transform.position = new Vector3(player.transform.position.x, cam.transform.position.y, cam.transform.position.z);
         //GameObject.FindGameObjectWithTag("CMcam").GetComponent<CinemachineVirtualCamera>().enabled = false;
-        TileManager.instance.GetComponent<TileManager>().mayhemLevelUp();
+        TileManager.instance.GetComponent<TileManager>().mayhemLevelUp(true);
         if (name.Contains("Skip"))
             SkipTutorial();
         AudioManager.instance.PlaySound("SFX_Teleport");

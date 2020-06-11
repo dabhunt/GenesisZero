@@ -28,8 +28,15 @@ public class MayhemTimer : MonoBehaviour
     }
     void Start()
     {
-        curTimeLeft = resetTime;
-        levelsClearedText.text = "Levels Cleared: " + levelsCleared.ToString();
+        if (!SaveLoadManager.instance.newGame && !SaveLoadManager.instance.endLess)
+        {
+            ApplyData();
+        }
+        else
+        {
+            curTimeLeft = resetTime;
+        }
+        levelsClearedText.text = "Level(s) Cleared: " + levelsCleared.ToString();
         if (ActiveOnStart)
             Active = true;
         else
@@ -58,12 +65,7 @@ public class MayhemTimer : MonoBehaviour
     {
         levelsCleared++;
         string display;
-        if (levelsCleared == 1)
-            display = "1 Level Cleared";
-        else 
-        {
-            display = levelsCleared.ToString() + " Levels Cleared ";
-        }
+        display = "Level(s) Cleared: " + levelsCleared.ToString();
         levelsClearedText.text = display;
         //difficultytxt.text = "Difficulty: " + difficulty.ToString();
         TileManager.instance.tempTextDisplay.ShowText(display , 1, .75f);
@@ -71,10 +73,11 @@ public class MayhemTimer : MonoBehaviour
 
     public float[] GetData()
     {
-        float[] data = new float[3];
+        float[] data = new float[4];
         data[0] = EnemyManager.Difficulty;//Difficulty
         data[1] = levelsCleared;//Levels cleared
         data[2] = curTimeLeft;//Time left
+        data[3] = TileManager.tileID;
         return data;
     }
 
@@ -83,8 +86,10 @@ public class MayhemTimer : MonoBehaviour
         Debug.Log("Applying Endless Data");
         EndlessData eData = SaveLoadManager.instance.LoadEndlessData();
         EnemyManager.instance.SetDifficulty(eData.data[0]);
+        Debug.Log("Difficulty: " + EnemyManager.Difficulty);
         levelsCleared = (int) eData.data[1];
-        curTimeLeft = eData.data[3];
+        curTimeLeft = eData.data[2];
+        TileManager.tileID = (int) eData.data[3];
     }
     public int GetLevelsCleared() 
     { return levelsCleared; }

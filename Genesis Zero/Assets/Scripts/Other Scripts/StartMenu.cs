@@ -7,7 +7,9 @@ using UnityEngine;
 public class StartMenu : MonoBehaviour
 {
     public Canvas canvas;
-    public string sceneName;
+    public string mainSceneName;
+    public string endlessSceneName;
+    private string sceneName;
     private AsyncOperation operation;
     private Slider loadBar;
     private Text loadPercentage;
@@ -44,6 +46,16 @@ public class StartMenu : MonoBehaviour
     {
         mainMenuScreen.SetActive(false);
         loadingScreen.SetActive(true);
+        if (SaveLoadManager.instance.EndlessSaveExists())
+        {
+            SaveLoadManager.instance.endLess = true;
+            mainMenuScreen.SetActive(false);
+            loadingScreen.SetActive(true);
+            sceneName = endlessSceneName;
+            LoadScene(false);
+            return;
+        }
+        sceneName = mainSceneName;
         LoadScene(false);
     }
 
@@ -53,8 +65,10 @@ public class StartMenu : MonoBehaviour
         //hiding MainMenuScreen.
         mainMenuScreen.SetActive(false);
         loadingScreen.SetActive(true);
+        SaveLoadManager.instance.endLess = false;
         //Deletes old save files
         SaveLoadManager.instance.DeleteSaveFiles();
+        sceneName = mainSceneName;
         LoadScene(true);
     }
     //Onclick Event for Options Button
@@ -67,9 +81,9 @@ public class StartMenu : MonoBehaviour
     {
         mainMenuScreen.SetActive(false);
         loadingScreen.SetActive(true);
-        SaveLoadManager.instance.DeleteSaveFiles();
         SaveLoadManager.instance.endLess = true;
-        sceneName = "MayhemMode";
+        SaveLoadManager.instance.DeleteSaveFiles();
+        sceneName = endlessSceneName;
         LoadScene(true);
     }
     //Onclick event for Quit Button
