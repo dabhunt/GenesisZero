@@ -638,18 +638,22 @@ public class SkillManager
     }
     public Color GetColor(SkillObject sk)
     {
-        Color color;
-        switch (sk.Rarity)
+        Color color = Color.white;
+        if (sk != null)
         {
-            case 2:
-                color = new Color(0, .93f, 1f);
-                break;
-            case 3:
-                color = new Color(1, 0.83f, 0);
-                break;
-            default:
-                color = Color.white;
-                break;
+
+            switch (sk.Rarity)
+            {
+                case 2:
+                    color = new Color(0, .93f, 1f);
+                    break;
+                case 3:
+                    color = new Color(1, 0.83f, 0);
+                    break;
+                default:
+                    color = Color.white;
+                    break;
+            }
         }
         return color;
     }
@@ -682,6 +686,13 @@ public class SkillManager
     public int GetModSlotLimit()
     {
         return uniqueModLimit;
+    }
+    public bool AtMaxCapacity() 
+    {
+        if (uniquemodamount >= uniqueModLimit)
+            return true;
+        else 
+            return false;
     }
     public void SetModLimit(float newLimit)
     {

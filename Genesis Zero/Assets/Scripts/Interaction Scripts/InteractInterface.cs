@@ -23,7 +23,7 @@ public class InteractInterface : MonoBehaviour
     }
     private void Start()
     {
-       player = GameObject.FindGameObjectWithTag("Player");
+        player = GameObject.FindGameObjectWithTag("Player");
     }
     //returns the closest object in the game with the tag "Interactable"
     public GameObject ClosestInteractable()
@@ -49,11 +49,14 @@ public class InteractInterface : MonoBehaviour
         }
 
         GameObject closest = objects[0];
+        GameObject secondclosest = objects[0];
         if (closest == null)
         {
             return null;
         }
         float shortest = Vector2.Distance(Player.instance.CenterPoint(), objects[0].transform.position);
+        float secondshortest = Vector2.Distance(Player.instance.CenterPoint(), objects[0].transform.position);
+
         for (int i = 0; i < objects.Length; i++)
         {
             float dist = Vector2.Distance(Player.instance.CenterPoint(), objects[i].transform.position);
@@ -63,15 +66,22 @@ public class InteractInterface : MonoBehaviour
                 //this solves the problem that there are many components with different active states being checked here
                 if (objects[i].GetComponent<InactiveFlag>() == null)
                 {
-                    shortest = dist;
+                    secondshortest = shortest;
+                    secondclosest = closest;
+                    shortest = Vector2.Distance(Player.instance.CenterPoint(), objects[0].transform.position);
                     closest = objects[i];
                 }
             }
         }
+        SkillPickup closestSkill = closest.GetComponent<SkillPickup>();
+        //if the player already has that skill, return the second closest instead
         if (shortest >= minProximity)
             return null;
+        if (closestSkill != null && Player.instance.GetSkillManager().AtMaxCapacity() && !Player.instance.GetSkillManager().HasSkill(closestSkill.name))
+            return secondclosest;
         return closest;
     }
+
     void Update()
     {
         if (Input.GetKeyDown(KeyCode.F))
@@ -80,28 +90,28 @@ public class InteractInterface : MonoBehaviour
                 return;
             print("isInteracting should be true -> " + player.GetComponent<Player>().IsInteracting());
             //determine which interactable / pickup is closest, and perform interact
-            string[] strArray = { "Pickups" , "Interactable", };
+            string[] strArray = { "Pickups", "Interactable", };
             GameObject obj = ClosestTaggedObj(strArray);
             //if the closestObject is too far away, it returns null
             print("closest Obj is... " + obj);
-;           if (obj == null)
+            ; if (obj == null)
             {
                 AudioManager.instance.PlaySound("SFX_Nope");
                 return;
             }
             AudioManager.instance.PlayRandomSFXType("Interact", null, .3f);
             if (obj.GetComponent<SkillPickup>() != null)
-                { obj.GetComponent<SkillPickup>().Interact(); return; }
+            { obj.GetComponent<SkillPickup>().Interact(); return; }
             if (obj.GetComponent<Merchant>() != null)
-                { obj.GetComponent<Merchant>().Interact(); return; }
+            { obj.GetComponent<Merchant>().Interact(); return; }
             if (obj.GetComponent<GodHead>() != null)
-                { obj.GetComponent<GodHead>().Interact(); return; }
+            { obj.GetComponent<GodHead>().Interact(); return; }
             if (obj.GetComponent<ModConverter>() != null)
-                {obj.GetComponent<ModConverter>().Interact(); return; }
+            { obj.GetComponent<ModConverter>().Interact(); return; }
             if (obj.GetComponent<SafeBox>() != null)
-                { obj.GetComponent<SafeBox>().Interact(); return; }
+            { obj.GetComponent<SafeBox>().Interact(); return; }
             if (obj.GetComponent<BUGE>() != null)
-                { obj.GetComponent<BUGE>().Interact(); return; }
+            { obj.GetComponent<BUGE>().Interact(); return; }
         }
     }
     public GameObject ClosestTaggedObj(string[] tags)
@@ -131,6 +141,7 @@ public class InteractInterface : MonoBehaviour
             float otherObjDist = Mathf.Abs(closestPriorityObj.transform.position.x - Player.instance.transform.position.x); //set distan
             if ((pickupDist - 3 < otherObjDist))//
                 closestPriorityObj = closestPickup;
+            //if (closestPickup.GetComponent<SkillPickup>())
         }
         return closestPriorityObj;
     }

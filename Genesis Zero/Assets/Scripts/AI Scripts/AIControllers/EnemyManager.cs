@@ -10,6 +10,7 @@ public class EnemyManager : MonoBehaviour
 {
     public static List<AIController> AllEnemies = new List<AIController>();
     public static float Difficulty = .75f;
+    public static float HealthMultiplier = 1;
     public static float MaxDifficulty = 100.0f;
     public static float NormalizedDifficulty { get { return Difficulty / Mathf.Max(0.01f, MaxDifficulty); } } // Range form 0 to 1 indicating current difficulty factor
 
@@ -39,25 +40,36 @@ public class EnemyManager : MonoBehaviour
             Destroy(enemy.gameObject);
         }
     }
+    public GameObject SpawnEnemy(Vector2 spawn)
+    {
+        GameObject newEnemy = Instantiate(TileManager.instance.enemyPrefabs[Random.Range(0, TileManager.instance.enemyPrefabs.Length)], spawn, Quaternion.identity) as GameObject;
+        AIController enemyHp = newEnemy.GetComponent<AIController>();
+        if (enemyHp != null && enemyHp.GetHealth() != null)
+            enemyHp.GetHealth().SetMaxValue(enemyHp.GetHealth().GetValue() *HealthMultiplier);
+        return newEnemy;
+    }
     // Increase enemy difficulty, based on the current difficulty multiplied by the number passed in.
     // Ex: 1.3 passed in makes enemies 30% more difficult
     public void ModifyDifficultyMulti(float multiplier)
     {
         float newDificulty = Difficulty + multiplier; //no longer multiplier because that doesn't scale well for most attributes
+        HealthMultiplier = 1 + Difficulty / 2;
         Difficulty = Mathf.Clamp(newDificulty, 1f, MaxDifficulty);
         int i = 0;
         foreach (AIController enemy in AllEnemies)
         {
             float oldHP = enemy.GetHealth().GetValue();
-            enemy.SetMaxHealth(oldHP * 1.2f);//health can scale exponentially
+            enemy.SetMaxHealth(HealthMultiplier);//health can scale exponentially
             if (i == 0)
                 print("health of enemy is " + enemy.GetHealth().GetValue());
             i++;
         }
         print("new difficulty: " + Difficulty);
+        print("Health Multiplier is: " + HealthMultiplier);
     }
     public void ResetDifficulty(float newdif)
     {
+        HealthMultiplier = 1;
         Difficulty = newdif;
     }
 }

@@ -6,7 +6,7 @@ public class MayhemTimer : MonoBehaviour
 {
     public static MayhemTimer instance;
     public float curTimeLeft;
-    public float resetTime;
+    public float resetTime = 105;
     public TextMeshProUGUI countdownText;
     public TextMeshProUGUI levelsClearedText;
     public TextMeshProUGUI difficultytxt;
@@ -81,7 +81,7 @@ public class MayhemTimer : MonoBehaviour
     }
     public void BumpDifficulty()
     {
-        EnemyManager.instance.ModifyDifficultyMulti(.65f);
+        EnemyManager.instance.ModifyDifficultyMulti(.6f);
         TileManager.instance.tempTextDisplay.ShowText("Difficulty Increased!", 1 , .75f);
         curTimeLeft = resetTime * decreasePercent;
         curTimeLeft = Mathf.Clamp(curTimeLeft, 30, 60);

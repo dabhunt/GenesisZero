@@ -6,12 +6,7 @@ public class CheatCodes : MonoBehaviour
 {
     // Start is called before the first frame update
     public GameObject CheatPanel;
-    public Button NextLevelButton;
-    public Button TPBossButton;
-    public Button SpawnModButton;
     public Button GodModeButton;
-    public Button SpawnAbilitiesButton;
-    public Button RandomBuildButton;
     public Button LowGravityButton;
     public Button NoCooldownsButton;
     private bool noCooldowns = false;
@@ -71,6 +66,10 @@ public class CheatCodes : MonoBehaviour
             Vector3 newVec = new Vector3(p.transform.position.x + i * 3f, p.transform.position.y + 1, 0);
             p.GetSkillManager().SpawnAbility(newVec, list[i].name);
         }
+    }
+    public void SpawnEnemy()
+    {
+        GameObject newEnemy = Instantiate(TileManager.instance.enemyPrefabs[Random.Range(0, 5)], Player.instance.CenterPoint() + new Vector2(5,10), Quaternion.identity);
     }
     public void RandomBuild()
     {

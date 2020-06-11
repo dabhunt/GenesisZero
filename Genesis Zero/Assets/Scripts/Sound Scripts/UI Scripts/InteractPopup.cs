@@ -59,6 +59,11 @@ public class InteractPopup : MonoBehaviour
     {
         if (GetComponent<SkillPickup>() != null)
         {
+            if (GetComponent<SkillPickup>() == null || GetComponent<SkillPickup>().skill == null) 
+            {
+                Debug.LogError("no skill attached to mod");
+                return;
+            }
             SkillObject skill = GetComponent<SkillPickup>().skill;
             titleColor = player.GetSkillManager().GetColor(skill);
             TitleText = skill.name;

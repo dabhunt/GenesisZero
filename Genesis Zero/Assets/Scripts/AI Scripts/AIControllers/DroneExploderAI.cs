@@ -44,7 +44,6 @@ public class DroneExploderAI : AIController
         base.Start();
         patrolDir = Mathf.RoundToInt(Mathf.Sign(Random.value - 0.5f));
     }
-
     new protected void FixedUpdate()
     {
         base.FixedUpdate();
@@ -80,7 +79,6 @@ public class DroneExploderAI : AIController
             frb.Accelerate((transform.position - wallPoint).normalized * (1.0f - (transform.position - wallPoint).magnitude / WallCheckDistance) * WallAvoidForce);
         }
     }
-
     new protected void Update()
     {
         base.Update();
@@ -125,7 +123,6 @@ public class DroneExploderAI : AIController
     {
         if (explosionPrefab != null)
         {
-
             GameObject spawnedExplosion = Instantiate(explosionPrefab, transform.position, Quaternion.identity);
             Hitbox spawnedHitbox = spawnedExplosion.GetComponent<Hitbox>();
             spawnedHitbox.InitializeHitbox(GetDamage().GetValue() * DamageDifficultyMultiplier.GetFactor(), this);
@@ -143,7 +140,6 @@ public class DroneExploderAI : AIController
             // AOE AOEscript = spawnedExplosion.GetComponent<AOE>();
             // AOEscript.setScaleTarget(startScale, blastRadius, lerpMultiplier);
             // //print("blastRadius = " + blastRadius + "during the on destroy call last section");
-            // 
         }
         Destroy(this.GetComponent<SpawnOnDestroy>());
         Destroy(this.gameObject);

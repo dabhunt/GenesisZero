@@ -238,7 +238,7 @@ public class TileManager : MonoBehaviour
 			{
 				newTele.name = "Teleporter in Level " + (teleporterInstances.Count);
 				levelTracking += levelSpacing;
-				newTele.GetComponent<Teleporter>().SetDestination(new Vector2(levelTracking + 5, 4));
+				newTele.GetComponent<Teleporter>().SetDestination(new Vector2(levelTracking + 2, 4));
 				teleporterInstances[teleporterInstances.Count - 1].transform.position = mat.transform.position;
 			}
 			else
@@ -261,7 +261,7 @@ public class TileManager : MonoBehaviour
 				//newTele.transform.SetParent(LevelParent.transform);
 				teleporterInstances.Add(newTele);
 			}
-			teleporterInstances[teleporterInstances.Count - 1].GetComponent<Teleporter>().SetDestination(new Vector2(levelSpacing + 5, 5));
+			teleporterInstances[teleporterInstances.Count - 1].GetComponent<Teleporter>().SetDestination(new Vector2(levelSpacing + 2, 5));
 			teleporterInstances[teleporterInstances.Count - 1].transform.position = mat.transform.position;
 			teleporterInstances[teleporterInstances.Count - 1].transform.SetParent(LevelParent.transform);
 			return teleporterInstances[teleporterInstances.Count - 1];
@@ -446,10 +446,17 @@ public class TileManager : MonoBehaviour
 
 		while (amount > 0)
 		{
-			GameObject newEnemy = Instantiate(enemyPrefabs[Random.Range(0, enemyPrefabs.Length)]) as GameObject;
-			newEnemy.transform.position = spawnVector;
+			GameObject newEnemy = null;
+			if (MayhemMode) 
+			{
+				newEnemy = EnemyManager.instance.SpawnEnemy(spawnVector); //spawns a new enemy with the correct amount of health for mayhem
+			}
+			else 
+			{
+				newEnemy = Instantiate(enemyPrefabs[Random.Range(0, enemyPrefabs.Length)]) as GameObject;
+			}
+			newEnemy.transform.position = spawnVector + new Vector3(amount,0,0);
 			newEnemy.transform.SetParent(LevelParent.transform);
-
 			--amount;
 		}
 		spawnVector.y -= 3;
