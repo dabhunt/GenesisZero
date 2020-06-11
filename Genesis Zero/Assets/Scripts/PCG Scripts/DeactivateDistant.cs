@@ -22,7 +22,7 @@ public class DeactivateDistant : MonoBehaviour
         resetDist = deactivateDist;
         resetEnemyDist = enemyDistOffset;
     	InvokeRepeating("Check", 1/updatesPerSecond, 1/updatesPerSecond);
-        Invoke("DelayedStart", 3);
+        Invoke("DelayedStart", 1.0f);
     }
     private void Update()
     {
@@ -45,6 +45,7 @@ public class DeactivateDistant : MonoBehaviour
         }
         newstr[tags.Length] = "BossRoom";
         tags = newstr;
+        firstCheck = true;
     }
     // Check is currently called once a second, but can also be called manually when the player is teleported to prevent visual latency
     void Check()
@@ -70,7 +71,7 @@ public class DeactivateDistant : MonoBehaviour
                     }
                     if (objects[i].gameObject.tag == "BossRoom")
                     {
-                        dist -= 50;
+                        dist += 400;
                     }
 	   				if (dist > deactivateDist){
 	   					objects[i].SetActive(false);

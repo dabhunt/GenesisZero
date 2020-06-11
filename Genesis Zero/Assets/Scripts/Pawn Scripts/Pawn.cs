@@ -514,6 +514,7 @@ public class Pawn : MonoBehaviour
                     }
                 }
             }
+            StateManager.instance.RecursiveLayerChange(this.transform, "Dead");
             //Allow the animator to control when the object is destroyed
             if (!HasAnimationEventController)
             {
@@ -522,7 +523,7 @@ public class Pawn : MonoBehaviour
 
             if (this is AIController)
             {
-                StateManager.instance.RecursiveLayerChange(this.transform, "Dead");
+
                 GetComponent<AIController>().DeathEvent.Invoke();
                 //Collider[] cols = this.GetComponentsInChildren<Collider>();
                 //for (int i = 0; i < cols.Length; i++)

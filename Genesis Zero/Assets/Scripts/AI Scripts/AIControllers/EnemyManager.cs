@@ -60,7 +60,7 @@ public class EnemyManager : MonoBehaviour
     public void SetDifficulty(float newDifficulty)
     {
         Difficulty = newDifficulty; //no longer multiplier because that doesn't scale well for most attributes
-        Difficulty = Mathf.Clamp(Difficulty, 1f, MaxDifficulty);
+        Difficulty = Mathf.Clamp(Difficulty, 0, MaxDifficulty);
         HealthMultiplier = 1 + Difficulty / 2;
         int i = 0;
         foreach (AIController enemy in AllEnemies)

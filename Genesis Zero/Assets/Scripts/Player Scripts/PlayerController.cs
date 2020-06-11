@@ -380,7 +380,7 @@ public class PlayerController : MonoBehaviour
     private void CheckGround()
     {
         Collider[] cols;
-        Vector3 point0 = transform.position + Vector3.up * characterHeight;
+        Vector3 point0 = transform.position + Vector3.up * (characterHeight - .2f);
         Vector3 point1 = transform.position;
         //cols = Physics.OverlapSphere(origin, 0.075f, immoveables, QueryTriggerInteraction.UseGlobal);
         cols = Physics.OverlapCapsule(point0, point1, 0.05f, immoveables, QueryTriggerInteraction.UseGlobal);
@@ -391,7 +391,7 @@ public class PlayerController : MonoBehaviour
                 //If there's at least one non-trigger collider under -> grounded
                 if (!col.isTrigger)
                 {
-                    transform.position = Vector3.Lerp(transform.position, transform.position + Vector3.up * 0.1f, 25);
+                    transform.position = Vector3.Lerp(transform.position, transform.position + Vector3.up * 0.1f, 250);
                     break;
                 }
             }

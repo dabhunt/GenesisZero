@@ -35,6 +35,7 @@ public class Hitbox : MonoBehaviour
     [HideInInspector]
     public float LifeTime = 99;
     public string SFXOnStart = "";
+    public float SFX_vol = .65f;
     public delegate void OnKill();
     public OnKill killDelegate;
 
@@ -83,7 +84,7 @@ public class Hitbox : MonoBehaviour
         }
         if (SFXOnStart != "")
         {
-            AudioManager.instance.PlayRandomSFXType(SFXOnStart, this.gameObject, .4f);
+            AudioManager.instance.PlayRandomSFXType(SFXOnStart, this.gameObject, .8f, 1.2f, SFX_vol);
         }
         //AddCollliders(transform, colliders);
         lastposition = GetComponent<Collider>().transform.position;
