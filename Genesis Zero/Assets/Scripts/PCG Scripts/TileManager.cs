@@ -84,13 +84,15 @@ public class TileManager : MonoBehaviour
 		if (SaveLoadManager.instance.newGame == true)
 		{
 			seedValue = Random.Range(0, 999999);
-			Random.InitState(seedValue);
 		}
 		else
 		{
-			seedValue = SaveLoadManager.instance.LoadMapData().seed;
+			MapData data = SaveLoadManager.instance.LoadMapData();
+			Debug.Log(data.seed);
+			seedValue = data.seed;
+			Debug.Log(seedValue);
 		}
-		
+		Random.InitState(seedValue);
 		if (!MayhemMode)
 		{
 			//Level 1

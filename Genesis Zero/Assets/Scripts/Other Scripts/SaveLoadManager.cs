@@ -149,6 +149,7 @@ public class SaveLoadManager : MonoBehaviour
      */
     public void ApplyPlayerData(PlayerData data)
     {
+        Debug.Log("Applying Player data");
         Player player = Player.instance;
         SkillManager sM = player.GetSkillManager();
         player.GetHealth().SetValue(data.health);
@@ -173,6 +174,9 @@ public class SaveLoadManager : MonoBehaviour
         }
         //print("x value" + data.playerPosition[0]);
         Player.instance.gameObject.transform.position = new Vector3(data.playerPosition[0], data.playerPosition[1], data.playerPosition[2]);
+        Debug.Log("Player Data, Applied");
+        GameObject.FindGameObjectWithTag("CMcam").SetActive(true);
+        Debug.Log("Cam SetActive!");
     }
 
     /* Grabs map data from current session for saving.
@@ -181,6 +185,7 @@ public class SaveLoadManager : MonoBehaviour
     {
         MapData data = new MapData();
         data.seed = TileManager.instance.GetSeed();
+        Debug.Log("GetDATA " + data.seed);
         data.version = Application.version;
         return data;
     }
