@@ -50,11 +50,16 @@ public class EnemyManager : MonoBehaviour
     }
     // Increase enemy difficulty, based on the current difficulty multiplied by the number passed in.
     // Ex: 1.3 passed in makes enemies 30% more difficult
-    public void ModifyDifficultyMulti(float multiplier)
+    public void MultiplyDifficulty(float multiplier)
     {
-        float newDificulty = Difficulty + multiplier; //no longer multiplier because that doesn't scale well for most attributes
+        Difficulty *= multiplier;
+        SetDifficulty(Difficulty);
+    }
+    public void SetDifficulty(float newDifficulty)
+    {
+        Difficulty = newDifficulty; //no longer multiplier because that doesn't scale well for most attributes
+        Difficulty = Mathf.Clamp(Difficulty, 1f, MaxDifficulty);
         HealthMultiplier = 1 + Difficulty / 2;
-        Difficulty = Mathf.Clamp(newDificulty, 1f, MaxDifficulty);
         int i = 0;
         foreach (AIController enemy in AllEnemies)
         {
