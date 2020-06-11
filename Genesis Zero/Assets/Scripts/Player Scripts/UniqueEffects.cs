@@ -319,10 +319,15 @@ public class UniqueEffects : MonoBehaviour
 		}
 		if (TH_stacks > 0)
 		{
-			print("you got some Timehack");
-			float duration = ((TH_stacks - 1) * TH_ExtraStacks) + TH_Firststack;
-			StateManager.instance.ChangeTimeScale(.4f,duration);
+			Invoke("TimeHack", .15f);
 		}
+
+	}
+	private void TimeHack() 
+	{
+		int TH_stacks = player.GetSkillStack("Time Hack");
+		float duration = ((TH_stacks - 1) * TH_ExtraStacks) + TH_Firststack;
+		StateManager.instance.ChangeTimeScale(.4f, duration);
 	}
 	private void PowerSurge()
 	{

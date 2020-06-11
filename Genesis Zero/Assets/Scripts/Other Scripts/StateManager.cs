@@ -169,7 +169,7 @@ public class StateManager : MonoBehaviour
         TimeScale = timescale;
         Timer = time;
         print(isPaused);//this better be false
-        if (!isPaused && TimeScale > .9f) //only set timescale if you're not already slowed
+        if (!isPaused) //only set timescale if you're not already slowed
         {
             Time.timeScale = TimeScale;
             Time.fixedDeltaTime = 0.02f * TimeScale;
@@ -180,6 +180,16 @@ public class StateManager : MonoBehaviour
             timeSlowEffectActive = true;
         }
     }
+    //public void ChangeTimeScale(float timescale, float time)
+    //{
+    //    TimeScale = timescale;
+    //    Timer = time;
+    //    if (!isPaused)
+    //    {
+    //        Time.timeScale = timescale;
+    //        Time.fixedDeltaTime = 0.02f * TimeScale;
+    //    }
+    //}
     public void LoadMenu()
     {
         
@@ -302,6 +312,14 @@ public class StateManager : MonoBehaviour
             {
                 RecursiveLayerChange(child, layerName);
             }
+        }
+    }
+    IEnumerator WaitForRealSeconds(float delay)
+    {
+        float start = Time.realtimeSinceStartup;
+        while (Time.realtimeSinceStartup < start + delay)
+        {
+            yield return null;
         }
     }
 

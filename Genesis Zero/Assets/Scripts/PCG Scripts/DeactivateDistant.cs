@@ -6,7 +6,7 @@ public class DeactivateDistant : MonoBehaviour
 {
     //at what minimum distance will enemies start to deactivate
     //enemies closer than this will be reactivated
-    public float deactivateDist = 29f;
+    public float deactivateDist = 35f;
     public float updatesPerSecond=1f;
     public float enemyDistOffset = 5f;
     private float resetEnemyDist;
