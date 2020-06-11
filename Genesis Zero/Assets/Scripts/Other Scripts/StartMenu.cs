@@ -68,6 +68,7 @@ public class StartMenu : MonoBehaviour
         mainMenuScreen.SetActive(false);
         loadingScreen.SetActive(true);
         SaveLoadManager.instance.DeleteSaveFiles();
+        SaveLoadManager.instance.endLess = true;
         sceneName = "MayhemMode";
         LoadScene(true);
     }

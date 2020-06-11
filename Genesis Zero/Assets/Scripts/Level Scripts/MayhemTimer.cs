@@ -15,7 +15,6 @@ public class MayhemTimer : MonoBehaviour
     public float decreasePercent = .9f;//how much time between difficulty bumps decreases each difficulty bump
     private string Strformat = "0.#";
     private int levelsCleared = 0;
-    private int difficulty = 0;
     private void Awake()
     {
         if (instance == null)
@@ -66,12 +65,26 @@ public class MayhemTimer : MonoBehaviour
             display = levelsCleared.ToString() + " Levels Cleared ";
         }
         levelsClearedText.text = display;
-        difficultytxt.text = "Difficulty: " + difficulty.ToString();
+        //difficultytxt.text = "Difficulty: " + difficulty.ToString();
         TileManager.instance.tempTextDisplay.ShowText(display , 1, .75f);
     }
-    public int GetDifficulty() 
+
+    public float[] GetData()
     {
-        return difficulty; 
+        float[] data = new float[3];
+        data[0] = EnemyManager.Difficulty;//Difficulty
+        data[1] = levelsCleared;//Levels cleared
+        data[2] = curTimeLeft;//Time left
+        return data;
+    }
+
+    public void ApplyData()
+    {
+        Debug.Log("Applying Endless Data");
+        EndlessData eData = SaveLoadManager.instance.LoadEndlessData();
+        EnemyManager.instance.SetDifficulty(eData.data[0]);
+        levelsCleared = (int) eData.data[1];
+        curTimeLeft = eData.data[3];
     }
     public int GetLevelsCleared() 
     { return levelsCleared; }
@@ -81,7 +94,7 @@ public class MayhemTimer : MonoBehaviour
     }
     public void BumpDifficulty()
     {
-        EnemyManager.instance.ModifyDifficultyMulti(.6f);
+        EnemyManager.instance.AddDifficulty(.6f);
         TileManager.instance.tempTextDisplay.ShowText("Difficulty Increased!", 1 , .75f);
         curTimeLeft = resetTime * decreasePercent;
         curTimeLeft = Mathf.Clamp(curTimeLeft, 30, 60);
