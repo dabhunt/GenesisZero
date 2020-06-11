@@ -69,7 +69,7 @@ public class CheatCodes : MonoBehaviour
     }
     public void SpawnEnemy()
     {
-        GameObject newEnemy = Instantiate(TileManager.instance.enemyPrefabs[Random.Range(0, 5)], Player.instance.CenterPoint() + new Vector2(5,10), Quaternion.identity);
+        GameObject newEnemy = Instantiate(TileManager.instance.enemyPrefabs[Random.Range(0, 5)], Player.instance.CenterPoint() + new Vector2(5,1), Quaternion.identity);
     }
     public void RandomBuild()
     {

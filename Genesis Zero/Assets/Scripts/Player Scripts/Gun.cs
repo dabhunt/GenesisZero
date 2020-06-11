@@ -247,7 +247,7 @@ public class Gun : MonoBehaviour
                 float otherStun = FT_stunDuration + (1 - FT_stacks) * FT_stunIncreasePerStack;
                 if (hit.StunTime < otherStun) //if the current stun on the bullet is less than the one we would apply, apply it
                     hit.StunTime = otherStun;
-                hit.Damage *= 1+ (FT_stacks * .4f);
+                hit.Damage *= 1+ (FT_stacks * .6f);
             }
         }
         if ((player.GetHealth().GetValue() / player.GetHealth().GetMaxValue()) < .33f) //at less than 33% health, you ignore 50% of Armor

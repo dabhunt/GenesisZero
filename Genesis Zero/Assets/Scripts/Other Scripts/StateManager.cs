@@ -61,7 +61,6 @@ public class StateManager : MonoBehaviour
     {
         if (Timer >= 0)
         {
-            print("Timescale: "+TimeScale);
             Timer -= Time.unscaledDeltaTime;
             if (Timer < 0)
             {
@@ -69,7 +68,6 @@ public class StateManager : MonoBehaviour
                 if (timeSlowEffectActive)
                 {
                     timeSlowEffectActive = false;
-                    print("timeslowoff now playing");
                     timeslowEffect.Play("TimeSlowOff");
                 }
 
@@ -168,7 +166,6 @@ public class StateManager : MonoBehaviour
     {
         TimeScale = timescale;
         Timer = time;
-        print(isPaused);//this better be false
         if (!isPaused) //only set timescale if you're not already slowed
         {
             Time.timeScale = TimeScale;

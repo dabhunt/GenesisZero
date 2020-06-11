@@ -14,7 +14,6 @@ public class CutsceneController : MonoBehaviour
     public string IntroName = "IntroCutscene";
     public string bugeIntro = "MeetingBuge";
     public static CutsceneController instance;
-    public Vector3 playerCutscenePos;
     private GameObject Primarycanvas;
     private GameObject CutsceneCanvas;
     private Camera cam;
