@@ -63,13 +63,16 @@ public class EnemyManager : MonoBehaviour
         Difficulty = Mathf.Clamp(Difficulty, 0, MaxDifficulty);
         HealthMultiplier = 1 + Difficulty / 2;
         int i = 0;
-        foreach (AIController enemy in AllEnemies)
+        if (TileManager.instance.MayhemMode)
         {
-            float oldHP = enemy.GetHealth().GetValue();
-            enemy.SetMaxHealth(HealthMultiplier);//health can scale exponentially
-            if (i == 0)
-                print("health of enemy is " + enemy.GetHealth().GetValue());
-            i++;
+            foreach (AIController enemy in AllEnemies)
+            {
+                float oldHP = enemy.GetHealth().GetValue();
+                enemy.SetMaxHealth(oldHP* HealthMultiplier);//health can scale exponentially
+                if (i == 0)
+                    print("health of enemy is " + enemy.GetHealth().GetValue());
+                i++;
+            }
         }
     }
     public void ResetDifficulty(float newdif)

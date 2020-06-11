@@ -199,6 +199,8 @@ public class SaveLoadManager : MonoBehaviour
         player.GetRange().SetValue(data.range);
         player.GetShield().SetValue(data.shield);
         player.GetWeight().SetValue(data.weight);
+        sM.SetModLimit(data.uniqueModLimit);
+        player.SetMaxCapsuleAmount(data.essenceLimit);
         player.SetEssence(data.essence);
 
         SkillObject sObject;
@@ -254,6 +256,8 @@ public class SaveLoadManager : MonoBehaviour
         data.range = player.GetRange().GetValue();
         data.shield = player.GetShield().GetValue();
         data.weight = player.GetWeight().GetValue();
+        data.essenceLimit = player.GetMaxCapsuleAmount();
+        data.uniqueModLimit = sM.GetModSlotLimit();
         //data.deathDuration = player.Stats.deathDuration;
 
         data.invunerable = player.GetInvunerableStatus();
@@ -361,12 +365,13 @@ public class PlayerData
     public float[] playerPosition;
     //player stats
     public float health, damage, speed, attackSpeed, flatDamageReduction, damageReduction, dodgeChance, critChance, critdamage, range, shield, weight;
-    public float essence;
+    public float essence, essenceLimit;
     public Status invunerable, stunned, burning, slowed, stunimmune;
     public List<string> skillList;
     public List<int> skillStacks;
     public List<string> dialougePlayedKeys;
     public List<int> dialougePlayedCounts;
+    public int uniqueModLimit;
     public PlayerData()
     {
         playerPosition = new float[3];

@@ -246,7 +246,6 @@ public class StateManager : MonoBehaviour
         cam.GetComponentInParent<CinemachineBrain>().enabled = false;
         cam.transform.position = new Vector3(player.transform.position.x, cam.transform.position.y, cam.transform.position.z);
         //GameObject.FindGameObjectWithTag("CMcam").GetComponent<CinemachineVirtualCamera>().enabled = false;
-        TileManager.instance.GetComponent<TileManager>().mayhemLevelUp(true);
         if (name.Contains("Skip"))
             SkipTutorial();
         AudioManager.instance.PlaySound("SFX_Teleport");
@@ -259,6 +258,7 @@ public class StateManager : MonoBehaviour
         }
         if (TileManager.instance.MayhemMode) //if it doesn't have pair, and you are in mayhem mode
         {
+            TileManager.instance.GetComponent<TileManager>().mayhemLevelUp(true);
             MayhemTimer.instance.LevelCleared();
             EnemyManager.instance.AddDifficulty(.4f); //mayhem mode increase
         }

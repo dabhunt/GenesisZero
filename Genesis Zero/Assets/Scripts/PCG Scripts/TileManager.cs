@@ -57,6 +57,7 @@ public class TileManager : MonoBehaviour
 	private GameObject[] betweenAreas;
 	private Sprite[] ads;
 	private GameObject LevelParent;
+	private Random.State rng;
 	List<List<GameObject>> guideArrows = new List<List<GameObject>>();
 	private void Awake()
 	{
@@ -95,9 +96,8 @@ public class TileManager : MonoBehaviour
 			seedValue = data.seed;
 			Debug.Log(seedValue);
 		}
-		Debug.Log(" Randstate Before:" + Random.seed);
 		Random.InitState(seedValue);
-		Debug.Log(" Randstate After:" + Random.seed);
+		rng = Random.state;
 		if (!MayhemMode)
 		{
 			//Level 1
@@ -160,6 +160,7 @@ public class TileManager : MonoBehaviour
 		teleporterInstances = new List<GameObject>();
 		int curMatLevel = 0;
 		print("placing Interactables");
+		//Random.state = rng;
 		int LastMatLevel = 0;
 		GameObject newestTele = null;
 		int iter = 0;
@@ -168,7 +169,7 @@ public class TileManager : MonoBehaviour
 			curMatLevel = Mathf.FloorToInt(mat.transform.position.x / levelSpacing); //convert X position to what level we are on
 																					 //print("mat.transform: " + mat.transform.position.x + " = curmatlevel: " + curMatLevel);
 			if (mat.transform.position.x > levelSpacing)
-			{
+			{ 
 				if (mat.name == "GodHeadMat" && Random.value <= godHeadSpawnChance) //Case 1: God Heads
 				{
 					GameObject newGodHead = Instantiate(interactablePrefabs[0]) as GameObject;
@@ -299,9 +300,8 @@ public class TileManager : MonoBehaviour
 		int tilesSinceLastCluster = 0;
 		List<GameObject> roofList = new List<GameObject>();
 		List<Vector3> vectorList = new List<Vector3>();
-		
-		//Create Building
 
+		//Create Building
 		spawnVector.z += 2; //Initialize spawnVector Z position
 		while (end > 0)
 		{
@@ -502,6 +502,7 @@ public class TileManager : MonoBehaviour
 			Destroy(LevelParent);
 			LevelParent = new GameObject("LevelParentInstance");
 			LevelParent.transform.SetParent(transform);
+			Random.state = rng;
 			if (swapTS)
 				SwapTileSet(); //alternate tiles
 			//Construct New Level

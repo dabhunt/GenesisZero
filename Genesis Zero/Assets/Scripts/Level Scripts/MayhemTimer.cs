@@ -28,17 +28,6 @@ public class MayhemTimer : MonoBehaviour
     }
     void Start()
     {
-        if (ActiveOnStart)
-        {
-            Active = true;
-
-        }
-        else 
-        {
-            Active = false;
-            Invoke("DelayedStart", 1f);
-            return;
-        }
         if (!SaveLoadManager.instance.newGame && SaveLoadManager.instance.endLess)
         {
             ApplyData();
@@ -47,7 +36,18 @@ public class MayhemTimer : MonoBehaviour
         {
             curTimeLeft = resetTime;
         }
-        levelsClearedText.text = "Level(s) Cleared: " + levelsCleared.ToString();
+        levelsClearedText.text = "Levels Cleared: " + levelsCleared.ToString();
+        if (ActiveOnStart)
+        {
+            Active = true;
+
+        }
+        else
+        {
+            Active = false;
+            Invoke("DelayedStart", 1f);
+            return;
+        }
     }
     void DelayedStart()
     {

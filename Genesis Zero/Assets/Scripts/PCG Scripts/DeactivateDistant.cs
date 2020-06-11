@@ -45,7 +45,7 @@ public class DeactivateDistant : MonoBehaviour
         }
         newstr[tags.Length] = "BossRoom";
         tags = newstr;
-        firstCheck = true;
+        //firstCheck = true;
     }
     // Check is currently called once a second, but can also be called manually when the player is teleported to prevent visual latency
     void Check()

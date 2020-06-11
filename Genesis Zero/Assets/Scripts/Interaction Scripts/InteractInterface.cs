@@ -68,7 +68,7 @@ public class InteractInterface : MonoBehaviour
                 {
                     secondshortest = shortest;
                     secondclosest = closest;
-                    shortest = Vector2.Distance(Player.instance.CenterPoint(), objects[0].transform.position);
+                    shortest = Vector2.Distance(Player.instance.CenterPoint(), objects[i].transform.position);
                     closest = objects[i];
                 }
             }
@@ -78,7 +78,10 @@ public class InteractInterface : MonoBehaviour
         if (shortest >= minProximity)
             return null;
         if (closestSkill != null && Player.instance.GetSkillManager().AtMaxCapacity() && !Player.instance.GetSkillManager().HasSkill(closestSkill.name))
-            return secondclosest;
+            closest = secondclosest;
+        closestSkill = closest.GetComponent<SkillPickup>();
+        if (closestSkill != null && Player.instance.GetSkillManager().AtMaxCapacity() && !Player.instance.GetSkillManager().HasSkill(closestSkill.name))
+            return null;
         return closest;
     }
 
