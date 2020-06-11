@@ -55,7 +55,11 @@ public class CutsceneController : MonoBehaviour
         Cutscene();
         print("buge cutscene playing");
         cinematicAnim.Play(bugeIntro);
-        CutsceneCanvas.SetActive(false);
+        if (CutsceneCanvas != null)
+        {
+            CutsceneCanvas.SetActive(false);
+
+        }
         Invoke("Reset", (float)cinematicAnim[bugeIntro].length); //reset the normal camera after it finishes
     }
     public void Cutscene()
@@ -66,8 +70,15 @@ public class CutsceneController : MonoBehaviour
         GetComponentInChildren<CinemachineBrain>().enabled = true;
         GameInputManager.instance.DisablePlayerControls();
         StateManager.instance.Cursorvisible = true;
-        CutsceneCanvas.SetActive(true);
-        Primarycanvas.SetActive(false);
+        if (CutsceneCanvas != null)
+        {
+            CutsceneCanvas.SetActive(true);
+
+        }
+        if (Primarycanvas != null)
+        {
+            Primarycanvas.SetActive(false);
+        }
         GameInputManager.instance.DisablePlayerControls();
     }
     public void Skip()

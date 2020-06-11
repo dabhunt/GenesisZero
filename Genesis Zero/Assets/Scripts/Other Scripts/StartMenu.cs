@@ -44,13 +44,12 @@ public class StartMenu : MonoBehaviour
 
     public void ContinueButton()
     {
+        KillTileManager();
         mainMenuScreen.SetActive(false);
         loadingScreen.SetActive(true);
         if (SaveLoadManager.instance.EndlessSaveExists())
         {
             SaveLoadManager.instance.endLess = true;
-            mainMenuScreen.SetActive(false);
-            loadingScreen.SetActive(true);
             sceneName = endlessSceneName;
             LoadScene(false);
             return;
@@ -63,6 +62,7 @@ public class StartMenu : MonoBehaviour
     public void StartButton()
     {
         //hiding MainMenuScreen.
+        KillTileManager();
         mainMenuScreen.SetActive(false);
         loadingScreen.SetActive(true);
         SaveLoadManager.instance.endLess = false;
@@ -77,8 +77,16 @@ public class StartMenu : MonoBehaviour
         mainMenuScreen.SetActive(false);
         optionsScreen.SetActive(true);
     }
+    private void KillTileManager() 
+    {
+        if (TileManager.instance != null)
+        {
+            Destroy(TileManager.instance);
+        }
+    }
     public void MayhemButton()
     {
+        KillTileManager();
         mainMenuScreen.SetActive(false);
         loadingScreen.SetActive(true);
         SaveLoadManager.instance.endLess = true;

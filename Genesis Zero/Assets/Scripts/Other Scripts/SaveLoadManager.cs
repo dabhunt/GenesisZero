@@ -67,6 +67,7 @@ public class SaveLoadManager : MonoBehaviour
             FileStream pFile = File.Create(pPath);
             FileStream mFile = File.Create(mPath);
             MapData mapData = GetMapData();
+            print("mapdata.seed = " + mapData.seed);
             if (endless)
             {
                 FileStream eFile = File.Create(ePath);
@@ -337,11 +338,11 @@ public class SaveLoadManager : MonoBehaviour
             Debug.Log("Deleting saves");
             File.Delete(pPath);
             File.Delete(mPath);
-            if (EndlessSaveExists())
-            {
-                Debug.Log("Deleting Endless Save");
-                File.Delete(ePath);
-            }
+        }
+        if (EndlessSaveExists())
+        {
+            Debug.Log("Deleting Endless Save");
+            File.Delete(ePath);
         }
     }
 
@@ -354,7 +355,6 @@ public class SaveLoadManager : MonoBehaviour
         return (data.version == Application.version);
     }
 }
-
 [Serializable]
 public class PlayerData
 {

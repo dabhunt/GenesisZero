@@ -242,8 +242,6 @@ public class StateManager : MonoBehaviour
     public void Teleport(Vector2 destination, bool bossRoomOverride, bool hasPair , string name)
     {
         canvas.transform.Find("BlackOverlay").GetComponent<Animation>().Play();
-        if (MayhemTimer.instance != null && TileManager.instance.MayhemMode)
-            MayhemTimer.instance.LevelCleared();
         Camera cam = Camera.main;
         cam.GetComponentInParent<CinemachineBrain>().enabled = false;
         cam.transform.position = new Vector3(player.transform.position.x, cam.transform.position.y, cam.transform.position.z);
@@ -261,7 +259,7 @@ public class StateManager : MonoBehaviour
         }
         if (TileManager.instance.MayhemMode) //if it doesn't have pair, and you are in mayhem mode
         {
-            MayhemTimer.instance.IncrementClearedLevels();
+            MayhemTimer.instance.LevelCleared();
             EnemyManager.instance.AddDifficulty(.4f); //mayhem mode increase
         }
         else //if it doesnt have pair and you are in normal mode
@@ -333,8 +331,11 @@ public class StateManager : MonoBehaviour
             }
             yield return null;
         }
+        if (TileManager.instance != null)
+        {
+            Destroy(TileManager.instance);
+        }
     }
-
 	IEnumerator LoadCreditsSceneCoroutine()
 	{
 		operation = SceneManager.LoadSceneAsync("Credits", LoadSceneMode.Single); // Change this later to the credits

@@ -86,6 +86,7 @@ public class TileManager : MonoBehaviour
 		if (SaveLoadManager.instance.newGame == true)
 		{
 			seedValue = Random.Range(0, 999999);
+			Debug.Log("New Game Seed " + seedValue);
 		}
 		else
 		{
@@ -94,7 +95,9 @@ public class TileManager : MonoBehaviour
 			seedValue = data.seed;
 			Debug.Log(seedValue);
 		}
+		Debug.Log(" Randstate Before:" + Random.seed);
 		Random.InitState(seedValue);
+		Debug.Log(" Randstate After:" + Random.seed);
 		if (!MayhemMode)
 		{
 			//Level 1

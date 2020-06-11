@@ -14,8 +14,6 @@ public class PauseMenu : MonoBehaviour
     }
     public void MenuButton()
     {
-        //StateManager.instance.LoadMenu();
-        //Save Game
         StateManager.instance.gameObject.GetComponent<Restart>().exitingScene = true;
         var sods = Resources.FindObjectsOfTypeAll<SpawnOnDestroy>();
         for (int i = 0; i < sods.Length; i++)
@@ -26,11 +24,6 @@ public class PauseMenu : MonoBehaviour
         SaveLoadManager.instance.SaveGame();
         //Player.instance.GetHealth().SetValue(0);
         StateManager.instance.LoadMenu();
-        Invoke("LoadMainMenu", .3f);
-    }
-    public void LoadMainMenu()
-    {
-        print("this runs");
     }
     public void RestartButton()
     {
