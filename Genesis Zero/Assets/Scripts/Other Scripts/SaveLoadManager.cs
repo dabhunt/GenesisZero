@@ -8,21 +8,26 @@ using System.IO;
 public class SaveLoadManager : MonoBehaviour
 {
     public static SaveLoadManager instance;
-    [Tooltip("Name of file for player data")]
-    public string pFileName = "pData";
-    [Tooltip("Name of file for map data")]
-    public string mFileName = "mData";
-    [Tooltip("Name of file for settings data")]
-    public string sFileName = "sData";
-
+    private static string pFileName = "pData";
+    private static string mFileName = "mData";
+    private static string sFileName = "sData";
+    private static string eFilename = "eData";
     private string pPath;
     private string mPath;
     private string sPath;
+    private string ePath;
     private static bool newgame = true;
+    private static bool endless = false;
     public bool newGame
     { 
         get {return newgame;} 
         set {newgame = value;}
+    }
+
+    public bool endLess
+    {
+        get { return endless;}
+        set {endless = value;}
     }
     private void Awake()
     {
@@ -35,10 +40,15 @@ public class SaveLoadManager : MonoBehaviour
             Destroy(gameObject);
             return;
         }
+        pPath = Application.persistentDataPath + "/" + pFileName + ".dat";
+        mPath = Application.persistentDataPath + "/" + mFileName + ".dat";
+        ePath = Application.persistentDataPath + "/" + eFilename + ".dat";
+        sPath = Application.persistentDataPath + "/" + sFileName + ".dat";
     }
 
     private void Start()
     {
+
         if(SaveExists() && !CorrectVersion())
             DeleteSaveFiles();
     }
@@ -49,8 +59,6 @@ public class SaveLoadManager : MonoBehaviour
     public void SaveGame()
     {
         Debug.Log("Saving Game");
-        pPath = Application.persistentDataPath + "/" + pFileName + ".dat";
-        mPath = Application.persistentDataPath + "/" + mFileName + ".dat";
         BinaryFormatter bf = new BinaryFormatter();
         try
         {
@@ -59,6 +67,15 @@ public class SaveLoadManager : MonoBehaviour
             FileStream pFile = File.Create(pPath);
             FileStream mFile = File.Create(mPath);
             MapData mapData = GetMapData();
+            if (endless)
+            {
+                FileStream eFile = File.Create(ePath);
+                EndlessData endlessData = GetEndlessData();
+                foreach (var d in endlessData.data)
+                    Debug.Log(d);
+                bf.Serialize(eFile, endlessData);
+                eFile.Close();
+            }
             //Serialize and write to the file
             bf.Serialize(pFile, playerData);
             pFile.Close();
@@ -75,7 +92,7 @@ public class SaveLoadManager : MonoBehaviour
     public void SaveSettings(SettingsData data)
     {
         Debug.Log("Saving User Preferences");
-        sPath = Application.persistentDataPath + "/" + sFileName + ".dat";
+        //sPath = Application.persistentDataPath + "/" + sFileName + ".dat";
         BinaryFormatter bf = new BinaryFormatter();
         FileStream sFile = File.Create(sPath);
         bf.Serialize(sFile, data);
@@ -84,7 +101,7 @@ public class SaveLoadManager : MonoBehaviour
 
     public SettingsData LoadSettings()
     {
-        sPath = Application.persistentDataPath + "/" + sFileName + ".dat";
+        //sPath = Application.persistentDataPath + "/" + sFileName + ".dat";
         if (File.Exists(sPath))
         {
             Debug.Log("Loading User Preferences");
@@ -106,7 +123,7 @@ public class SaveLoadManager : MonoBehaviour
      */
     public PlayerData LoadPlayerData()
     {
-        pPath = Application.persistentDataPath + "/" + pFileName + ".dat";
+        //pPath = Application.persistentDataPath + "/" + pFileName + ".dat";
         if (File.Exists(pPath))
         {
             Debug.Log("Loading Character Data");
@@ -128,7 +145,7 @@ public class SaveLoadManager : MonoBehaviour
      */
     public MapData LoadMapData()
     {
-        mPath = Application.persistentDataPath + "/" + mFileName + ".dat";
+        //mPath = Application.persistentDataPath + "/" + mFileName + ".dat";
         if (File.Exists(mPath))
         {
             Debug.Log("Loading Map Data");
@@ -145,6 +162,24 @@ public class SaveLoadManager : MonoBehaviour
         }
     }
 
+    public EndlessData LoadEndlessData()
+    {
+        //ePath = Application.persistentDataPath + "/" + eFilename + ".dat";
+        if (File.Exists(ePath))
+        {
+            Debug.Log("Loading Endless data");
+            BinaryFormatter bf = new BinaryFormatter();
+            FileStream file = File.Open(ePath, FileMode.Open);
+            EndlessData data = bf.Deserialize(file) as EndlessData;
+            file.Close();
+            return data;
+        }
+        else
+        {
+            Debug.LogError("Endless data file doesn't exist");
+            return null;
+        }
+    }
     /* Applying saved player data to current game session.
      */
     public void ApplyPlayerData(PlayerData data)
@@ -178,7 +213,6 @@ public class SaveLoadManager : MonoBehaviour
         //GameObject.FindGameObjectWithTag("CMcam").SetActive(true);
         //Debug.Log("Cam SetActive!");
     }
-
     /* Grabs map data from current session for saving.
      */
     private MapData GetMapData()
@@ -188,6 +222,13 @@ public class SaveLoadManager : MonoBehaviour
         Debug.Log("GetDATA " + data.seed);
         data.version = Application.version;
         return data;
+    }
+
+    private EndlessData GetEndlessData()
+    {
+        EndlessData eData = new EndlessData();
+        eData.data = MayhemTimer.instance.GetData();
+        return eData;
     }
     /* Returns a SaveData object with the most updated
      * values from the current game state.
@@ -241,9 +282,9 @@ public class SaveLoadManager : MonoBehaviour
     //Checks if the save files exists
     public bool SaveExists()
     {
-        pPath = Application.persistentDataPath + "/" + pFileName + ".dat";
+        //pPath = Application.persistentDataPath + "/" + pFileName + ".dat";
         Debug.Log("Checking for Player data at: " + (pPath));
-        mPath = Application.persistentDataPath + "/" + mFileName + ".dat";    
+        //mPath = Application.persistentDataPath + "/" + mFileName + ".dat";    
         Debug.Log("Checking for Map data at: " + (mPath));
         if (File.Exists(pPath) && File.Exists(mPath))
         {
@@ -259,7 +300,7 @@ public class SaveLoadManager : MonoBehaviour
 
     public bool SettingsSaveExists()
     {
-        sPath = Application.persistentDataPath + "/" + sFileName + ".dat";
+        //sPath = Application.persistentDataPath + "/" + sFileName + ".dat";
         Debug.Log("Checking for SettingsFile at: " + (sPath));
         if (File.Exists(sPath))
         {
@@ -273,6 +314,22 @@ public class SaveLoadManager : MonoBehaviour
         }
     }
 
+    public bool EndlessSaveExists()
+    {
+        //ePath = Application.persistentDataPath + "/" + eFilename + ".dat";
+        Debug.Log("Checking for Endless save File at: " + (ePath));
+        if (File.Exists(ePath))
+        {
+            Debug.Log("Endless save File exist");
+            return true;
+        }
+        else
+        {
+            Debug.Log("Endless save File doesn't exist");
+            return false;
+        }
+    }
+
     public void DeleteSaveFiles()
     {
         if (SaveExists())
@@ -280,6 +337,11 @@ public class SaveLoadManager : MonoBehaviour
             Debug.Log("Deleting saves");
             File.Delete(pPath);
             File.Delete(mPath);
+            if (EndlessSaveExists())
+            {
+                Debug.Log("Deleting Endless Save");
+                File.Delete(ePath);
+            }
         }
     }
 
@@ -328,4 +390,15 @@ public class SettingsData
     public float musicVolume;
     public int resIndex;
     public bool fullScreen;
+}
+
+[Serializable]
+public class EndlessData
+{
+    public float[] data;
+
+    public EndlessData()
+    {
+        data = new float[4];
+    }
 }

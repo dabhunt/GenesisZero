@@ -50,6 +50,7 @@ public class TileManager : MonoBehaviour
 	private float tileLength = 22.0f;
 	private float tileHeight = 6.5f;
 	private int seedValue;
+	public static int tileID = 0;
 	private float levelTracking, enemyspawnchanceincease;
 	private List<GameObject> endBuildings;
 	private List<GameObject> teleporterInstances;
@@ -69,6 +70,7 @@ public class TileManager : MonoBehaviour
 	}
 	private void Start()
     {
+		MayhemMode = SaveLoadManager.instance.endLess;
 		betweenAreas = Resources.LoadAll<GameObject>("InbetweenAreas");
 		ads = Resources.LoadAll<Sprite>("Billboards");
 		SkillObject[] sskills = Resources.LoadAll<SkillObject>("Skills/Starter Mods");
@@ -124,7 +126,15 @@ public class TileManager : MonoBehaviour
 
 			Invoke("DelayedStart", .5f);
 			//mayhemLevelUp();
-			mayhemLevelUp();
+			if (!SaveLoadManager.instance.newGame)
+			{
+				tilePrefabs = (tileID == 0) ? industrialTilePrefabs : cityTilePrefabs;
+				mayhemLevelUp(false);
+			}
+			else
+			{
+				mayhemLevelUp(true);
+			}
 		}
 
 		//Placemat PCG Pass
@@ -469,13 +479,17 @@ public class TileManager : MonoBehaviour
 	public void SwapTileSet()
 	{
 		if (tilePrefabs == cityTilePrefabs)
+		{
 			tilePrefabs = industrialTilePrefabs;
+			tileID = 0;
+		}
 		else
 		{
 			tilePrefabs = cityTilePrefabs; //randomly choose the tileset
+			tileID = 1;
 		}
 	}
-	public void mayhemLevelUp()
+	public void mayhemLevelUp(bool swapTS)
 	{
 		if (MayhemMode)
 		{
@@ -485,7 +499,8 @@ public class TileManager : MonoBehaviour
 			Destroy(LevelParent);
 			LevelParent = new GameObject("LevelParentInstance");
 			LevelParent.transform.SetParent(transform);
-			SwapTileSet(); //alternate tiles
+			if (swapTS)
+				SwapTileSet(); //alternate tiles
 			//Construct New Level
 			int level = 1;
 			currentPos = levelSpacing * level + 22;
