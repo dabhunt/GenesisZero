@@ -9,11 +9,13 @@ public class MayhemTimer : MonoBehaviour
     public float resetTime;
     public TextMeshProUGUI countdownText;
     public TextMeshProUGUI levelsClearedText;
+    public TextMeshProUGUI difficultytxt;
     public bool Active = false;
     public bool ActiveOnStart = false;
     public float decreasePercent = .9f;//how much time between difficulty bumps decreases each difficulty bump
     private string Strformat = "0.#";
     private int levelsCleared = 0;
+    private int difficulty = 0;
     private void Awake()
     {
         if (instance == null)
@@ -64,7 +66,12 @@ public class MayhemTimer : MonoBehaviour
             display = levelsCleared.ToString() + " Levels Cleared ";
         }
         levelsClearedText.text = display;
+        difficultytxt.text = "Difficulty: " + difficulty.ToString();
         TileManager.instance.tempTextDisplay.ShowText(display , 1, .75f);
+    }
+    public int GetDifficulty() 
+    {
+        return difficulty; 
     }
     public int GetLevelsCleared() 
     { return levelsCleared; }

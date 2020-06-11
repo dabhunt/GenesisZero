@@ -130,12 +130,13 @@ public class DroneExploderAI : AIController
             Hitbox spawnedHitbox = spawnedExplosion.GetComponent<Hitbox>();
             spawnedHitbox.InitializeHitbox(GetDamage().GetValue() * DamageDifficultyMultiplier.GetFactor(), this);
             //GameObject emit = VFXManager.instance.PlayEffect(vfxName, transform.position, 0f, .3f);
-            spawnedExplosion.GetComponent<ProjectileTest>().DestroyEvent.AddListener(DestroySelf);
             if (AudioManager.instance != null)
             {
                 //AudioManager.instance.PlayRandomSFXType("EnemyHit");
+                print("explosiontrying to play");
                 AudioManager.instance.PlayRandomSFXType("ExplosionEnemy", this.gameObject, .9f, 1.2f, 1f);
             }
+            spawnedExplosion.GetComponent<ProjectileTest>().DestroyEvent.AddListener(DestroySelf);
             // Vector3 spawnPoint = new Vector3(transform.position.x, transform.position.y,0);
             // //this is for collision, not VFX
             // GameObject spawnedExplosion = Instantiate(explosionPrefab,spawnPoint, Quaternion.identity);

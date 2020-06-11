@@ -70,7 +70,7 @@ public class StatDisplay : MonoBehaviour
             AD.SetText("Bullet Damage: " + (int)_bd);
             AP.SetText("Ability Power: " + (int)_ap);
             AS.SetText("Attack Speed: " + (Mathf.Round(_as * 100)) / 100.0);
-            CC.SetText("Crit Chance: " + (Mathf.Round(_cc * 100)) / 100.0+"%");
+            CC.SetText("Crit Chance: " + (Mathf.Round(_cc * 10)) / 10+"%");
         }
     }
 

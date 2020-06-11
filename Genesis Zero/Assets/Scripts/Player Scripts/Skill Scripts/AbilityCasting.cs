@@ -376,8 +376,6 @@ public class AbilityCasting : MonoBehaviour
     private void CastSlowDown()
     {
         StateManager.instance.ChangeTimeScale(timeScale, TS_effectDuration);
-        VFXManager.instance.TimeEffect(TS_effectDuration-TS_offset, 1);
-        StateManager.instance.TintScreenForDuration(TS_screenTint,TS_effectDuration-TS_offset, TS_tweenTime, TS_alpha);
     }
 
     private void CastSpartanLaser(int num)

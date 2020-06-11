@@ -15,7 +15,6 @@ public class CutsceneController : MonoBehaviour
     public string bugeIntro = "MeetingBuge";
     public static CutsceneController instance;
     public Vector3 playerCutscenePos;
-    private Vector3 playerPreCutscene;
     private GameObject Primarycanvas;
     private GameObject CutsceneCanvas;
     private Camera cam;
@@ -41,7 +40,7 @@ public class CutsceneController : MonoBehaviour
     }
     private void Update()
     {
-        if (Input.GetKeyDown(KeyCode.Escape) && CutsceneCanvas.activeSelf)
+        if (Input.GetKeyDown(KeyCode.Escape) && CutsceneCanvas != null && CutsceneCanvas.activeSelf)
             Skip();
     }
     public void IntroCutscene()
@@ -63,7 +62,6 @@ public class CutsceneController : MonoBehaviour
     public void Cutscene()
     {
         UpdateCanvases();
-        playerPreCutscene = Player.instance.transform.position;
         inCutscene = true;
         Player.instance.GetComponent<AimIK>().enabled = false;
         GetComponentInChildren<CinemachineBrain>().enabled = true;
@@ -91,7 +89,6 @@ public class CutsceneController : MonoBehaviour
     {
         inCutscene = false;
         CancelInvoke("Reset");
-        Player.instance.transform.position = playerPreCutscene;
         Player.instance.GetComponent<AimIK>().enabled = true;
         UpdateCanvases();
         StateManager.instance.Cursorvisible = false;
