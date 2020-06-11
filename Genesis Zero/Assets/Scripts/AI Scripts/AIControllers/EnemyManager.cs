@@ -55,6 +55,10 @@ public class EnemyManager : MonoBehaviour
         Difficulty *= multiplier;
         SetDifficulty(Difficulty);
     }
+    public void AddDifficulty(float moredif) 
+    {
+        SetDifficulty(Difficulty + moredif);
+    }
     public void SetDifficulty(float newDifficulty)
     {
         Difficulty = newDifficulty; //no longer multiplier because that doesn't scale well for most attributes

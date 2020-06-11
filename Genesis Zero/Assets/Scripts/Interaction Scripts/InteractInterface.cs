@@ -68,6 +68,7 @@ public class InteractInterface : MonoBehaviour
                 {
                     secondshortest = shortest;
                     secondclosest = closest;
+                    dist = closest;
                     shortest = Vector2.Distance(Player.instance.CenterPoint(), objects[0].transform.position);
                     closest = objects[i];
                 }
