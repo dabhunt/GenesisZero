@@ -25,9 +25,8 @@ public class StateManager : MonoBehaviour
     public bool GameOver = false;
     public bool InTutorial = true;
     private float tweenduration = 0;
-    private  float toWhite = .6f;
-    private float stayWhite = 1.2f;
-    private float fadeWhite = 1.2f;
+    private Animation timeslowEffect;
+    private bool timeSlowEffectActive = true;
     private void Awake()
     {
         if (instance == null)
@@ -54,41 +53,52 @@ public class StateManager : MonoBehaviour
         canvas = GameObject.FindWithTag("CanvasUI");
         pauseMenu = canvas.transform.Find("PauseMenu").gameObject;
         optionsMenu = canvas.transform.Find("OptionsScreen").gameObject;
+        timeslowEffect = Camera.main.transform.parent.Find("TimeSlow").GetComponent<Animation>();
+        //timeslowEffect["TimeSlowOff"].wrapMode = WrapMode.Once;
+        //timeslowEffect["TimeSlowOn"].wrapMode = WrapMode.Once;
     }
     private void Update()
     {
         if (Timer >= 0)
         {
+            print("Timescale: "+TimeScale);
             Timer -= Time.unscaledDeltaTime;
             if (Timer < 0)
             {
                 ChangeTimeScale(1, 0);
+                if (timeSlowEffectActive)
+                {
+                    timeSlowEffectActive = false;
+                    print("timeslowoff now playing");
+                    timeslowEffect.Play("TimeSlowOff");
+                }
+
             }
-        }
-        //temporary input usage for demo tomorrow
-        if (Input.GetKeyDown(KeyCode.Escape))
-        {
-            if (Time.realtimeSinceStartup > 10)
+            //temporary input usage for demo tomorrow
+            if (Input.GetKeyDown(KeyCode.Escape))
             {
-                if (pauseMenu.activeSelf)
+                if (Time.realtimeSinceStartup > 10)
                 {
-                    pauseMenu.SetActive(false);
-                    ToggleOptionsMenu(false);
-                    UnpauseGame();
-                }
-                else
-                {
-                    pauseMenu.SetActive(true);
-                    PauseGame();
+                    if (pauseMenu.activeSelf)
+                    {
+                        pauseMenu.SetActive(false);
+                        ToggleOptionsMenu(false);
+                        UnpauseGame();
+                    }
+                    else
+                    {
+                        pauseMenu.SetActive(true);
+                        PauseGame();
+                    }
                 }
             }
+            if (Input.GetKeyDown(KeyCode.Backspace))
+                restart.RestartScene();
+            if (isPaused == true || Cursorvisible)
+                Cursor.visible = true;
+            else
+                Cursor.visible = false;
         }
-        if (Input.GetKeyDown(KeyCode.Backspace))
-            restart.RestartScene();
-        if (isPaused == true || Cursorvisible)
-            Cursor.visible = true;
-        else
-            Cursor.visible = false;
     }
     public Vector2 GetBossRoomLocation()
     {
@@ -158,10 +168,16 @@ public class StateManager : MonoBehaviour
     {
         TimeScale = timescale;
         Timer = time;
-        if (!isPaused && timescale > .9f) //only set timescale if you're not already slowed
+        print(isPaused);//this better be false
+        if (!isPaused && TimeScale > .9f) //only set timescale if you're not already slowed
         {
-            Time.timeScale = timescale;
+            Time.timeScale = TimeScale;
             Time.fixedDeltaTime = 0.02f * TimeScale;
+        }
+        if (TimeScale < .6f) 
+        {
+            timeslowEffect.Play("TimeSlowOn");
+            timeSlowEffectActive = true;
         }
     }
     public void LoadMenu()
