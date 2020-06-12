@@ -362,11 +362,21 @@ public class UniqueEffects : MonoBehaviour
 			player.GetDamage().AddRepeatingBonus(currentDamage, currentAttackSpeed, 1 / checksPerSecond, "BoilingPoint_DMG");
 		}
 	}
-	public float SL_CalculateDmg()
+	public float SL_CalculateDmg(int num, float charged1, float charged2)
 	{
-		aManager.PlaySoundOneShot("SFX_AOE");
+		//aManager.PlaySoundOneShot("SFX_AOE");
+		float chargeAmount = 0;
+		if (num == 1)
+		{
+			chargeAmount = charged1;
+		}
+		else 
+		{
+			chargeAmount = charged2;
+		}
+		chargeAmount *= .5f;
 		float AP = player.GetAbilityPower().GetValue();
-		return Mathf.Clamp(AP * 1.5f + SL_bonusPerKill * SL_killCount, AP, SL_maxDmg);
+		return Mathf.Clamp(AP * 1.5f * chargeAmount, AP, SL_maxDmg);
 	}
 	public int GetKillCount()
 	{

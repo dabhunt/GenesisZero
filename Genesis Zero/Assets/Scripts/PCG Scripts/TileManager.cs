@@ -183,10 +183,9 @@ public class TileManager : MonoBehaviour
 				else if (mat.name == "ChestMat" || mat.name == "MerchantMat" || mat.name == "ScrapMat")
 				{
 					int rng = Random.Range(1, 5); //get num from 1 to 4 to choose what may spawn here, since all are roughly the same space requirement
+					GameObject newInteractable = null;
 					if (Random.value <= interactableSpawnChances[rng])
 					{
-						//if it didn't pass the random check, try again
-						GameObject newInteractable;
 						if (rng == 4)
 						{
 							newInteractable = Instantiate(interactablePrefabs[5]) as GameObject; // replace with Guidance Arrow
@@ -198,9 +197,25 @@ public class TileManager : MonoBehaviour
 						{
 							newInteractable = Instantiate(interactablePrefabs[rng]) as GameObject;
 							newInteractable.transform.position = mat.transform.position;
+							newInteractable.transform.SetParent(mat.transform.parent);
 						}
-
-						newInteractable.transform.SetParent(mat.transform.parent);
+					}
+					else 
+					{
+						if (Random.value > .2f) // 50% chance to spawn a barrel or crate if no interactable spawned in that spot
+						{
+							int type = Random.Range(5, TileManager.instance.enemyPrefabs.Length);
+							newInteractable = Instantiate(TileManager.instance.enemyPrefabs[type]) as GameObject;
+							newInteractable.transform.position = mat.transform.position + new Vector3(0, 0, Random.Range(1,3.0f));
+							newInteractable.transform.SetParent(mat.transform.parent);
+							if (type == 6)
+								newInteractable.transform.rotation = Quaternion.Euler(-90, 180, 0);
+							if (Random.value > .6f) // 60% chance to put the barrel in Z depth 0
+							{
+								Vector3 zeroSpot = mat.transform.position;
+								newInteractable.transform.position = new Vector3(zeroSpot.x, zeroSpot.y, 0);
+							}
+						}
 					}
 				}
 				else if (mat.name == "TeleportMat")
@@ -516,6 +531,7 @@ public class TileManager : MonoBehaviour
 			{
 				generateBuilding(Random.Range(minBuildingWidth, maxBuildingWidth), Random.Range(minBuildingTileCount, maxBuildingTileCount), level);
 			} //the final level of PCG needs this for the guidance arrows
+			EnemyManager.instance.AddDifficulty(.3f);
 			Vector3 spawnVector = new Vector3(1, 0, 0) * currentPos + new Vector3(0, -2, 0); //spawnVector for tiles																		 //GameObject endBuilding = (GameObject)GameObject.Instantiate(levelEndCityBuilding, spawnVector, Quaternion.Euler(0, 141.6f, 0));
 			PlaceInteractables();
 			GameObject endBuilding = (GameObject)GameObject.Instantiate(levelEndCityBuilding, spawnVector, Quaternion.Euler(0, 141.6f, 0));

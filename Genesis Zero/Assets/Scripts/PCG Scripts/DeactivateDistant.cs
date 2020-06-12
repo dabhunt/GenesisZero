@@ -64,7 +64,7 @@ public class DeactivateDistant : MonoBehaviour
    				if (objects[i] != null && camObj != null){
                     //check each objects distance relative to the player transform, if outside the designated distance, it's inactive otherwise it's active.
                     float dist = Vector2.Distance(camObj.transform.position, objects[i].transform.position);
-                    if (objects[i].gameObject.tag == "Enemy")
+                    if (objects[i].gameObject.tag == "Enemy" || objects[i].gameObject.tag == "Props")
                     {
                         //make it so that enemies load in slower than cubbies, preventing them from falling through cubbies that haven't loaded yet
                         dist -= enemyDistOffset;

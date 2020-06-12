@@ -100,6 +100,8 @@ public class CheatCodes : MonoBehaviour
     public void NoCooldowns()
     {
         Player.instance.gameObject.GetComponent<AbilityCasting>().cooldownCheatOn = !noCooldowns;
+        Player.instance.gameObject.GetComponent<AbilityCasting>().ResetAbilityCooldown1();
+        Player.instance.gameObject.GetComponent<AbilityCasting>().ResetAbilityCooldown2();
     }
     public void GodMode()
     {

@@ -327,8 +327,8 @@ public class AbilityCasting : MonoBehaviour
         player.KnockBackForced(-aimDir, 30);
         GameObject hitbox = SpawnGameObject("PulseBurstHitbox", CastAtAngle(pc.CenterPoint(), aimDir, 1), Quaternion.identity);
         hitbox.GetComponent<Hitbox>().InitializeHitbox(GetComponent<Player>().GetAbilityPower().GetValue(), GetComponent<Player>(), false);
-        hitbox.GetComponent<Hitbox>().SetStunTime(1.2f);
-        player.SetInvunerable(.5f);
+        hitbox.GetComponent<Hitbox>().SetStunTime(1.5f);
+        player.SetInvunerable(.3f);
         hitbox.GetComponent<Hitbox>().SetLifeTime(.15f);
         EndBonus();
     }
@@ -419,7 +419,7 @@ public class AbilityCasting : MonoBehaviour
                 float scale = Mathf.Pow(scaleMultiPerKill, U.GetKillCount());
                 hitbox.transform.localScale = new Vector3(scale, scale, scale);
                 vfx_blast.transform.localScale = new Vector3(scale, scale, scale);
-                float damage = U.SL_CalculateDmg();
+                float damage = U.SL_CalculateDmg(num, SL_ActiveTime - ActiveTime1, SL_ActiveTime - ActiveTime2);
                 hitbox.GetComponent<Hitbox>().InitializeHitbox(damage, player, false);
                 //manually put spartan laser ability on cooldown since the initial cast can't have a cooldown
                 float cdr = 1 - Player.instance.GetCDR().GetValue();
