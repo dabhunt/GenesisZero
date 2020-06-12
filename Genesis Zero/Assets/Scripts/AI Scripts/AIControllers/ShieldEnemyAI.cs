@@ -39,6 +39,7 @@ public class ShieldEnemyAI : AIController
     public ParticleSystem chargeParticles;
     public ParticleSystem attackParticles;
     public GameObject AttackHitbox;
+    public GameObject hitboxParent;
     public Vector3 AttackHitboxStart = Vector3.zero;
     private Transform spawnedHitboxObj; // Refernce to currently spawned hitbox object
 
@@ -234,7 +235,8 @@ public class ShieldEnemyAI : AIController
             spawnedHitbox.DirectionalKnockback = true;
             spawnedHitbox.Knockbackforce = 20f;
             spawnedHitbox.InitializeHitbox(GetDamage().GetValue() * DamageDifficultyMultiplier.GetFactor(), this);
-            spawnedHitbox.SetLifeTime(.35f);
+            spawnedHitbox.SetLifeTime(.36f);
+            //spawnedHitboxObj.transform.SetParent(hitboxParent.transform);
         }
     }
 

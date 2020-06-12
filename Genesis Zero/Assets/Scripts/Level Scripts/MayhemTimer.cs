@@ -10,6 +10,7 @@ public class MayhemTimer : MonoBehaviour
     public TextMeshProUGUI countdownText;
     public TextMeshProUGUI levelsClearedText;
     public TextMeshProUGUI difficultytxt;
+    public TextMeshProUGUI curDifficultytxt;
     public bool Active = false;
     public bool ActiveOnStart = false;
     public float decreasePercent = .9f;//how much time between difficulty bumps decreases each difficulty bump
@@ -37,6 +38,7 @@ public class MayhemTimer : MonoBehaviour
             curTimeLeft = resetTime;
         }
         levelsClearedText.text = "Levels Cleared: " + levelsCleared.ToString();
+        curDifficultytxt.text = "Current Difficulty: " + EnemyManager.Difficulty;
         if (ActiveOnStart)
         {
             Active = true;
@@ -70,8 +72,9 @@ public class MayhemTimer : MonoBehaviour
     {
         levelsCleared++;
         string display;
-        display = "Level(s) Cleared: " + levelsCleared.ToString();
+        display = "Levels Cleared: " + levelsCleared.ToString();
         levelsClearedText.text = display;
+        curDifficultytxt.text = "Current Difficulty: " + EnemyManager.Difficulty;
         //difficultytxt.text = "Difficulty: " + difficulty.ToString();
         TileManager.instance.tempTextDisplay.ShowText(display , 1, .75f);
     }
@@ -100,9 +103,10 @@ public class MayhemTimer : MonoBehaviour
     { return levelsCleared; }
     public void BumpDifficulty()
     {
-        EnemyManager.instance.AddDifficulty(.6f);
+        EnemyManager.instance.AddDifficulty(.3f);
         //EnemyManager.instance.ModifyDifficultyMulti(.6f);
         TileManager.instance.tempTextDisplay.ShowText("Difficulty Increased!", 1 , .75f);
+        curDifficultytxt.text = "Current Difficulty: " + EnemyManager.Difficulty;
         curTimeLeft = resetTime * decreasePercent;
         curTimeLeft = Mathf.Clamp(curTimeLeft, 30, 60);
         countdownText.text = curTimeLeft.ToString(Strformat);

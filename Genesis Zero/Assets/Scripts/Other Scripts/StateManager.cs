@@ -256,15 +256,17 @@ public class StateManager : MonoBehaviour
             newTele.GetComponent<Teleporter>().SetDestination(player.transform.position + new Vector3(4, 0, 0));
             newTele.GetComponent<Teleporter>().hasPair = true;
         }
-        if (TileManager.instance.MayhemMode) //if it doesn't have pair, and you are in mayhem mode
+        if (TileManager.instance.MayhemMode) //if in mayhem mode
         {
-            TileManager.instance.GetComponent<TileManager>().mayhemLevelUp(true);
+            print("increasing difficulty in teleport");
+            EnemyManager.instance.AddDifficulty(.2f); //mayhem mode increase
             MayhemTimer.instance.LevelCleared();
-            EnemyManager.instance.AddDifficulty(.4f); //mayhem mode increase
+            TileManager.instance.GetComponent<TileManager>().mayhemLevelUp(true);
+
         }
         else //if it doesnt have pair and you are in normal mode
         {
-            EnemyManager.instance.AddDifficulty(.4f); //regular mode
+            EnemyManager.instance.AddDifficulty(.55f); //regular mode
             //EnemyManager.instance.ModifyDifficultyMulti(.4f); //mayhem mode increase
         }
         //Destroy(fakeTele.GetComponent<Teleporter>());
@@ -290,7 +292,7 @@ public class StateManager : MonoBehaviour
     {
         SkillManager sk = Player.instance.GetSkillManager();
         sk.AddSkill(sk.GetRandomAbility());
-        while (sk.GetRandomGoldsFromPlayer(1).Count < 1 && sk.GetPlayerMods().Count < 5) // if the player has a legendary OR 4 mods, stop rolling
+        while (sk.GetRandomGoldsFromPlayer(1).Count < 1 && sk.GetPlayerMods().Count < 5) // if the player has a legendary OR 5 mods, stop rolling
             sk.AddSkill(sk.GetRandomModsByChance(1)[0]);
         DialogueManager.instance.TriggerDialogue("BUG-E_SkipTut");
         Destroy(gameObject.GetComponent<FindingBuge>());

@@ -71,7 +71,7 @@ public class TileManager : MonoBehaviour
 	}
 	private void Start()
     {
-		MayhemMode = SaveLoadManager.instance.endLess;
+		//MayhemMode = SaveLoadManager.instance.endLess;
 		betweenAreas = Resources.LoadAll<GameObject>("InbetweenAreas");
 		ads = Resources.LoadAll<Sprite>("Billboards");
 		SkillObject[] sskills = Resources.LoadAll<SkillObject>("Skills/Starter Mods");
@@ -153,6 +153,10 @@ public class TileManager : MonoBehaviour
 	{
 		return seedValue;
 	}
+	//public bool MayhemMode() 
+	//{
+
+	//}
 	public void PlaceInteractables()
 	{
 		levelTracking = levelSpacing;

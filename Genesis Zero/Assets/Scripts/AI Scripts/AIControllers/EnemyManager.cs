@@ -11,6 +11,7 @@ public class EnemyManager : MonoBehaviour
     public static List<AIController> AllEnemies = new List<AIController>();
     public static float Difficulty = .75f;
     public static float HealthMultiplier = 1;
+    private float HealthIncreasePerDifficulty = 1.5f; //15%
     public static float MaxDifficulty = 100.0f;
     public static float NormalizedDifficulty { get { return Difficulty / Mathf.Max(0.01f, MaxDifficulty); } } // Range form 0 to 1 indicating current difficulty factor
 
@@ -41,9 +42,13 @@ public class EnemyManager : MonoBehaviour
     public GameObject SpawnEnemy(Vector2 spawn)
     {
         GameObject newEnemy = Instantiate(TileManager.instance.enemyPrefabs[Random.Range(0, TileManager.instance.enemyPrefabs.Length)], spawn, Quaternion.identity) as GameObject;
-        AIController enemyHp = newEnemy.GetComponent<AIController>();
-        if (enemyHp != null && enemyHp.GetHealth() != null)
-            enemyHp.GetHealth().SetMaxValue(enemyHp.GetHealth().GetValue() *HealthMultiplier);
+        AIController enemy = newEnemy.GetComponent<AIController>();
+        if (enemy != null && enemy.GetHealth() != null) 
+        {
+            enemy.GetHealth().SetMaxValue(enemy.GetHealth().GetValue() * HealthMultiplier);
+            print("Enemy Health:" + enemy.GetHealth().GetValue());
+            print("health multiplier: " + HealthMultiplier);
+        }
         return newEnemy;
     }
     // Increase enemy difficulty, based on the current difficulty multiplied by the number passed in.
@@ -61,14 +66,16 @@ public class EnemyManager : MonoBehaviour
     {
         Difficulty = newDifficulty; //no longer multiplier because that doesn't scale well for most attributes
         Difficulty = Mathf.Clamp(Difficulty, 0, MaxDifficulty);
-        HealthMultiplier = 1 + Difficulty / 2;
+        HealthMultiplier = Mathf.Pow(HealthIncreasePerDifficulty, Difficulty);
+        print("health multiplier: "+ HealthMultiplier);
+        //HealthMultiplier = 1 + Difficulty / 2; //healthmultiplier is used for new enemies being spawned, but ones that are already in game are scaled based on % or previous health
         int i = 0;
         if (TileManager.instance.MayhemMode)
         {
             foreach (AIController enemy in AllEnemies)
             {
                 float oldHP = enemy.GetHealth().GetValue();
-                enemy.SetMaxHealth(oldHP* HealthMultiplier);//health can scale exponentially
+                enemy.SetMaxHealth(oldHP* HealthIncreasePerDifficulty);//health can scale exponentially
                 if (i == 0)
                     print("health of enemy is " + enemy.GetHealth().GetValue());
                 i++;
