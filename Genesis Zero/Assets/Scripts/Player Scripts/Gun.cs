@@ -244,9 +244,8 @@ public class Gun : MonoBehaviour
             int FT_stacks = player.GetSkillStack("Frosted Tips");
             if (FT_stacks > 0)
             {
-                float otherStun = FT_stunDuration + (1 - FT_stacks) * FT_stunIncreasePerStack;
-                if (hit.StunTime < otherStun) //if the current stun on the bullet is less than the one we would apply, apply it
-                    hit.StunTime = otherStun;
+                if (hit.StunTime < FT_stunDuration) //if the current stun on the bullet is less than the one we would apply, apply it
+                    hit.StunTime = FT_stunDuration;
                 hit.Damage *= 1+ (FT_stacks * .6f);
             }
         }

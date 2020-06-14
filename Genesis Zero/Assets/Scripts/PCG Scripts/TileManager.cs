@@ -202,19 +202,19 @@ public class TileManager : MonoBehaviour
 					}
 					else 
 					{
-						if (Random.value > .2f) // 50% chance to spawn a barrel or crate if no interactable spawned in that spot
+						if (Random.value > .2f) // 20% chance to spawn a barrel or crate if no interactable spawned in that spot
 						{
 							int type = Random.Range(5, TileManager.instance.enemyPrefabs.Length);
 							newInteractable = Instantiate(TileManager.instance.enemyPrefabs[type]) as GameObject;
-							newInteractable.transform.position = mat.transform.position + new Vector3(0, 0, Random.Range(1,3.0f));
+							newInteractable.transform.position = mat.transform.position + new Vector3(0, 0, Random.Range(2.0f,4.0f));
 							newInteractable.transform.SetParent(mat.transform.parent);
 							if (type == 6)
-								newInteractable.transform.rotation = Quaternion.Euler(-90, 180, 0);
-							if (Random.value > .6f) // 60% chance to put the barrel in Z depth 0
-							{
-								Vector3 zeroSpot = mat.transform.position;
-								newInteractable.transform.position = new Vector3(zeroSpot.x, zeroSpot.y, 0);
-							}
+								newInteractable.transform.rotation = Quaternion.Euler(-90, 180, 0); //rotate barrels
+							//if (Random.value > .5f) // 60% chance to put the barrel or crate in Z depth 0
+							//{
+							//	Vector3 zeroSpot = mat.transform.position;
+							//	newInteractable.transform.position = new Vector3(zeroSpot.x, zeroSpot.y, 0);
+							//}
 						}
 					}
 				}

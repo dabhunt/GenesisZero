@@ -10,7 +10,7 @@ public class EnemyManager : MonoBehaviour
 {
     public static List<AIController> AllEnemies = new List<AIController>();
     public static float Difficulty = .75f;
-    private float HealthIncreasePerDifficulty = 1.5f; //50%
+    private float HealthIncreasePerDifficulty = 1.3f; //50%
     public static float MaxDifficulty = 100.0f;
     public static float NormalizedDifficulty { get { return Difficulty / Mathf.Max(0.01f, MaxDifficulty); } } // Range form 0 to 1 indicating current difficulty factor
 
@@ -41,6 +41,7 @@ public class EnemyManager : MonoBehaviour
     public GameObject SpawnEnemy(Vector2 spawn)
     {
         GameObject newEnemy = Instantiate(TileManager.instance.enemyPrefabs[Random.Range(0, TileManager.instance.enemyPrefabs.Length-2)], spawn, Quaternion.identity) as GameObject;
+        newEnemy.transform.position = new Vector3(spawn.x, spawn.y, 0);
         //AIController enemy = newEnemy.GetComponent<AIController>();
        // if (enemy != null && enemy.GetHealth() != null) 
        // { 
@@ -72,22 +73,24 @@ public class EnemyManager : MonoBehaviour
         GetHealthMultiplier();
         print("health multiplier: "+ GetHealthMultiplier());
         //HealthMultiplier = 1 + Difficulty / 2; //healthmultiplier is used for new enemies being spawned, but ones that are already in game are scaled based on % or previous health
-        int i = 0;
-        if (TileManager.instance.MayhemMode)
-        {
-            foreach (AIController enemy in AllEnemies)
-            {
-                float oldHP = enemy.GetHealth().GetValue();
-                enemy.SetMaxHealth(oldHP* HealthIncreasePerDifficulty);//health can scale exponentially
-                print("health of enemy is " + enemy.GetHealth().GetValue());
-                i++;
-            }
-        }
+        UpdateHealth();
     }
     public void ResetDifficulty(float newdif)
     {
         Difficulty = newdif;
         GetHealthMultiplier();
+    }
+    public void UpdateHealth() 
+    {
+        if (TileManager.instance.MayhemMode)
+        {
+            foreach (AIController enemy in AllEnemies)
+            {
+                float oldHP = enemy.GetHealth().GetValue();
+                enemy.SetMaxHealth(oldHP * HealthIncreasePerDifficulty);//health can scale exponentially
+                print("health of enemy is " + enemy.GetHealth().GetValue());
+            }
+        }
     }
     public void SetHealthMultiPerDifficulty(float newMulti) 
     {

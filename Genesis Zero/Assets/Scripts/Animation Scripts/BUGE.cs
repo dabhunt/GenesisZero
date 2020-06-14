@@ -61,7 +61,7 @@ public class BUGE : MonoBehaviour
         maxDistReset = MaxDistance;
         alertObj = GameObject.FindGameObjectWithTag("BUG-EAlert");
         flashlight = transform.Find("flashlightouter").gameObject;
-        flashlight.SetActive(false);
+        flashlight.SetActive(true);
         alertObj.SetActive(false);
 
         //Test waypoint system
@@ -89,7 +89,7 @@ public class BUGE : MonoBehaviour
                 else
                 {//if the player mouse is not on BUGE, add a waypoint
                     if (mouseOver == false)
-                        AddWayPoint(playerController.worldXhair.transform.position, 1f);
+                        AddWayPoint(playerController.worldXhair.transform.position, 1f, false);
                 }
             }
             
@@ -221,11 +221,13 @@ public class BUGE : MonoBehaviour
         }
     }
     //add a waypoint location that Bug-E will fly over to when this reaches the top of the queue
-    public void AddWayPoint(Vector3 V, float T)
+    public void AddWayPoint(Vector3 V, float T, bool waitInQueue)
     {
         WayPoint newpoint = ScriptableObject.CreateInstance<WayPoint>();
         if (T == -1)
             T = 999;
+        if (!waitInQueue)
+            animWaypoints.Clear();
         newpoint.SetValues(V, T);
         animWaypoints.Enqueue(newpoint);
     }

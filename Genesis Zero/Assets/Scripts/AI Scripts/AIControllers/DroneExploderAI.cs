@@ -141,7 +141,7 @@ public class DroneExploderAI : AIController
             // AOEscript.setScaleTarget(startScale, blastRadius, lerpMultiplier);
             // //print("blastRadius = " + blastRadius + "during the on destroy call last section");
         }
-        Destroy(this.GetComponent<SpawnOnDestroy>());
+        //Destroy(this.GetComponent<SpawnOnDestroy>());
         Destroy(this.gameObject);
     }
 

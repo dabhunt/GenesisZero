@@ -27,6 +27,7 @@ public class StateManager : MonoBehaviour
     private float tweenduration = 0;
     private Animation timeslowEffect;
     private bool timeSlowEffectActive = true;
+    public Elevator bossElev = null;
     private void Awake()
     {
         if (instance == null)
@@ -249,7 +250,7 @@ public class StateManager : MonoBehaviour
         if (name.Contains("Skip"))
             SkipTutorial();
         AudioManager.instance.PlaySound("SFX_Teleport");
-        if (!hasPair) //if the teleporter doesn't already have a pair
+        if (!hasPair && !TileManager.instance.MayhemMode) //if the teleporter doesn't already have a pair
         {
             GameObject newTele = Instantiate(TileManager.instance.interactablePrefabs[4]) as GameObject;//spawn a teporter where ever the teleporter takes you
             newTele.transform.position = destination + new Vector2(-4, 4);
@@ -277,6 +278,8 @@ public class StateManager : MonoBehaviour
         {
             Player.instance.transform.position = GetBossRoomLocation();
             player.GetComponent<UniqueEffects>().CombatChangesMusic = false;
+            if (bossElev != null)
+                bossElev.TriggerElevator();
             level = 3;
         }
         Player.instance.Heal(50);

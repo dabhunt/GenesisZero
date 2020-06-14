@@ -39,7 +39,7 @@ public class Elevator : MonoBehaviour
 		if (Input.GetKeyDown(KeyCode.F))
 		{
 
-			TriggerEvevator();
+			TriggerElevator();
 		}
 	}
 
@@ -47,11 +47,11 @@ public class Elevator : MonoBehaviour
 	{
 		if (ctx.performed)
 		{
-			TriggerEvevator();
+			TriggerElevator();
 		}
 	}
 
-	private void TriggerEvevator()
+	public void TriggerElevator()
 	{
 		foreach (var button in buttons)
 		{

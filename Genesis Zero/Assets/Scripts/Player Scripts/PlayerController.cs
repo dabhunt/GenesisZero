@@ -508,7 +508,7 @@ public class PlayerController : MonoBehaviour
                 GetComponent<UniqueEffects>().PhaseTrigger();
                 sound.Roll();
                 //VFXManager.instance.PlayEffect("VFX_PlayerDashStart", transform.position);
-                GameObject dashstart = VFXManager.instance.PlayEffectOnObject("VFX_PlayerDashStart", followLight, new Vector2(0,0));
+                GameObject dashstart = VFXManager.instance.PlayEffectOnObject("VFX_PlayerDashStart",followLight, Vector3.zero);
                 gameObject.GetComponentInChildren<SkinnedMeshRenderer>().enabled = false; //TEMPORARY CHANGE THIS
                 GameObject dash = VFXManager.instance.PlayEffectForDuration("VFX_PlayerDashEffect", transform.position, rollDuration);
                 dash.transform.SetParent(transform);
@@ -534,11 +534,13 @@ public class PlayerController : MonoBehaviour
                 {
                     //if the 90 degree values are zero, then the roll works while moving but not when standing still
                     transform.rotation = Quaternion.Euler(0, -90, 0);
+                    dashstart.transform.rotation = Quaternion.Euler(0, 90, 0);
                     isFacingRight = false;
                 }
                 if (rollDirection > 0 && !isFacingRight)
                 {
                     transform.rotation = Quaternion.Euler(0, 90, 0);
+                    dashstart.transform.rotation = Quaternion.Euler(0, 90, 0);
                     isFacingRight = true;
                 }
 
