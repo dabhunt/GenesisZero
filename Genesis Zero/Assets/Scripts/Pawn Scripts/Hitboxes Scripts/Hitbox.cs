@@ -218,14 +218,12 @@ public class Hitbox : MonoBehaviour
                     }
 
                 }
-
-                if (StunTime > 0 && p.IsStunImmune() == false)
+                if (StunTime > 0 && !p.IsStunImmune() && !p.IsStunned()) //only stun if the pawn is not stun immune not already stunned
                 {
                     p.GetStunnedStatus().AddTime(StunTime);
                     print("stun sound");
                     AudioManager.instance.PlayRandomSFXType("Stunned", this.gameObject, .4f);
                 }
-
 				if(Source != p)
 				{
 					if (Burn.x > 0 && Burn.y > 0)
@@ -260,7 +258,7 @@ public class Hitbox : MonoBehaviour
                 else if (special && bp.damagemultipler > 1)
                 {
                     VFXManager.instance.PlayEffect("VFX_WeakPoint", this.transform.position);
-                    if (AudioManager.instance != null && !AudioManager.instance.IsPlaying("EnemyHit"))
+                    if (AudioManager.instance != null && AudioManager.instance.IsPlaying("EnemyHit") < 1)
                         AudioManager.instance.PlayRandomSFXType("EnemyHit", this.gameObject, .4f);
                     if (player != null)
                         player.GetComponent<Player>().GetComponent<UniqueEffects>().WeakPointHit();

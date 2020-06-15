@@ -38,13 +38,13 @@ public class DeactivateDistant : MonoBehaviour
     }
     public void DelayedStart()
     { //this is to fix the problem of the boss not liking to be deactivated at the start, so we wait 5 seconds
-        string[] newstr = new string[tags.Length+1];
-        for (int i = 0; i < tags.Length; i++)
-        {
-            newstr[i] = tags[i];
-        }
-        //newstr[tags.Length] = "BossRoom";
-        tags = newstr;
+        //string[] newstr = new string[tags.Length+1];
+        //for (int i = 0; i < tags.Length; i++)
+        //{
+        //    newstr[i] = tags[i];
+        //}
+        ////newstr[tags.Length] = "BossRoom";
+        //tags = newstr;
         //firstCheck = true;
     }
     // Check is currently called once a second, but can also be called manually when the player is teleported to prevent visual latency

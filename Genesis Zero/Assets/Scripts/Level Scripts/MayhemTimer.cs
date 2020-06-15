@@ -8,14 +8,14 @@ public class MayhemTimer : MonoBehaviour
     public float curTimeLeft;
     public float resetTime = 105;
     public TextMeshProUGUI countdownText;
-    public TextMeshProUGUI levelsClearedText;
+    public TextMeshProUGUI killCountText;
     public TextMeshProUGUI difficultytxt;
     public TextMeshProUGUI curDifficultytxt;
     public bool Active = false;
     public bool ActiveOnStart = false;
     public float decreasePercent = .9f;//how much time between difficulty bumps decreases each difficulty bump
     private string Strformat = "0.#";
-    private int levelsCleared = 0;
+    private int killCount = 0;
     private void Awake()
     {
         if (instance == null)
@@ -37,8 +37,8 @@ public class MayhemTimer : MonoBehaviour
         {
             curTimeLeft = resetTime;
         }
-        levelsClearedText.text = "Levels Cleared: " + levelsCleared.ToString();
-        curDifficultytxt.text = "Current Difficulty: " + EnemyManager.Difficulty;
+        killCountText.text = "Enemies Killed: " + killCount.ToString();
+        curDifficultytxt.text = "Current Difficulty: " + EnemyManager.Difficulty.ToString(Strformat);
         if (ActiveOnStart)
         {
             Active = true;
@@ -68,22 +68,20 @@ public class MayhemTimer : MonoBehaviour
             }
         }
     }
-    public void LevelCleared()
+    public void EnemyKilled()
     {
-        levelsCleared++;
-        string display;
-        display = "Levels Cleared: " + levelsCleared.ToString();
-        levelsClearedText.text = display;
-        curDifficultytxt.text = "Current Difficulty: " + EnemyManager.Difficulty;
+        killCount++;
+        string display = "Enemies Killed: " + killCount.ToString();
+        killCountText.text = display;
+        curDifficultytxt.text = "Current Difficulty: " + EnemyManager.Difficulty.ToString(Strformat);
         //difficultytxt.text = "Difficulty: " + difficulty.ToString();
-        TileManager.instance.tempTextDisplay.ShowText(display , 1, .75f);
     }
 
     public float[] GetData()
     {
         float[] data = new float[4];
         data[0] = EnemyManager.Difficulty;//Difficulty
-        data[1] = levelsCleared;//Levels cleared
+        data[1] = killCount;//Enemies Killed
         data[2] = curTimeLeft;//Time left
         data[3] = TileManager.tileID;
         return data;
@@ -94,19 +92,19 @@ public class MayhemTimer : MonoBehaviour
         Debug.Log("Applying Endless Data");
         EndlessData eData = SaveLoadManager.instance.LoadEndlessData();
         EnemyManager.instance.SetDifficulty(eData.data[0]);
-        Debug.Log("Difficulty: " + EnemyManager.Difficulty);
-        levelsCleared = (int) eData.data[1];
+        //Debug.Log("Difficulty: " + EnemyManager.Difficulty);
+        killCount = (int) eData.data[1];
         curTimeLeft = eData.data[2];
         TileManager.tileID = (int) eData.data[3];
     }
-    public int GetLevelsCleared() 
-    { return levelsCleared; }
+    public int GetkillCount() 
+    { return killCount; }
     public void BumpDifficulty()
     {
         EnemyManager.instance.AddDifficulty(.3f);
         //EnemyManager.instance.ModifyDifficultyMulti(.6f);
         TileManager.instance.tempTextDisplay.ShowText("Difficulty Increased!", 1 , .75f);
-        curDifficultytxt.text = "Current Difficulty: " + EnemyManager.Difficulty;
+        curDifficultytxt.text = "Current Difficulty: " + EnemyManager.Difficulty.ToString(Strformat);
         curTimeLeft = resetTime * decreasePercent;
         curTimeLeft = Mathf.Clamp(curTimeLeft, 30, 60);
         countdownText.text = curTimeLeft.ToString(Strformat);

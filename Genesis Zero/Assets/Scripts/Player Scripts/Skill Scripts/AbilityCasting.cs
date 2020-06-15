@@ -329,7 +329,7 @@ public class AbilityCasting : MonoBehaviour
         hitbox.GetComponent<Hitbox>().InitializeHitbox(GetComponent<Player>().GetAbilityPower().GetValue(), GetComponent<Player>(), false);
         hitbox.GetComponent<Hitbox>().SetStunTime(1.5f);
         player.SetInvunerable(.3f);
-        hitbox.GetComponent<Hitbox>().SetLifeTime(.15f);
+        hitbox.GetComponent<Hitbox>().SetLifeTime(.24f);
         EndBonus();
     }
 
@@ -337,7 +337,7 @@ public class AbilityCasting : MonoBehaviour
     {
         PlayerController pc = player.GetComponent<PlayerController>();
         pc.SetVertVel(0);
-        player.KnockBackForced(aimDir, 25);
+        player.KnockBackForced(aimDir, 30);
         GameObject hitbox = SpawnGameObject("BurstChargeHitbox", pc.CenterPoint(), Quaternion.identity);
         hitbox.transform.LookAt(WorldXhair);
         pc.NewLayerMask(ignoreEnemiesLayerMask, FD_duration);
@@ -353,7 +353,7 @@ public class AbilityCasting : MonoBehaviour
     {
         PlayerController pc = player.GetComponent<PlayerController>();
         pc.SetVertVel(0);
-        player.KnockBackForced(aimDir, 25);
+        player.KnockBackForced(aimDir, 30);
         pc.NewLayerMask(ignoreEnemiesLayerMask, FD_duration);
         GameObject hitbox = SpawnGameObject("FireDashHitbox", pc.CenterPoint(), Quaternion.identity);
         hitbox.GetComponent<Hitbox>().InitializeHitbox(GetComponent<Player>().GetAbilityPower().GetValue()*.6f, GetComponent<Player>(), false);
@@ -449,7 +449,7 @@ public class AbilityCasting : MonoBehaviour
         SkillObject skill = player.GetSkillManager().GetSkillFromString("Wound Sealant");
         player.GetSkillManager().RemoveSkill(skill);
         VFXManager.instance.PlayEffect("VFX_Health", pc.CenterPoint());
-        player.Heal(55);
+        player.HealPercent(.5f);
     }
     private void CastManicTitan()
     {

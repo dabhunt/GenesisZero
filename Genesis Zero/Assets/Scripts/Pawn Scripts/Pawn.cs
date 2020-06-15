@@ -115,6 +115,16 @@ public class Pawn : MonoBehaviour
             GetHealth().AddValue(amount);
         }
     }
+    //restores a percentage of health, ex .5 = 50% of max hp
+    public void HealPercent(float percent)
+    {
+        percent = Mathf.Clamp(percent, 0, 1);
+        float amount = GetHealth().GetMaxValue() * percent;
+        GetHealth().AddValue(amount);
+        GameObject emit = VFXManager.instance.PlayEffect("DamageNumber", new Vector3(transform.position.x, transform.position.y + 1, transform.position.z - .5f));
+        emit.GetComponent<DamageNumber>().SetNumber(amount);
+        emit.GetComponent<DamageNumber>().SetColor(new Color(0, .9f, 0));
+    }
 
     protected void Update()
     {

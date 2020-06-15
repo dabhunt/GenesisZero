@@ -264,7 +264,6 @@ public class StateManager : MonoBehaviour
         {
             print("increasing difficulty in teleport");
             //EnemyManager.instance.AddDifficulty(.2f); //mayhem mode increase
-            MayhemTimer.instance.LevelCleared();
             TileManager.instance.GetComponent<TileManager>().mayhemLevelUp(true);
 
         }

@@ -143,11 +143,12 @@ public class TileManager : MonoBehaviour
 		//Placemat PCG Pass
 
     }
-	private void DelayedStart()
+	private void DelayedStart() //mayhem mode delayed start
 	{
 		//StateManager.instance.Teleport( new Vector2(levelSpacing + 5,40) , false, true);
 		StateManager.instance.SkipTutorial();
-		tempTextDisplay. ShowText("Clear as many levels as possible without dying", 5, .75f);
+		tempTextDisplay. ShowText("Kill as many enemies as possible without dying", 5, .75f);
+		GameInputManager.instance.EnablePlayerControls();
 	}
 	public int GetSeed()
 	{
@@ -191,6 +192,7 @@ public class TileManager : MonoBehaviour
 							newInteractable = Instantiate(interactablePrefabs[5]) as GameObject; // replace with Guidance Arrow
 							newInteractable.name = "Guidance Arrow";
 							newInteractable.transform.position = mat.transform.position + new Vector3(0, 2, -2);
+							newInteractable.transform.SetParent(mat.transform.parent);
 							guideArrows[curMatLevel - 1].Add(newInteractable); //keep track of guide arrows so that they can point at the teleporter properly
 						}
 						else
@@ -414,8 +416,9 @@ public class TileManager : MonoBehaviour
 			}
 			if (clusterSpawned) //if an enemy cluster spawned in this tile
 			{
+				int max = Mathf.Clamp(Mathf.FloorToInt(EnemyManager.Difficulty), 0 , 8);
 				if (MayhemMode)
-					amount = Random.Range((int)MinMaxEnemies.x, (int)MinMaxEnemies.y + MayhemTimer.instance.GetLevelsCleared() - 1);
+					amount = Random.Range((int)MinMaxEnemies.x, (int)MinMaxEnemies.y + max - 1);
 				else
 					amount = Random.Range((int)MinMaxEnemies.x, (int)MinMaxEnemies.y + levelNumber - 1);
 				spawnVector = SpawnEnemy(amount, spawnVector);

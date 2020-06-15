@@ -26,6 +26,7 @@ public class Merchant : MonoBehaviour
     private int canistersNeeded = 0;
     private bool firstInteraction = true;
     private int interactionCount = 0;
+    private SkillObject[] savedMods;
     //private bool confirmationWindowOpen = false;
     //change to private later below this point
     private int itemSelectNum = -1;
@@ -34,6 +35,7 @@ public class Merchant : MonoBehaviour
     {
         gameObjList = new List<GameObject>();
         shopObjList = new List<ShopObject>();
+        savedMods = new SkillObject[2];
         player = Player.instance.gameObject;
         inputActions = GameInputManager.instance.GetInputActions();
         inputActions.PlayerControls.Interact.performed += ctx => interactInput = ctx.ReadValue<float>();
@@ -86,7 +88,8 @@ public class Merchant : MonoBehaviour
         }
         else
         {
-            merchantUI.gameObject.SetActive(true);
+            InitializeUI();
+            UpdateSelect(0);
         }
     }
     public void Select(InputAction.CallbackContext ctx)
@@ -154,6 +157,22 @@ public class Merchant : MonoBehaviour
             purchaseButton.GetComponentInChildren<Text>().text = "Purchase Item";
         }
     }
+    public SkillObject[] GetSavedMods()
+    {
+        if (savedMods[0] && savedMods[1]) //if savedMods already has data in it
+        {
+            return savedMods; //if the mods have already been rolled
+        }
+        savedMods[0] = skillManager.GetRandomModByChance();
+        //used to prevent duplicate mods from appearing in the shop
+        savedMods[1] = skillManager.GetRandomModByChance();
+        while (savedMods[1].name == savedMods[0].name)
+        {
+            savedMods[1] = skillManager.GetRandomModByChance();
+        }
+        //savedMods[1] = savedMods[0];
+        return savedMods;
+    }
     public void InitializeUI()
     {
         player.GetComponent<Player>().SetInteracting(true);
@@ -170,23 +189,18 @@ public class Merchant : MonoBehaviour
         }
         //using the already created template gameobject which is correctly positioned, make the rest
         int num = 0;
-        //used to prevent duplicate mods from appearing in the shop
-        SkillObject duplicatePrevention = skillManager.GetRandomModByChance();
+        int z = 0;
         foreach (RectTransform child in shopItemsParent.transform)
         {
             //if the object is a modifier, instead inherit Icon and Name from the associated skillobject
             child.gameObject.SetActive(true);
             if (shopObjList[num].Type == 0)
             {
-                SkillObject mod = skillManager.GetRandomModByChance();
-                while (duplicatePrevention == mod)
-                {
-                    mod = skillManager.GetRandomModByChance();
-                }
-                duplicatePrevention = mod;
-                child.transform.Find("Icon").GetComponent<Image>().sprite = mod.Icon;
-                child.transform.Find("Cost").GetComponent<Text>().text = "x"+(mod.Rarity).ToString();
-                child.transform.Find("Name").GetComponent<Text>().text = mod.name;
+                GetSavedMods();//refresh mod list if needed
+                child.transform.Find("Icon").GetComponent<Image>().sprite = savedMods[z].Icon;
+                child.transform.Find("Cost").GetComponent<Text>().text = "x"+(savedMods[z].Rarity).ToString();
+                child.transform.Find("Name").GetComponent<Text>().text = savedMods[z].name;
+                z++;
             }
             //if it's anything but a modifier, use the shopObject data from the asset
             else
@@ -227,7 +241,7 @@ public class Merchant : MonoBehaviour
         {
             case 0:
                 //If it is an instant heal item
-                pp.Heal(40f);
+                pp.HealPercent(.5f);
                 break;
             case 1:
                 //if it is a health or shield charge (type 1)

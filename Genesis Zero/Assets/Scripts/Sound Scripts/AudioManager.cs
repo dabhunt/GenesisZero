@@ -514,7 +514,7 @@ public class AudioManager : MonoBehaviour
 	public void PlayTrack(int channel, string type, string name,  bool loop, bool awake, float vol, float pit)
 	{
 		//if the track is already playing, do nothing
-		if (IsPlaying(name) != null)
+		if (IsPlaying(name) > 0)
 			return;
 		AudioSource temp = ImportAudio(type, name, vol, 0f, pit, loop, 0f, awake);
 		CopyToChannel(channel, temp);
@@ -705,7 +705,7 @@ public class AudioManager : MonoBehaviour
 	}
 	//Takes a string name of the type of sound effect to play, and randomly chooses one to play
 	//example string value would be "Walk" or "Gunshot" , which gets a random SFX_Walk-00 case sensitive
-	//note that if you pass a string value that more than one type of sound has in it's name this will be problematic
+	//note that if you pass a string value that more than one type of sound has in it's name this will be problematic if that was not the intent
 	public void PlayRandomSFXType(string name)
 	{
 		PlayRandomSFXType(name, null, 1,1, -1);
@@ -728,9 +728,9 @@ public class AudioManager : MonoBehaviour
 			obj = getPlayerObj();
 			Volume = 1; //sounds played right next to the audio listener should not exceed 1
 		}
+		if (IsPlaying(name) >= 3) //if this sound is already playing on 3 seperate tracks, don't play it
+			return;
 		//if the object is being destroyed
-
-
 		if (vol > 0)
 			Volume = vol;
 		bool found = false;
@@ -765,17 +765,20 @@ public class AudioManager : MonoBehaviour
 			return;
 		}
 	}
-	public AudioSource IsPlaying(string name)
+	/*returns the amount of sound childs that are playing this sound
+	 */
+	public int IsPlaying(string name)
 	{
+		int playCount = 0;
 		for (int i = 0; i < soundPlayerChilds.Count; i++)
 		{
 			if ( soundPlayerChilds[i] !=null && soundPlayerChilds[i].GetComponent<AudioSource>().isPlaying && soundPlayerChilds[i].name.Contains(name))
 			{
-				return soundPlayerChilds[i].GetComponent<AudioSource>();
+				playCount++;
 			}
 		}
 		//Debug.Log("Audio: '" + name + "' not currently playing");
-		return null;
+		return playCount;
 	}
 	public void StopSound(string name)
 	{

@@ -66,6 +66,8 @@ public class Player : Pawn
     {
         Heal(healthPerStack * GetSkillStack("Vampirism"));
         int TH_stacks = GetSkillStack("Thrill of the Hunt");
+        if (TileManager.instance.MayhemMode)
+            MayhemTimer.instance.EnemyKilled();
         //reduce cooldowns by .5 seconds for each stack.
         GetComponent<AbilityCasting>().ReduceCooldowns(TH_stacks/2);
     }

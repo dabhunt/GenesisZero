@@ -60,7 +60,7 @@ public class Teleporter : MonoBehaviour
     {
 			if(distanceFromPortal()<portalactivedistance){
 				ani.SetBool("Open",true);
-				if (!AudioManager.instance.IsPlaying("TeleporterAmbient"))
+				if (AudioManager.instance.IsPlaying("TeleporterAmbient") < 1)
 					AudioManager.instance.PlayAttachedSound("SFX_TeleporterAmbient", this.gameObject, .5f, 1, true, 0);
 				ani.SetBool("Close",false);
 			}

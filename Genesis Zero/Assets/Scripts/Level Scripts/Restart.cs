@@ -93,7 +93,11 @@ public class Restart : MonoBehaviour
         StateManager.instance.DestroyPopUpsWithTag("Interactable");
         if (pauseMenu != null) { pauseMenu.GetComponent<Image>().enabled = false; }
         if (resume != null) { resume.SetActive(false); }
-        if (pauseMenu != null) { pauseMenu.SetActive(true); };
+        if (pauseMenu != null) {
+            pauseMenu.SetActive(true);
+            pauseMenu.transform.Find("Controls").gameObject.SetActive(false);
+        };
+        
     }
 
     // function to delay code written after it
