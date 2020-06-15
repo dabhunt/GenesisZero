@@ -10,7 +10,6 @@ public class EnemyHealthDisplay : MonoBehaviour
     public GameObject healthBar;
     //public Image healthBar;
     private bool delayFinished = false;
-    private float maxHealth;
     private float heightOffset = 0.0f;
 
     void Start()
@@ -23,7 +22,6 @@ public class EnemyHealthDisplay : MonoBehaviour
     {
         pawn = GetComponent<Pawn>();
         hb = GetComponent<Hurtbox>();
-        maxHealth = pawn.GetHealth().GetValue();
         healthBar.SetActive(false);
         delayFinished = true;
     }
@@ -33,15 +31,16 @@ public class EnemyHealthDisplay : MonoBehaviour
         if (delayFinished)
         {
             float hp = pawn.GetHealth().GetValue();
-            if (hp < maxHealth)
+            if (hp < pawn.GetHealth().GetMaxValue())
             {
                 healthBar.SetActive(true);
-                healthBar.transform.localScale = new Vector3((hp / maxHealth) * 1f, .088f, .71f);
+                healthBar.transform.localScale = new Vector3((hp / pawn.GetHealth().GetMaxValue()) * 1f, .088f, .71f);
                 //healthBar.transform.Rotate(new Vector3(0, 0, 0), Space.World);
             }
             healthBar.transform.position = transform.position + Vector3.up * heightOffset;
             healthBar.transform.rotation = Quaternion.identity;
+            print("Health Maxvalue: " + pawn.GetHealth().GetMaxValue());
         }
-      
+
     }
 }

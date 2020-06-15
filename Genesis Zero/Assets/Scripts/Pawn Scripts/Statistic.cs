@@ -254,7 +254,14 @@ public class Statistic
             }
         }
     }
-
+    public Bonus GetBonus(string id)
+    {
+        foreach (Bonus b in bonusamounts)
+        {
+            if (b.GetIdentifier() == id) return b;
+        }
+        return null;
+    }
     public void CheckBonuses()
     {
         float b = 0;
@@ -339,8 +346,10 @@ public class Statistic
                     bonuses.Remove(bonus);
                     return filledamount;
                 }
-            }         
+            }
         }
+
+
 
 
         //If there is no more bonus, check if the stats' base value is low

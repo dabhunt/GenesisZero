@@ -27,7 +27,7 @@ Transform:
   m_GameObject: {fileID: 3811059399341386006}
   m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
   m_LocalPosition: {x: 0, y: 0, z: 0}
-  m_LocalScale: {x: 0.28, y: 0.28, z: 0.28}
+  m_LocalScale: {x: 0.5, y: 0.5, z: 0.5}
   m_Children:
   - {fileID: 3814205534760047276}
   m_Father: {fileID: 3814531455948732352}
@@ -4818,7 +4818,7 @@ Transform:
   m_GameObject: {fileID: 3811061407925644876}
   m_LocalRotation: {x: -0.7071068, y: -0, z: -0, w: 0.7071068}
   m_LocalPosition: {x: 0, y: 0, z: 0}
-  m_LocalScale: {x: 0.28, y: 0.28, z: 0.28}
+  m_LocalScale: {x: 0.5, y: 0.5, z: 0.5}
   m_Children:
   - {fileID: 3814637741214695852}
   - {fileID: 3814808516230117642}
@@ -9744,7 +9744,7 @@ Transform:
   m_GameObject: {fileID: 3811360127000366948}
   m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
   m_LocalPosition: {x: 0, y: 0, z: 0}
-  m_LocalScale: {x: 0.28, y: 0.28, z: 0.28}
+  m_LocalScale: {x: 0.5, y: 0.5, z: 0.5}
   m_Children: []
   m_Father: {fileID: 3814808516230117642}
   m_RootOrder: 0
@@ -14533,7 +14533,7 @@ Transform:
   m_GameObject: {fileID: 3811415406225632552}
   m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
   m_LocalPosition: {x: -0.6040001, y: 0.80581105, z: -0.0047779083}
-  m_LocalScale: {x: 0.28, y: 0.28, z: 0.28}
+  m_LocalScale: {x: 0.5, y: 0.5, z: 0.5}
   m_Children: []
   m_Father: {fileID: 3814955086064524418}
   m_RootOrder: 0
@@ -19345,7 +19345,7 @@ Transform:
   m_GameObject: {fileID: 3811501145404015956}
   m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
   m_LocalPosition: {x: 0, y: 0, z: 0}
-  m_LocalScale: {x: 0.28, y: 0.28, z: 0.28}
+  m_LocalScale: {x: 0.5, y: 0.5, z: 0.5}
   m_Children:
   - {fileID: 3814370803919858260}
   m_Father: {fileID: 3814531455948732352}
@@ -24216,7 +24216,7 @@ Transform:
   m_GameObject: {fileID: 3811580847600300094}
   m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
   m_LocalPosition: {x: 0, y: 0, z: 0}
-  m_LocalScale: {x: 0.28, y: 0.28, z: 0.28}
+  m_LocalScale: {x: 0.5, y: 0.5, z: 0.5}
   m_Children: []
   m_Father: {fileID: 3814531455948732352}
   m_RootOrder: 0
@@ -29086,7 +29086,7 @@ Transform:
   m_GameObject: {fileID: 3811873238848770000}
   m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
   m_LocalPosition: {x: 0, y: 0, z: 0}
-  m_LocalScale: {x: 0.28, y: 0.28, z: 0.28}
+  m_LocalScale: {x: 0.5, y: 0.5, z: 0.5}
   m_Children: []
   m_Father: {fileID: 3814531455948732352}
   m_RootOrder: 2
@@ -33961,7 +33961,6 @@ GameObject:
   - component: {fileID: 6641631083453567849}
   - component: {fileID: -7445150402578483573}
   - component: {fileID: 6715079778417504245}
-  - component: {fileID: 678572383913439769}
   m_Layer: 9
   m_Name: DroneExplosion
   m_TagString: Untagged
@@ -33978,7 +33977,7 @@ Transform:
   m_GameObject: {fileID: 6641631083453567850}
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
   m_LocalPosition: {x: 18.685966, y: 0.7371643, z: 0}
-  m_LocalScale: {x: 2, y: 2, z: 2}
+  m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children:
   - {fileID: 3814531455948732352}
   m_Father: {fileID: 0}
@@ -34062,7 +34061,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 1e7773cfab260d141aad2bd82731dee2, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  Damage: 0
+  Damage: 10
   Critical: 0
   HurtsAllies: 1
   HurtsEnemies: 0
@@ -34074,6 +34073,7 @@ MonoBehaviour:
   IgnoredDamageReduction: 0
   LifeTime: 99
   SFXOnStart: 
+  SFX_vol: 0.65
   Burn: {x: 2, y: 4}
   Slow: {x: 0, y: 0}
   Collider: {fileID: 6715079778417504245}
@@ -34091,17 +34091,5 @@ SphereCollider:
   m_IsTrigger: 1
   m_Enabled: 1
   serializedVersion: 2
-  m_Radius: 1
+  m_Radius: 3.4
   m_Center: {x: 0, y: 0, z: 0}
---- !u!114 &678572383913439769
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 6641631083453567850}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 996a64271a7824343a0425aea7a1f01f, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 

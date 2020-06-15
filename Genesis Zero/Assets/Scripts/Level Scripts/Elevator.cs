@@ -47,12 +47,14 @@ public class Elevator : MonoBehaviour
 	{
 		if (ctx.performed)
 		{
-			TriggerElevator();
+			//TriggerElevator();
 		}
 	}
 
 	public void TriggerElevator()
 	{
+		if (!Player.instance.GetComponent<PlayerController>().IsGrounded())
+			return; //if not grounded, return
 		foreach (var button in buttons)
 		{
 			if (button.GetComponent<InteractPopup>())

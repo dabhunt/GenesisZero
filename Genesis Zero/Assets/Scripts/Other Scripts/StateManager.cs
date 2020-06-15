@@ -243,6 +243,7 @@ public class StateManager : MonoBehaviour
     public void Teleport(Vector2 destination, bool bossRoomOverride, bool hasPair , string name)
     {
         canvas.transform.Find("BlackOverlay").GetComponent<Animation>().Play();
+        InTutorial = false;
         Camera cam = Camera.main;
         cam.GetComponentInParent<CinemachineBrain>().enabled = false;
         cam.transform.position = new Vector3(player.transform.position.x, cam.transform.position.y, cam.transform.position.z);
@@ -260,7 +261,7 @@ public class StateManager : MonoBehaviour
         if (TileManager.instance.MayhemMode) //if in mayhem mode
         {
             print("increasing difficulty in teleport");
-            EnemyManager.instance.AddDifficulty(.2f); //mayhem mode increase
+            //EnemyManager.instance.AddDifficulty(.2f); //mayhem mode increase
             MayhemTimer.instance.LevelCleared();
             TileManager.instance.GetComponent<TileManager>().mayhemLevelUp(true);
 
@@ -271,15 +272,14 @@ public class StateManager : MonoBehaviour
             //EnemyManager.instance.ModifyDifficultyMulti(.4f); //mayhem mode increase
         }
         //Destroy(fakeTele.GetComponent<Teleporter>());
-        StateManager.instance.InTutorial = false;
         Player.instance.transform.position = new Vector3(destination.x, destination.y, 0);
         int level = StateManager.instance.GetCurrentPlayerLevel();
         if (bossRoomOverride == true)
         {
             Player.instance.transform.position = GetBossRoomLocation();
             player.GetComponent<UniqueEffects>().CombatChangesMusic = false;
-            if (bossElev != null)
-                bossElev.TriggerElevator();
+            //if (bossElev != null)
+                //bossElev.TriggerElevator();
             level = 3;
         }
         Player.instance.Heal(50);
@@ -293,13 +293,16 @@ public class StateManager : MonoBehaviour
     }
     public void SkipTutorial()
     {
+        StateManager.instance.InTutorial = false;
         SkillManager sk = Player.instance.GetSkillManager();
         sk.AddSkill(sk.GetRandomAbility());
         while (sk.GetRandomGoldsFromPlayer(1).Count < 1 && sk.GetPlayerMods().Count < 5) // if the player has a legendary OR 5 mods, stop rolling
             sk.AddSkill(sk.GetRandomModsByChance(1)[0]);
-        DialogueManager.instance.TriggerDialogue("BUG-E_SkipTut");
+        if (!TileManager.instance.MayhemMode)
+            DialogueManager.instance.TriggerDialogue("BUG-E_SkipTut");
         Destroy(gameObject.GetComponent<FindingBuge>());
         BUGE buge = BUGE.instance;
+        
         buge.GetComponent<InteractPopup>().SetInteractable(false);
         buge.GetComponent<InteractPopup>().DestroyPopUp();
         buge.GetComponent<InteractPopup>().SetText("Right Click to Interact");

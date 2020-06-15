@@ -281,7 +281,7 @@ public class PlayerController : MonoBehaviour
     {
         if (ctx.performed)
         {
-            if (!inputActions.PlayerControls.enabled) return;
+            if (GameInputManager.instance.isEnabled() == false) return; //if input is disabled, return
             if (isRolling) return;
             if (isGrounded && jumpCount < 2) return;
             jumpPressedTime = jumpBufferTime;
@@ -391,7 +391,7 @@ public class PlayerController : MonoBehaviour
                 //If there's at least one non-trigger collider under -> grounded
                 if (!col.isTrigger)
                 {
-                    transform.position = Vector3.Lerp(transform.position, transform.position + Vector3.up * 0.1f, 250);
+                    transform.position = Vector3.Lerp(transform.position, transform.position + Vector3.up * 0.3f, 250);
                     break;
                 }
             }
@@ -795,6 +795,10 @@ public class PlayerController : MonoBehaviour
 	{
 		return isRolling;
 	}
+    public bool IsGrounded() 
+    {
+        return isGrounded;
+    }
 
     private IEnumerator ResetTrigger(string trigger, float time)
     {

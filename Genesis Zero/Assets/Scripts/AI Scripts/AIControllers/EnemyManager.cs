@@ -10,7 +10,7 @@ public class EnemyManager : MonoBehaviour
 {
     public static List<AIController> AllEnemies = new List<AIController>();
     public static float Difficulty = .75f;
-    private float HealthIncreasePerDifficulty = 1.3f; //50%
+    private float HealthIncreasePerDifficulty = 1.4f; //50%
     public static float MaxDifficulty = 100.0f;
     public static float NormalizedDifficulty { get { return Difficulty / Mathf.Max(0.01f, MaxDifficulty); } } // Range form 0 to 1 indicating current difficulty factor
 
@@ -86,9 +86,14 @@ public class EnemyManager : MonoBehaviour
         {
             foreach (AIController enemy in AllEnemies)
             {
-                float oldHP = enemy.GetHealth().GetValue();
-                enemy.SetMaxHealth(oldHP * HealthIncreasePerDifficulty);//health can scale exponentially
-                print("health of enemy is " + enemy.GetHealth().GetValue());
+                enemy.GetHealth().EndRepeatingBonus("EnemyExtraHealth"); //end bonus not needed
+                enemy.GetHealth().CheckBonuses();
+                float baseHP = enemy.GetHealth().GetBaseValue();
+                print("health baseHP: " + baseHP);
+                float newHP = baseHP * GetHealthMultiplier();
+                enemy.GetHealth().AddRepeatingBonus(newHP,newHP,9999, "EnemyExtraHealth");
+                //enemy.SetMaxHealth(baseHP * GetHealthMultiplier()); //multiply baseHP by health multiplier
+                //print("health of enemy is " + enemy.GetHealth().GetValue());
             }
         }
     }

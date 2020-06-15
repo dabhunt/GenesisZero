@@ -511,6 +511,10 @@ public class TileManager : MonoBehaviour
 			tileID = 1;
 		}
 	}
+	public void MayhemAfterDelay()
+	{
+		EnemyManager.instance.AddDifficulty(.3f);
+	}
 	public void mayhemLevelUp(bool swapTS)
 	{
 		if (MayhemMode)
@@ -531,7 +535,6 @@ public class TileManager : MonoBehaviour
 			{
 				generateBuilding(Random.Range(minBuildingWidth, maxBuildingWidth), Random.Range(minBuildingTileCount, maxBuildingTileCount), level);
 			} //the final level of PCG needs this for the guidance arrows
-			EnemyManager.instance.AddDifficulty(.3f);
 			Vector3 spawnVector = new Vector3(1, 0, 0) * currentPos + new Vector3(0, -2, 0); //spawnVector for tiles																		 //GameObject endBuilding = (GameObject)GameObject.Instantiate(levelEndCityBuilding, spawnVector, Quaternion.Euler(0, 141.6f, 0));
 			PlaceInteractables();
 			GameObject endBuilding = (GameObject)GameObject.Instantiate(levelEndCityBuilding, spawnVector, Quaternion.Euler(0, 141.6f, 0));
@@ -552,6 +555,7 @@ public class TileManager : MonoBehaviour
 				}
 			}
 			GetComponent<DeactivateDistant>().SetFirstCheck(true);
+			Invoke("MayhemAfterDelay", .55f);
 		}
 	}
 }
