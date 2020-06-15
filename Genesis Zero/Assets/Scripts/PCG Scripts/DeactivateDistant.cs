@@ -8,7 +8,7 @@ public class DeactivateDistant : MonoBehaviour
     //enemies closer than this will be reactivated
     public float deactivateDist = 35f;
     public float updatesPerSecond=1f;
-    public float enemyDistOffset = 5f;
+    private float enemyDistOffset = 6.5f;
     private float resetEnemyDist;
     private float resetDist;
     //which game tags to check and deactivate if out of range

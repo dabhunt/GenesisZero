@@ -487,7 +487,7 @@ public class TileManager : MonoBehaviour
 			}
 			else 
 			{
-				newEnemy = Instantiate(enemyPrefabs[Random.Range(0, enemyPrefabs.Length)]) as GameObject;
+				newEnemy = Instantiate(enemyPrefabs[Random.Range(0, enemyPrefabs.Length-2)]) as GameObject;
 			}
 			newEnemy.transform.position = spawnVector + new Vector3(amount,0,0);
 			newEnemy.transform.SetParent(LevelParent.transform);

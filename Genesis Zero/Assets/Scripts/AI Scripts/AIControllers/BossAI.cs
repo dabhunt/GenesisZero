@@ -170,12 +170,10 @@ public class BossAI : AIController
 		base.FixedUpdate();
 		if (Target == null) { return; }
 		if (initiated == false) { return; }
-
 		// Determine the velocity of the target
 		targetmovement = Target.position - lasttargetposition;
 		lasttargetposition = Target.position;
 		LastZDepth = Mathf.Lerp(LastZDepth, zdepth, Time.fixedDeltaTime);
-
 		if (TimeBeforeFight <= 0 && IsDying() == false)
 		{
 			CheckActions(); // Checks and updates what actions the boss should do
@@ -368,11 +366,11 @@ public class BossAI : AIController
 			}
 		}
 
-		if (!(GameObject.FindGameObjectWithTag("BossRoom").GetComponent<BoxCollider2D>().bounds.Contains((Vector2)transform.position) || GameObject.FindGameObjectWithTag("BossRoom").GetComponent<BoxCollider2D>().bounds.Contains((Vector2)transform.Find("Hitbox 2").position)))
+		if (!(transform.parent.gameObject.GetComponent<BoxCollider2D>().bounds.Contains((Vector2)transform.position) || transform.parent.gameObject.GetComponent<BoxCollider2D>().bounds.Contains((Vector2)transform.Find("Hurtbox 2").position))) //if the head is outside the boss boundaries
 		{
-			Bounds bound = GameObject.FindGameObjectWithTag("BossRoom").GetComponent<BoxCollider2D>().bounds;
+			Bounds bound = transform.parent.gameObject.GetComponent<BoxCollider2D>().bounds;
 			transform.position = Vector2.Lerp(transform.position, bound.center, Time.fixedDeltaTime);
-			if (bound.Contains(transform.position) && bound.Contains(transform.Find("Hitbox 2").position))
+			if (bound.Contains(transform.position) && bound.Contains(transform.Find("Hurtbox 2").position))
 			{
 				GetComponent<SphereCollider>().isTrigger = false;
 			}
@@ -385,7 +383,7 @@ public class BossAI : AIController
 					camera.transform.DOShakePosition(duration: .75f, strength: 1, vibrato: 5, randomness: 60, snapping: false, fadeOut: true);
 				}
 				chargetime = .5f;
-				SetBossstate(State.Stunned, .5f);
+				SetBossstate(State.Stunned, .6f);
 			}
 
 		}
@@ -722,13 +720,11 @@ public class BossAI : AIController
 			img.color = color;
 		}
 	}
-
 	public void LookAtVectorTemp(Vector3 position, float time)
 	{
 		templookposition = position;
 		templooktime = time;
 	}
-
 	public Transform GetNearestVisibleWaypoint()
 	{
 		if (!EmptyWaypoints()) return transform;
@@ -920,17 +916,15 @@ public class BossAI : AIController
 		}
 		animating = false;
 	}
-
 	IEnumerator SpawnPrefab(GameObject prefab, Vector3 position, Quaternion direction, float delay)
 	{
 		yield return new WaitForSeconds(delay);
 		GameObject hitbox = Instantiate(prefab, position, direction);
 	}
-
 	void RayCast(Vector2 target, float distance)
 	{
 		RaycastHit hit;
-		BoxCollider2D Bossroom = GameObject.FindGameObjectWithTag("BossRoom").GetComponent<BoxCollider2D>();
+		BoxCollider2D Bossroom = transform.parent.gameObject.GetComponent<BoxCollider2D>();
 		if (Bossroom.bounds.Contains(target))
 		{
 
@@ -945,7 +939,6 @@ public class BossAI : AIController
 			}
 		}
 	}
-
 	void SpitFireball()
 	{
 		Vector2 angle = (Vector2)transform.rotation.eulerAngles;
@@ -1002,8 +995,6 @@ public class BossAI : AIController
 		flamethrower.Stop();
 		//Destroy(flamethrower.gameObject, 4f);
 	}
-
-
 	public void SpawnIndicator(Vector2 position, Vector2 size, Vector2 dir, Color color, Vector2 offset, bool centered, bool square, float time)
 	{
 		GameObject instance = (GameObject)Instantiate(Indicator, position, Indicator.transform.rotation);
@@ -1021,12 +1012,10 @@ public class BossAI : AIController
 		Destroy(instance, time);
 		indicators.Add(instance);
 	}
-
 	public void LoadCredits()
 	{
 		StateManager.instance.LoadCredits();
 	}
-
 	public void DisableUIExceptDialogue()
 	{
 		Transform t = GameObject.FindGameObjectWithTag("CanvasUI").transform;
