@@ -10,7 +10,7 @@ public class EnemyManager : MonoBehaviour
 {
     public static List<AIController> AllEnemies = new List<AIController>();
     public static float Difficulty = .75f;
-    private float HealthIncreasePerDifficulty = 1.4f; //50%
+    private float HealthIncreasePerDifficulty = 1.32f; //50%
     public static float MaxDifficulty = 100.0f;
     public static float NormalizedDifficulty { get { return Difficulty / Mathf.Max(0.01f, MaxDifficulty); } } // Range form 0 to 1 indicating current difficulty factor
 
@@ -71,7 +71,6 @@ public class EnemyManager : MonoBehaviour
         Difficulty = newDifficulty; //no longer multiplier because that doesn't scale well for most attributes
         Difficulty = Mathf.Clamp(Difficulty, 0, MaxDifficulty);
         GetHealthMultiplier();
-        print("health multiplier: "+ GetHealthMultiplier());
         //HealthMultiplier = 1 + Difficulty / 2; //healthmultiplier is used for new enemies being spawned, but ones that are already in game are scaled based on % or previous health
         UpdateHealth();
     }
@@ -82,19 +81,10 @@ public class EnemyManager : MonoBehaviour
     }
     public void UpdateHealth() 
     {
-        if (TileManager.instance.MayhemMode)
+        foreach (AIController enemy in AllEnemies)
         {
-            foreach (AIController enemy in AllEnemies)
-            {
-                enemy.GetHealth().EndRepeatingBonus("EnemyExtraHealth"); //end bonus not needed
-                enemy.GetHealth().CheckBonuses();
-                float baseHP = enemy.GetHealth().GetBaseValue();
-                print("health baseHP: " + baseHP);
-                float newHP = baseHP * GetHealthMultiplier();
-                enemy.GetHealth().AddRepeatingBonus(newHP,newHP,9999, "EnemyExtraHealth");
-                //enemy.SetMaxHealth(baseHP * GetHealthMultiplier()); //multiply baseHP by health multiplier
-                //print("health of enemy is " + enemy.GetHealth().GetValue());
-            }
+            float baseHP = enemy.Stats.health;
+            enemy.GetHealth().SetMaxValue(baseHP * GetHealthMultiplier());
         }
     }
     public void SetHealthMultiPerDifficulty(float newMulti) 

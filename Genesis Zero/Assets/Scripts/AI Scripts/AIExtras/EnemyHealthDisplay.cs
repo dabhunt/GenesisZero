@@ -39,7 +39,6 @@ public class EnemyHealthDisplay : MonoBehaviour
             }
             healthBar.transform.position = transform.position + Vector3.up * heightOffset;
             healthBar.transform.rotation = Quaternion.identity;
-            print("Health Maxvalue: " + pawn.GetHealth().GetMaxValue());
         }
 
     }

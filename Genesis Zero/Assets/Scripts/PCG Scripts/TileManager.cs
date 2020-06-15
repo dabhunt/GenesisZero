@@ -513,7 +513,7 @@ public class TileManager : MonoBehaviour
 	}
 	public void MayhemAfterDelay()
 	{
-		EnemyManager.instance.AddDifficulty(.3f);
+		EnemyManager.instance.AddDifficulty(.1f);
 	}
 	public void mayhemLevelUp(bool swapTS)
 	{

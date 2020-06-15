@@ -170,7 +170,7 @@ public class Pawn : MonoBehaviour
                 GetStunnedStatus().AddTime(Time.fixedDeltaTime);
             }
             if (!ForcedKnockBack)
-                knockbackforce *= Mathf.Clamp(9.5f / GetWeight().GetValue(), 0, .99f); //only decrease velocity for non players
+                knockbackforce *= Mathf.Clamp(9.5f / GetWeight().GetValue(), 0, .99f); //only use weight for non players
             else
             {
                 knockbackforce *= Mathf.Clamp(1-dashDecay, 0, 1-dashDecay);
@@ -185,16 +185,16 @@ public class Pawn : MonoBehaviour
                     Vector3 p1 = cc.center + Vector3.up * -cc.height / 2;
                     Vector3 p2 = p1 + Vector3.up * cc.height;
                     //colliding = Physics.CapsuleCast(p1, p2, cc.radius, knockbackvector, out hit, translation.magnitude);
-                    colliding = Physics.Raycast(Player.instance.CenterPoint(), knockbackvector, out hit, translation.magnitude, GetComponentInParent<PlayerController>().rollingLayerMask);
+                    colliding = Physics.Raycast(Player.instance.CenterPoint(), knockbackvector, out hit, translation.magnitude, GetComponentInParent<PlayerController>().immoveables);
                     if (colliding && hit.collider.isTrigger == false)
                     {
                         //Debug.Log(colliding);
                         //print(hit.collider);
-                        colliding = !hit.collider.isTrigger;
-
+                        colliding = true;
+                        print("colliding!");
                         StopCollision(hit.normal);
                     }
-                    translation = colliding ? -translation : translation;
+                    //translation = colliding ? -translation : translation;
                 }
                 if (GetComponentInParent<PlayerController>() && colliding == false)
                 {
@@ -202,7 +202,8 @@ public class Pawn : MonoBehaviour
                 }
                 else if (GetComponentInParent<PlayerController>() && colliding == true)
                 {
-                    transform.position -= translation * 2;
+                    transform.position -= translation;
+                    //transform.position -= translation * 2;
                 }
             }
             if (knockbackforce < 1 || dashDecay >= 1)
@@ -367,10 +368,10 @@ public class Pawn : MonoBehaviour
         //Debug.Log(direction+" "+force);
         knockbackvector = direction;
         knockbackforce = force;
-        knockbackforce *= Mathf.Clamp(9.5f / GetWeight().GetValue(), 0, .99f);
         float knockback = Mathf.Clamp(knockbackforce, 0, 100f);
         if (GetComponent<Rigidbody>())
         {
+            knockbackforce *= Mathf.Clamp(9.5f / GetWeight().GetValue(), 0, .99f);
             GetComponent<Rigidbody>().AddForce(knockbackvector.normalized * knockback, ForceMode.Impulse);
         }
         if (GetComponent<Player>())

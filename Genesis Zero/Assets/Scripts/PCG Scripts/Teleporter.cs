@@ -9,6 +9,7 @@ public class Teleporter : MonoBehaviour
 	public float destinationY = 16;
 	public float destinationZ = 0;
 	public bool BossRoomOverride = false;
+	public bool active = true;
 	//Variables for animator
 
 	private Transform player;
@@ -28,7 +29,7 @@ public class Teleporter : MonoBehaviour
 	}
 	private void OnTriggerEnter(Collider other)
 	{
-		if (other.GetComponentInParent<Player>())
+		if (other.GetComponentInParent<Player>() && active)
 		{
 			TeleportWithAnim();
 		}
@@ -36,6 +37,8 @@ public class Teleporter : MonoBehaviour
 	public void TeleportWithAnim()
 	{
 		print("teleport being called");
+		active = false;
+		Invoke("ReactivatePortal", 1.75f);
 		StateManager.instance.Teleport(new Vector2(destinationX, destinationY), BossRoomOverride, hasPair, this.name);
 		hasPair = true;
 	}
@@ -47,6 +50,10 @@ public class Teleporter : MonoBehaviour
 	}
 	public float GetAnimationStateTime(){
 		return Mathf.Repeat(ani.GetCurrentAnimatorStateInfo(0).normalizedTime, 1f)+.1f;
+	}
+	private void ReactivatePortal()
+	{
+		active = true;
 	}
 
 	public void portalAnimation()

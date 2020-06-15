@@ -257,6 +257,8 @@ public class StateManager : MonoBehaviour
             newTele.transform.position = destination + new Vector2(-4, 4);
             newTele.GetComponent<Teleporter>().SetDestination(player.transform.position + new Vector3(4, 0, 0));
             newTele.GetComponent<Teleporter>().hasPair = true;
+            newTele.GetComponent<Teleporter>().active = false;
+            newTele.GetComponent<Teleporter>().Invoke("ReactivatePortal", 1.75f); //allow player to travel back through after a couple seconds to prevent accidental travel
         }
         if (TileManager.instance.MayhemMode) //if in mayhem mode
         {
@@ -268,7 +270,7 @@ public class StateManager : MonoBehaviour
         }
         else //if it doesnt have pair and you are in normal mode
         {
-            EnemyManager.instance.AddDifficulty(.55f); //regular mode
+            EnemyManager.instance.AddDifficulty(.35f); //regular mode
             //EnemyManager.instance.ModifyDifficultyMulti(.4f); //mayhem mode increase
         }
         //Destroy(fakeTele.GetComponent<Teleporter>());
@@ -311,7 +313,7 @@ public class StateManager : MonoBehaviour
     {
         foreach (Transform child in t)
         {
-            this.gameObject.layer = LayerMask.NameToLayer(layerName);
+            child.gameObject.layer = LayerMask.NameToLayer(layerName);
             if (child.childCount > 0)
             {
                 RecursiveLayerChange(child, layerName);

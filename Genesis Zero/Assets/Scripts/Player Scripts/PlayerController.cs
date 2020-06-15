@@ -283,6 +283,8 @@ public class PlayerController : MonoBehaviour
         {
             if (GameInputManager.instance.isEnabled() == false) return; //if input is disabled, return
             if (isRolling) return;
+            if (isFallingFast)
+                EndSlam(true);
             if (isGrounded && jumpCount < 2) return;
             jumpPressedTime = jumpBufferTime;
             if (!isJumping && jumpCount > 1)
@@ -380,7 +382,7 @@ public class PlayerController : MonoBehaviour
     private void CheckGround()
     {
         Collider[] cols;
-        Vector3 point0 = transform.position + Vector3.up * (characterHeight - .2f);
+        Vector3 point0 = transform.position + Vector3.up * (characterHeight - .3f);
         Vector3 point1 = transform.position;
         //cols = Physics.OverlapSphere(origin, 0.075f, immoveables, QueryTriggerInteraction.UseGlobal);
         cols = Physics.OverlapCapsule(point0, point1, 0.05f, immoveables, QueryTriggerInteraction.UseGlobal);
@@ -543,7 +545,6 @@ public class PlayerController : MonoBehaviour
                     dashstart.transform.rotation = Quaternion.Euler(0, 90, 0);
                     isFacingRight = true;
                 }
-
                 if (isFallingFast)
                     EndSlam(true);
             }

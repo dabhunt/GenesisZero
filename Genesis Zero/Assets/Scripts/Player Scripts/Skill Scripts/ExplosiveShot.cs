@@ -52,9 +52,9 @@ public class ExplosiveShot : MonoBehaviour
             //AOE AOEscript = runtimeExplosion.GetComponent<AOE>();
             //AOEscript.setScaleTarget(startScale, blastRadius, lerpMultiplier);
             hit.InitializeHitbox(player.GetDamage().GetValue(), player);
-            hit.SetLifeTime(.4f);
+            hit.SetLifeTime(.3f);
             GameObject emit = VFXManager.instance.PlayEffect(vfxName, new Vector3(transform.position.x, transform.position.y, transform.position.z), 0f, blastRadius/baseblastRadius);
-            aManager.PlaySound(sfxName);
+            aManager.PlayRandomSFXType(sfxName);
         }
        
     }

@@ -324,7 +324,7 @@ public class AbilityCasting : MonoBehaviour
     private void CastPulseBurst()
     {
         pc.SetVertVel(0);
-        player.KnockBackForced(-aimDir, 30);
+        player.KnockBackForced(-aimDir, 25);
         GameObject hitbox = SpawnGameObject("PulseBurstHitbox", CastAtAngle(pc.CenterPoint(), aimDir, 1), Quaternion.identity);
         hitbox.GetComponent<Hitbox>().InitializeHitbox(GetComponent<Player>().GetAbilityPower().GetValue(), GetComponent<Player>(), false);
         hitbox.GetComponent<Hitbox>().SetStunTime(1.5f);
@@ -335,25 +335,28 @@ public class AbilityCasting : MonoBehaviour
 
     private void CastBurstCharge()
     {
-        player.GetComponent<PlayerController>().SetVertVel(0);
-        player.KnockBackForced(aimDir, 30);
+        PlayerController pc = player.GetComponent<PlayerController>();
+        pc.SetVertVel(0);
+        player.KnockBackForced(aimDir, 25);
         GameObject hitbox = SpawnGameObject("BurstChargeHitbox", pc.CenterPoint(), Quaternion.identity);
         hitbox.transform.LookAt(WorldXhair);
+        pc.NewLayerMask(ignoreEnemiesLayerMask, FD_duration);
         //print("ability power in burst charge:"+ GetComponent<Player>().GetAbilityPower().GetValue());
         hitbox.GetComponent<Hitbox>().InitializeHitbox(GetComponent<Player>().GetAbilityPower().GetValue(), GetComponent<Player>(), false);
         hitbox.transform.parent = transform;
-        player.SetInvunerable(.6f);
+        player.SetInvunerable(FD_duration);
         player.GetComponent<PlayerController>().Dash(FD_duration - .1f, FD_gravityReplacement);
         hitbox.GetComponent<Hitbox>().SetLifeTime(.6f);
         EndBonus();
     }
     private void CastFireDash()
     {
-        player.GetComponent<PlayerController>().SetVertVel(0);
-        player.KnockBackForced(aimDir + Vector2.up, 25);
-        player.GetComponent<PlayerController>().NewLayerMask(ignoreEnemiesLayerMask, FD_duration);
-        GameObject hitbox = SpawnGameObject("FireDashHitbox", CastAtAngle(pc.CenterPoint(), aimDir, .5f), GetComponent<Gun>().firePoint.rotation);
-        hitbox.GetComponent<Hitbox>().InitializeHitbox(GetComponent<Player>().GetAbilityPower().GetValue() / 2, GetComponent<Player>(), false);
+        PlayerController pc = player.GetComponent<PlayerController>();
+        pc.SetVertVel(0);
+        player.KnockBackForced(aimDir, 25);
+        pc.NewLayerMask(ignoreEnemiesLayerMask, FD_duration);
+        GameObject hitbox = SpawnGameObject("FireDashHitbox", pc.CenterPoint(), Quaternion.identity);
+        hitbox.GetComponent<Hitbox>().InitializeHitbox(GetComponent<Player>().GetAbilityPower().GetValue()*.6f, GetComponent<Player>(), false);
         hitbox.transform.parent = transform;
         player.SetInvunerable(FD_duration);
         player.GetComponent<PlayerController>().Dash(FD_duration - .1f, FD_gravityReplacement);
@@ -457,6 +460,7 @@ public class AbilityCasting : MonoBehaviour
     private void CastMultiShot()
     {
         //Multishot is dealt with in Gun.cs based on isabilityactive
+        Invoke("EndBonus", 3f);
     }
     private void CastHeatShield(int num)
     {

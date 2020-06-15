@@ -43,7 +43,7 @@ public class DeactivateDistant : MonoBehaviour
         {
             newstr[i] = tags[i];
         }
-        newstr[tags.Length] = "BossRoom";
+        //newstr[tags.Length] = "BossRoom";
         tags = newstr;
         //firstCheck = true;
     }
