@@ -91,13 +91,11 @@ public class InteractInterface : MonoBehaviour
         {
             if (player.GetComponent<Player>().IsInteracting() == true)
                 return;
-            print("isInteracting should be true -> " + player.GetComponent<Player>().IsInteracting());
             //determine which interactable / pickup is closest, and perform interact
             string[] strArray = { "Pickups", "Interactable", };
             GameObject obj = ClosestTaggedObj(strArray);
             //if the closestObject is too far away, it returns null
-            print("closest Obj is... " + obj);
-            ; if (obj == null)
+            if (obj == null)
             {
                 AudioManager.instance.PlaySound("SFX_Nope");
                 return;

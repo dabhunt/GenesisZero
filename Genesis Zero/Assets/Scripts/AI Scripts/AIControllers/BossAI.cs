@@ -131,6 +131,7 @@ public class BossAI : AIController
 				AudioManager.instance.PlaySongsForLevel(4);
 				Camera.main.GetComponent<BasicCameraZoom>().inboss = true;
 				introdialogue = true;
+				SetBossstate(State.MovingCloser, 30);
 			}
 
 			if (TimeBeforeFight > 0)

@@ -57,13 +57,11 @@ public class Elevator : MonoBehaviour
 			return; //if not grounded, return
 		foreach (var button in buttons)
 		{
-			if (button.GetComponent<InteractPopup>())
-			{
-				Destroy(button.GetComponent<InteractPopup>());
-			}
 			if (Vector3.Distance(player.transform.position, button.transform.position) <= activationDistance)
 			{
 				canMove = true;
+				Destroy(button.GetComponent<InteractPopup>());
+				GameInputManager.instance.DisablePlayerControls();
 				break;
 			}
 			else

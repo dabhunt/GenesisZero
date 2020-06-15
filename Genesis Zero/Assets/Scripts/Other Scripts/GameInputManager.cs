@@ -9,6 +9,7 @@ public class GameInputManager : MonoBehaviour
     private GameInputActions inputActions;
     public InputActionAsset actionAsset;
     private string activeControlMap;
+    private bool inputEnabled;
     private void Awake() 
     {
         if (instance == null)
@@ -40,6 +41,10 @@ public class GameInputManager : MonoBehaviour
     public string GetActiveControlMap()
     {
         return activeControlMap;
+    }
+    public bool IsInputEnabled()
+    {
+        return inputEnabled;
     }
 
     //This switches the control map to the one with "name" as its name
@@ -73,17 +78,20 @@ public class GameInputManager : MonoBehaviour
     }
     public bool isEnabled()
     {
-        return inputActions.PlayerControls.enabled;
+        return inputEnabled;
     }
     public void DisablePlayerControls()
     {
         inputActions.PlayerControls.Disable();
+        inputEnabled = false;
         Player.instance.GetComponent<PlayerController>().movementInput = Vector2.zero;
         Player.instance.GetComponent<PlayerController>().fireInput = 0;
+        Player.instance.GetComponent<PlayerController>().JumpInput = 0;
     }
 
     public void EnablePlayerControls()
     {
         inputActions.PlayerControls.Enable();
+        inputEnabled = true;
     }
 }

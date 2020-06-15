@@ -66,6 +66,7 @@ public class PlayerController : MonoBehaviour
     GameInputActions inputActions;
 	[HideInInspector]
     public Vector2 movementInput;
+    public float JumpInput;
     private Vector2 aimInputMouse;
     private Vector2 aimInputController;
     public float fireInput;
@@ -115,6 +116,7 @@ public class PlayerController : MonoBehaviour
         inputActions.PlayerControls.Move.performed += ctx => movementInput = ctx.ReadValue<Vector2>();
         inputActions.PlayerControls.AimMouse.performed += ctx => aimInputMouse = ctx.ReadValue<Vector2>();
         inputActions.PlayerControls.AimController.performed += ctx => aimInputController = ctx.ReadValue<Vector2>();
+        inputActions.PlayerControls.Jump.performed += ctx => JumpInput = ctx.ReadValue<float>();
         inputActions.PlayerControls.Fire.performed += ctx => fireInput = ctx.ReadValue<float>();
         inputActions.PlayerControls.Interact.performed += ctx => interactInput = ctx.ReadValue<float>();
         defaultLayerMask = immoveables;
@@ -279,13 +281,13 @@ public class PlayerController : MonoBehaviour
      */
     public void Jump(InputAction.CallbackContext ctx)
     {
-        if (ctx.performed)
+        if (JumpInput > 0)
         {
             if (GameInputManager.instance.isEnabled() == false) return; //if input is disabled, return
             if (isRolling) return;
+            if (isGrounded && jumpCount < 2) return;
             if (isFallingFast)
                 EndSlam(true);
-            if (isGrounded && jumpCount < 2) return;
             jumpPressedTime = jumpBufferTime;
             if (!isJumping && jumpCount > 1)
             {

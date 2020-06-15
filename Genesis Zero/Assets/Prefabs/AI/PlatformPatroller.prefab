@@ -5305,7 +5305,7 @@ MonoBehaviour:
     Invert: 1
   DamageDifficultyMultiplier:
     MinFactor: 0.5
-    MaxFactor: 100
+    MaxFactor: 4
     Invert: 0
   EnemySpaceRadius: 1
   EnemySpaceForce: 50
@@ -10823,7 +10823,6 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 3012230252689837465}
-  - component: {fileID: 894413768541971754}
   m_Layer: 9
   m_Name: Root
   m_TagString: Untagged
@@ -10850,14 +10849,6 @@ Transform:
   m_Father: {fileID: 4372973848609342327}
   m_RootOrder: 0
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!33 &894413768541971754
-MeshFilter:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 5401367818284516180}
-  m_Mesh: {fileID: 0}
 --- !u!1 &5427989778895812032
 GameObject:
   m_ObjectHideFlags: 0
@@ -11241,7 +11232,7 @@ SkinnedMeshRenderer:
   m_Quality: 0
   m_UpdateWhenOffscreen: 0
   m_SkinnedMotionVectors: 1
-  m_Mesh: {fileID: 0}
+  m_Mesh: {fileID: 4300000, guid: 8daed1545e4085f42b6ded820bcd11e8, type: 2}
   m_Bones:
   - {fileID: 3012230252689837465}
   - {fileID: 2604569755287097290}
