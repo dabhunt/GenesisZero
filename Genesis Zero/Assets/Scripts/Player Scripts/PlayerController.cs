@@ -325,6 +325,7 @@ public class PlayerController : MonoBehaviour
             downSmash.transform.SetParent(this.transform.Find("Center"));
             Hitbox hit = downSmash.GetComponent<Hitbox>();
             slamCooldown = slamCoolDownDuration;
+            GetComponent<AbilityCasting>().EndBonus();
             hit.InitializeHitbox(Player.instance.GetAbilityPower().GetValue(), Player.instance, false);
             int stacks = Player.instance.GetSkillStack("Anti-Gravity Boots");
             if (stacks > 0)

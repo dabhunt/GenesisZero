@@ -29,7 +29,9 @@ public class EnemyManager : MonoBehaviour
     private void Start()
     {
         AllEnemies.Clear();
+        //Difficulty = 15; to test
     }
+
     public void DestroyAll()
     {
         foreach (AIController enemy in AllEnemies)

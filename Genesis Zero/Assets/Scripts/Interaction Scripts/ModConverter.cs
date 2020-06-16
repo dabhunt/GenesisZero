@@ -57,12 +57,13 @@ public class ModConverter : MonoBehaviour
             SkillObject oldMod = newMod;
             //for each 'value' roll a new mod by chance, if that mod exceeds the value of the stored mod, replace it
             newMod = sk.GetRandomModByChance();
-            if (newMod.Rarity > oldMod.Rarity)
+            if (newMod.Rarity > oldMod.Rarity) 
                 newMod = oldMod;
         }
         //randomly rolls a mod by chance, giving the player the chance to potentially receive a better mod
         if (value >= 3 && mod[0].Rarity > newMod.Rarity)
             newMod = mod[0]; //if the mod is better replace it, otherwise it stays the same
+        newMod = GetFreshMod(newMod.Rarity); //guarantees the mod you get back was not one of the mods you put in
         modList.Clear();
         //deactivate Scrap Converter
         isActive = false;
@@ -73,9 +74,33 @@ public class ModConverter : MonoBehaviour
         //play breaking down animation?
         return newMod;
     }
+    //makes sure you don't get the same modifier that you put in
+    private SkillObject GetFreshMod(int rarity)
+    {
+        SkillObject newSkill = sk.GetRandomMods(1, rarity)[0];
+        int failSafe = 0;
+        while (ListContainsMod(newSkill)) //if it tries 200 times, then there probably is no mod of that rarity that you didn't put in, so we exit
+        {
+            newSkill = sk.GetRandomMods(1, rarity)[0]; //keep getting random mods of that rarity until ListContainsMod is false
+            failSafe++;
+            if (failSafe > 200)
+                break;
+        }
+        return newSkill;
+    }
+    private bool ListContainsMod(SkillObject skill)
+    {
+        foreach (SkillObject hasMod in modList)
+        {
+            if (skill.name == hasMod.name) //if the passed in skill is also inside the modlist, return true
+                return true;
+        }
+        return false;
+    }
     public void AddMod(SkillObject skill)
     {
         Destroy(GetComponent<InactiveFlag>());
+        print("adding mod to converter");
         modList.Add(skill);
         string s = "";
         if (modList.Count > 1)

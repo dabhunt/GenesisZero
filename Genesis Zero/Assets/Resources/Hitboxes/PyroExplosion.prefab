@@ -11,7 +11,7 @@ GameObject:
   - component: {fileID: 751264047887206145}
   - component: {fileID: 622602272487046893}
   - component: {fileID: 621715801209811721}
-  m_Layer: 0
+  m_Layer: 8
   m_Name: AdditonalSmoke
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -4890,7 +4890,7 @@ GameObject:
   - component: {fileID: 751411073941335393}
   - component: {fileID: 622515705826801819}
   - component: {fileID: 621545346071533785}
-  m_Layer: 0
+  m_Layer: 8
   m_Name: Embers2
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -9679,7 +9679,7 @@ GameObject:
   - component: {fileID: 7937491108810232553}
   - component: {fileID: 6013418742694842014}
   - component: {fileID: 7015691457848084016}
-  m_Layer: 0
+  m_Layer: 8
   m_Name: Debris
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -14550,7 +14550,7 @@ GameObject:
   - component: {fileID: 4174538599576767019}
   - component: {fileID: 552464242997075953}
   - component: {fileID: 6516450552157073001}
-  m_Layer: 0
+  m_Layer: 8
   m_Name: SmokeTrail
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -19363,7 +19363,8 @@ GameObject:
   - component: {fileID: 7446024088350224126}
   - component: {fileID: 7323713832238595723}
   - component: {fileID: 7237362000396769751}
-  m_Layer: 0
+  - component: {fileID: 8859843004551970078}
+  m_Layer: 8
   m_Name: PyroExplosion
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -19424,6 +19425,8 @@ MonoBehaviour:
   StunTime: 0
   IgnoredDamageReduction: 0
   LifeTime: 99
+  SFXOnStart: 
+  SFX_vol: 0.65
   Burn: {x: 3, y: 3}
   Slow: {x: 0, y: 0}
   Collider: {fileID: 7237362000396769751}
@@ -19443,6 +19446,22 @@ SphereCollider:
   serializedVersion: 2
   m_Radius: 2
   m_Center: {x: 0, y: 0, z: 0}
+--- !u!114 &8859843004551970078
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 7446024088350224124}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: fb0e6cb48f0b97a4280741f982b0df39, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  delay: 0
+  emitter: {fileID: 0}
+  duration: 0
+  longestDur: 0
 --- !u!1 &8774680545536262149
 GameObject:
   m_ObjectHideFlags: 0
@@ -19454,7 +19473,7 @@ GameObject:
   - component: {fileID: 8778379115537996907}
   - component: {fileID: 8863618499435822119}
   - component: {fileID: 8864634880560039779}
-  m_Layer: 0
+  m_Layer: 8
   m_Name: Embers
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -24244,7 +24263,7 @@ GameObject:
   - component: {fileID: 8864136572030265617}
   - component: {fileID: 8864762998125614947}
   - component: {fileID: 4628674424222361556}
-  m_Layer: 0
+  m_Layer: 8
   m_Name: TinyExplosion
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -24260,7 +24279,7 @@ Transform:
   m_GameObject: {fileID: 8775108586278113947}
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
   m_LocalPosition: {x: 0, y: 0, z: 0}
-  m_LocalScale: {x: 3, y: 3, z: 3}
+  m_LocalScale: {x: 2, y: 2, z: 2}
   m_Children:
   - {fileID: 7937491108810232553}
   - {fileID: 751264047887206145}
@@ -25277,7 +25296,7 @@ ParticleSystem:
         m_Curve:
         - serializedVersion: 3
           time: 0
-          value: 0.26259232
+          value: 0.19462967
           inSlope: 13.062219
           outSlope: 13.062219
           tangentMode: 0
@@ -25285,8 +25304,8 @@ ParticleSystem:
           inWeight: 0.33333334
           outWeight: 0.4482506
         - serializedVersion: 3
-          time: 0.11442888
-          value: 0.8611107
+          time: 0.116610885
+          value: 0.7640228
           inSlope: -0.65420204
           outSlope: -0.65420204
           tangentMode: 0
@@ -25295,7 +25314,7 @@ ParticleSystem:
           outWeight: 0.013850347
         - serializedVersion: 3
           time: 0.31258723
-          value: 0.55610156
+          value: 0.39105487
           inSlope: -0.78903043
           outSlope: -0.78903043
           tangentMode: 0
@@ -25304,7 +25323,7 @@ ParticleSystem:
           outWeight: 0.11687849
         - serializedVersion: 3
           time: 1
-          value: 0.5624988
+          value: 0.513953
           inSlope: 0.6932473
           outSlope: 0.6932473
           tangentMode: 0
@@ -25625,7 +25644,7 @@ ParticleSystem:
         key6: {r: 0, g: 0, b: 0, a: 0}
         key7: {r: 0, g: 0, b: 0, a: 0}
         ctime0: 1235
-        ctime1: 2388
+        ctime1: 26985
         ctime2: 45489
         ctime3: 0
         ctime4: 0

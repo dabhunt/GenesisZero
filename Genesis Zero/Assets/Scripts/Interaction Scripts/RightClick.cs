@@ -47,7 +47,7 @@ public class RightClick : MonoBehaviour , IPointerEnterHandler, IPointerExitHand
         Collider[] cols = Physics.OverlapSphere(mod.transform.position, 3);
         foreach (Collider c in cols)
         {
-            if (c.gameObject.GetComponent<ModConverter>() != null) // if one of the colliders that overlaps has a mod converter
+            if (c.gameObject.GetComponent<ModConverter>() != null && c.gameObject.GetComponent<ModConverter>().isActive) // if one of the colliders that overlaps has a mod converter that is also active
             {
                 mod.GetComponent<SkillPickup>().SetTarget(c.gameObject); //set target to the scrap converter
             }

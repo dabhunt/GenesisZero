@@ -99,6 +99,8 @@ public class AbilityCasting : MonoBehaviour
     {
         GetComponent<UniqueEffects>().AbilityTrigger();
         float cdr = 1-Player.instance.GetCDR().GetValue();
+        if (cooldownCheatOn)
+            cdr = 0;
         switch (name)
         {
             case "Pulse Burst":
@@ -426,6 +428,8 @@ public class AbilityCasting : MonoBehaviour
                 hitbox.GetComponent<Hitbox>().InitializeHitbox(damage, player, false);
                 //manually put spartan laser ability on cooldown since the initial cast can't have a cooldown
                 float cdr = 1 - Player.instance.GetCDR().GetValue();
+                if (cooldownCheatOn)
+                    cdr = 0;
                 if (num == 1)
                 {
                     ActiveTime1 = 0;

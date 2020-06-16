@@ -116,10 +116,10 @@ public class InteractPopup : MonoBehaviour
     }
     public void SetText(string newtext)
     {
+        PopText = newtext;
         if (popup != null)
         {
             popup.transform.Find("InteractText").gameObject.GetComponent<Text>().text = newtext;
-            PopText = newtext;
         }
     }
 

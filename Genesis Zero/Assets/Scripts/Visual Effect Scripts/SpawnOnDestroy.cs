@@ -66,7 +66,7 @@ public class SpawnOnDestroy : MonoBehaviour
             return;
         }
         // otherwise play the effect
-        if (sound != null && sound != "")
+        if (sound != null && sound != "" && sound != " ")
         {
             if (aManager != null)
             {

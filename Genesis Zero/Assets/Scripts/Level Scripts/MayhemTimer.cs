@@ -101,7 +101,7 @@ public class MayhemTimer : MonoBehaviour
     { return killCount; }
     public void BumpDifficulty()
     {
-        EnemyManager.instance.AddDifficulty(.3f);
+        EnemyManager.instance.AddDifficulty(.4f);
         //EnemyManager.instance.ModifyDifficultyMulti(.6f);
         TileManager.instance.tempTextDisplay.ShowText("Difficulty Increased!", 1 , .75f);
         curDifficultytxt.text = "Current Difficulty: " + EnemyManager.Difficulty.ToString(Strformat);
