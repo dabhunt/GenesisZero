@@ -26,7 +26,7 @@ public class TileManager : MonoBehaviour
 	private float[] interactableSpawnChances;
 	[Header("Teleporter Spawning")]
 	public float teleSpawnChance = .03f;
-	public int dontSpawnUntilAfter = 30;//the minimum amount of cubbies that must be passed before a teleporter can spawn
+	public int dontSpawnUntilAfter = 45;//the minimum amount of cubbies that must be passed before a teleporter can spawn
 	//public float ForceTeleSpawnDist = 15; // a teleporter mat less than this distance away from the end building will forcibly spawn a teleporter
 	[Header("Prefab Containers")]
 	private GameObject[] tilePrefabs;
@@ -40,7 +40,7 @@ public class TileManager : MonoBehaviour
 	
 	[Header("Enemy Spawning")]
 	public Vector2 MinMaxEnemies = new Vector2(1, 2);
-	public Vector2 MinMaxClusterDistance = new Vector2(4, 7); //min guarantees enemy clusters can't be closer than this, Max guarantees they can't be further than this
+	public Vector2 MinMaxClusterDistance = new Vector2(6, 12); //min guarantees enemy clusters can't be closer than this, Max guarantees they can't be further than this
 	[Range(0, 1)]
 	public float SpawnChance = .1f;
 	public int playerOnlevel = 0;
@@ -169,6 +169,7 @@ public class TileManager : MonoBehaviour
 		int LastMatLevel = 0;
 		GameObject newestTele = null;
 		int iter = 0;
+		int tilesSinceLastCluster = 0;
 		foreach (GameObject mat in GameObject.FindGameObjectsWithTag("Placemat"))
 		{
 			curMatLevel = Mathf.FloorToInt(mat.transform.position.x / levelSpacing); //convert X position to what level we are on
@@ -219,6 +220,37 @@ public class TileManager : MonoBehaviour
 							//}
 						}
 					}
+					bool clusterSpawned = false;
+					//Spawn Enemy
+					int amount = 0;
+					if (tilesSinceLastCluster > MinMaxClusterDistance.x && tilesSinceLastCluster < MinMaxClusterDistance.y) //if it's within our constraints, use randomness
+					{
+						if (Random.value <= (SpawnChance + enemyspawnchanceincease))
+						{
+							clusterSpawned = true; //random chance to create cluster spawn
+						}
+					}
+					else if (tilesSinceLastCluster >= MinMaxClusterDistance.y)
+					{
+						clusterSpawned = true; // force a cluster spawn if outside max value
+					}
+					if (clusterSpawned) //if an enemy cluster spawned in this tile
+					{
+						int max = Mathf.Clamp(Mathf.FloorToInt(EnemyManager.Difficulty), 0, 8);
+						if (MayhemMode)
+							amount = Random.Range((int)MinMaxEnemies.x, (int)MinMaxEnemies.y + max - 1);
+						else
+							amount = Random.Range((int)MinMaxEnemies.x, (int)MinMaxEnemies.y + curMatLevel -1);
+						SpawnEnemy(amount, mat.transform.position);
+						enemyspawnchanceincease = 0;
+						tilesSinceLastCluster = 0;
+					}
+					else // if an enemy cluster did not spawn in this tile
+					{
+						enemyspawnchanceincease += .05f;
+						tilesSinceLastCluster++;
+					}
+
 				}
 				else if (mat.name == "TeleportMat")
 				{
@@ -318,7 +350,6 @@ public class TileManager : MonoBehaviour
 		int floorWidth = width; //Total width of current floor in tiles (x axis)
 		int shift = width; // Equals 0 when floor is complete
 		int height = 1; //Current building height (# of floors)
-		int tilesSinceLastCluster = 0;
 		List<GameObject> roofList = new List<GameObject>();
 		List<Vector3> vectorList = new List<Vector3>();
 
@@ -400,36 +431,6 @@ public class TileManager : MonoBehaviour
 			newTile.transform.position = spawnVector;
 
 			spawnVector.x += tileLength;
-			bool clusterSpawned = false;
-			//Spawn Enemy
-			int amount = 0;
-			if (tilesSinceLastCluster > MinMaxClusterDistance.x && tilesSinceLastCluster < MinMaxClusterDistance.y) //if it's within our constraints, use randomness
-			{ 
-				if (Random.value <= (SpawnChance + enemyspawnchanceincease))
-				{
-					clusterSpawned = true;
-				}
-			} 
-			else if (tilesSinceLastCluster >= MinMaxClusterDistance.y)
-			{
-				clusterSpawned = true;
-			}
-			if (clusterSpawned) //if an enemy cluster spawned in this tile
-			{
-				int max = Mathf.Clamp(Mathf.FloorToInt(EnemyManager.Difficulty), 0 , 8);
-				if (MayhemMode)
-					amount = Random.Range((int)MinMaxEnemies.x, (int)MinMaxEnemies.y + max - 1);
-				else
-					amount = Random.Range((int)MinMaxEnemies.x, (int)MinMaxEnemies.y + levelNumber - 1);
-				spawnVector = SpawnEnemy(amount, spawnVector);
-				enemyspawnchanceincease = 0;
-				tilesSinceLastCluster = 0;
-			}
-			else // if an enemy cluster did not spawn in this tile
-			{
-				enemyspawnchanceincease += .05f;
-				tilesSinceLastCluster++;
-			}
 			//Iterate counting variables
 			shift--;
 			end--;
@@ -475,31 +476,16 @@ public class TileManager : MonoBehaviour
 		//areaObj = VFXManager.instance.ChangeColor(areaObj, area.AcceptableColors[Random.Range(0, area.AcceptableColors.Length - 1)]);
 		currentPos += spacing;
 	}
-	public Vector3 SpawnEnemy(int amount , Vector3 spawnVector)
+	public GameObject SpawnEnemy(int amount, Vector3 spawnVector)
 	{
-		spawnVector.y += 3;
-		spawnVector.x -= 11;
-		spawnVector.z -= 2;
-
-		while (amount > 0)
+		GameObject newEnemy = null;
+		for (int i = 0; i < amount; i++)
 		{
-			GameObject newEnemy = null;
-			if (MayhemMode) 
-			{
-				newEnemy = EnemyManager.instance.SpawnEnemy(spawnVector); //spawns a new enemy with the correct amount of health for mayhem
-			}
-			else 
-			{
-				newEnemy = Instantiate(enemyPrefabs[Random.Range(0, enemyPrefabs.Length-2)]) as GameObject;
-			}
-			newEnemy.transform.position = spawnVector + new Vector3(amount*2,0,0);
+			newEnemy = EnemyManager.instance.SpawnEnemy(spawnVector); 
+			newEnemy.transform.position =  new Vector3(spawnVector.x + amount, spawnVector.y + 0.3f,0);
 			newEnemy.transform.SetParent(LevelParent.transform);
-			--amount;
 		}
-		spawnVector.y -= 3;
-		spawnVector.x += 11;
-		spawnVector.z += 2;
-		return spawnVector;
+		return newEnemy;
 	}
 	public void SwapTileSet()
 	{
@@ -557,8 +543,9 @@ public class TileManager : MonoBehaviour
 					}
 				}
 			}
-			GetComponent<DeactivateDistant>().SetFirstCheck(true);
-			Invoke("MayhemAfterDelay", .55f);
+			//GetComponent<DeactivateDistant>().DisableTemporary(.35f); //temporarily activate all objects so that enemies can initialize
+			GetComponent<DeactivateDistant>().SetFirstCheck(true); //clears list of objects in deactivatedist
+			Invoke("MayhemAfterDelay", .4f);
 		}
 	}
 }

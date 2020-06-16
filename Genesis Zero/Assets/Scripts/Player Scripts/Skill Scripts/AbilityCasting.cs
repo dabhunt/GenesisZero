@@ -491,6 +491,13 @@ public class AbilityCasting : MonoBehaviour
         player.GetAbilityPower().EndRepeatingBonus("PS_TempAbilityMultiplier");
         GetComponent<UniqueEffects>().ResetPhaseTrigger();
     }
+    public void EndActive(int slot)
+    {
+        if (slot == 1)
+            ActiveTime1 = 0;
+        if (slot == 2)
+            ActiveTime2 = 0;
+    }
     private void CastSingularity()
     {
         AudioManager.instance.PlayRandomSFXType("blackholeInitial");

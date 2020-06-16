@@ -8,7 +8,7 @@ public class DeactivateDistant : MonoBehaviour
     //enemies closer than this will be reactivated
     public float deactivateDist = 35f;
     public float updatesPerSecond=1f;
-    private float enemyDistOffset = 6.5f;
+    private float enemyDistOffset = 7f;
     private float resetEnemyDist;
     private float resetDist;
     //which game tags to check and deactivate if out of range
@@ -16,6 +16,7 @@ public class DeactivateDistant : MonoBehaviour
     private List<GameObject> objects = new List<GameObject>();
     private GameObject camObj;
     private bool firstCheck = true;
+    private bool active = true;
     void Start()
     {
        	camObj = GameObject.FindWithTag("MainCamera");
@@ -53,34 +54,38 @@ public class DeactivateDistant : MonoBehaviour
     		//find the array of gameobjects associated with that tag
     		// if its the first check of the game, use a find by tag
     		//all other checks will use the already existing array of enemies to do this check
-    		if (firstCheck){
-                //NOTE Finding by tag does not work if they are deactive
-                for (int t = 0; t < tags.Length; t ++){
-                    objects.AddRange(GameObject.FindGameObjectsWithTag(tags[t]));
+        if (!active)
+            return;
+    	if (firstCheck){
+            //NOTE Finding by tag does not work if they are deactive
+            for (int t = 0; t < tags.Length; t ++){
+                objects.AddRange(GameObject.FindGameObjectsWithTag(tags[t]));
+            }
+    		firstCheck = false;
+    	}
+   		for (int i = 0; i < objects.Count; i++){
+   			if (objects[i] != null && camObj != null){
+                //check each objects distance relative to the player transform, if outside the designated distance, it's inactive otherwise it's active.
+                float dist = Vector2.Distance(camObj.transform.position, objects[i].transform.position);
+                if (objects[i].gameObject.tag == "Enemy" || objects[i].gameObject.tag == "Props")
+                {
+                    //make it so that enemies load in slower than cubbies, preventing them from falling through cubbies that haven't loaded yet
+                    dist -= enemyDistOffset;
                 }
-    			firstCheck = false;
-    		}
-   			for (int i = 0; i < objects.Count; i++){
-   				if (objects[i] != null && camObj != null){
-                    //check each objects distance relative to the player transform, if outside the designated distance, it's inactive otherwise it's active.
-                    float dist = Vector2.Distance(camObj.transform.position, objects[i].transform.position);
-                    if (objects[i].gameObject.tag == "Enemy" || objects[i].gameObject.tag == "Props")
-                    {
-                        //make it so that enemies load in slower than cubbies, preventing them from falling through cubbies that haven't loaded yet
-                        dist -= enemyDistOffset;
-                    }
-                    if (objects[i].gameObject.tag == "BossRoom")
-                    {
-                        dist += 400;
-                    }
-	   				if (dist > deactivateDist){
-	   					objects[i].SetActive(false);
-	   				}
-	   				else{
-	   					objects[i].SetActive(true);
-	   				}
-   				}
-    		}
+                if (objects[i].gameObject.tag == "BossRoom")
+                {
+                    dist += 400;
+                }
+	   			if (dist > deactivateDist){
+	   				objects[i].SetActive(false);
+	   			}
+	   			else{
+	   				objects[i].SetActive(true);
+	   			}
+   			}
+            if (objects[i] == null)
+                objects.RemoveAt(i);
+    	}
     	//UpdateArray();
     }
     public void DisableEnemies()
@@ -102,7 +107,29 @@ public class DeactivateDistant : MonoBehaviour
 	public void SetFirstCheck (bool b)
 	{
 		firstCheck = b;
+        objects.Clear();
 	}
+    public void SetActive(bool b)
+    {
+        active = b;
+    }
+    public void ReEnable()
+    {
+        //deactivateDist = resetDist;
+        active = true;
+        SetFirstCheck(true);
+    }
+    public void DisableTemporary(float time)
+    {
+        //deactivateDist = 220;
+        foreach (GameObject obj in objects)
+        {
+            obj.SetActive(true);
+        }
+        active = false;
+        //Check();
+        Invoke("ReEnable", time);
+    }
     //public void SetTagDistance( float newdist)
     //{
 
