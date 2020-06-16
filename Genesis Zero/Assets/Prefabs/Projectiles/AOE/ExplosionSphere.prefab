@@ -14,7 +14,7 @@ GameObject:
   - component: {fileID: -1694434105571815367}
   - component: {fileID: 7323713832238595723}
   - component: {fileID: 7237362000396769751}
-  m_Layer: 0
+  m_Layer: 8
   m_Name: ExplosionSphere
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -74,7 +74,7 @@ MonoBehaviour:
   speed: 0
   gravity: 0
   lifeTime: 3
-  direction: {x: 0, y: 0, z: 0}
+  accurate: 1
 --- !u!114 &7323713832238595723
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -96,8 +96,12 @@ MonoBehaviour:
   Knockbackforce: 2
   DirectionalKnockback: 1
   StunTime: 0
+  IgnoredDamageReduction: 0
   LifeTime: 99
+  SFXOnStart: 
+  SFX_vol: 0.65
   Burn: {x: 3, y: 4}
+  Slow: {x: 0, y: 0}
   Collider: {fileID: 7237362000396769751}
   Source: {fileID: 0}
   hitEffectVFX: VFX_BulletSparks

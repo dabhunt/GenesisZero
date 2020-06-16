@@ -26,7 +26,6 @@ public class Merchant : MonoBehaviour
     private int canistersNeeded = 0;
     private bool firstInteraction = true;
     private int interactionCount = 0;
-    private SkillObject[] savedMods;
     //private bool confirmationWindowOpen = false;
     //change to private later below this point
     private int itemSelectNum = -1;
@@ -35,9 +34,16 @@ public class Merchant : MonoBehaviour
     {
         gameObjList = new List<GameObject>();
         shopObjList = new List<ShopObject>();
-        savedMods = new SkillObject[2];
         player = Player.instance.gameObject;
         inputActions = GameInputManager.instance.GetInputActions();
+        Object[] temp = Resources.LoadAll("ShopItems");
+        for (int i = 0; i < temp.Length; i++)
+        {
+            //cast as shopObject type and add each to the list
+            ShopObject item = ScriptableObject.CreateInstance<ShopObject>();
+            item.CopyValues((ShopObject)temp[i]); //copy values, duplicating points to the actual skillobject, which is bad
+            shopObjList.Add(item);
+        }
         inputActions.PlayerControls.Interact.performed += ctx => interactInput = ctx.ReadValue<float>();
         skillManager = player.GetComponent<Player>().GetSkillManager();
         canvasRef = GameObject.FindGameObjectWithTag("CanvasUI").GetComponent<Canvas>();
@@ -83,24 +89,23 @@ public class Merchant : MonoBehaviour
         if (firstInteraction)
         {
             interactionCount++;
-            InitializeUI();
-            UpdateSelect(0);
+
         }
         else
         {
-            InitializeUI();
-            UpdateSelect(0);
         }
+        InitializeUI();
+        UpdateSelect(0);
     }
     public void Select(InputAction.CallbackContext ctx)
     {
         if (ctx.performed)
         {
-            
+
         }
     }
     public void UpdateSelect(int num)
-    {   
+    {
         itemSelectNum = num;
         //gets the shop object associated with this selected number
         selectedShopItem = shopObjList[num];
@@ -148,8 +153,8 @@ public class Merchant : MonoBehaviour
         //if the player has selected a mod they don't already have, and don't have room for it
         else if (selectedShopItem.Type == 0 && (skillManager.GetUniqueModAmount() >= skillManager.GetModSlotLimit() && !skillManager.HasSkill(name)))
         {
-                purchaseButton.interactable = false;
-                purchaseButton.GetComponentInChildren<Text>().text = "Mod Limit Reached";
+            purchaseButton.interactable = false;
+            purchaseButton.GetComponentInChildren<Text>().text = "Mod Limit Reached";
         }
         else
         {//if none of the above are true, the player is allowed to purchase the item
@@ -157,36 +162,33 @@ public class Merchant : MonoBehaviour
             purchaseButton.GetComponentInChildren<Text>().text = "Purchase Item";
         }
     }
-    public SkillObject[] GetSavedMods()
+    public void GetSavedMods()
     {
-        if (savedMods[0] && savedMods[1]) //if savedMods already has data in it
+        if (shopObjList[2].mod != null)
         {
-            return savedMods; //if the mods have already been rolled
+            return; //if the shopitems already has a mod associated with it, do nothing
         }
-        savedMods[0] = skillManager.GetRandomModByChance();
-        //used to prevent duplicate mods from appearing in the shop
-        savedMods[1] = skillManager.GetRandomModByChance();
-        while (savedMods[1].name == savedMods[0].name)
+        SkillObject mod1;
+        SkillObject mod2;
+        //if it's the first time opening the shop, it rolls new mods
+        mod1 = skillManager.GetRandomModByChance();
+        mod2 = skillManager.GetRandomModByChance();
+        //used to prevent duplicate mods from appearing in the shop next to eachother
+        while (mod1.name == mod2.name)
         {
-            savedMods[1] = skillManager.GetRandomModByChance();
+            mod2 = skillManager.GetRandomModByChance();
         }
-        //savedMods[1] = savedMods[0];
-        return savedMods;
+        shopObjList[2].mod = mod1;
+        shopObjList[3].mod = mod2;
     }
     public void InitializeUI()
     {
         player.GetComponent<Player>().SetInteracting(true);
         firstInteraction = false;
         //Destroy the "Press F to interact popup"
-        merchantUI = (RectTransform) canvasRef.transform.Find("MerchantUI");
+        merchantUI = (RectTransform)canvasRef.transform.Find("MerchantUI");
         shopItemsParent = merchantUI.gameObject.transform.Find("ShopItemParent").gameObject;
         //load all shopitems from resources
-        Object[] temp = Resources.LoadAll("ShopItems");
-        for (int i = 0; i < temp.Length; i++)
-        {
-            //cast as shopObject type and add each to the list
-            shopObjList.Add((ShopObject)temp[i]);
-        }
         //using the already created template gameobject which is correctly positioned, make the rest
         int num = 0;
         int z = 0;
@@ -197,9 +199,9 @@ public class Merchant : MonoBehaviour
             if (shopObjList[num].Type == 0)
             {
                 GetSavedMods();//refresh mod list if needed
-                child.transform.Find("Icon").GetComponent<Image>().sprite = savedMods[z].Icon;
-                child.transform.Find("Cost").GetComponent<Text>().text = "x"+(savedMods[z].Rarity).ToString();
-                child.transform.Find("Name").GetComponent<Text>().text = savedMods[z].name;
+                child.transform.Find("Icon").GetComponent<Image>().sprite = shopObjList[num].mod.Icon;
+                child.transform.Find("Cost").GetComponent<Text>().text = "x" + (shopObjList[num].mod.Rarity).ToString();
+                child.transform.Find("Name").GetComponent<Text>().text = shopObjList[num].mod.name;
                 z++;
             }
             //if it's anything but a modifier, use the shopObject data from the asset
@@ -213,9 +215,17 @@ public class Merchant : MonoBehaviour
             {
                 child.gameObject.GetComponent<Button>().interactable = true;
                 child.transform.Find("PurchasedOverlay").gameObject.SetActive(false);
-            } 
+            }
             gameObjList.Add(child.gameObject);
             num++;
+        }
+        foreach (ShopObject item in shopObjList)
+        {
+            if (item.quantityLeft < 1)//if the mod was already purchased, disable it when opening the shop
+            {
+                //print("order in list = " + item.orderInList);
+                disableShopItem(item.orderInList, "Purchased");
+            }
         }
         SkillManager sk = Player.instance.GetSkillManager();
         if (sk.GetModSlotLimit() >= sk.GetModHardCap())
@@ -251,7 +261,7 @@ public class Merchant : MonoBehaviour
             case 4:
                 //increase the maximum amount of essence capsules the player can have by 1
                 prevMax = pp.GetMaxCapsuleAmount();
-                pp.SetMaxCapsuleAmount(prevMax+1);
+                pp.SetMaxCapsuleAmount(prevMax + 1);
                 break;
             case 5:
                 //increase the maximum amount of mods player can have at one time by 1
@@ -273,7 +283,9 @@ public class Merchant : MonoBehaviour
         int essenceCost = player.GetComponent<Player>().GetEssencePerCapsule() * canistersNeeded * -1;
         player.GetComponent<Player>().AddEssence(essenceCost);
         //set the purchased overlay to active so player is not able to select Item
-        disableShopItem(itemSelectNum, "Purchased");
+        shopObjList[itemSelectNum].quantityLeft--; //subtract one from merchants stock
+        if (shopObjList[itemSelectNum].quantityLeft < 1) //if there are less than 1 of it left, disable it
+            disableShopItem(itemSelectNum, "Purchased");
         //update UI, since game is paused must be manually done
         canvasRef.transform.Find("EssencePanel").gameObject.GetComponent<EssenceFill>().CalculateEssenceUI();
     }

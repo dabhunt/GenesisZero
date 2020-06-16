@@ -728,6 +728,8 @@ public class AudioManager : MonoBehaviour
 			obj = getPlayerObj();
 			Volume = 1; //sounds played right next to the audio listener should not exceed 1
 		}
+		if (name == null || name == "" || name == " ")
+			return;
 		if (IsPlaying(name) >= 3) //if this sound is already playing on 3 seperate tracks, don't play it
 			return;
 		//if the object is being destroyed

@@ -82,10 +82,7 @@ public class Hitbox : MonoBehaviour
                 Collider = GetComponent<Collider>();
             }
         }
-        if (SFXOnStart != "")
-        {
-            AudioManager.instance.PlayRandomSFXType(SFXOnStart, this.gameObject, .8f, 1.2f, SFX_vol);
-        }
+        AudioManager.instance.PlayRandomSFXType(SFXOnStart, this.gameObject, .8f, 1.2f, SFX_vol);
         //AddCollliders(transform, colliders);
         lastposition = GetComponent<Collider>().transform.position;
 

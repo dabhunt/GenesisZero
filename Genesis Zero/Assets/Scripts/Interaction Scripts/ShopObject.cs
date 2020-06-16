@@ -17,4 +17,21 @@ public class ShopObject: ScriptableObject
     [Space]
     public float health;
     public float shield;
+    public int quantityLeft = 1;
+    [Tooltip("Should match the prefix of the name of shop item")]
+    public int orderInList = 0;
+    public SkillObject mod;
+    public void CopyValues(ShopObject item)
+    {
+        Icon = item.Icon;
+        VisibleName = item.VisibleName;
+        Description = item.Description;
+        Cost= item.Cost;
+        Type = item.Type;
+        health = item.health;
+        shield = item.shield;
+        quantityLeft = item.quantityLeft;
+        orderInList = item.orderInList;
+        mod = item.mod;
+    }
 }

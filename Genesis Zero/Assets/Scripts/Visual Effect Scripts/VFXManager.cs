@@ -154,10 +154,6 @@ public class VFXManager : MonoBehaviour
         if (scaleMultiplier != 1 && scaleMultiplier != 0)
             RecursiveChildScale(tEffect, scaleMultiplier);
         VFXScript vfx = effect.GetComponent<VFXScript>();
-        if (vfx != null && delay > 0)
-        {
-            vfx.delay = delay;
-        }
         if (vfx != null && duration != 0)
         {
             vfx.duration = duration;

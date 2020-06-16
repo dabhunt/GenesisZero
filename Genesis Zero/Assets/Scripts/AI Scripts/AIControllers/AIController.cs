@@ -91,7 +91,9 @@ public class AIController : Pawn
         }
         if (this.gameObject.name != "Boss")
             StateManager.instance.RecursiveLayerChange(this.transform, "Enemies");
-        StartCoroutine(DelayedStart());
+        //StartCoroutine(DelayedStart());
+        EnemyManager.AllEnemies.Add(this);
+        initialized = true;
     }
 
     /**
@@ -100,6 +102,7 @@ public class AIController : Pawn
     protected IEnumerator DelayedStart()
     {
         yield return new WaitForFixedUpdate();
+        //yield return new WaitForSecondsRealtime(.1f);
         EnemyManager.AllEnemies.Add(this);
         initialized = true;
     }

@@ -11,7 +11,7 @@ public class VFXScript : MonoBehaviour
 {
     private ParticleSystem[] ps;
     private bool played;
-    public float delay;
+    public float delayKill;
     public GameObject emitter;
 
     [HideInInspector]
@@ -33,7 +33,7 @@ public class VFXScript : MonoBehaviour
                 }
             }
         }
-        Invoke("Kill", longestDur+delay);
+        Invoke("Kill", longestDur+delayKill);
         played = false;
     }
     private void Kill()

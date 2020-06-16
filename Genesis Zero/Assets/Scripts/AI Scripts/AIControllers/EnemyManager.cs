@@ -37,7 +37,6 @@ public class EnemyManager : MonoBehaviour
         foreach (AIController enemy in AllEnemies)
         {
             enemy.GetComponent<SpawnOnDestroy>().quitting = true;
-            Destroy(enemy.gameObject);
         }
     }
     public GameObject SpawnEnemy(Vector2 spawn)
@@ -45,11 +44,11 @@ public class EnemyManager : MonoBehaviour
         GameObject newEnemy = Instantiate(TileManager.instance.enemyPrefabs[Random.Range(0, TileManager.instance.enemyPrefabs.Length-2)], spawn, Quaternion.identity) as GameObject;
         newEnemy.transform.position = new Vector3(spawn.x, spawn.y, 0);
         //AIController enemy = newEnemy.GetComponent<AIController>();
-       // if (enemy != null && enemy.GetHealth() != null) 
-       // { 
-            //enemy.GetHealth().SetMaxValue(enemy.GetHealth().GetValue() * GetHealthMultiplier);
-            //print("Enemy Health:" + enemy.GetHealth().GetValue());
-            //print("health multiplier: " + GetHealthMultiplier);
+        // if (enemy != null && enemy.GetHealth() != null) 
+        // { 
+        //enemy.GetHealth().SetMaxValue(enemy.GetHealth().GetValue() * GetHealthMultiplier);
+        //print("Enemy Health:" + enemy.GetHealth().GetValue());
+        //print("health multiplier: " + GetHealthMultiplier);
         //}
         return newEnemy;
     }
