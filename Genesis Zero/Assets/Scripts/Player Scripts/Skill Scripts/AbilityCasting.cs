@@ -476,6 +476,7 @@ public class AbilityCasting : MonoBehaviour
             shield.GetComponent<Pawn>().UpdateStats();
             shield.GetComponent<Pawn>().GetHealth().SetMaxValue(GetComponent<OverHeat>().GetHeat());
             GetComponent<OverHeat>().Increment(-GetComponent<OverHeat>().GetHeat());
+            Player.instance.SetInvunerable(num == 1 ? ActiveTime1 : ActiveTime2);
             Destroy(shield, num == 1 ? ActiveTime1 : ActiveTime2);
         }
     }

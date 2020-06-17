@@ -60,7 +60,7 @@ public class Pawn : MonoBehaviour
     public virtual float TakeDamage(float amount, Pawn source)
     {
         int chance = Random.Range(0, 100);
-        if (chance > GetDodgeChance().GetValue() * 100) // Dodging will ignore damage
+        if (chance >= GetDodgeChance().GetValue() * 100) // Dodging will ignore damage
         {
             float finaldamage = amount;
             if (invunerable.IsActive() == true)

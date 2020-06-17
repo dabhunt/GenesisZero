@@ -40,7 +40,8 @@ public class TileManager : MonoBehaviour
 	
 	[Header("Enemy Spawning")]
 	public Vector2 MinMaxEnemies = new Vector2(1, 2);
-	public Vector2 MinMaxClusterDistance = new Vector2(6, 12); //min guarantees enemy clusters can't be closer than this, Max guarantees they can't be further than this
+	public Vector2 MinMaxClusterDistance = new Vector2(11, 15); //min guarantees enemy clusters can't be closer than this, Max guarantees they can't be further than this
+	public Vector2 MinMaxMayhemCluster = new Vector2(6, 13);
 	[Range(0, 1)]
 	public float SpawnChance = .1f;
 	public int playerOnlevel = 0;
@@ -170,6 +171,10 @@ public class TileManager : MonoBehaviour
 		GameObject newestTele = null;
 		int iter = 0;
 		int tilesSinceLastCluster = 0;
+		if (MayhemMode)
+		{
+			MinMaxClusterDistance = MinMaxMayhemCluster;
+		}
 		foreach (GameObject mat in GameObject.FindGameObjectsWithTag("Placemat"))
 		{
 			curMatLevel = Mathf.FloorToInt(mat.transform.position.x / levelSpacing); //convert X position to what level we are on
@@ -211,8 +216,10 @@ public class TileManager : MonoBehaviour
 							newInteractable = Instantiate(TileManager.instance.enemyPrefabs[type]) as GameObject;
 							newInteractable.transform.position = mat.transform.position + new Vector3(0, 0, Random.Range(2.0f,4.0f));
 							newInteractable.transform.SetParent(mat.transform.parent);
-							if (type == 6)
-								newInteractable.transform.rotation = Quaternion.Euler(-90, 180, 0); //rotate barrels
+							newInteractable.transform.rotation = Quaternion.Euler(0, 0, 0);
+							//print("name: " + newInteractable.name);
+							//if (type == 5)
+								//newInteractable.transform.position = newInteractable.transform.position + new Vector3(0,.38f,0);
 							//if (Random.value > .5f) // 60% chance to put the barrel or crate in Z depth 0
 							//{
 							//	Vector3 zeroSpot = mat.transform.position;
@@ -274,6 +281,7 @@ public class TileManager : MonoBehaviour
 					if (iter < dontSpawnUntilAfter || Random.value <= teleSpawnChance)
 					{
 						newestTele.transform.position = new Vector3(mat.transform.position.x, mat.transform.position.y, 0);
+						//print("Tele Position.x: " + newestTele.transform.position.x);
 					}
 					LastMatLevel = curMatLevel;
 				}
@@ -543,7 +551,7 @@ public class TileManager : MonoBehaviour
 					}
 				}
 			}
-			//GetComponent<DeactivateDistant>().DisableTemporary(.35f); //temporarily activate all objects so that enemies can initialize
+			GetComponent<DeactivateDistant>().DisableTemporary(.35f); //temporarily activate all objects so that enemies can initialize properly
 			GetComponent<DeactivateDistant>().SetFirstCheck(true); //clears list of objects in deactivatedist
 			Invoke("MayhemAfterDelay", .4f);
 		}

@@ -157,7 +157,7 @@ public class DroneAI : AIController
     private bool wallCheckCycleInProgress = false;
     protected bool isCloseToWall = false;
     protected Vector3 wallPoint = Vector3.zero;
-    public float WallAvoidForce = 10f;
+    private float WallAvoidForce = 1f;
 
     IEnumerator WallCheckCycle()
     {

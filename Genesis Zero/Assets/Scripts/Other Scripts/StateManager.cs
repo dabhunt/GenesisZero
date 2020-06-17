@@ -243,13 +243,14 @@ public class StateManager : MonoBehaviour
     public void Teleport(Vector2 destination, bool bossRoomOverride, bool hasPair , string name)
     {
         canvas.transform.Find("BlackOverlay").GetComponent<Animation>().Play();
-        InTutorial = false;
+
         Camera cam = Camera.main;
         cam.GetComponentInParent<CinemachineBrain>().enabled = false;
         cam.transform.position = new Vector3(player.transform.position.x, cam.transform.position.y, cam.transform.position.z);
         //GameObject.FindGameObjectWithTag("CMcam").GetComponent<CinemachineVirtualCamera>().enabled = false;
         if (name.Contains("Skip"))
             SkipTutorial();
+        InTutorial = false;
         AudioManager.instance.PlaySound("SFX_Teleport");
         if (!hasPair && !TileManager.instance.MayhemMode) //if the teleporter doesn't already have a pair
         {
@@ -294,6 +295,8 @@ public class StateManager : MonoBehaviour
     }
     public void SkipTutorial()
     {
+        if (!InTutorial)
+            return;
         StateManager.instance.InTutorial = false;
         SkillManager sk = Player.instance.GetSkillManager();
         sk.AddSkill(sk.GetRandomAbility());

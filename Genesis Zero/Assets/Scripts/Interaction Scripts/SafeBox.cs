@@ -72,7 +72,7 @@ public class SafeBox : MonoBehaviour
             SkillObject oldMod = newMod;
             //for each reroll, we roll a new mod by chance, if that mod exceeds the value of the stored mod, replace it
             newMod = sk.GetRandomModByChance();
-            if (newMod.Rarity > oldMod.Rarity)
+            if (newMod.Rarity < oldMod.Rarity)
                 newMod = oldMod;
         }
         modList.Clear();
@@ -81,8 +81,8 @@ public class SafeBox : MonoBehaviour
     }
     public void AfterAnimation()
     {
-        sk.SpawnMod(transform.position + new Vector3(0.1f, 3, 0), GetNewMod(4).name);
-        sk.SpawnMod(transform.position + new Vector3(0, 3, 0), GetNewMod(2).name);
+        sk.SpawnMod(transform.position + new Vector3(0.1f, 3, 0), sk.GetRandomGreens(1)[0].name); //one rare guaranteed
+        sk.SpawnMod(transform.position + new Vector3(0, 3, 0), GetNewMod(4).name); //one mod gets the best of 3 rolls
         if (Random.value < .5f)
             sk.SpawnMod(player.transform.position + new Vector3(-.1f, 3, 0), GetNewMod(1).name);
     }
