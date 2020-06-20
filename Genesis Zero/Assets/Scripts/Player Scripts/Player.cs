@@ -14,6 +14,7 @@ public class Player : Pawn
     private float MaxKeys = 3f;
     private float MaxCapsules = 5;
     private float healthPerStack = 4;
+    private bool inTutorial = true;
     public static Player instance;
     private void Awake()
     {
@@ -51,10 +52,19 @@ public class Player : Pawn
     {
         isInteracting = foo;
     }
+    public void SetInTutorial(bool boo)
+    {
+        inTutorial = boo;
+    }
+    public bool GetInTutorial()
+    { 
+        return inTutorial;
+    }
     new void FixedUpdate()
     {
         base.FixedUpdate();
     }
+    
     public override float TakeDamage(float amount, Pawn source)
     {
         //Add anything if there is class specific additions to taking damage

@@ -214,7 +214,7 @@ public class TileManager : MonoBehaviour
 						{
 							int type = Random.Range(5, TileManager.instance.enemyPrefabs.Length);
 							newInteractable = Instantiate(TileManager.instance.enemyPrefabs[type]) as GameObject;
-							newInteractable.transform.position = mat.transform.position + new Vector3(0, 0, Random.Range(2.0f,4.0f));
+							newInteractable.transform.position = mat.transform.position + new Vector3(0, 0, Random.Range(3.0f,4.0f));
 							newInteractable.transform.SetParent(mat.transform.parent);
 							newInteractable.transform.rotation = Quaternion.Euler(0, 0, 0);
 							//print("name: " + newInteractable.name);

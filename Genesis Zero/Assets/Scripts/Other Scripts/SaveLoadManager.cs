@@ -210,6 +210,7 @@ public class SaveLoadManager : MonoBehaviour
             sM.AddSkill(sObject);
             sM.SetCountByName(data.skillList[i], data.skillStacks[i]);
         }
+        Player.instance.SetInTutorial(data.inTutorial);
         //print("x value" + data.playerPosition[0]);
         Player.instance.gameObject.transform.position = new Vector3(data.playerPosition[0], data.playerPosition[1], data.playerPosition[2]);
         //Debug.Log("Player Data, Applied");
@@ -277,10 +278,11 @@ public class SaveLoadManager : MonoBehaviour
         data.skillList = new List<string>();
         data.skillStacks = new List<int>();
         for (int i = 0; i < sList.Count; i++)
-        {
+        { 
             data.skillList.Add(sList[i].name);
             data.skillStacks.Add(sM.GetSkillStack(sList[i].name));
         }
+        data.inTutorial = player.GetInTutorial();
         return data;
     }
     
@@ -372,6 +374,7 @@ public class PlayerData
     public List<string> dialougePlayedKeys;
     public List<int> dialougePlayedCounts;
     public int uniqueModLimit;
+    public bool inTutorial;
     public PlayerData()
     {
         playerPosition = new float[3];

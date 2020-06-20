@@ -31,13 +31,15 @@ public class BasicCameraZoom : MonoBehaviour
         {
             if (Input.GetAxis("Mouse ScrollWheel") < 0)
             {
+                print("cur FOV: " + myCamera.fieldOfView);
+                print(myCamera.fieldOfView+scrollZoom + "<- FOV becoming ");
                 if (myCamera.fieldOfView+scrollZoom < fovMax)
-                    myCamera.DOFieldOfView(myCamera.fieldOfView+scrollZoom, .5f);
+                    myCamera.DOFieldOfView(myCamera.fieldOfView+scrollZoom, .3f);
             }
             if (Input.GetAxis("Mouse ScrollWheel") > 0)
             {
                 if (myCamera.fieldOfView - scrollZoom > fovMin)
-                    myCamera.DOFieldOfView(myCamera.fieldOfView-scrollZoom, .5f);
+                    myCamera.DOFieldOfView(myCamera.fieldOfView-scrollZoom, .3f);
             }
         }
     }
@@ -46,6 +48,8 @@ public class BasicCameraZoom : MonoBehaviour
         if (spanding == false)
         {
             savedFOV = myCamera.fieldOfView; //save current FOV
+            print("CHANGE - cur FOV: " + myCamera.fieldOfView);
+            print("CHANGE - FOV becoming " + newFOV);
             myCamera.DOFieldOfView(newFOV, tweenTime);
             StartCoroutine(Reset(false, tweenTime));
         }
@@ -71,16 +75,15 @@ public class BasicCameraZoom : MonoBehaviour
         spanding = false;
         if (!temp)
             yield return 0;
-        while (Player.instance.GetComponent<UniqueEffects>().IsInCombat() == true) //continue checking while in combat
-        {
-            yield return new WaitForSeconds(.5f); //wait .5 seconds then check again to see if player is still in combat
-        }
-        if (!inboss)
-		{
-            Tween t = myCamera.DOFieldOfView(savedFOV, 1.2f); //tween back to original FOV
-            t.SetUpdate(UpdateType.Fixed);
-		}
-		spanding = false;
+  //      while (Player.instance.GetComponent<UniqueEffects>().IsInCombat() == true) //continue checking while in combat
+  //      {
+  //          yield return new WaitForSeconds(.5f); //wait .5 seconds then check again to see if player is still in combat
+  //      }
+  //      if (!inboss)
+		//{
+  //          Tween t = myCamera.DOFieldOfView(savedFOV, 1.2f); //tween back to original FOV
+  //          t.SetUpdate(UpdateType.Fixed);
+		//}
     }
     public void EndCinematic()
     {
