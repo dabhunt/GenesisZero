@@ -1,5 +1,7 @@
-﻿using System.Collections;
+﻿using System;
+using System.Collections;
 using System.Collections.Generic;
+using System.Diagnostics;
 using UnityEngine;
 
 [RequireComponent(typeof(FakeRigidbody))]
@@ -9,13 +11,13 @@ using UnityEngine;
  */
 public class ShieldEnemyAI : AIController
 {
+    public ShieldDisabler ShieldDisabler;
     [Header("Movement")]
     public float MoveSpeed = 10f; // Maximum movement speed
     public float LungeSpeed = 20f; // Lunging attack speed
     public float LungeVerticality = 0.5f; // Amount to jump vertically for horizontal lunges
     private float targetSpeed = 0.0f;
     public float Acceleration = 5.0f; // Rate of acceleration
-
     public float PatrolSpeed = 5.0f; // Movement speed while patrolling
     public float PatrolSwitchRate = 1.0f; // Rate at which the enemy switches directions while patrolling
     private float patrolCycleOffset = 0.0f; // Randomly set offset for the patrol cycle
@@ -50,8 +52,8 @@ public class ShieldEnemyAI : AIController
     new protected void Start()
     {
         base.Start();
-        faceDir = Mathf.RoundToInt(Mathf.Sign(Random.value - 0.5f));
-        patrolCycleOffset = Random.value * Mathf.PI;
+        faceDir = Mathf.RoundToInt(Mathf.Sign(UnityEngine.Random.value - 0.5f));
+        patrolCycleOffset = UnityEngine.Random.value * Mathf.PI;
     }
 
     protected override void SetTarget(Transform tr)
@@ -112,7 +114,17 @@ public class ShieldEnemyAI : AIController
             }
         }
         faceDirChangeTime += Time.fixedDeltaTime;
-
+        if (IsStunned())
+        {
+            ShieldDisabler.gameObject.GetComponent<BodyPart>().enabled = false;
+            print("Shield Disabled!");
+        }
+        else 
+        { 
+            ShieldDisabler.gameObject.GetComponent<BodyPart>().enabled = true;
+            print("Shield Enabled!");
+        }
+        
         // Separate checks for logic that only applies to individual states
         if (state == AIState.Follow)
         {

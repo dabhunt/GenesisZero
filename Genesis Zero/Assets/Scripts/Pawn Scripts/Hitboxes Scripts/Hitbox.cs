@@ -15,7 +15,7 @@ public class Hitbox : MonoBehaviour
 
     public float Damage;        // How much damage the hitbox can deal
     public bool Critical;
-
+    public bool ignoreShieldHitbox;
     public bool HurtsAllies;    // Determines if this hitbox can harm the allies layer
     public bool HurtsEnemies;   // Determines if this hotbox can harm the enemies layer
     [Space]
@@ -175,8 +175,9 @@ public class Hitbox : MonoBehaviour
                 bool special = (bp && bp.SpecialPart);
                 if (special)
                 {
-                    //Debug.Log("Special hit " + other.transform.root.name);
-                    finaldamage *= bp.damagemultipler;
+                    Debug.Log("Special hit " + other.transform.root.name);
+                    if (!ignoreShieldHitbox)
+                        finaldamage *= bp.damagemultipler;
                 }
                 else
                 {

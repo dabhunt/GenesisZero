@@ -143,6 +143,10 @@ public class SkillManager
                 {
                     modamount--;
                     playermods.Remove(skill);
+                    if (skill.name == "Quantum Harvester") 
+                    {
+                        Player.instance.GetAbilityPower().EndRepeatingBonus("Quantum Harester");  
+                    }
                     switch (skill.Rarity)
                     {
                         case 1:

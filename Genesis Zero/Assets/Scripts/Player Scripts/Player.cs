@@ -15,6 +15,7 @@ public class Player : Pawn
     private float MaxCapsules = 5;
     private float healthPerStack = 4;
     public static Player instance;
+    private int harvesterKills;
     private void Awake()
     {
         if (instance == null)
@@ -70,7 +71,19 @@ public class Player : Pawn
             MayhemTimer.instance.EnemyKilled();
         //reduce cooldowns by .5 seconds for each stack.
         GetComponent<AbilityCasting>().ReduceCooldowns(TH_stacks/2);
+        GetComponent<Gun>().enemyKilledTrigger = true;
+        if (GetSkillStack("Quantum Harvester") > 0)
+        {
+            harvesterKills++;
+            
+        }
     }
+    public int GetQH_Kills()
+    {
+        return harvesterKills;
+    }
+    public void SetQH_Kills(int kills)
+    { harvesterKills = kills;}
 
     public bool HasSkill(string name)
     {

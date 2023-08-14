@@ -8,6 +8,7 @@ public class Gun : MonoBehaviour
     public Transform firePoint;
     public GameObject basicProjectile;
     public Color CritBulletColor = new Color(1, 1, .46f);
+    public bool enemyKilledTrigger;
     [Header("Bullet Modifiers")]
     [Header("1. AOE on crit (pyrotechnics)")]
     public GameObject explosiveProjectile;
@@ -42,8 +43,8 @@ public class Gun : MonoBehaviour
     public float reductionPerStack = .1f;
     [Header("Atom Splitter (Multishot)")]
     public float AS_heatMulti = .7f;
-
-
+    [Header("Supercharger ")]
+    public float SC_APscaling = 1;
     [Header("Crosshair Spread")]
     public float spreadSpeed = 5f;
     public float minXGap = 14f;
@@ -63,6 +64,7 @@ public class Gun : MonoBehaviour
     private float spread;
     private GameObject vfx_MuzzleFlash;
     private int shotCount = 0;
+
     private void Start() 
     {
         player = GetComponent<Player>();
@@ -176,6 +178,15 @@ public class Gun : MonoBehaviour
         Hitbox hit = projectile.GetComponent<Hitbox>();
         Color bulletColor;
         hit.Damage = player.GetDamage().GetValue();
+        if (enemyKilledTrigger)
+        {
+            enemyKilledTrigger = false;
+            if (player.HasSkill("Supercharger"))
+            {
+                hit.Damage = player.GetAbilityPower().GetValue()*player.GetSkillStack("Supercharger") * SC_APscaling;
+                print("This bullet dealt 100% of your AP");
+            }
+        }
         if (crit) 
         {//Any effects that need to apply due to crit should go here
             //apply a burn to crits if you have ignition bullets

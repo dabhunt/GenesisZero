@@ -3,6 +3,8 @@ using System.Collections.Generic;
 using UnityEngine;
 using System;
 using DG.Tweening;
+using static Statistic;
+
 public class UniqueEffects : MonoBehaviour
 {
 	//this script contains non bullet related unique effects of modifiers outside the data structure of stats
@@ -15,7 +17,11 @@ public class UniqueEffects : MonoBehaviour
 	public float durationUntilDecay = 6f;
 	//these are all done in multipliers, not in flat amounts
 	// 1.1 = 10% increase, .9f = 10% reduction
-	[Header("Power Surge")]
+	[Header("Quantum Harvester")]
+	public float QH_APperKill = 1;
+	private float harvesterKills = 0;
+	private float harvesterGains = 0;
+    [Header("Power Surge")]
 	public float PS_APmulti = 2;
 	private float PreBonusAP = 0;
 	[Header("Adrenaline Rush")]
@@ -92,14 +98,15 @@ public class UniqueEffects : MonoBehaviour
 		SuperHeatedEssence();
 		ThermiteCore();
 		MusicTimer();
+		QuantumHarvester();
 		
 		if (phaseTrigger)
 		{
 			PowerSurge();
 		}
-		player.UpdateStats();
-		StatDisplay.instance.UpdateStats();
-	}
+        player.UpdateStats();
+        StatDisplay.instance.UpdateStats();
+    }
 	private void Update()
 	{
 		StackDecayTimer();
@@ -362,7 +369,21 @@ public class UniqueEffects : MonoBehaviour
 			player.GetDamage().AddRepeatingBonus(currentDamage, currentAttackSpeed, 1 / checksPerSecond, "BoilingPoint_DMG");
 		}
 	}
-	public float SL_CalculateDmg(int num, float charged1, float charged2)
+    private void QuantumHarvester()
+    {
+        int stacks = player.GetSkillStack("Quantum Harvester");
+        if (stacks > 0)
+        {
+            SkillManager sm = Player.instance.GetSkillManager();
+            float bonus = Player.instance.GetQH_Kills() * QH_APperKill * stacks;
+            player.GetAbilityPower().AddRepeatingBonus(bonus, 0, 1 / checksPerSecond, "QuantumHarvester");
+            player.GetAbilityPower().CheckBonuses();
+            SkillObject harvester = sm.GetSkillFromString("Quantum Harvester");
+            harvester.Description = "For each stack of this modifier, gain + 10 Ability Power when an enemy is killed. (+" + bonus + "0 Ability Power harvested so far)";
+        }
+
+    }
+    public float SL_CalculateDmg(int num, float charged1, float charged2)
 	{
 		//aManager.PlaySoundOneShot("SFX_AOE");
 		float chargeAmount = 0;
