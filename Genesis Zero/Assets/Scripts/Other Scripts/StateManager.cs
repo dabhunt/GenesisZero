@@ -23,7 +23,6 @@ public class StateManager : MonoBehaviour
     private Vector2 BossRoomLocation = new Vector2(-346, 315f);
     public bool Cursorvisible = true;
     public bool GameOver = false;
-    public bool InTutorial = true;
     private float tweenduration = 0;
     private Animation timeslowEffect;
     private bool timeSlowEffectActive = true;
@@ -248,12 +247,13 @@ public class StateManager : MonoBehaviour
         cam.GetComponentInParent<CinemachineBrain>().enabled = false;
         cam.transform.position = new Vector3(player.transform.position.x, cam.transform.position.y, cam.transform.position.z);
         //GameObject.FindGameObjectWithTag("CMcam").GetComponent<CinemachineVirtualCamera>().enabled = false;
-        if (name.Contains("Skip"))
+        if (name.Contains("Skip") && Player.instance.GetInTutorial())
             SkipTutorial();
-        InTutorial = false;
+        Player.instance.SetInTutorial(false);
         AudioManager.instance.PlaySound("SFX_Teleport");
         if (!hasPair && !TileManager.instance.MayhemMode) //if the teleporter doesn't already have a pair
         {
+            EnemyManager.instance.AddDifficulty(.4f); //in regular mode increase difficulty when you go through a new teleporter
             GameObject newTele = Instantiate(TileManager.instance.interactablePrefabs[4]) as GameObject;//spawn a teporter where ever the teleporter takes you
             newTele.transform.position = destination + new Vector2(-4, 4);
             newTele.GetComponent<Teleporter>().SetDestination(player.transform.position + new Vector3(4, 0, 0));
@@ -261,17 +261,9 @@ public class StateManager : MonoBehaviour
             newTele.GetComponent<Teleporter>().active = false;
             newTele.GetComponent<Teleporter>().Invoke("ReactivatePortal", 1.75f); //allow player to travel back through after a couple seconds to prevent accidental travel
         }
-        if (TileManager.instance.MayhemMode) //if in mayhem mode
+        if (TileManager.instance.MayhemMode) //if in mayhem mode, dont create a new teleporter
         {
-            print("increasing difficulty in teleport");
-            //EnemyManager.instance.AddDifficulty(.2f); //mayhem mode increase
             TileManager.instance.GetComponent<TileManager>().mayhemLevelUp(true);
-
-        }
-        else //if it doesnt have pair and you are in normal mode
-        {
-            EnemyManager.instance.AddDifficulty(.35f); //regular mode
-            //EnemyManager.instance.ModifyDifficultyMulti(.4f); //mayhem mode increase
         }
         //Destroy(fakeTele.GetComponent<Teleporter>());
         Player.instance.transform.position = new Vector3(destination.x, destination.y, 0);
@@ -295,10 +287,11 @@ public class StateManager : MonoBehaviour
     }
     public void SkipTutorial()
     {
-        if (!InTutorial)
+        if (!Player.instance.GetInTutorial())
             return;
-        StateManager.instance.InTutorial = false;
+        Player.instance.SetInTutorial(false);
         SkillManager sk = Player.instance.GetSkillManager();
+        Camera.main.GetComponent<BasicCameraZoom>().ChangeFieldOfView(20, .8f);
         sk.AddSkill(sk.GetRandomAbility());
         while (sk.GetRandomGoldsFromPlayer(1).Count < 1 && sk.GetPlayerMods().Count < 5) // if the player has a legendary OR 5 mods, stop rolling
             sk.AddSkill(sk.GetRandomModsByChance(1)[0]);

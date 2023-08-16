@@ -66,7 +66,7 @@ public class FillHealthBar : MonoBehaviour
         // uses the player object to get info about player health
         // fillvalue represents how filled in the healthbar is, from 0 to 100
         float curValue = player.GetHealth().GetValue();
-        if (!StateManager.instance.InTutorial && GetComponent<SimpleTooltip>())
+        if (!Player.instance.GetInTutorial() && GetComponent<SimpleTooltip>())
         {
             GetComponent<SimpleTooltip>().infoLeft = curValue + " / " + player.GetHealth().GetMaxValue() + " Health";
         }
