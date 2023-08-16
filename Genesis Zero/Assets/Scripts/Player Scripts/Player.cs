@@ -5,7 +5,7 @@ using UnityEngine;
 public class Player : Pawn
 {
     SkillManager SkillManager;
-    public Statistic Essence, Keys, AbilityPower, CDR;
+    public Statistic Essence, Keys, AbilityPower, CDR, dmgReduction;
     private List<Statistic> playerStatistics;
     public float baseAbilityPower = 16;
     private bool isInteracting = false;
@@ -16,6 +16,7 @@ public class Player : Pawn
     private float healthPerStack = 4;
     public static Player instance;
     private int harvesterKills;
+    public float actualDR;
     private void Awake()
     {
         if (instance == null)
@@ -75,7 +76,6 @@ public class Player : Pawn
         if (GetSkillStack("Quantum Harvester") > 0)
         {
             harvesterKills++;
-            
         }
     }
     public int GetQH_Kills()

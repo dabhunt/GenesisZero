@@ -372,15 +372,17 @@ public class UniqueEffects : MonoBehaviour
     private void QuantumHarvester()
     {
         int stacks = player.GetSkillStack("Quantum Harvester");
+        SkillManager sm = Player.instance.GetSkillManager();
+		float bonus = 0f;
         if (stacks > 0)
         {
-            SkillManager sm = Player.instance.GetSkillManager();
-            float bonus = Player.instance.GetQH_Kills() * QH_APperKill * stacks;
+            bonus = Player.instance.GetQH_Kills() * QH_APperKill * stacks;
             player.GetAbilityPower().AddRepeatingBonus(bonus, 0, 1 / checksPerSecond, "QuantumHarvester");
             player.GetAbilityPower().CheckBonuses();
-            SkillObject harvester = sm.GetSkillFromString("Quantum Harvester");
-            harvester.Description = "For each stack of this modifier, gain + 10 Ability Power when an enemy is killed. (+" + bonus + "0 Ability Power harvested so far)";
+
         }
+        SkillObject harvester = sm.GetSkillFromString("Quantum Harvester");
+        harvester.Description = "For each stack of this modifier, gain + 10 Ability Power when an enemy is killed. (+" + bonus + "0 Ability Power harvested so far)";
 
     }
     public float SL_CalculateDmg(int num, float charged1, float charged2)

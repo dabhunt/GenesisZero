@@ -1,6 +1,9 @@
-﻿using System.Collections;
+﻿using System;
+using System.Collections;
 using System.Collections.Generic;
+using UnityEditor.PackageManager;
 using UnityEngine;
+using UnityEngine.LowLevel;
 
 /**
  * Kenny Doan
@@ -20,13 +23,17 @@ public class Pawn : MonoBehaviour
     private float burntime, burndamage, burntick, burnimmunity; //burndamage is damage per second
     private float slowtime, knockbackforce;
     private float stunImmuneAfterStun = 1.5f;
+    private float logDecayRate = .93f;
     private Vector3 knockbackvector, lastposition;
     private bool Initialized, ForcedKnockBack, Dying, StunnedLastFrame, HasAnimationEventController;
     private float dashDecay = .01f;
+    private float power;
+    private float maxDamageReduction = .95f;
 
     protected void Start()
     {
         Initialize();
+
     }
 
     public void Initialize()
@@ -39,7 +46,7 @@ public class Pawn : MonoBehaviour
             }
             else
             {
-                Debug.LogError("No statistics have been assigned to " + transform.parent.name);
+                UnityEngine.Debug.LogError("No statistics have been assigned to " + transform.parent.name);
             }
             InitializeStatuses();
 
@@ -59,7 +66,7 @@ public class Pawn : MonoBehaviour
      */
     public virtual float TakeDamage(float amount, Pawn source)
     {
-        int chance = Random.Range(0, 100);
+        int chance = UnityEngine.Random.Range(0, 100);
         if (chance >= GetDodgeChance().GetValue() * 100) // Dodging will ignore damage
         {
             float finaldamage = amount;
@@ -68,9 +75,16 @@ public class Pawn : MonoBehaviour
                 finaldamage = 0;
             }
             finaldamage -= GetFlatDamageReduction().GetValue();
-            finaldamage = finaldamage - finaldamage * GetDamageReduction().GetValue();
-            finaldamage = Mathf.Clamp(finaldamage, 0, 999);
-
+            //finaldamage = finaldamage - finaldamage * ApplyDiminishingReturns(Mathf.Min(GetDamageReduction().GetValue(),maxDamageReduction));
+            if (GetComponent<Player>() != null)
+            {
+                finaldamage = finaldamage - finaldamage * ApplyDiminishingReturns(GetDamageReduction().GetValue());
+            }
+            else
+            {
+                finaldamage = finaldamage - finaldamage * GetDamageReduction().GetValue();
+            }
+            //finaldamage = Mathf.Clamp(finaldamage, 0, 999);
             // Shield Damage
             if (GetShield().GetValue() > 0)
             {
@@ -99,6 +113,28 @@ public class Pawn : MonoBehaviour
             return 0;
             //Dodge Effect
         }
+    }
+    public float ApplyDiminishingReturns(float input)
+    {
+
+        //input = Mathf.Min(input,1);  //clamp input value to 1 at most
+        float output = input;
+        float stackSize = .07f;
+        float divisions = input / stackSize;
+        if (input > stackSize)
+        {
+            //diminishing returns per stack
+            output = input - stackSize * (divisions * divisions / 60);
+            Debug.Log(divisions);
+        }
+        if (divisions > 25)
+        {
+            output = maxDamageReduction;
+        }
+        output = Mathf.Min(output, maxDamageReduction);
+        //float output = -0.1f * input * input + 1.1f * input;
+        Debug.Log("input: " + input + "  outputDR: " + output);
+        return output;
     }
 
     /**

@@ -40,10 +40,7 @@ public class RightClick : MonoBehaviour , IPointerEnterHandler, IPointerExitHand
             return;
         sManager.RemoveSkill(s);
         GameObject mod = sManager.SpawnMod(player.transform.position, s.name);
-        //destroy the mod after 3 seconds to prevent abuse
-        mod.AddComponent<DestroyAfterXTime>().time = 6;
         mod.GetComponent<SkillPickup>().SetDropped(true);
-        mod.AddComponent<InactiveFlag>();
         Collider[] cols = Physics.OverlapSphere(mod.transform.position, 3);
         foreach (Collider c in cols)
         {

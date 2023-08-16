@@ -112,8 +112,22 @@ public class SkillManager
         AddedSkill = skill;
         AddSkillStats(skill, true);
         skillamount++;
-    }
+        UpdateDescriptions();
 
+    }
+    public void UpdateDescriptions()
+    {
+        if (HasSkill("Hardened Armor"))
+        {
+        float dr = Player.instance.GetComponent<Pawn>().GetDamageReduction().GetValue();
+        Debug.Log("dr: "+dr);
+        float diminished = Mathf.Round(Player.instance.GetComponent<Pawn>().ApplyDiminishingReturns(dr) * 1000f) / 1000f;
+        //float reduced = Player.instance.GetComponent<Pawn>().ApplyDiminishingReturns(dr); 
+        GetSkillFromString("Hardened Armor").Description = "+7% damage reduction. Each additional stack is 5% less effective than the previous. "+ "[" +diminished*100+ "% dmg reduction.]" ;
+            if (diminished >= .95f)
+                GetSkillFromString("Hardened Armor").Description = "+7% damage reduction. Each additional stack is 5% less effective than the previous. " + "[" + diminished * 100 + "% dmg reduction. Limit reached.]";
+        }
+    }
     /**
      * Removes a stack of skill
      */
@@ -168,6 +182,7 @@ public class SkillManager
             AddedSkill = null;
             AddSkillStats(skill, false);
             skillamount--;
+            UpdateDescriptions();
         }
     }
 
